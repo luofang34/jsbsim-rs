@@ -150,9 +150,10 @@ int main(int argc, char** argv)
     if (mode == "atmosphere") return RunAtmosphereProbe(argv[2], argv[3]);
     if (mode == "models") return RunModelsProbe(argv[2], argv[3]);
     if (mode == "auxiliary") return RunAuxiliaryProbe(argv[2], argv[3]);
+    if (mode == "geodesic") return RunGeodesicProbe(argv[2], argv[3]);
     if (mode == "initial-condition") return RunInitialConditionProbe(argv[2], argv[3]);
     if (mode == "winds") return RunWindsProbe(argv[2], argv[3]);
   }
-  std::fprintf(stderr, "usage: %s script|bench|properties|units|xml|math|functions|table|mass-balance|atmosphere|winds|models|auxiliary|initial-condition ...\n", argv[0]);
+  std::fprintf(stderr, "usage: %s script|bench|properties|units|xml|math|functions|table|mass-balance|atmosphere|winds|models|auxiliary|geodesic|initial-condition ...\n", argv[0]);
   return 2;
 }

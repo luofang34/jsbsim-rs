@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!-- A prolate planet (polar axis longer than the equatorial one, negative
+     flattening), given by semimajor and semiminor axes; exercises the
+     geodesic solver's prolate branches. -->
+<planet name="Prolate">
+  <semimajor_axis unit="FT">2.0e7</semimajor_axis>
+  <semiminor_axis unit="FT">2.03e7</semiminor_axis>
+</planet>
