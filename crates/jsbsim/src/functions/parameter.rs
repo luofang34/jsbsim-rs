@@ -67,10 +67,18 @@ impl PropertyValue {
     }
 
     /// The node, binding it now if needed (`GetNode`).
+    #[inline]
     pub fn node(&self, tree: &PropertyTree) -> Result<NodeId, Error> {
-        if let Some(node) = self.node.get() {
-            return Ok(node);
+        match self.node.get() {
+            Some(node) => Ok(node),
+            None => self.bind_late(tree),
         }
+    }
+
+    /// The first read of a late-bound operand.
+    #[cold]
+    #[inline(never)]
+    fn bind_late(&self, tree: &PropertyTree) -> Result<NodeId, Error> {
         let node = tree
             .get(&self.name)?
             .ok_or_else(|| FunctionError::MissingProperty {

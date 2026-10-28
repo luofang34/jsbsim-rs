@@ -53,19 +53,29 @@ impl Value {
 impl PropertyTree {
     /// Follows aliases from `id`, returning the node that holds the value,
     /// or `None` when some node on the way is not readable.
+    #[inline]
     pub fn read_target(&self, mut id: NodeId) -> Option<NodeId> {
         loop {
-            if self.attribute(id, Attribute::TRACE_READ) {
-                info!("TRACE: Read node {}", self.path(id, false));
+            let node = self.node(id);
+            if node.attributes & Attribute::TRACE_READ.0 != 0 {
+                self.trace_read(id);
             }
-            if !self.attribute(id, Attribute::READ) {
+            if node.attributes & Attribute::READ.0 == 0 {
                 return None;
             }
-            match self.node(id).value {
+            match node.value {
                 Value::Alias(target) => id = target,
                 _ => return Some(id),
             }
         }
+    }
+
+    /// Kept out of line so that [`read_target`](Self::read_target), on
+    /// every property read, stays small enough to inline.
+    #[cold]
+    #[inline(never)]
+    fn trace_read(&self, id: NodeId) {
+        info!("TRACE: Read node {}", self.path(id, false));
     }
 
     fn read<T>(&self, id: NodeId, default: T, convert: impl Fn(&Value) -> T) -> T {
