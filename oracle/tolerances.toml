@@ -83,7 +83,8 @@ case = "ball"
 property = "attitude/phi-rad"
 abs = 1e-09
 rel = 1e-12
-reason = "Equatorial orbit: the reference is round-off noise around zero, so an absolute floor replaces the relative bound."
+period = 6.283185307179586
+reason = "Equatorial orbit: phi is round-off noise on the +-pi branch cut, so it flips by 2 pi between builds (seen with and without FMA contraction); compared modulo 2 pi with an absolute floor."
 
 [[tolerance]]
 case = "ball"

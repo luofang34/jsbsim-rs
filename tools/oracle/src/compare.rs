@@ -52,7 +52,7 @@ impl fmt::Display for Divergence {
                 f,
                 "t={time} {property}: reference={reference:?} candidate={candidate:?} \
                  |diff|={:?} allowed={:?} (abs={:?} rel={:?}: {})",
-                (candidate - reference).abs(),
+                tolerance.difference(*reference, *candidate),
                 tolerance.allowed(*reference),
                 tolerance.abs,
                 tolerance.rel,
@@ -109,7 +109,7 @@ pub fn compare(
                     time,
                 }
             })?;
-            if !agrees(r, c, tolerance) {
+            if !tolerance.agrees(r, c) {
                 return Ok(Outcome {
                     rows_compared: index.wrapping_add(1),
                     columns,
@@ -138,12 +138,4 @@ pub fn compare(
         columns,
         divergence,
     })
-}
-
-/// Exact equality (which covers infinities), both NaN, or a difference
-/// within the bound. A NaN on one side only never agrees.
-fn agrees(reference: f64, candidate: f64, tolerance: &Tolerance) -> bool {
-    reference == candidate
-        || (reference.is_nan() && candidate.is_nan())
-        || (candidate - reference).abs() <= tolerance.allowed(reference)
 }

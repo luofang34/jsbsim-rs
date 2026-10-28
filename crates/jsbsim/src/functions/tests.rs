@@ -322,3 +322,71 @@ fn conditions() {
         "no short-circuit"
     );
 }
+
+/// Inputs JSBSim only logs: accepted by default, refused in strict mode.
+const LENIENT_INPUTS: &[(&str, &str, &str)] = &[
+    (
+        "unknown operation",
+        "<function><sum><frobnicate/><v>1</v><v>2</v></sum></function>",
+        "",
+    ),
+    (
+        "unknown template",
+        "<function><sum><p apply=\"nope\">x</p><v>1</v><v>2</v></sum></function>",
+        "",
+    ),
+    (
+        "one-argument product",
+        "<function><product><p>x</p></product></function>",
+        "",
+    ),
+    (
+        "copyto without property",
+        "<function copyto=\"nowhere\"><p>x</p></function>",
+        "",
+    ),
+    (
+        "copyto with '#' and no number",
+        "<function copyto=\"a/#\"><p>x</p></function>",
+        "fcs",
+    ),
+    (
+        "numeric prefix without '#'",
+        "<function name=\"out\"><p>x</p></function>",
+        "3",
+    ),
+];
+
+#[test]
+fn default_mode_logs_and_ignores_what_jsbsim_ignores() {
+    for (what, text, prefix) in LENIENT_INPUTS {
+        let mut f = Fixture::new(&[("x", 1.0)]);
+        let loaded = f.set.load_function(&mut f.tree, &xml(text), prefix);
+        assert!(loaded.is_ok(), "{what}: {loaded:?}");
+    }
+}
+
+#[test]
+fn strict_mode_refuses_what_jsbsim_ignores() {
+    for (what, text, prefix) in LENIENT_INPUTS {
+        let mut f = Fixture::new(&[("x", 1.0)]);
+        f.set = FunctionSet::with_options(crate::LoadOptions { strict: true });
+        let loaded = f.set.load_function(&mut f.tree, &xml(text), prefix);
+        let refused = matches!(loaded, Err(Error::Function(FunctionError::Strict { .. })))
+            || matches!(loaded, Err(Error::Function(FunctionError::Arguments { .. })) if *what == "one-argument product");
+        assert!(refused, "{what}: {loaded:?}");
+    }
+}
+
+#[test]
+fn strict_mode_refuses_internal_tables_with_lookup_properties() {
+    let text = "<table type=\"internal\"><independentVar>x</independentVar><tableData>0 0\n1 1</tableData></table>";
+    let mut f = Fixture::new(&[("x", 1.0)]);
+    let id = f.set.load_table(&mut f.tree, &xml(text), "").unwrap();
+    assert!(!f.set.table(id).is_internal(), "JSBSim drops 'internal'");
+    f.set = FunctionSet::with_options(crate::LoadOptions { strict: true });
+    assert!(matches!(
+        f.set.load_table(&mut f.tree, &xml(text), ""),
+        Err(Error::Function(FunctionError::Strict { .. }))
+    ));
+}

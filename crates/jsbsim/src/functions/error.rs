@@ -94,6 +94,15 @@ pub enum FunctionError {
         /// Property being evaluated.
         property: String,
     },
+    /// Input that JSBSim logs and ignores, refused under
+    /// [`LoadOptions::strict`](crate::LoadOptions::strict).
+    #[error("{at}: {message} (refused in strict mode)")]
+    Strict {
+        /// Where it is.
+        at: Location,
+        /// JSBSim's log message.
+        message: String,
+    },
     /// A template parameter read with no property to stand for.
     #[error("{at}: template parameter '#' read outside a template call")]
     UnboundTemplateParameter {

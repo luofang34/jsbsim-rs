@@ -46,7 +46,9 @@ live in `oracle/`:
   Rust twins in `tools/oracle/src/probe/`.
 - `oracle/tolerances.toml`: per case and property, the accepted difference
   `abs + rel * |reference|`, optionally for a time window `[t_start, t_end)`,
-  with a mandatory reason. A logged property without a row is an error. A
+  with a mandatory reason, and for angles on a branch cut a `period` (2π or
+  360) by which differences are wrapped. A logged property without a row is
+  an error. A
   transcript case with rows is compared number by number under the row for
   `<op>/<tag>`, then `<op>/*`, then `*`; without rows it must match exactly.
 

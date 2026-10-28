@@ -107,12 +107,12 @@ fn compare_line(
                 let property = format!("{op}/{tag}");
                 let tolerance = lookup(table, case, &property, line)?;
                 outcome.numbers_differing = outcome.numbers_differing.wrapping_add(1);
-                let diff = (c - r).abs();
+                let diff = tolerance.difference(r, c);
                 outcome.max_abs = outcome.max_abs.max(diff);
                 if r != 0.0 {
                     outcome.max_rel = outcome.max_rel.max(diff / r.abs());
                 }
-                if diff.is_nan() || diff > tolerance.allowed(r) {
+                if !tolerance.agrees(r, c) {
                     return Ok(Some(format!(
                         "{property}: reference={r:?} candidate={c:?} |diff|={diff:?} allowed={:?} ({})",
                         tolerance.allowed(r),

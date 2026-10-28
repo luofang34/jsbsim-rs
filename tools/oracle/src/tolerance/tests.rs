@@ -9,6 +9,7 @@ fn row(property: &str, t_start: Option<f64>, t_end: Option<f64>) -> Tolerance {
         property: property.into(),
         abs: 1.0,
         rel: 0.0,
+        period: None,
         t_start,
         t_end,
         reason: "test".into(),
@@ -105,4 +106,17 @@ fn unknown_fields_are_rejected() {
     )
     .unwrap_err();
     assert!(err.to_string().contains("why"), "{err}");
+}
+
+#[test]
+fn periodic_rows_compare_wrapped_differences() {
+    let mut r = row("phi", None, None);
+    r.abs = 1e-9;
+    r.period = Some(std::f64::consts::TAU);
+    let pi = std::f64::consts::PI;
+    assert!(r.agrees(pi - 1e-12, -pi + 1e-12), "across the branch cut");
+    assert!(!r.agrees(0.0, 1e-3));
+    assert!(r.difference(170.0f64.to_radians(), -170.0f64.to_radians()) < 0.35);
+    r.period = Some(-1.0);
+    assert!(ToleranceTable::new(vec![r]).is_err());
 }

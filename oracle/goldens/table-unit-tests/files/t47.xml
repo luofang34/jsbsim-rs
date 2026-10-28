@@ -1,0 +1,1 @@
+<dummy>  <table name="test">    <independentVar lookup="row">x</independentVar>    <independentVar lookup="column">y</independentVar>    <independentVar lookup="table">z</independentVar>  </table></dummy>

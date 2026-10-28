@@ -10,12 +10,14 @@ pub mod error;
 pub mod functions;
 pub mod math;
 pub mod models;
+pub mod options;
 pub mod properties;
 pub mod resolver;
 pub mod units;
 pub mod xml;
 
 pub use error::Error;
+pub use options::LoadOptions;
 #[cfg(feature = "fs")]
 pub use resolver::FileResolver;
 pub use resolver::{MemoryResolver, Resolver};

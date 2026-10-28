@@ -1,0 +1,7 @@
+<dummy>  <table name="test">    <independentVar lookup="row">x</independentVar>    <independentVar lookup="column">y</independentVar>    <independentVar lookup="table">z</independentVar>    <tableData breakPoint="1.0">            0.0  1.0
+      2.0   3.0 -2.0
+      4.0  -1.0  0.5
+    </tableData>    <tableData breakPoint="0.5">            0.5  1.5
+      2.5   3.5 -2.5
+      4.5  -1.5  1.0
+    </tableData>  </table></dummy>

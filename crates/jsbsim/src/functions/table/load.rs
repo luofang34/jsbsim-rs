@@ -5,11 +5,11 @@
 //! Building a [`Table`] from `<table>` / `<tableData>` elements.
 
 use super::{Table, TableKind};
-use crate::Error;
 use crate::c_numeric::strtod_prefix;
 use crate::functions::{FunctionError, PropertyValue, substitute_hash};
 use crate::properties::PropertyTree;
 use crate::xml::Element;
+use crate::{Error, LoadOptions};
 
 fn table_error(el: &Element, message: impl Into<String>) -> Error {
     FunctionError::Table {
@@ -115,7 +115,12 @@ fn numeric_data(data: &Element) -> Result<Vec<f64>, Error> {
 impl Table {
     /// `FGTable(pm, el, prefix)`. Binding a named table to its property is
     /// left to the caller.
-    pub fn load(el: &Element, tree: &PropertyTree, prefix: &str) -> Result<Self, Error> {
+    pub fn load(
+        el: &Element,
+        tree: &PropertyTree,
+        prefix: &str,
+        options: LoadOptions,
+    ) -> Result<Self, Error> {
         let mut table = Self {
             kind: TableKind::OneD,
             n_rows: 0,
@@ -137,8 +142,8 @@ impl Table {
                 ));
             }
         }
-        let declared = table.load_axes(el, tree, prefix)?;
-        table.load_data(el, tree)?;
+        let declared = table.load_axes(el, tree, prefix, options)?;
+        table.load_data(el, tree, options)?;
         if declared != 0 && declared != table.n_dims {
             return Err(table_error(
                 el,
@@ -161,6 +166,7 @@ impl Table {
         el: &Element,
         tree: &PropertyTree,
         prefix: &str,
+        options: LoadOptions,
     ) -> Result<usize, Error> {
         let mut declared = 0;
         let mut axes = el.find_elements("independentVar").peekable();
@@ -174,10 +180,15 @@ impl Table {
             return Ok(0);
         }
         if self.internal {
-            tracing::error!(
-                "{}: This table specifies both 'internal' call type and specific lookup properties via the 'independentVar' element. The 'internal' attribute will be ignored.",
-                el.location()
-            );
+            let message = "This table specifies both 'internal' call type and specific lookup properties via the 'independentVar' element. The 'internal' attribute will be ignored.";
+            if options.strict {
+                return Err(FunctionError::Strict {
+                    at: el.location(),
+                    message: message.to_owned(),
+                }
+                .into());
+            }
+            tracing::error!("{}: {message}", el.location());
             self.internal = false;
         }
         for axis_el in axes {
@@ -213,14 +224,19 @@ impl Table {
         Ok(declared)
     }
 
-    fn load_data(&mut self, el: &Element, tree: &PropertyTree) -> Result<(), Error> {
+    fn load_data(
+        &mut self,
+        el: &Element,
+        tree: &PropertyTree,
+        options: LoadOptions,
+    ) -> Result<(), Error> {
         let children = el.num_elements("tableData");
         let leaf = if el.name() == "tableData" && children == 0 {
             Some(el)
         } else if el.name() != "tableData" && children == 1 {
             el.find_element("tableData")
         } else if children > 1 {
-            return self.load_nested(el, tree);
+            return self.load_nested(el, tree, options);
         } else {
             return Err(table_error(el, "<tableData> elements are missing"));
         };
@@ -244,7 +260,12 @@ impl Table {
         Ok(())
     }
 
-    fn load_nested(&mut self, el: &Element, tree: &PropertyTree) -> Result<(), Error> {
+    fn load_nested(
+        &mut self,
+        el: &Element,
+        tree: &PropertyTree,
+        options: LoadOptions,
+    ) -> Result<(), Error> {
         self.kind = TableKind::Nested;
         self.data = vec![f64::NAN];
         self.n_cols = 1;
@@ -258,7 +279,7 @@ impl Table {
                     "a named <tableData> sub-table has no lookup properties to bind",
                 ));
             }
-            let sub = Table::load(child, tree, "")?;
+            let sub = Table::load(child, tree, "", options)?;
             if self.n_dims == 0 {
                 self.n_dims = sub.n_dims + 1;
                 if self.n_dims < 3 {

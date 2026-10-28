@@ -33,6 +33,7 @@ pub use ops::{OPERATIONS, Op};
 pub use parameter::{Parameter, PropertyValue};
 pub use table::{Table, TableKind};
 
+use crate::LoadOptions;
 use crate::properties::{Attribute, NodeId, PropertyTree, Value, mk_property_name};
 use crate::xml::{Location, atof_locale_c};
 
@@ -90,13 +91,36 @@ pub struct FunctionSet {
     tables: Vec<Table>,
     bound: BTreeMap<NodeId, Bound>,
     templates: BTreeMap<String, FnId>,
+    options: LoadOptions,
 }
 
 impl FunctionSet {
-    /// An empty set.
+    /// An empty set with default (JSBSim-compatible) options.
     #[must_use]
     pub fn new() -> Self {
         Self::default()
+    }
+
+    /// An empty set loading with `options`.
+    #[must_use]
+    pub fn with_options(options: LoadOptions) -> Self {
+        Self {
+            options,
+            ..Self::default()
+        }
+    }
+
+    /// Something JSBSim logs and ignores: logged, or refused when strict.
+    fn lenient(&self, at: &Location, message: String) -> Result<(), crate::Error> {
+        if self.options.strict {
+            return Err(FunctionError::Strict {
+                at: at.clone(),
+                message,
+            }
+            .into());
+        }
+        tracing::error!("{at}: {message}");
+        Ok(())
     }
 
     /// The function `id`.
@@ -164,7 +188,10 @@ impl FunctionSet {
         if tree.tie(node, Value::Double(0.0), false) {
             self.bound.insert(node, what);
         } else {
-            tracing::error!("Failed to tie property {property} to object methods");
+            self.lenient(
+                at,
+                format!("Failed to tie property {property} to object methods"),
+            )?;
         }
         Ok(node)
     }
@@ -197,23 +224,26 @@ pub fn substitute_hash(text: &str, prefix: &str) -> String {
     }
 }
 
-/// `CreateOutputNode`'s property name for `name` under `prefix`; `None`
-/// when JSBSim would log an error and leave the output unbound.
-fn output_name(name: &str, prefix: &str, at: &Location) -> Option<String> {
+/// `CreateOutputNode`'s property name for `name` under `prefix`;
+/// `Err(message)` when JSBSim would log an error and leave the output
+/// unbound.
+fn output_name(name: &str, prefix: &str) -> Result<Option<String>, String> {
     if name.is_empty() {
-        return None;
+        return Ok(None);
     }
     if prefix.is_empty() {
-        return Some(mk_property_name(name, false));
+        return Ok(Some(mk_property_name(name, false)));
     }
     if !is_number(prefix) {
-        return Some(mk_property_name(&format!("{prefix}/{name}"), false));
+        return Ok(Some(mk_property_name(&format!("{prefix}/{name}"), false)));
     }
     if name.contains('#') {
-        return Some(mk_property_name(&name.replacen('#', prefix, 1), false));
+        return Ok(Some(mk_property_name(
+            &name.replacen('#', prefix, 1),
+            false,
+        )));
     }
-    tracing::error!(
-        "{at}: Malformed function name with number: {prefix} and property name: {name} but no \"#\" sign for substitution."
-    );
-    None
+    Err(format!(
+        "Malformed function name with number: {prefix} and property name: {name} but no \"#\" sign for substitution."
+    ))
 }

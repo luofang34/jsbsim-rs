@@ -6,6 +6,7 @@
 mod functions;
 mod math;
 mod properties;
+mod table;
 mod units;
 mod xml;
 
@@ -29,6 +30,7 @@ pub fn run(name: &str, input: &str, context: &ProbeContext) -> Result<String, Or
         "units" => Ok(units::run(input)),
         "math" => Ok(math::run(input)),
         "functions" => Ok(functions::run(input, context)),
+        "table" => Ok(table::run(input, context)),
         "xml" => Ok(xml::run(input, context)),
         other => Err(OracleError::Provenance(format!("unknown probe {other}"))),
     }

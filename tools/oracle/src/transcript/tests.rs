@@ -9,6 +9,7 @@ fn table(rows: &[(&str, f64)]) -> ToleranceTable {
                 property: (*property).into(),
                 abs: 0.0,
                 rel: *rel,
+                period: None,
                 t_start: None,
                 t_end: None,
                 reason: "test".into(),

@@ -10,6 +10,7 @@ fn table(abs: f64) -> ToleranceTable {
                 property: property.into(),
                 abs,
                 rel: 0.0,
+                period: None,
                 t_start: None,
                 t_end: None,
                 reason: "test".into(),

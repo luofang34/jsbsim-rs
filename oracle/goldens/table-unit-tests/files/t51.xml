@@ -1,0 +1,17 @@
+<dummy>  <table name="test5d">    <independentVar lookup="row">axis1</independentVar>    <independentVar lookup="column">axis2</independentVar>    <independentVar lookup="axis3">axis3</independentVar>    <independentVar lookup="axis4">axis4</independentVar>    <independentVar lookup="axis5">axis5</independentVar>    <tableData breakPoint="0.0">      <tableData breakPoint="0.0">        <tableData breakPoint="0.0">                0.0  1.0
+          1.0   1.0  2.0
+        </tableData>        <tableData breakPoint="10.0">                0.0  1.0
+          1.0   5.0  6.0
+        </tableData>      </tableData>      <tableData breakPoint="1.0">        <tableData breakPoint="0.0">                0.0  1.0
+          1.0   1.0  2.0
+        </tableData>        <tableData breakPoint="10.0">                0.0  1.0
+          1.0   5.0  6.0
+        </tableData>      </tableData>    </tableData>    <tableData breakPoint="1.0">      <tableData breakPoint="0.0">        <tableData breakPoint="0.0">                0.0  1.0
+          1.0   1.0  2.0
+        </tableData>        <tableData breakPoint="10.0">                0.0  1.0
+          1.0   5.0  6.0
+        </tableData>      </tableData>      <tableData breakPoint="1.0">        <tableData breakPoint="0.0">                0.0  1.0
+          1.0   1.0  2.0
+        </tableData>        <tableData breakPoint="10.0">                0.0  1.0
+          1.0   5.0  6.0
+        </tableData>      </tableData>    </tableData>  </table></dummy>

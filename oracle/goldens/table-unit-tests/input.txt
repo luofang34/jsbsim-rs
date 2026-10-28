@@ -1,0 +1,1758 @@
+# Every readFromXML table of JSBSim's tests/unit_tests/FGTableTest.h,
+# evaluated on a grid of breakpoints, midpoints and values beyond both ends.
+table - files/t00.xml
+lookup -1.0
+lookup 0.0
+lookup 1.0
+lookup
+table - files/t01.xml
+lookup 0.0
+lookup 1.0
+lookup 1.5
+lookup 2.0
+lookup 3.0
+lookup
+table - files/t02.xml
+lookup 0.0
+lookup 1.0
+lookup 1.5
+lookup 2.0
+lookup 3.0
+lookup 4.0
+lookup 5.0
+lookup
+table - files/t03.xml
+lookup -1.0
+lookup 0.0
+lookup 1.0
+lookup
+table - files/t04.xml
+lookup 0.0
+lookup 1.0
+lookup 1.5
+lookup 2.0
+lookup 3.0
+lookup
+table 2 files/t05.xml
+lookup 0.0
+lookup 1.0
+lookup 1.5
+lookup 2.0
+lookup 3.0
+lookup
+table tables files/t06.xml
+lookup 0.0
+lookup 1.0
+lookup 1.5
+lookup 2.0
+lookup 3.0
+lookup
+table - files/t07.xml
+lookup 0.0
+lookup 1.0
+lookup 1.5
+lookup 2.0
+lookup 3.0
+lookup
+table - files/t08.xml
+lookup 1.0 -1.0
+lookup 1.0 0.0
+lookup 1.0 0.5
+lookup 1.0 1.0
+lookup 1.0 2.0
+lookup 2.0 -1.0
+lookup 2.0 0.0
+lookup 2.0 0.5
+lookup 2.0 1.0
+lookup 2.0 2.0
+lookup 3.0 -1.0
+lookup 3.0 0.0
+lookup 3.0 0.5
+lookup 3.0 1.0
+lookup 3.0 2.0
+lookup
+table - files/t09.xml
+lookup 1.0 -1.0
+lookup 1.0 0.0
+lookup 1.0 1.0
+lookup 2.0 -1.0
+lookup 2.0 0.0
+lookup 2.0 1.0
+lookup 3.0 -1.0
+lookup 3.0 0.0
+lookup 3.0 1.0
+lookup 4.0 -1.0
+lookup 4.0 0.0
+lookup 4.0 1.0
+lookup 5.0 -1.0
+lookup 5.0 0.0
+lookup 5.0 1.0
+lookup
+table - files/t10.xml
+lookup 1.0 -1.0
+lookup 1.0 0.0
+lookup 1.0 0.5
+lookup 1.0 1.0
+lookup 1.0 2.0
+lookup 2.0 -1.0
+lookup 2.0 0.0
+lookup 2.0 0.5
+lookup 2.0 1.0
+lookup 2.0 2.0
+lookup 3.0 -1.0
+lookup 3.0 0.0
+lookup 3.0 0.5
+lookup 3.0 1.0
+lookup 3.0 2.0
+lookup 4.0 -1.0
+lookup 4.0 0.0
+lookup 4.0 0.5
+lookup 4.0 1.0
+lookup 4.0 2.0
+lookup 5.0 -1.0
+lookup 5.0 0.0
+lookup 5.0 0.5
+lookup 5.0 1.0
+lookup 5.0 2.0
+lookup
+table - files/t11.xml
+lookup 0.0 -1.0
+lookup 0.0 0.0
+lookup 0.0 0.5
+lookup 0.0 1.0
+lookup 0.0 2.0
+lookup 1.0 -1.0
+lookup 1.0 0.0
+lookup 1.0 0.5
+lookup 1.0 1.0
+lookup 1.0 2.0
+lookup 1.5 -1.0
+lookup 1.5 0.0
+lookup 1.5 0.5
+lookup 1.5 1.0
+lookup 1.5 2.0
+lookup 2.0 -1.0
+lookup 2.0 0.0
+lookup 2.0 0.5
+lookup 2.0 1.0
+lookup 2.0 2.0
+lookup 3.0 -1.0
+lookup 3.0 0.0
+lookup 3.0 0.5
+lookup 3.0 1.0
+lookup 3.0 2.0
+lookup 4.0 -1.0
+lookup 4.0 0.0
+lookup 4.0 0.5
+lookup 4.0 1.0
+lookup 4.0 2.0
+lookup 5.0 -1.0
+lookup 5.0 0.0
+lookup 5.0 0.5
+lookup 5.0 1.0
+lookup 5.0 2.0
+lookup
+table - files/t12.xml
+lookup 1.0 -1.0
+lookup 1.0 0.0
+lookup 1.0 0.5
+lookup 1.0 1.0
+lookup 1.0 2.0
+lookup 2.0 -1.0
+lookup 2.0 0.0
+lookup 2.0 0.5
+lookup 2.0 1.0
+lookup 2.0 2.0
+lookup 3.0 -1.0
+lookup 3.0 0.0
+lookup 3.0 0.5
+lookup 3.0 1.0
+lookup 3.0 2.0
+lookup
+table - files/t13.xml
+lookup 1.0 -1.0
+lookup 1.0 0.0
+lookup 1.0 1.0
+lookup 2.0 -1.0
+lookup 2.0 0.0
+lookup 2.0 1.0
+lookup 3.0 -1.0
+lookup 3.0 0.0
+lookup 3.0 1.0
+lookup 4.0 -1.0
+lookup 4.0 0.0
+lookup 4.0 1.0
+lookup 5.0 -1.0
+lookup 5.0 0.0
+lookup 5.0 1.0
+lookup
+table - files/t14.xml
+lookup 1.0 -1.0
+lookup 1.0 0.0
+lookup 1.0 0.5
+lookup 1.0 1.0
+lookup 1.0 2.0
+lookup 2.0 -1.0
+lookup 2.0 0.0
+lookup 2.0 0.5
+lookup 2.0 1.0
+lookup 2.0 2.0
+lookup 3.0 -1.0
+lookup 3.0 0.0
+lookup 3.0 0.5
+lookup 3.0 1.0
+lookup 3.0 2.0
+lookup 4.0 -1.0
+lookup 4.0 0.0
+lookup 4.0 0.5
+lookup 4.0 1.0
+lookup 4.0 2.0
+lookup 5.0 -1.0
+lookup 5.0 0.0
+lookup 5.0 0.5
+lookup 5.0 1.0
+lookup 5.0 2.0
+lookup
+table 2 files/t15.xml
+lookup 1.0 -1.0
+lookup 1.0 0.0
+lookup 1.0 0.5
+lookup 1.0 1.0
+lookup 1.0 2.0
+lookup 2.0 -1.0
+lookup 2.0 0.0
+lookup 2.0 0.5
+lookup 2.0 1.0
+lookup 2.0 2.0
+lookup 3.0 -1.0
+lookup 3.0 0.0
+lookup 3.0 0.5
+lookup 3.0 1.0
+lookup 3.0 2.0
+lookup 4.0 -1.0
+lookup 4.0 0.0
+lookup 4.0 0.5
+lookup 4.0 1.0
+lookup 4.0 2.0
+lookup 5.0 -1.0
+lookup 5.0 0.0
+lookup 5.0 0.5
+lookup 5.0 1.0
+lookup 5.0 2.0
+lookup
+table tables files/t16.xml
+lookup 1.0 -1.0
+lookup 1.0 0.0
+lookup 1.0 0.5
+lookup 1.0 1.0
+lookup 1.0 2.0
+lookup 2.0 -1.0
+lookup 2.0 0.0
+lookup 2.0 0.5
+lookup 2.0 1.0
+lookup 2.0 2.0
+lookup 3.0 -1.0
+lookup 3.0 0.0
+lookup 3.0 0.5
+lookup 3.0 1.0
+lookup 3.0 2.0
+lookup 4.0 -1.0
+lookup 4.0 0.0
+lookup 4.0 0.5
+lookup 4.0 1.0
+lookup 4.0 2.0
+lookup 5.0 -1.0
+lookup 5.0 0.0
+lookup 5.0 0.5
+lookup 5.0 1.0
+lookup 5.0 2.0
+lookup
+table - files/t17.xml
+lookup 1.0 -1.0
+lookup 1.0 0.0
+lookup 1.0 0.5
+lookup 1.0 1.0
+lookup 1.0 2.0
+lookup 2.0 -1.0
+lookup 2.0 0.0
+lookup 2.0 0.5
+lookup 2.0 1.0
+lookup 2.0 2.0
+lookup 3.0 -1.0
+lookup 3.0 0.0
+lookup 3.0 0.5
+lookup 3.0 1.0
+lookup 3.0 2.0
+lookup 4.0 -1.0
+lookup 4.0 0.0
+lookup 4.0 0.5
+lookup 4.0 1.0
+lookup 4.0 2.0
+lookup 5.0 -1.0
+lookup 5.0 0.0
+lookup 5.0 0.5
+lookup 5.0 1.0
+lookup 5.0 2.0
+lookup
+table - files/t18.xml
+lookup 1.0 -1.0
+lookup 1.0 0.0
+lookup 1.0 0.5
+lookup 1.0 1.0
+lookup 1.0 2.0
+lookup 2.0 -1.0
+lookup 2.0 0.0
+lookup 2.0 0.5
+lookup 2.0 1.0
+lookup 2.0 2.0
+lookup 3.0 -1.0
+lookup 3.0 0.0
+lookup 3.0 0.5
+lookup 3.0 1.0
+lookup 3.0 2.0
+lookup 4.0 -1.0
+lookup 4.0 0.0
+lookup 4.0 0.5
+lookup 4.0 1.0
+lookup 4.0 2.0
+lookup 5.0 -1.0
+lookup 5.0 0.0
+lookup 5.0 0.5
+lookup 5.0 1.0
+lookup 5.0 2.0
+lookup
+table - files/t19.xml
+lookup 1.0 -1.0 -2.0
+lookup 1.0 -1.0 -1.0
+lookup 1.0 -1.0 -0.25
+lookup 1.0 -1.0 0.5
+lookup 1.0 -1.0 1.5
+lookup 1.0 0.0 -2.0
+lookup 1.0 0.0 -1.0
+lookup 1.0 0.0 -0.25
+lookup 1.0 0.0 0.5
+lookup 1.0 0.0 1.5
+lookup 1.0 0.5 -2.0
+lookup 1.0 0.5 -1.0
+lookup 1.0 0.5 -0.25
+lookup 1.0 0.5 0.5
+lookup 1.0 0.5 1.5
+lookup 1.0 1.0 -2.0
+lookup 1.0 1.0 -1.0
+lookup 1.0 1.0 -0.25
+lookup 1.0 1.0 0.5
+lookup 1.0 1.0 1.5
+lookup 1.0 2.0 -2.0
+lookup 1.0 2.0 -1.0
+lookup 1.0 2.0 -0.25
+lookup 1.0 2.0 0.5
+lookup 1.0 2.0 1.5
+lookup 2.0 -1.0 -2.0
+lookup 2.0 -1.0 -1.0
+lookup 2.0 -1.0 -0.25
+lookup 2.0 -1.0 0.5
+lookup 2.0 -1.0 1.5
+lookup 2.0 0.0 -2.0
+lookup 2.0 0.0 -1.0
+lookup 2.0 0.0 -0.25
+lookup 2.0 0.0 0.5
+lookup 2.0 0.0 1.5
+lookup 2.0 0.5 -2.0
+lookup 2.0 0.5 -1.0
+lookup 2.0 0.5 -0.25
+lookup 2.0 0.5 0.5
+lookup 2.0 0.5 1.5
+lookup 2.0 1.0 -2.0
+lookup 2.0 1.0 -1.0
+lookup 2.0 1.0 -0.25
+lookup 2.0 1.0 0.5
+lookup 2.0 1.0 1.5
+lookup 2.0 2.0 -2.0
+lookup 2.0 2.0 -1.0
+lookup 2.0 2.0 -0.25
+lookup 2.0 2.0 0.5
+lookup 2.0 2.0 1.5
+lookup 3.0 -1.0 -2.0
+lookup 3.0 -1.0 -1.0
+lookup 3.0 -1.0 -0.25
+lookup 3.0 -1.0 0.5
+lookup 3.0 -1.0 1.5
+lookup 3.0 0.0 -2.0
+lookup 3.0 0.0 -1.0
+lookup 3.0 0.0 -0.25
+lookup 3.0 0.0 0.5
+lookup 3.0 0.0 1.5
+lookup 3.0 0.5 -2.0
+lookup 3.0 0.5 -1.0
+lookup 3.0 0.5 -0.25
+lookup 3.0 0.5 0.5
+lookup 3.0 0.5 1.5
+lookup 3.0 1.0 -2.0
+lookup 3.0 1.0 -1.0
+lookup 3.0 1.0 -0.25
+lookup 3.0 1.0 0.5
+lookup 3.0 1.0 1.5
+lookup 3.0 2.0 -2.0
+lookup 3.0 2.0 -1.0
+lookup 3.0 2.0 -0.25
+lookup 3.0 2.0 0.5
+lookup 3.0 2.0 1.5
+lookup 4.0 -1.0 -2.0
+lookup 4.0 -1.0 -1.0
+lookup 4.0 -1.0 -0.25
+lookup 4.0 -1.0 0.5
+lookup 4.0 -1.0 1.5
+lookup 4.0 0.0 -2.0
+lookup 4.0 0.0 -1.0
+lookup 4.0 0.0 -0.25
+lookup 4.0 0.0 0.5
+lookup 4.0 0.0 1.5
+lookup 4.0 0.5 -2.0
+lookup 4.0 0.5 -1.0
+lookup 4.0 0.5 -0.25
+lookup 4.0 0.5 0.5
+lookup 4.0 0.5 1.5
+lookup 4.0 1.0 -2.0
+lookup 4.0 1.0 -1.0
+lookup 4.0 1.0 -0.25
+lookup 4.0 1.0 0.5
+lookup 4.0 1.0 1.5
+lookup 4.0 2.0 -2.0
+lookup 4.0 2.0 -1.0
+lookup 4.0 2.0 -0.25
+lookup 4.0 2.0 0.5
+lookup 4.0 2.0 1.5
+lookup 5.0 -1.0 -2.0
+lookup 5.0 -1.0 -1.0
+lookup 5.0 -1.0 -0.25
+lookup 5.0 -1.0 0.5
+lookup 5.0 -1.0 1.5
+lookup 5.0 0.0 -2.0
+lookup 5.0 0.0 -1.0
+lookup 5.0 0.0 -0.25
+lookup 5.0 0.0 0.5
+lookup 5.0 0.0 1.5
+lookup 5.0 0.5 -2.0
+lookup 5.0 0.5 -1.0
+lookup 5.0 0.5 -0.25
+lookup 5.0 0.5 0.5
+lookup 5.0 0.5 1.5
+lookup 5.0 1.0 -2.0
+lookup 5.0 1.0 -1.0
+lookup 5.0 1.0 -0.25
+lookup 5.0 1.0 0.5
+lookup 5.0 1.0 1.5
+lookup 5.0 2.0 -2.0
+lookup 5.0 2.0 -1.0
+lookup 5.0 2.0 -0.25
+lookup 5.0 2.0 0.5
+lookup 5.0 2.0 1.5
+table - files/t20.xml
+lookup 1.0 -1.0 -2.0
+lookup 1.0 -1.0 -1.0
+lookup 1.0 -1.0 -0.25
+lookup 1.0 -1.0 0.5
+lookup 1.0 -1.0 1.5
+lookup 1.0 0.0 -2.0
+lookup 1.0 0.0 -1.0
+lookup 1.0 0.0 -0.25
+lookup 1.0 0.0 0.5
+lookup 1.0 0.0 1.5
+lookup 1.0 0.5 -2.0
+lookup 1.0 0.5 -1.0
+lookup 1.0 0.5 -0.25
+lookup 1.0 0.5 0.5
+lookup 1.0 0.5 1.5
+lookup 1.0 1.0 -2.0
+lookup 1.0 1.0 -1.0
+lookup 1.0 1.0 -0.25
+lookup 1.0 1.0 0.5
+lookup 1.0 1.0 1.5
+lookup 1.0 2.0 -2.0
+lookup 1.0 2.0 -1.0
+lookup 1.0 2.0 -0.25
+lookup 1.0 2.0 0.5
+lookup 1.0 2.0 1.5
+lookup 2.0 -1.0 -2.0
+lookup 2.0 -1.0 -1.0
+lookup 2.0 -1.0 -0.25
+lookup 2.0 -1.0 0.5
+lookup 2.0 -1.0 1.5
+lookup 2.0 0.0 -2.0
+lookup 2.0 0.0 -1.0
+lookup 2.0 0.0 -0.25
+lookup 2.0 0.0 0.5
+lookup 2.0 0.0 1.5
+lookup 2.0 0.5 -2.0
+lookup 2.0 0.5 -1.0
+lookup 2.0 0.5 -0.25
+lookup 2.0 0.5 0.5
+lookup 2.0 0.5 1.5
+lookup 2.0 1.0 -2.0
+lookup 2.0 1.0 -1.0
+lookup 2.0 1.0 -0.25
+lookup 2.0 1.0 0.5
+lookup 2.0 1.0 1.5
+lookup 2.0 2.0 -2.0
+lookup 2.0 2.0 -1.0
+lookup 2.0 2.0 -0.25
+lookup 2.0 2.0 0.5
+lookup 2.0 2.0 1.5
+lookup 3.0 -1.0 -2.0
+lookup 3.0 -1.0 -1.0
+lookup 3.0 -1.0 -0.25
+lookup 3.0 -1.0 0.5
+lookup 3.0 -1.0 1.5
+lookup 3.0 0.0 -2.0
+lookup 3.0 0.0 -1.0
+lookup 3.0 0.0 -0.25
+lookup 3.0 0.0 0.5
+lookup 3.0 0.0 1.5
+lookup 3.0 0.5 -2.0
+lookup 3.0 0.5 -1.0
+lookup 3.0 0.5 -0.25
+lookup 3.0 0.5 0.5
+lookup 3.0 0.5 1.5
+lookup 3.0 1.0 -2.0
+lookup 3.0 1.0 -1.0
+lookup 3.0 1.0 -0.25
+lookup 3.0 1.0 0.5
+lookup 3.0 1.0 1.5
+lookup 3.0 2.0 -2.0
+lookup 3.0 2.0 -1.0
+lookup 3.0 2.0 -0.25
+lookup 3.0 2.0 0.5
+lookup 3.0 2.0 1.5
+lookup 4.0 -1.0 -2.0
+lookup 4.0 -1.0 -1.0
+lookup 4.0 -1.0 -0.25
+lookup 4.0 -1.0 0.5
+lookup 4.0 -1.0 1.5
+lookup 4.0 0.0 -2.0
+lookup 4.0 0.0 -1.0
+lookup 4.0 0.0 -0.25
+lookup 4.0 0.0 0.5
+lookup 4.0 0.0 1.5
+lookup 4.0 0.5 -2.0
+lookup 4.0 0.5 -1.0
+lookup 4.0 0.5 -0.25
+lookup 4.0 0.5 0.5
+lookup 4.0 0.5 1.5
+lookup 4.0 1.0 -2.0
+lookup 4.0 1.0 -1.0
+lookup 4.0 1.0 -0.25
+lookup 4.0 1.0 0.5
+lookup 4.0 1.0 1.5
+lookup 4.0 2.0 -2.0
+lookup 4.0 2.0 -1.0
+lookup 4.0 2.0 -0.25
+lookup 4.0 2.0 0.5
+lookup 4.0 2.0 1.5
+lookup 5.0 -1.0 -2.0
+lookup 5.0 -1.0 -1.0
+lookup 5.0 -1.0 -0.25
+lookup 5.0 -1.0 0.5
+lookup 5.0 -1.0 1.5
+lookup 5.0 0.0 -2.0
+lookup 5.0 0.0 -1.0
+lookup 5.0 0.0 -0.25
+lookup 5.0 0.0 0.5
+lookup 5.0 0.0 1.5
+lookup 5.0 0.5 -2.0
+lookup 5.0 0.5 -1.0
+lookup 5.0 0.5 -0.25
+lookup 5.0 0.5 0.5
+lookup 5.0 0.5 1.5
+lookup 5.0 1.0 -2.0
+lookup 5.0 1.0 -1.0
+lookup 5.0 1.0 -0.25
+lookup 5.0 1.0 0.5
+lookup 5.0 1.0 1.5
+lookup 5.0 2.0 -2.0
+lookup 5.0 2.0 -1.0
+lookup 5.0 2.0 -0.25
+lookup 5.0 2.0 0.5
+lookup 5.0 2.0 1.5
+table - files/t21.xml
+lookup 0.0
+lookup 1.0
+lookup 1.5
+lookup 2.0
+lookup 3.0
+lookup
+table - files/t22.xml
+lookup 1.0 -1.0
+lookup 1.0 0.0
+lookup 1.0 0.5
+lookup 1.0 1.0
+lookup 1.0 2.0
+lookup 2.0 -1.0
+lookup 2.0 0.0
+lookup 2.0 0.5
+lookup 2.0 1.0
+lookup 2.0 2.0
+lookup 3.0 -1.0
+lookup 3.0 0.0
+lookup 3.0 0.5
+lookup 3.0 1.0
+lookup 3.0 2.0
+lookup 4.0 -1.0
+lookup 4.0 0.0
+lookup 4.0 0.5
+lookup 4.0 1.0
+lookup 4.0 2.0
+lookup 5.0 -1.0
+lookup 5.0 0.0
+lookup 5.0 0.5
+lookup 5.0 1.0
+lookup 5.0 2.0
+lookup
+table - files/t23.xml
+table - files/t24.xml
+lookup 0.0
+lookup 1.0
+lookup 1.5
+lookup 2.0
+lookup 3.0
+lookup
+table 0 files/t25.xml
+lookup 0.0
+lookup 1.0
+lookup 1.5
+lookup 2.0
+lookup 3.0
+lookup
+table - files/t26.xml
+table - files/t27.xml
+table - files/t28.xml
+table - files/t29.xml
+table - files/t30.xml
+lookup 0.0
+lookup 1.0
+lookup 1.5
+lookup 2.0
+lookup 3.0
+lookup
+table - files/t31.xml
+lookup -1.5
+lookup -0.5
+lookup 1.0
+lookup 1.5
+lookup 2.0
+lookup 3.0
+lookup 4.0
+lookup
+table - files/t32.xml
+lookup 0.0
+lookup 1.0
+lookup 2.0
+lookup
+table - files/t33.xml
+lookup 1.0 -2.0
+lookup 1.0 -1.0
+lookup 1.0 0.0
+lookup 1.0 1.0
+lookup 1.0 2.0
+lookup 2.0 -2.0
+lookup 2.0 -1.0
+lookup 2.0 0.0
+lookup 2.0 1.0
+lookup 2.0 2.0
+lookup 3.0 -2.0
+lookup 3.0 -1.0
+lookup 3.0 0.0
+lookup 3.0 1.0
+lookup 3.0 2.0
+lookup
+table - files/t34.xml
+lookup 0.0
+lookup 1.0
+lookup 1.5
+lookup 2.0
+lookup 2.5
+lookup 3.0
+lookup 4.0
+lookup
+table - files/t35.xml
+lookup 1.0 -2.0
+lookup 1.0 -1.0
+lookup 1.0 0.0
+lookup 1.0 1.0
+lookup 1.0 1.65
+lookup 1.0 2.3
+lookup 1.0 3.3
+lookup 2.0 -2.0
+lookup 2.0 -1.0
+lookup 2.0 0.0
+lookup 2.0 1.0
+lookup 2.0 1.65
+lookup 2.0 2.3
+lookup 2.0 3.3
+lookup 2.5 -2.0
+lookup 2.5 -1.0
+lookup 2.5 0.0
+lookup 2.5 1.0
+lookup 2.5 1.65
+lookup 2.5 2.3
+lookup 2.5 3.3
+lookup 3.0 -2.0
+lookup 3.0 -1.0
+lookup 3.0 0.0
+lookup 3.0 1.0
+lookup 3.0 1.65
+lookup 3.0 2.3
+lookup 3.0 3.3
+lookup 4.0 -2.0
+lookup 4.0 -1.0
+lookup 4.0 0.0
+lookup 4.0 1.0
+lookup 4.0 1.65
+lookup 4.0 2.3
+lookup 4.0 3.3
+lookup
+table - files/t36.xml
+lookup 1.0 -1.0
+lookup 1.0 0.0
+lookup 1.0 0.5
+lookup 1.0 1.0
+lookup 1.0 2.0
+lookup 2.0 -1.0
+lookup 2.0 0.0
+lookup 2.0 0.5
+lookup 2.0 1.0
+lookup 2.0 2.0
+lookup 3.0 -1.0
+lookup 3.0 0.0
+lookup 3.0 0.5
+lookup 3.0 1.0
+lookup 3.0 2.0
+lookup 4.0 -1.0
+lookup 4.0 0.0
+lookup 4.0 0.5
+lookup 4.0 1.0
+lookup 4.0 2.0
+lookup 5.0 -1.0
+lookup 5.0 0.0
+lookup 5.0 0.5
+lookup 5.0 1.0
+lookup 5.0 2.0
+lookup
+table - files/t37.xml
+lookup 1.0 -1.0
+lookup 1.0 0.0
+lookup 1.0 0.5
+lookup 1.0 1.0
+lookup 1.0 2.0
+lookup 2.0 -1.0
+lookup 2.0 0.0
+lookup 2.0 0.5
+lookup 2.0 1.0
+lookup 2.0 2.0
+lookup 3.0 -1.0
+lookup 3.0 0.0
+lookup 3.0 0.5
+lookup 3.0 1.0
+lookup 3.0 2.0
+lookup 4.0 -1.0
+lookup 4.0 0.0
+lookup 4.0 0.5
+lookup 4.0 1.0
+lookup 4.0 2.0
+lookup 5.0 -1.0
+lookup 5.0 0.0
+lookup 5.0 0.5
+lookup 5.0 1.0
+lookup 5.0 2.0
+lookup
+table - files/t38.xml
+lookup 1.0 -1.0
+lookup 1.0 0.0
+lookup 1.0 0.5
+lookup 1.0 1.0
+lookup 1.0 2.0
+lookup 2.0 -1.0
+lookup 2.0 0.0
+lookup 2.0 0.5
+lookup 2.0 1.0
+lookup 2.0 2.0
+lookup 3.0 -1.0
+lookup 3.0 0.0
+lookup 3.0 0.5
+lookup 3.0 1.0
+lookup 3.0 2.0
+lookup 4.0 -1.0
+lookup 4.0 0.0
+lookup 4.0 0.5
+lookup 4.0 1.0
+lookup 4.0 2.0
+lookup 5.0 -1.0
+lookup 5.0 0.0
+lookup 5.0 0.5
+lookup 5.0 1.0
+lookup 5.0 2.0
+lookup
+table - files/t39.xml
+table - files/t40.xml
+table - files/t41.xml
+lookup 0.0
+lookup 1.0
+lookup 1.5
+lookup 2.0
+lookup 3.0
+lookup
+table - files/t42.xml
+lookup 1.0 -1.0
+lookup 1.0 0.0
+lookup 1.0 0.5
+lookup 1.0 1.0
+lookup 1.0 2.0
+lookup 2.0 -1.0
+lookup 2.0 0.0
+lookup 2.0 0.5
+lookup 2.0 1.0
+lookup 2.0 2.0
+lookup 3.0 -1.0
+lookup 3.0 0.0
+lookup 3.0 0.5
+lookup 3.0 1.0
+lookup 3.0 2.0
+lookup 4.0 -1.0
+lookup 4.0 0.0
+lookup 4.0 0.5
+lookup 4.0 1.0
+lookup 4.0 2.0
+lookup 5.0 -1.0
+lookup 5.0 0.0
+lookup 5.0 0.5
+lookup 5.0 1.0
+lookup 5.0 2.0
+lookup
+table - files/t43.xml
+lookup 1.0 -1.0 -0.5
+lookup 1.0 -1.0 0.5
+lookup 1.0 -1.0 0.75
+lookup 1.0 -1.0 1.0
+lookup 1.0 -1.0 2.0
+lookup 1.0 0.0 -0.5
+lookup 1.0 0.0 0.5
+lookup 1.0 0.0 0.75
+lookup 1.0 0.0 1.0
+lookup 1.0 0.0 2.0
+lookup 1.0 0.5 -0.5
+lookup 1.0 0.5 0.5
+lookup 1.0 0.5 0.75
+lookup 1.0 0.5 1.0
+lookup 1.0 0.5 2.0
+lookup 1.0 1.0 -0.5
+lookup 1.0 1.0 0.5
+lookup 1.0 1.0 0.75
+lookup 1.0 1.0 1.0
+lookup 1.0 1.0 2.0
+lookup 1.0 2.0 -0.5
+lookup 1.0 2.0 0.5
+lookup 1.0 2.0 0.75
+lookup 1.0 2.0 1.0
+lookup 1.0 2.0 2.0
+lookup 2.0 -1.0 -0.5
+lookup 2.0 -1.0 0.5
+lookup 2.0 -1.0 0.75
+lookup 2.0 -1.0 1.0
+lookup 2.0 -1.0 2.0
+lookup 2.0 0.0 -0.5
+lookup 2.0 0.0 0.5
+lookup 2.0 0.0 0.75
+lookup 2.0 0.0 1.0
+lookup 2.0 0.0 2.0
+lookup 2.0 0.5 -0.5
+lookup 2.0 0.5 0.5
+lookup 2.0 0.5 0.75
+lookup 2.0 0.5 1.0
+lookup 2.0 0.5 2.0
+lookup 2.0 1.0 -0.5
+lookup 2.0 1.0 0.5
+lookup 2.0 1.0 0.75
+lookup 2.0 1.0 1.0
+lookup 2.0 1.0 2.0
+lookup 2.0 2.0 -0.5
+lookup 2.0 2.0 0.5
+lookup 2.0 2.0 0.75
+lookup 2.0 2.0 1.0
+lookup 2.0 2.0 2.0
+lookup 3.0 -1.0 -0.5
+lookup 3.0 -1.0 0.5
+lookup 3.0 -1.0 0.75
+lookup 3.0 -1.0 1.0
+lookup 3.0 -1.0 2.0
+lookup 3.0 0.0 -0.5
+lookup 3.0 0.0 0.5
+lookup 3.0 0.0 0.75
+lookup 3.0 0.0 1.0
+lookup 3.0 0.0 2.0
+lookup 3.0 0.5 -0.5
+lookup 3.0 0.5 0.5
+lookup 3.0 0.5 0.75
+lookup 3.0 0.5 1.0
+lookup 3.0 0.5 2.0
+lookup 3.0 1.0 -0.5
+lookup 3.0 1.0 0.5
+lookup 3.0 1.0 0.75
+lookup 3.0 1.0 1.0
+lookup 3.0 1.0 2.0
+lookup 3.0 2.0 -0.5
+lookup 3.0 2.0 0.5
+lookup 3.0 2.0 0.75
+lookup 3.0 2.0 1.0
+lookup 3.0 2.0 2.0
+lookup 4.0 -1.0 -0.5
+lookup 4.0 -1.0 0.5
+lookup 4.0 -1.0 0.75
+lookup 4.0 -1.0 1.0
+lookup 4.0 -1.0 2.0
+lookup 4.0 0.0 -0.5
+lookup 4.0 0.0 0.5
+lookup 4.0 0.0 0.75
+lookup 4.0 0.0 1.0
+lookup 4.0 0.0 2.0
+lookup 4.0 0.5 -0.5
+lookup 4.0 0.5 0.5
+lookup 4.0 0.5 0.75
+lookup 4.0 0.5 1.0
+lookup 4.0 0.5 2.0
+lookup 4.0 1.0 -0.5
+lookup 4.0 1.0 0.5
+lookup 4.0 1.0 0.75
+lookup 4.0 1.0 1.0
+lookup 4.0 1.0 2.0
+lookup 4.0 2.0 -0.5
+lookup 4.0 2.0 0.5
+lookup 4.0 2.0 0.75
+lookup 4.0 2.0 1.0
+lookup 4.0 2.0 2.0
+lookup 5.0 -1.0 -0.5
+lookup 5.0 -1.0 0.5
+lookup 5.0 -1.0 0.75
+lookup 5.0 -1.0 1.0
+lookup 5.0 -1.0 2.0
+lookup 5.0 0.0 -0.5
+lookup 5.0 0.0 0.5
+lookup 5.0 0.0 0.75
+lookup 5.0 0.0 1.0
+lookup 5.0 0.0 2.0
+lookup 5.0 0.5 -0.5
+lookup 5.0 0.5 0.5
+lookup 5.0 0.5 0.75
+lookup 5.0 0.5 1.0
+lookup 5.0 0.5 2.0
+lookup 5.0 1.0 -0.5
+lookup 5.0 1.0 0.5
+lookup 5.0 1.0 0.75
+lookup 5.0 1.0 1.0
+lookup 5.0 1.0 2.0
+lookup 5.0 2.0 -0.5
+lookup 5.0 2.0 0.5
+lookup 5.0 2.0 0.75
+lookup 5.0 2.0 1.0
+lookup 5.0 2.0 2.0
+table - files/t44.xml
+lookup 1.0 -1.0 0.0
+lookup 1.0 -1.0 1.0
+lookup 1.0 -1.0 1.5
+lookup 1.0 -1.0 2.0
+lookup 1.0 -1.0 3.0
+lookup 1.0 0.0 0.0
+lookup 1.0 0.0 1.0
+lookup 1.0 0.0 1.5
+lookup 1.0 0.0 2.0
+lookup 1.0 0.0 3.0
+lookup 1.0 0.5 0.0
+lookup 1.0 0.5 1.0
+lookup 1.0 0.5 1.5
+lookup 1.0 0.5 2.0
+lookup 1.0 0.5 3.0
+lookup 1.0 1.0 0.0
+lookup 1.0 1.0 1.0
+lookup 1.0 1.0 1.5
+lookup 1.0 1.0 2.0
+lookup 1.0 1.0 3.0
+lookup 1.0 2.0 0.0
+lookup 1.0 2.0 1.0
+lookup 1.0 2.0 1.5
+lookup 1.0 2.0 2.0
+lookup 1.0 2.0 3.0
+lookup 2.0 -1.0 0.0
+lookup 2.0 -1.0 1.0
+lookup 2.0 -1.0 1.5
+lookup 2.0 -1.0 2.0
+lookup 2.0 -1.0 3.0
+lookup 2.0 0.0 0.0
+lookup 2.0 0.0 1.0
+lookup 2.0 0.0 1.5
+lookup 2.0 0.0 2.0
+lookup 2.0 0.0 3.0
+lookup 2.0 0.5 0.0
+lookup 2.0 0.5 1.0
+lookup 2.0 0.5 1.5
+lookup 2.0 0.5 2.0
+lookup 2.0 0.5 3.0
+lookup 2.0 1.0 0.0
+lookup 2.0 1.0 1.0
+lookup 2.0 1.0 1.5
+lookup 2.0 1.0 2.0
+lookup 2.0 1.0 3.0
+lookup 2.0 2.0 0.0
+lookup 2.0 2.0 1.0
+lookup 2.0 2.0 1.5
+lookup 2.0 2.0 2.0
+lookup 2.0 2.0 3.0
+lookup 3.0 -1.0 0.0
+lookup 3.0 -1.0 1.0
+lookup 3.0 -1.0 1.5
+lookup 3.0 -1.0 2.0
+lookup 3.0 -1.0 3.0
+lookup 3.0 0.0 0.0
+lookup 3.0 0.0 1.0
+lookup 3.0 0.0 1.5
+lookup 3.0 0.0 2.0
+lookup 3.0 0.0 3.0
+lookup 3.0 0.5 0.0
+lookup 3.0 0.5 1.0
+lookup 3.0 0.5 1.5
+lookup 3.0 0.5 2.0
+lookup 3.0 0.5 3.0
+lookup 3.0 1.0 0.0
+lookup 3.0 1.0 1.0
+lookup 3.0 1.0 1.5
+lookup 3.0 1.0 2.0
+lookup 3.0 1.0 3.0
+lookup 3.0 2.0 0.0
+lookup 3.0 2.0 1.0
+lookup 3.0 2.0 1.5
+lookup 3.0 2.0 2.0
+lookup 3.0 2.0 3.0
+lookup 4.0 -1.0 0.0
+lookup 4.0 -1.0 1.0
+lookup 4.0 -1.0 1.5
+lookup 4.0 -1.0 2.0
+lookup 4.0 -1.0 3.0
+lookup 4.0 0.0 0.0
+lookup 4.0 0.0 1.0
+lookup 4.0 0.0 1.5
+lookup 4.0 0.0 2.0
+lookup 4.0 0.0 3.0
+lookup 4.0 0.5 0.0
+lookup 4.0 0.5 1.0
+lookup 4.0 0.5 1.5
+lookup 4.0 0.5 2.0
+lookup 4.0 0.5 3.0
+lookup 4.0 1.0 0.0
+lookup 4.0 1.0 1.0
+lookup 4.0 1.0 1.5
+lookup 4.0 1.0 2.0
+lookup 4.0 1.0 3.0
+lookup 4.0 2.0 0.0
+lookup 4.0 2.0 1.0
+lookup 4.0 2.0 1.5
+lookup 4.0 2.0 2.0
+lookup 4.0 2.0 3.0
+lookup 5.0 -1.0 0.0
+lookup 5.0 -1.0 1.0
+lookup 5.0 -1.0 1.5
+lookup 5.0 -1.0 2.0
+lookup 5.0 -1.0 3.0
+lookup 5.0 0.0 0.0
+lookup 5.0 0.0 1.0
+lookup 5.0 0.0 1.5
+lookup 5.0 0.0 2.0
+lookup 5.0 0.0 3.0
+lookup 5.0 0.5 0.0
+lookup 5.0 0.5 1.0
+lookup 5.0 0.5 1.5
+lookup 5.0 0.5 2.0
+lookup 5.0 0.5 3.0
+lookup 5.0 1.0 0.0
+lookup 5.0 1.0 1.0
+lookup 5.0 1.0 1.5
+lookup 5.0 1.0 2.0
+lookup 5.0 1.0 3.0
+lookup 5.0 2.0 0.0
+lookup 5.0 2.0 1.0
+lookup 5.0 2.0 1.5
+lookup 5.0 2.0 2.0
+lookup 5.0 2.0 3.0
+table - files/t45.xml
+lookup 1.0 -1.0 0.0
+lookup 1.0 -1.0 1.0
+lookup 1.0 -1.0 1.5
+lookup 1.0 -1.0 2.0
+lookup 1.0 -1.0 3.0
+lookup 1.0 0.0 0.0
+lookup 1.0 0.0 1.0
+lookup 1.0 0.0 1.5
+lookup 1.0 0.0 2.0
+lookup 1.0 0.0 3.0
+lookup 1.0 0.5 0.0
+lookup 1.0 0.5 1.0
+lookup 1.0 0.5 1.5
+lookup 1.0 0.5 2.0
+lookup 1.0 0.5 3.0
+lookup 1.0 1.0 0.0
+lookup 1.0 1.0 1.0
+lookup 1.0 1.0 1.5
+lookup 1.0 1.0 2.0
+lookup 1.0 1.0 3.0
+lookup 1.0 2.0 0.0
+lookup 1.0 2.0 1.0
+lookup 1.0 2.0 1.5
+lookup 1.0 2.0 2.0
+lookup 1.0 2.0 3.0
+lookup 2.0 -1.0 0.0
+lookup 2.0 -1.0 1.0
+lookup 2.0 -1.0 1.5
+lookup 2.0 -1.0 2.0
+lookup 2.0 -1.0 3.0
+lookup 2.0 0.0 0.0
+lookup 2.0 0.0 1.0
+lookup 2.0 0.0 1.5
+lookup 2.0 0.0 2.0
+lookup 2.0 0.0 3.0
+lookup 2.0 0.5 0.0
+lookup 2.0 0.5 1.0
+lookup 2.0 0.5 1.5
+lookup 2.0 0.5 2.0
+lookup 2.0 0.5 3.0
+lookup 2.0 1.0 0.0
+lookup 2.0 1.0 1.0
+lookup 2.0 1.0 1.5
+lookup 2.0 1.0 2.0
+lookup 2.0 1.0 3.0
+lookup 2.0 2.0 0.0
+lookup 2.0 2.0 1.0
+lookup 2.0 2.0 1.5
+lookup 2.0 2.0 2.0
+lookup 2.0 2.0 3.0
+lookup 3.0 -1.0 0.0
+lookup 3.0 -1.0 1.0
+lookup 3.0 -1.0 1.5
+lookup 3.0 -1.0 2.0
+lookup 3.0 -1.0 3.0
+lookup 3.0 0.0 0.0
+lookup 3.0 0.0 1.0
+lookup 3.0 0.0 1.5
+lookup 3.0 0.0 2.0
+lookup 3.0 0.0 3.0
+lookup 3.0 0.5 0.0
+lookup 3.0 0.5 1.0
+lookup 3.0 0.5 1.5
+lookup 3.0 0.5 2.0
+lookup 3.0 0.5 3.0
+lookup 3.0 1.0 0.0
+lookup 3.0 1.0 1.0
+lookup 3.0 1.0 1.5
+lookup 3.0 1.0 2.0
+lookup 3.0 1.0 3.0
+lookup 3.0 2.0 0.0
+lookup 3.0 2.0 1.0
+lookup 3.0 2.0 1.5
+lookup 3.0 2.0 2.0
+lookup 3.0 2.0 3.0
+lookup 4.0 -1.0 0.0
+lookup 4.0 -1.0 1.0
+lookup 4.0 -1.0 1.5
+lookup 4.0 -1.0 2.0
+lookup 4.0 -1.0 3.0
+lookup 4.0 0.0 0.0
+lookup 4.0 0.0 1.0
+lookup 4.0 0.0 1.5
+lookup 4.0 0.0 2.0
+lookup 4.0 0.0 3.0
+lookup 4.0 0.5 0.0
+lookup 4.0 0.5 1.0
+lookup 4.0 0.5 1.5
+lookup 4.0 0.5 2.0
+lookup 4.0 0.5 3.0
+lookup 4.0 1.0 0.0
+lookup 4.0 1.0 1.0
+lookup 4.0 1.0 1.5
+lookup 4.0 1.0 2.0
+lookup 4.0 1.0 3.0
+lookup 4.0 2.0 0.0
+lookup 4.0 2.0 1.0
+lookup 4.0 2.0 1.5
+lookup 4.0 2.0 2.0
+lookup 4.0 2.0 3.0
+lookup 5.0 -1.0 0.0
+lookup 5.0 -1.0 1.0
+lookup 5.0 -1.0 1.5
+lookup 5.0 -1.0 2.0
+lookup 5.0 -1.0 3.0
+lookup 5.0 0.0 0.0
+lookup 5.0 0.0 1.0
+lookup 5.0 0.0 1.5
+lookup 5.0 0.0 2.0
+lookup 5.0 0.0 3.0
+lookup 5.0 0.5 0.0
+lookup 5.0 0.5 1.0
+lookup 5.0 0.5 1.5
+lookup 5.0 0.5 2.0
+lookup 5.0 0.5 3.0
+lookup 5.0 1.0 0.0
+lookup 5.0 1.0 1.0
+lookup 5.0 1.0 1.5
+lookup 5.0 1.0 2.0
+lookup 5.0 1.0 3.0
+lookup 5.0 2.0 0.0
+lookup 5.0 2.0 1.0
+lookup 5.0 2.0 1.5
+lookup 5.0 2.0 2.0
+lookup 5.0 2.0 3.0
+table - files/t46.xml
+lookup 1.0 -1.0 0.0
+lookup 1.0 -1.0 1.0
+lookup 1.0 -1.0 1.5
+lookup 1.0 -1.0 2.0
+lookup 1.0 -1.0 3.0
+lookup 1.0 0.0 0.0
+lookup 1.0 0.0 1.0
+lookup 1.0 0.0 1.5
+lookup 1.0 0.0 2.0
+lookup 1.0 0.0 3.0
+lookup 1.0 0.5 0.0
+lookup 1.0 0.5 1.0
+lookup 1.0 0.5 1.5
+lookup 1.0 0.5 2.0
+lookup 1.0 0.5 3.0
+lookup 1.0 1.0 0.0
+lookup 1.0 1.0 1.0
+lookup 1.0 1.0 1.5
+lookup 1.0 1.0 2.0
+lookup 1.0 1.0 3.0
+lookup 1.0 2.0 0.0
+lookup 1.0 2.0 1.0
+lookup 1.0 2.0 1.5
+lookup 1.0 2.0 2.0
+lookup 1.0 2.0 3.0
+lookup 2.0 -1.0 0.0
+lookup 2.0 -1.0 1.0
+lookup 2.0 -1.0 1.5
+lookup 2.0 -1.0 2.0
+lookup 2.0 -1.0 3.0
+lookup 2.0 0.0 0.0
+lookup 2.0 0.0 1.0
+lookup 2.0 0.0 1.5
+lookup 2.0 0.0 2.0
+lookup 2.0 0.0 3.0
+lookup 2.0 0.5 0.0
+lookup 2.0 0.5 1.0
+lookup 2.0 0.5 1.5
+lookup 2.0 0.5 2.0
+lookup 2.0 0.5 3.0
+lookup 2.0 1.0 0.0
+lookup 2.0 1.0 1.0
+lookup 2.0 1.0 1.5
+lookup 2.0 1.0 2.0
+lookup 2.0 1.0 3.0
+lookup 2.0 2.0 0.0
+lookup 2.0 2.0 1.0
+lookup 2.0 2.0 1.5
+lookup 2.0 2.0 2.0
+lookup 2.0 2.0 3.0
+lookup 3.0 -1.0 0.0
+lookup 3.0 -1.0 1.0
+lookup 3.0 -1.0 1.5
+lookup 3.0 -1.0 2.0
+lookup 3.0 -1.0 3.0
+lookup 3.0 0.0 0.0
+lookup 3.0 0.0 1.0
+lookup 3.0 0.0 1.5
+lookup 3.0 0.0 2.0
+lookup 3.0 0.0 3.0
+lookup 3.0 0.5 0.0
+lookup 3.0 0.5 1.0
+lookup 3.0 0.5 1.5
+lookup 3.0 0.5 2.0
+lookup 3.0 0.5 3.0
+lookup 3.0 1.0 0.0
+lookup 3.0 1.0 1.0
+lookup 3.0 1.0 1.5
+lookup 3.0 1.0 2.0
+lookup 3.0 1.0 3.0
+lookup 3.0 2.0 0.0
+lookup 3.0 2.0 1.0
+lookup 3.0 2.0 1.5
+lookup 3.0 2.0 2.0
+lookup 3.0 2.0 3.0
+lookup 4.0 -1.0 0.0
+lookup 4.0 -1.0 1.0
+lookup 4.0 -1.0 1.5
+lookup 4.0 -1.0 2.0
+lookup 4.0 -1.0 3.0
+lookup 4.0 0.0 0.0
+lookup 4.0 0.0 1.0
+lookup 4.0 0.0 1.5
+lookup 4.0 0.0 2.0
+lookup 4.0 0.0 3.0
+lookup 4.0 0.5 0.0
+lookup 4.0 0.5 1.0
+lookup 4.0 0.5 1.5
+lookup 4.0 0.5 2.0
+lookup 4.0 0.5 3.0
+lookup 4.0 1.0 0.0
+lookup 4.0 1.0 1.0
+lookup 4.0 1.0 1.5
+lookup 4.0 1.0 2.0
+lookup 4.0 1.0 3.0
+lookup 4.0 2.0 0.0
+lookup 4.0 2.0 1.0
+lookup 4.0 2.0 1.5
+lookup 4.0 2.0 2.0
+lookup 4.0 2.0 3.0
+lookup 5.0 -1.0 0.0
+lookup 5.0 -1.0 1.0
+lookup 5.0 -1.0 1.5
+lookup 5.0 -1.0 2.0
+lookup 5.0 -1.0 3.0
+lookup 5.0 0.0 0.0
+lookup 5.0 0.0 1.0
+lookup 5.0 0.0 1.5
+lookup 5.0 0.0 2.0
+lookup 5.0 0.0 3.0
+lookup 5.0 0.5 0.0
+lookup 5.0 0.5 1.0
+lookup 5.0 0.5 1.5
+lookup 5.0 0.5 2.0
+lookup 5.0 0.5 3.0
+lookup 5.0 1.0 0.0
+lookup 5.0 1.0 1.0
+lookup 5.0 1.0 1.5
+lookup 5.0 1.0 2.0
+lookup 5.0 1.0 3.0
+lookup 5.0 2.0 0.0
+lookup 5.0 2.0 1.0
+lookup 5.0 2.0 1.5
+lookup 5.0 2.0 2.0
+lookup 5.0 2.0 3.0
+table - files/t47.xml
+table - files/t48.xml
+table - files/t49.xml
+table - files/t50.xml
+lookup 0.0 -1.0 -1.0 -1.0
+lookup 0.0 -1.0 0.0 -1.0
+lookup 0.0 -1.0 5.0 -1.0
+lookup 0.0 -1.0 10.0 -1.0
+lookup 0.0 -1.0 11.0 -1.0
+lookup 0.0 0.0 -1.0 -1.0
+lookup 0.0 0.0 0.0 -1.0
+lookup 0.0 0.0 5.0 -1.0
+lookup 0.0 0.0 10.0 -1.0
+lookup 0.0 0.0 11.0 -1.0
+lookup 0.0 0.5 -1.0 -1.0
+lookup 0.0 0.5 0.0 -1.0
+lookup 0.0 0.5 5.0 -1.0
+lookup 0.0 0.5 10.0 -1.0
+lookup 0.0 0.5 11.0 -1.0
+lookup 0.0 1.0 -1.0 -1.0
+lookup 0.0 1.0 0.0 -1.0
+lookup 0.0 1.0 5.0 -1.0
+lookup 0.0 1.0 10.0 -1.0
+lookup 0.0 1.0 11.0 -1.0
+lookup 0.0 2.0 -1.0 -1.0
+lookup 0.0 2.0 0.0 -1.0
+lookup 0.0 2.0 5.0 -1.0
+lookup 0.0 2.0 10.0 -1.0
+lookup 0.0 2.0 11.0 -1.0
+lookup 1.0 -1.0 -1.0 -1.0
+lookup 1.0 -1.0 0.0 -1.0
+lookup 1.0 -1.0 5.0 -1.0
+lookup 1.0 -1.0 10.0 -1.0
+lookup 1.0 -1.0 11.0 -1.0
+lookup 1.0 0.0 -1.0 -1.0
+lookup 1.0 0.0 0.0 -1.0
+lookup 1.0 0.0 5.0 -1.0
+lookup 1.0 0.0 10.0 -1.0
+lookup 1.0 0.0 11.0 -1.0
+lookup 1.0 0.5 -1.0 -1.0
+lookup 1.0 0.5 0.0 -1.0
+lookup 1.0 0.5 5.0 -1.0
+lookup 1.0 0.5 10.0 -1.0
+lookup 1.0 0.5 11.0 -1.0
+lookup 1.0 1.0 -1.0 -1.0
+lookup 1.0 1.0 0.0 -1.0
+lookup 1.0 1.0 5.0 -1.0
+lookup 1.0 1.0 10.0 -1.0
+lookup 1.0 1.0 11.0 -1.0
+lookup 1.0 2.0 -1.0 -1.0
+lookup 1.0 2.0 0.0 -1.0
+lookup 1.0 2.0 5.0 -1.0
+lookup 1.0 2.0 10.0 -1.0
+lookup 1.0 2.0 11.0 -1.0
+lookup 1.5 -1.0 -1.0 -1.0
+lookup 1.5 -1.0 0.0 -1.0
+lookup 1.5 -1.0 5.0 -1.0
+lookup 1.5 -1.0 10.0 -1.0
+lookup 1.5 -1.0 11.0 -1.0
+lookup 1.5 0.0 -1.0 -1.0
+lookup 1.5 0.0 0.0 -1.0
+lookup 1.5 0.0 5.0 -1.0
+lookup 1.5 0.0 10.0 -1.0
+lookup 1.5 0.0 11.0 -1.0
+lookup 1.5 0.5 -1.0 -1.0
+lookup 1.5 0.5 0.0 -1.0
+lookup 1.5 0.5 5.0 -1.0
+lookup 1.5 0.5 10.0 -1.0
+lookup 1.5 0.5 11.0 -1.0
+lookup 1.5 1.0 -1.0 -1.0
+lookup 1.5 1.0 0.0 -1.0
+lookup 1.5 1.0 5.0 -1.0
+lookup 1.5 1.0 10.0 -1.0
+lookup 1.5 1.0 11.0 -1.0
+lookup 1.5 2.0 -1.0 -1.0
+lookup 1.5 2.0 0.0 -1.0
+lookup 1.5 2.0 5.0 -1.0
+lookup 1.5 2.0 10.0 -1.0
+lookup 1.5 2.0 11.0 -1.0
+lookup 2.0 -1.0 -1.0 -1.0
+lookup 2.0 -1.0 0.0 -1.0
+lookup 2.0 -1.0 5.0 -1.0
+lookup 2.0 -1.0 10.0 -1.0
+lookup 2.0 -1.0 11.0 -1.0
+lookup 2.0 0.0 -1.0 -1.0
+lookup 2.0 0.0 0.0 -1.0
+lookup 2.0 0.0 5.0 -1.0
+lookup 2.0 0.0 10.0 -1.0
+lookup 2.0 0.0 11.0 -1.0
+lookup 2.0 0.5 -1.0 -1.0
+lookup 2.0 0.5 0.0 -1.0
+lookup 2.0 0.5 5.0 -1.0
+lookup 2.0 0.5 10.0 -1.0
+lookup 2.0 0.5 11.0 -1.0
+lookup 2.0 1.0 -1.0 -1.0
+lookup 2.0 1.0 0.0 -1.0
+lookup 2.0 1.0 5.0 -1.0
+lookup 2.0 1.0 10.0 -1.0
+lookup 2.0 1.0 11.0 -1.0
+lookup 2.0 2.0 -1.0 -1.0
+lookup 2.0 2.0 0.0 -1.0
+lookup 2.0 2.0 5.0 -1.0
+lookup 2.0 2.0 10.0 -1.0
+lookup 2.0 2.0 11.0 -1.0
+lookup 3.0 -1.0 -1.0 -1.0
+lookup 3.0 -1.0 0.0 -1.0
+lookup 3.0 -1.0 5.0 -1.0
+lookup 3.0 -1.0 10.0 -1.0
+lookup 3.0 -1.0 11.0 -1.0
+lookup 3.0 0.0 -1.0 -1.0
+lookup 3.0 0.0 0.0 -1.0
+lookup 3.0 0.0 5.0 -1.0
+lookup 3.0 0.0 10.0 -1.0
+lookup 3.0 0.0 11.0 -1.0
+lookup 3.0 0.5 -1.0 -1.0
+lookup 3.0 0.5 0.0 -1.0
+lookup 3.0 0.5 5.0 -1.0
+lookup 3.0 0.5 10.0 -1.0
+lookup 3.0 0.5 11.0 -1.0
+lookup 3.0 1.0 -1.0 -1.0
+lookup 3.0 1.0 0.0 -1.0
+lookup 3.0 1.0 5.0 -1.0
+lookup 3.0 1.0 10.0 -1.0
+lookup 3.0 1.0 11.0 -1.0
+lookup 3.0 2.0 -1.0 -1.0
+lookup 3.0 2.0 0.0 -1.0
+lookup 3.0 2.0 5.0 -1.0
+lookup 3.0 2.0 10.0 -1.0
+lookup 3.0 2.0 11.0 -1.0
+table - files/t51.xml
+lookup 0.0 -1.0 -1.0 -1.0 -1.0
+lookup 0.0 -1.0 -1.0 0.5 1.0
+lookup 0.0 -1.0 0.0 -1.0 0.0
+lookup 0.0 -1.0 0.0 0.5 2.0
+lookup 0.0 -1.0 5.0 -1.0 0.5
+lookup 0.0 -1.0 5.0 1.0 -1.0
+lookup 0.0 -1.0 10.0 -1.0 1.0
+lookup 0.0 -1.0 10.0 1.0 0.0
+lookup 0.0 -1.0 11.0 -1.0 2.0
+lookup 0.0 -1.0 11.0 1.0 0.5
+lookup 0.0 0.0 -1.0 0.0 -1.0
+lookup 0.0 0.0 -1.0 1.0 1.0
+lookup 0.0 0.0 0.0 0.0 0.0
+lookup 0.0 0.0 0.0 1.0 2.0
+lookup 0.0 0.0 5.0 0.0 0.5
+lookup 0.0 0.0 5.0 2.0 -1.0
+lookup 0.0 0.0 10.0 0.0 1.0
+lookup 0.0 0.0 10.0 2.0 0.0
+lookup 0.0 0.0 11.0 0.0 2.0
+lookup 0.0 0.0 11.0 2.0 0.5
+lookup 0.0 0.5 -1.0 0.5 -1.0
+lookup 0.0 0.5 -1.0 2.0 1.0
+lookup 0.0 0.5 0.0 0.5 0.0
+lookup 0.0 0.5 0.0 2.0 2.0
+lookup 0.0 0.5 5.0 0.5 0.5
+lookup 0.0 0.5 10.0 -1.0 -1.0
+lookup 0.0 0.5 10.0 0.5 1.0
+lookup 0.0 0.5 11.0 -1.0 0.0
+lookup 0.0 0.5 11.0 0.5 2.0
+lookup 0.0 1.0 -1.0 -1.0 0.5
+lookup 0.0 1.0 -1.0 1.0 -1.0
+lookup 0.0 1.0 0.0 -1.0 1.0
+lookup 0.0 1.0 0.0 1.0 0.0
+lookup 0.0 1.0 5.0 -1.0 2.0
+lookup 0.0 1.0 5.0 1.0 0.5
+lookup 0.0 1.0 10.0 0.0 -1.0
+lookup 0.0 1.0 10.0 1.0 1.0
+lookup 0.0 1.0 11.0 0.0 0.0
+lookup 0.0 1.0 11.0 1.0 2.0
+lookup 0.0 2.0 -1.0 0.0 0.5
+lookup 0.0 2.0 -1.0 2.0 -1.0
+lookup 0.0 2.0 0.0 0.0 1.0
+lookup 0.0 2.0 0.0 2.0 0.0
+lookup 0.0 2.0 5.0 0.0 2.0
+lookup 0.0 2.0 5.0 2.0 0.5
+lookup 0.0 2.0 10.0 0.5 -1.0
+lookup 0.0 2.0 10.0 2.0 1.0
+lookup 0.0 2.0 11.0 0.5 0.0
+lookup 0.0 2.0 11.0 2.0 2.0
+lookup 1.0 -1.0 -1.0 0.5 0.5
+lookup 1.0 -1.0 0.0 -1.0 -1.0
+lookup 1.0 -1.0 0.0 0.5 1.0
+lookup 1.0 -1.0 5.0 -1.0 0.0
+lookup 1.0 -1.0 5.0 0.5 2.0
+lookup 1.0 -1.0 10.0 -1.0 0.5
+lookup 1.0 -1.0 10.0 1.0 -1.0
+lookup 1.0 -1.0 11.0 -1.0 1.0
+lookup 1.0 -1.0 11.0 1.0 0.0
+lookup 1.0 0.0 -1.0 -1.0 2.0
+lookup 1.0 0.0 -1.0 1.0 0.5
+lookup 1.0 0.0 0.0 0.0 -1.0
+lookup 1.0 0.0 0.0 1.0 1.0
+lookup 1.0 0.0 5.0 0.0 0.0
+lookup 1.0 0.0 5.0 1.0 2.0
+lookup 1.0 0.0 10.0 0.0 0.5
+lookup 1.0 0.0 10.0 2.0 -1.0
+lookup 1.0 0.0 11.0 0.0 1.0
+lookup 1.0 0.0 11.0 2.0 0.0
+lookup 1.0 0.5 -1.0 0.0 2.0
+lookup 1.0 0.5 -1.0 2.0 0.5
+lookup 1.0 0.5 0.0 0.5 -1.0
+lookup 1.0 0.5 0.0 2.0 1.0
+lookup 1.0 0.5 5.0 0.5 0.0
+lookup 1.0 0.5 5.0 2.0 2.0
+lookup 1.0 0.5 10.0 0.5 0.5
+lookup 1.0 0.5 11.0 -1.0 -1.0
+lookup 1.0 0.5 11.0 0.5 1.0
+lookup 1.0 1.0 -1.0 -1.0 0.0
+lookup 1.0 1.0 -1.0 0.5 2.0
+lookup 1.0 1.0 0.0 -1.0 0.5
+lookup 1.0 1.0 0.0 1.0 -1.0
+lookup 1.0 1.0 5.0 -1.0 1.0
+lookup 1.0 1.0 5.0 1.0 0.0
+lookup 1.0 1.0 10.0 -1.0 2.0
+lookup 1.0 1.0 10.0 1.0 0.5
+lookup 1.0 1.0 11.0 0.0 -1.0
+lookup 1.0 1.0 11.0 1.0 1.0
+lookup 1.0 2.0 -1.0 0.0 0.0
+lookup 1.0 2.0 -1.0 1.0 2.0
+lookup 1.0 2.0 0.0 0.0 0.5
+lookup 1.0 2.0 0.0 2.0 -1.0
+lookup 1.0 2.0 5.0 0.0 1.0
+lookup 1.0 2.0 5.0 2.0 0.0
+lookup 1.0 2.0 10.0 0.0 2.0
+lookup 1.0 2.0 10.0 2.0 0.5
+lookup 1.0 2.0 11.0 0.5 -1.0
+lookup 1.0 2.0 11.0 2.0 1.0
+lookup 2.0 -1.0 -1.0 0.5 0.0
+lookup 2.0 -1.0 -1.0 2.0 2.0
+lookup 2.0 -1.0 0.0 0.5 0.5
+lookup 2.0 -1.0 5.0 -1.0 -1.0
+lookup 2.0 -1.0 5.0 0.5 1.0
+lookup 2.0 -1.0 10.0 -1.0 0.0
+lookup 2.0 -1.0 10.0 0.5 2.0
+lookup 2.0 -1.0 11.0 -1.0 0.5
+lookup 2.0 -1.0 11.0 1.0 -1.0
+lookup 2.0 0.0 -1.0 -1.0 1.0
+lookup 2.0 0.0 -1.0 1.0 0.0
+lookup 2.0 0.0 0.0 -1.0 2.0
+lookup 2.0 0.0 0.0 1.0 0.5
+lookup 2.0 0.0 5.0 0.0 -1.0
+lookup 2.0 0.0 5.0 1.0 1.0
+lookup 2.0 0.0 10.0 0.0 0.0
+lookup 2.0 0.0 10.0 1.0 2.0
+lookup 2.0 0.0 11.0 0.0 0.5
+lookup 2.0 0.0 11.0 2.0 -1.0
+lookup 2.0 0.5 -1.0 0.0 1.0
+lookup 2.0 0.5 -1.0 2.0 0.0
+lookup 2.0 0.5 0.0 0.0 2.0
+lookup 2.0 0.5 0.0 2.0 0.5
+lookup 2.0 0.5 5.0 0.5 -1.0
+lookup 2.0 0.5 5.0 2.0 1.0
+lookup 2.0 0.5 10.0 0.5 0.0
+lookup 2.0 0.5 10.0 2.0 2.0
+lookup 2.0 0.5 11.0 0.5 0.5
+lookup 2.0 1.0 -1.0 -1.0 -1.0
+lookup 2.0 1.0 -1.0 0.5 1.0
+lookup 2.0 1.0 0.0 -1.0 0.0
+lookup 2.0 1.0 0.0 0.5 2.0
+lookup 2.0 1.0 5.0 -1.0 0.5
+lookup 2.0 1.0 5.0 1.0 -1.0
+lookup 2.0 1.0 10.0 -1.0 1.0
+lookup 2.0 1.0 10.0 1.0 0.0
+lookup 2.0 1.0 11.0 -1.0 2.0
+lookup 2.0 1.0 11.0 1.0 0.5
+lookup 2.0 2.0 -1.0 0.0 -1.0
+lookup 2.0 2.0 -1.0 1.0 1.0
+lookup 2.0 2.0 0.0 0.0 0.0
+lookup 2.0 2.0 0.0 1.0 2.0
+lookup 2.0 2.0 5.0 0.0 0.5
+lookup 2.0 2.0 5.0 2.0 -1.0
+lookup 2.0 2.0 10.0 0.0 1.0
+lookup 2.0 2.0 10.0 2.0 0.0
+lookup 2.0 2.0 11.0 0.0 2.0
+lookup 2.0 2.0 11.0 2.0 0.5
+table - files/t52.xml
+lookup 0.0 -1.0 -1.0 -1.0 -1.0 -1.0
+lookup 0.0 -1.0 -1.0 0.5 0.5 1.0
+lookup 0.0 -1.0 0.0 -1.0 -1.0 0.0
+lookup 0.0 -1.0 0.0 0.5 0.5 2.0
+lookup 0.0 -1.0 5.0 -1.0 -1.0 0.5
+lookup 0.0 -1.0 5.0 0.5 1.0 -1.0
+lookup 0.0 -1.0 10.0 -1.0 -1.0 1.0
+lookup 0.0 -1.0 10.0 0.5 1.0 0.0
+lookup 0.0 -1.0 11.0 -1.0 -1.0 2.0
+lookup 0.0 -1.0 11.0 0.5 1.0 0.5
+lookup 0.0 0.0 -1.0 -1.0 0.0 -1.0
+lookup 0.0 0.0 -1.0 0.5 1.0 1.0
+lookup 0.0 0.0 0.0 -1.0 0.0 0.0
+lookup 0.0 0.0 0.0 0.5 1.0 2.0
+lookup 0.0 0.0 5.0 -1.0 0.0 0.5
+lookup 0.0 0.0 5.0 0.5 2.0 -1.0
+lookup 0.0 0.0 10.0 -1.0 0.0 1.0
+lookup 0.0 0.0 10.0 0.5 2.0 0.0
+lookup 0.0 0.0 11.0 -1.0 0.0 2.0
+lookup 0.0 0.0 11.0 0.5 2.0 0.5
+lookup 0.0 0.5 -1.0 -1.0 0.5 -1.0
+lookup 0.0 0.5 -1.0 0.5 2.0 1.0
+lookup 0.0 0.5 0.0 -1.0 0.5 0.0
+lookup 0.0 0.5 0.0 0.5 2.0 2.0
+lookup 0.0 0.5 5.0 -1.0 0.5 0.5
+lookup 0.0 0.5 5.0 1.0 -1.0 -1.0
+lookup 0.0 0.5 10.0 -1.0 0.5 1.0
+lookup 0.0 0.5 10.0 1.0 -1.0 0.0
+lookup 0.0 0.5 11.0 -1.0 0.5 2.0
+lookup 0.0 0.5 11.0 1.0 -1.0 0.5
+lookup 0.0 1.0 -1.0 -1.0 1.0 -1.0
+lookup 0.0 1.0 -1.0 1.0 -1.0 1.0
+lookup 0.0 1.0 0.0 -1.0 1.0 0.0
+lookup 0.0 1.0 0.0 1.0 -1.0 2.0
+lookup 0.0 1.0 5.0 -1.0 1.0 0.5
+lookup 0.0 1.0 5.0 1.0 0.0 -1.0
+lookup 0.0 1.0 10.0 -1.0 1.0 1.0
+lookup 0.0 1.0 10.0 1.0 0.0 0.0
+lookup 0.0 1.0 11.0 -1.0 1.0 2.0
+lookup 0.0 1.0 11.0 1.0 0.0 0.5
+lookup 0.0 2.0 -1.0 -1.0 2.0 -1.0
+lookup 0.0 2.0 -1.0 1.0 0.0 1.0
+lookup 0.0 2.0 0.0 -1.0 2.0 0.0
+lookup 0.0 2.0 0.0 1.0 0.0 2.0
+lookup 0.0 2.0 5.0 -1.0 2.0 0.5
+lookup 0.0 2.0 5.0 1.0 0.5 -1.0
+lookup 0.0 2.0 10.0 -1.0 2.0 1.0
+lookup 0.0 2.0 10.0 1.0 0.5 0.0
+lookup 0.0 2.0 11.0 -1.0 2.0 2.0
+lookup 0.0 2.0 11.0 1.0 0.5 0.5
+lookup 1.0 -1.0 -1.0 0.0 -1.0 -1.0
+lookup 1.0 -1.0 -1.0 1.0 0.5 1.0
+lookup 1.0 -1.0 0.0 0.0 -1.0 0.0
+lookup 1.0 -1.0 0.0 1.0 0.5 2.0
+lookup 1.0 -1.0 5.0 0.0 -1.0 0.5
+lookup 1.0 -1.0 5.0 1.0 1.0 -1.0
+lookup 1.0 -1.0 10.0 0.0 -1.0 1.0
+lookup 1.0 -1.0 10.0 1.0 1.0 0.0
+lookup 1.0 -1.0 11.0 0.0 -1.0 2.0
+lookup 1.0 -1.0 11.0 1.0 1.0 0.5
+lookup 1.0 0.0 -1.0 0.0 0.0 -1.0
+lookup 1.0 0.0 -1.0 1.0 1.0 1.0
+lookup 1.0 0.0 0.0 0.0 0.0 0.0
+lookup 1.0 0.0 0.0 1.0 1.0 2.0
+lookup 1.0 0.0 5.0 0.0 0.0 0.5
+lookup 1.0 0.0 5.0 1.0 2.0 -1.0
+lookup 1.0 0.0 10.0 0.0 0.0 1.0
+lookup 1.0 0.0 10.0 1.0 2.0 0.0
+lookup 1.0 0.0 11.0 0.0 0.0 2.0
+lookup 1.0 0.0 11.0 1.0 2.0 0.5
+lookup 1.0 0.5 -1.0 0.0 0.5 -1.0
+lookup 1.0 0.5 -1.0 1.0 2.0 1.0
+lookup 1.0 0.5 0.0 0.0 0.5 0.0
+lookup 1.0 0.5 0.0 1.0 2.0 2.0
+lookup 1.0 0.5 5.0 0.0 0.5 0.5
+lookup 1.0 0.5 5.0 2.0 -1.0 -1.0
+lookup 1.0 0.5 10.0 0.0 0.5 1.0
+lookup 1.0 0.5 10.0 2.0 -1.0 0.0
+lookup 1.0 0.5 11.0 0.0 0.5 2.0
+lookup 1.0 0.5 11.0 2.0 -1.0 0.5
+lookup 1.0 1.0 -1.0 0.0 1.0 -1.0
+lookup 1.0 1.0 -1.0 2.0 -1.0 1.0
+lookup 1.0 1.0 0.0 0.0 1.0 0.0
+lookup 1.0 1.0 0.0 2.0 -1.0 2.0
+lookup 1.0 1.0 5.0 0.0 1.0 0.5
+lookup 1.0 1.0 5.0 2.0 0.0 -1.0
+lookup 1.0 1.0 10.0 0.0 1.0 1.0
+lookup 1.0 1.0 10.0 2.0 0.0 0.0
+lookup 1.0 1.0 11.0 0.0 1.0 2.0
+lookup 1.0 1.0 11.0 2.0 0.0 0.5
+lookup 1.0 2.0 -1.0 0.0 2.0 -1.0
+lookup 1.0 2.0 -1.0 2.0 0.0 1.0
+lookup 1.0 2.0 0.0 0.0 2.0 0.0
+lookup 1.0 2.0 0.0 2.0 0.0 2.0
+lookup 1.0 2.0 5.0 0.0 2.0 0.5
+lookup 1.0 2.0 5.0 2.0 0.5 -1.0
+lookup 1.0 2.0 10.0 0.0 2.0 1.0
+lookup 1.0 2.0 10.0 2.0 0.5 0.0
+lookup 1.0 2.0 11.0 0.0 2.0 2.0
+lookup 1.0 2.0 11.0 2.0 0.5 0.5
+lookup 2.0 -1.0 -1.0 0.5 -1.0 -1.0
+lookup 2.0 -1.0 -1.0 2.0 0.5 1.0
+lookup 2.0 -1.0 0.0 0.5 -1.0 0.0
+lookup 2.0 -1.0 0.0 2.0 0.5 2.0
+lookup 2.0 -1.0 5.0 0.5 -1.0 0.5
+lookup 2.0 -1.0 5.0 2.0 1.0 -1.0
+lookup 2.0 -1.0 10.0 0.5 -1.0 1.0
+lookup 2.0 -1.0 10.0 2.0 1.0 0.0
+lookup 2.0 -1.0 11.0 0.5 -1.0 2.0
+lookup 2.0 -1.0 11.0 2.0 1.0 0.5
+lookup 2.0 0.0 -1.0 0.5 0.0 -1.0
+lookup 2.0 0.0 -1.0 2.0 1.0 1.0
+lookup 2.0 0.0 0.0 0.5 0.0 0.0
+lookup 2.0 0.0 0.0 2.0 1.0 2.0
+lookup 2.0 0.0 5.0 0.5 0.0 0.5
+lookup 2.0 0.0 5.0 2.0 2.0 -1.0
+lookup 2.0 0.0 10.0 0.5 0.0 1.0
+lookup 2.0 0.0 10.0 2.0 2.0 0.0
+lookup 2.0 0.0 11.0 0.5 0.0 2.0
+lookup 2.0 0.0 11.0 2.0 2.0 0.5
+lookup 2.0 0.5 -1.0 0.5 0.5 -1.0
+lookup 2.0 0.5 -1.0 2.0 2.0 1.0
+lookup 2.0 0.5 0.0 0.5 0.5 0.0
+lookup 2.0 0.5 0.0 2.0 2.0 2.0
+lookup 2.0 0.5 5.0 0.5 0.5 0.5
+lookup 2.0 0.5 10.0 -1.0 -1.0 -1.0
+lookup 2.0 0.5 10.0 0.5 0.5 1.0
+lookup 2.0 0.5 11.0 -1.0 -1.0 0.0
+lookup 2.0 0.5 11.0 0.5 0.5 2.0
+lookup 2.0 1.0 -1.0 -1.0 -1.0 0.5
+lookup 2.0 1.0 -1.0 0.5 1.0 -1.0
+lookup 2.0 1.0 0.0 -1.0 -1.0 1.0
+lookup 2.0 1.0 0.0 0.5 1.0 0.0
+lookup 2.0 1.0 5.0 -1.0 -1.0 2.0
+lookup 2.0 1.0 5.0 0.5 1.0 0.5
+lookup 2.0 1.0 10.0 -1.0 0.0 -1.0
+lookup 2.0 1.0 10.0 0.5 1.0 1.0
+lookup 2.0 1.0 11.0 -1.0 0.0 0.0
+lookup 2.0 1.0 11.0 0.5 1.0 2.0
+lookup 2.0 2.0 -1.0 -1.0 0.0 0.5
+lookup 2.0 2.0 -1.0 0.5 2.0 -1.0
+lookup 2.0 2.0 0.0 -1.0 0.0 1.0
+lookup 2.0 2.0 0.0 0.5 2.0 0.0
+lookup 2.0 2.0 5.0 -1.0 0.0 2.0
+lookup 2.0 2.0 5.0 0.5 2.0 0.5
+lookup 2.0 2.0 10.0 -1.0 0.5 -1.0
+lookup 2.0 2.0 10.0 0.5 2.0 1.0
+lookup 2.0 2.0 11.0 -1.0 0.5 0.0
+lookup 2.0 2.0 11.0 0.5 2.0 2.0

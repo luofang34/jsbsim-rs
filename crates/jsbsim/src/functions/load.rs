@@ -44,20 +44,22 @@ impl FunctionSet {
         } else if is_number(prefix) {
             copy_to.replacen('#', prefix, 1)
         } else {
-            tracing::error!(
-                "{}: Illegal use of the special character '#'. The 'copyto' argument in function {} is ignored.",
-                el.location(),
+            let message = format!(
+                "Illegal use of the special character '#'. The 'copyto' argument in function {} is ignored.",
                 self.function(id).name
             );
+            self.lenient(&el.location(), message)?;
             return Ok(id);
         };
         match tree.get(&copy_to)? {
             Some(node) => self.functions[id.0].copy_to = Some(node),
-            None => tracing::error!(
-                "{}: Property \"{copy_to}\" must be previously defined in function {}. The 'copyto' argument is ignored.",
-                el.location(),
-                self.function(id).name
-            ),
+            None => {
+                let message = format!(
+                    "Property \"{copy_to}\" must be previously defined in function {}. The 'copyto' argument is ignored.",
+                    self.function(id).name
+                );
+                self.lenient(&el.location(), message)?;
+            }
         }
         Ok(id)
     }
@@ -82,7 +84,7 @@ impl FunctionSet {
         el: &Element,
         prefix: &str,
     ) -> Result<TableId, Error> {
-        let table = Table::load(el, tree, prefix)?;
+        let table = Table::load(el, tree, prefix, self.options)?;
         let name = table.name().to_owned();
         let internal = table.is_internal();
         let id = self.push_table(table);
@@ -132,7 +134,13 @@ impl FunctionSet {
         let output = if body == Body::Template && op == Op::Identity {
             None
         } else {
-            output_name(&name, prefix, &at)
+            match output_name(&name, prefix) {
+                Ok(output) => output,
+                Err(message) => {
+                    self.lenient(&at, message)?;
+                    None
+                }
+            }
         };
         if is_number(prefix) {
             name = name.replacen('#', prefix, 1);
@@ -224,10 +232,8 @@ impl FunctionSet {
                 }
                 Some(op) => return self.load_nested(tree, el, op, prefix, body).map(Some),
                 None => {
-                    tracing::error!(
-                        "{}: Bad operation <{name}> detected in configuration file",
-                        el.location()
-                    );
+                    let message = format!("Bad operation <{name}> detected in configuration file");
+                    self.lenient(&el.location(), message)?;
                     return Ok(None);
                 }
             },
@@ -256,9 +262,12 @@ impl FunctionSet {
             .functions
             .last()
             .filter(|f| f.op == op && f.params.len() == 1);
-        let (Some(function), true, true) =
-            (collapsible, own_count_error, op.collapses_single_argument())
-        else {
+        let (Some(function), true, true, false) = (
+            collapsible,
+            own_count_error,
+            op.collapses_single_argument(),
+            self.options.strict,
+        ) else {
             return Err(error);
         };
         tracing::warn!(
@@ -306,10 +315,10 @@ impl FunctionSet {
         match self.template(template_name) {
             Some(template) => Ok(Some(Parameter::Template { template, property })),
             None => {
-                tracing::error!(
-                    "{}: No function by the name {template_name} has been defined. This property will not be logged.",
-                    el.location()
+                let message = format!(
+                    "No function by the name {template_name} has been defined. This property will not be logged."
                 );
+                self.lenient(&el.location(), message)?;
                 Ok(None)
             }
         }

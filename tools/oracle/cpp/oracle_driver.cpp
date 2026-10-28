@@ -137,8 +137,9 @@ int main(int argc, char** argv)
     if (mode == "units") return RunUnitsProbe(argv[2], argv[3]);
     if (mode == "math") return RunMathProbe(argv[2], argv[3]);
     if (mode == "functions") return RunFunctionsProbe(argv[2], argv[3]);
+    if (mode == "table") return RunTableProbe(argv[2], argv[3]);
     if (mode == "xml") return RunXmlProbe(argv[2], argv[3]);
   }
-  std::fprintf(stderr, "usage: %s script|properties|units|xml|math|functions ...\n", argv[0]);
+  std::fprintf(stderr, "usage: %s script|properties|units|xml|math|functions|table ...\n", argv[0]);
   return 2;
 }

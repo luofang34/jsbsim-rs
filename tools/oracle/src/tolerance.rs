@@ -27,6 +27,10 @@ pub struct Tolerance {
     pub abs: f64,
     /// Relative part of the bound, as a fraction of |reference|.
     pub rel: f64,
+    /// For angles on a branch cut: differences are wrapped into
+    /// `[-period/2, period/2]` before the bound applies (2π or 360).
+    #[serde(default)]
+    pub period: Option<f64>,
     /// Inclusive start of the window; unbounded when absent.
     #[serde(default)]
     pub t_start: Option<f64>,
@@ -42,6 +46,26 @@ impl Tolerance {
     #[must_use]
     pub fn covers(&self, time: f64) -> bool {
         self.t_start.is_none_or(|start| time >= start) && self.t_end.is_none_or(|end| time < end)
+    }
+
+    /// |candidate - reference|, wrapped by the period when there is one.
+    #[must_use]
+    pub fn difference(&self, reference: f64, candidate: f64) -> f64 {
+        let d = candidate - reference;
+        match self.period {
+            Some(p) => (d - p * (d / p).round()).abs(),
+            None => d.abs(),
+        }
+    }
+
+    /// Whether `candidate` agrees with `reference`: exactly (which covers
+    /// infinities), both NaN, or within the bound. A NaN on one side only
+    /// never agrees.
+    #[must_use]
+    pub fn agrees(&self, reference: f64, candidate: f64) -> bool {
+        reference == candidate
+            || (reference.is_nan() && candidate.is_nan())
+            || self.difference(reference, candidate) <= self.allowed(reference)
     }
 
     /// Largest accepted |candidate - reference| for `reference`.
@@ -67,6 +91,9 @@ impl Tolerance {
         }
         if self.t_start.is_some_and(f64::is_nan) || self.t_end.is_some_and(f64::is_nan) {
             return fail("t_start and t_end must not be NaN");
+        }
+        if self.period.is_some_and(|p| !(p.is_finite() && p > 0.0)) {
+            return fail("period must be finite and positive");
         }
         if let (Some(start), Some(end)) = (self.t_start, self.t_end)
             && start.partial_cmp(&end) != Some(std::cmp::Ordering::Less)
