@@ -17,7 +17,6 @@ use crate::math::ColumnVector3;
 use crate::models::aerodynamics::Values;
 use crate::models::external_reactions::{Magnitude, Transforms};
 use crate::models::fcs::FcsFunction;
-use crate::models::ground_reactions;
 use crate::properties::Attribute;
 use crate::units::constrain;
 use crate::xml::{DocumentLoader, Element, IncludeKind};
@@ -56,7 +55,10 @@ impl Fdm {
     }
 
     pub(super) fn load_ground_reactions(&mut self, el: &Element) -> Result<(), Error> {
-        self.models.ground_reactions.load(el)?;
+        let mut ground = std::mem::take(&mut self.models.ground_reactions);
+        let result = ground.load(el, &mut self.context());
+        self.models.ground_reactions = ground;
+        result?;
         self.post_load(el, "", Model::GroundReactions)
     }
 
@@ -101,6 +103,7 @@ impl Fdm {
         let c = &mut m.auxiliary.input.constants;
         c.wingspan = m.aircraft.wing_span;
         c.wingchord = m.aircraft.cbar;
+        m.ground_reactions.input.xyz_cg = m.mass_balance.xyz_cg;
     }
 
     /// `FGFCS::Run`.
@@ -284,12 +287,6 @@ impl Fdm {
         if m.ground_reactions.base.skip() || m.exec.holding {
             return Ok(());
         }
-        let input = ground_reactions::Inputs {
-            location: m.propagate.state.location.clone(),
-            tb2l: m.propagate.frames.tb2l,
-            xyz_cg: m.mass_balance.xyz_cg,
-            fcs_gear_pos: m.fcs.gear_pos,
-        };
         let (trim, time) = (m.exec.trim_status, m.exec.sim_time);
         if m.ground_reactions.surface.bumpiness >= 0.001 && !trim {
             return Err(Error::Unsupported {
@@ -299,8 +296,9 @@ impl Fdm {
         }
         self.run_model_functions(Model::GroundReactions, true)?;
         let m = &mut self.models;
-        m.ground_reactions
-            .check_contacts(&input, &m.inertial, trim, time)?;
+        m.ground_reactions.forces = ColumnVector3::zero();
+        m.ground_reactions.moments = ColumnVector3::zero();
+        m.ground_reactions.check_contacts(&m.inertial, trim, time)?;
         self.run_model_functions(Model::GroundReactions, false)
     }
 }

@@ -80,6 +80,15 @@ impl Models {
                 a.tw2b = x.tw2b;
                 a.rp_body = self.mass_balance.structural_to_body(self.aircraft.xyz_rp);
             }
+            Model::GroundReactions => {
+                let g = &mut self.ground_reactions.input;
+                g.fcs_gear_pos = self.fcs.gear_pos;
+                g.empty_weight = self.mass_balance.empty_weight;
+                g.tb2l = self.propagate.frames.tb2l;
+                g.total_delta_t = self.exec.dt * f64::from(self.ground_reactions.base.rate);
+                g.location.clone_from(&self.propagate.state.location);
+                g.xyz_cg = self.mass_balance.xyz_cg;
+            }
             Model::MassBalance => self.load_mass_balance_inputs(),
             Model::Accelerations => self.load_accelerations_inputs(),
             Model::Auxiliary => self.load_auxiliary_inputs(),
@@ -87,8 +96,8 @@ impl Models {
         }
     }
 
-    /// The executive supplies no tank, lifting gas or weight-on-wheels
-    /// inputs, so they contribute nothing.
+    /// The executive supplies no tank or lifting gas inputs, so they
+    /// contribute nothing.
     fn load_mass_balance_inputs(&mut self) {
         let i = &mut self.mass_balance.input;
         i.gas_inertia = Matrix33::zero();
@@ -97,7 +106,7 @@ impl Models {
         i.tanks_weight = 0.0;
         i.tanks_moment = ColumnVector3::zero();
         i.tank_inertia = Matrix33::zero();
-        i.wow = false;
+        i.wow = self.ground_reactions.wow();
     }
 
     fn load_accelerations_inputs(&mut self) {
@@ -190,7 +199,7 @@ impl Models {
             Model::Systems => self.fcs.init_model(),
             Model::Aerodynamics => self.aerodynamics.init_model(),
             Model::ExternalReactions => self.external_reactions.init_model(),
-            Model::GroundReactions => self.ground_reactions.base.init(),
+            Model::GroundReactions => self.ground_reactions.init_model(),
             _ => {}
         }
     }

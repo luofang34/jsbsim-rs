@@ -1643,6 +1643,140 @@ rel = 0.0
 reason = "Output only, the state being bit-identical here: the orbital-element conversion's acos/atan2 differ in the last digit between Rust libm and Apple libm; observed max 1.8e-12 (rel 3.3e-16) at t=1 s; bound 10x that."
 
 [[tolerance]]
+case = "cannonball"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the same IEEE operations in JSBSim's order; properties listed with a window differ."
+
+[[tolerance]]
+case = "cannonball"
+property = "position/lat-gc-deg"
+abs = 5e-17
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: the geodetic/geocentric conversion's atan2 and sqrt differ in the last digit between Rust libm and Apple libm; observed max 3.5e-18 (rel 2.4e-16) at t=18 s; bound 10x that."
+
+[[tolerance]]
+case = "cannonball"
+property = "position/long-gc-deg"
+abs = 2e-13
+rel = 0.0
+period = 360.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: the geodetic/geocentric conversion's atan2 and sqrt differ in the last digit between Rust libm and Apple libm; observed max 1.4e-14 (rel 1.6e-16) at t=2 s; bound 10x that."
+
+[[tolerance]]
+case = "cannonball"
+property = "attitude/phi-rad"
+abs = 5e-21
+rel = 0.0
+period = 6.283185307179586
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 2.1e-22 (rel 1.9e-16) at t=27 s; bound 10x that."
+
+[[tolerance]]
+case = "cannonball"
+property = "attitude/theta-rad"
+abs = 2e-15
+rel = 0.0
+period = 6.283185307179586
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 1.1e-16 (rel 1.6e-16) at t=6 s; bound 10x that."
+
+[[tolerance]]
+case = "cannonball"
+property = "attitude/psi-rad"
+abs = 2e-15
+rel = 0.0
+period = 6.283185307179586
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 1.1e-16 (rel 1.6e-16) at t=6 s; bound 10x that."
+
+[[tolerance]]
+case = "cannonball"
+property = "aero/qbar-psf"
+abs = 1e-12
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: the standard atmosphere's pow/exp differ in the last digit between Rust libm and Apple libm; observed max 5.7e-14 (rel 2.9e-16) at t=19 s; bound 10x that."
+
+[[tolerance]]
+case = "cannonball"
+property = "atmosphere/rho-slugs_ft3"
+abs = 5e-18
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: the standard atmosphere's pow/exp differ in the last digit between Rust libm and Apple libm; observed max 4.3e-19 (rel 2.6e-16) at t=11 s; bound 10x that."
+
+[[tolerance]]
+case = "cannonball-60s"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the same IEEE operations in JSBSim's order."
+
+[[tolerance]]
+case = "cannonball-60s"
+property = "position/lat-gc-deg"
+abs = 1e-16
+rel = 0.0
+reason = "Output only, the state being bit-identical here: the geodetic/geocentric conversion's atan2 and sqrt differ in the last digit between Rust libm and Apple libm; observed max 6.9e-18 (rel 2.5e-16) at t=36 s; bound 10x that."
+
+[[tolerance]]
+case = "cannonball-60s"
+property = "position/long-gc-deg"
+abs = 2e-13
+rel = 0.0
+period = 360.0
+reason = "Output only, the state being bit-identical here: the geodetic/geocentric conversion's atan2 and sqrt differ in the last digit between Rust libm and Apple libm; observed max 1.4e-14 (rel 1.6e-16) at t=0 s; bound 10x that."
+
+[[tolerance]]
+case = "cannonball-60s"
+property = "attitude/phi-rad"
+abs = 5e-21
+rel = 0.0
+period = 6.283185307179586
+reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 2.1e-22 (rel 2.2e-16) at t=13 s; bound 10x that."
+
+[[tolerance]]
+case = "cannonball-60s"
+property = "attitude/theta-rad"
+abs = 2e-15
+rel = 0.0
+period = 6.283185307179586
+reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 1.1e-16 (rel 1.6e-16) at t=1 s; bound 10x that."
+
+[[tolerance]]
+case = "cannonball-60s"
+property = "attitude/psi-rad"
+abs = 2e-15
+rel = 0.0
+period = 6.283185307179586
+reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 1.1e-16 (rel 1.6e-16) at t=0 s; bound 10x that."
+
+[[tolerance]]
+case = "cannonball-60s"
+property = "aero/qbar-psf"
+abs = 2e-12
+rel = 0.0
+reason = "Output only, the state being bit-identical here: the standard atmosphere's pow/exp differ in the last digit between Rust libm and Apple libm; observed max 1.1e-13 (rel 4.4e-16) at t=28 s; bound 10x that."
+
+[[tolerance]]
+case = "cannonball-60s"
+property = "atmosphere/rho-slugs_ft3"
+abs = 5e-18
+rel = 0.0
+reason = "Output only, the state being bit-identical here: the standard atmosphere's pow/exp differ in the last digit between Rust libm and Apple libm; observed max 4.3e-19 (rel 2.6e-16) at t=2 s; bound 10x that."
+
+[[tolerance]]
 case = "nasa-atmos-02"
 property = "*"
 abs = 0.0
@@ -1718,3 +1852,2705 @@ abs = 1e-12
 rel = 0.0
 period = 360.0
 reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 5.7e-14 (rel 2.5e-16) at t=7 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the same IEEE operations in JSBSim's order; properties listed with a window differ."
+
+[[tolerance]]
+case = "ball_chute"
+property = "position/lat-gc-deg"
+abs = 5e-17
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: the geodetic/geocentric conversion's atan2 and sqrt differ in the last digit between Rust libm and Apple libm; observed max 3.5e-18 (rel 1.9e-16) at t=23 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "position/lat-gc-deg"
+abs = 1e-16
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 6.9e-18 (rel 2.5e-16) at t=94 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "position/long-gc-deg"
+abs = 2e-13
+rel = 0.0
+period = 360.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: the geodetic/geocentric conversion's atan2 and sqrt differ in the last digit between Rust libm and Apple libm; observed max 1.4e-14 (rel 1.6e-16) at t=3 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "position/long-gc-deg"
+abs = 2e-13
+rel = 0.0
+period = 360.0
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.4e-14 (rel 1.6e-16) at t=61 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "velocities/eci-x-fps"
+abs = 5e-12
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: libm differ in the last digit between Rust libm and Apple libm; observed max 2.3e-13 (rel 1.5e-16) at t=36 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "velocities/eci-x-fps"
+abs = 5e-12
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.3e-13 (rel 1.5e-16) at t=112 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "velocities/eci-y-fps"
+abs = 1e-12
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: libm differ in the last digit between Rust libm and Apple libm; observed max 5.7e-14 (rel 4.6e-16) at t=31 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "velocities/eci-y-fps"
+abs = 5e-13
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.1e-14 (rel 3.9e-16) at t=112 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "velocities/eci-z-fps"
+abs = 1e-12
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: libm differ in the last digit between Rust libm and Apple libm; observed max 5.7e-14 (rel 2.7e-13) at t=32 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "velocities/eci-z-fps"
+abs = 2e-13
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.4e-14 (rel 2.1e-14) at t=79 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "velocities/u-fps"
+abs = 2e-09
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: libm differ in the last digit between Rust libm and Apple libm; observed max 1.3e-10 (rel 1.1e-11) at t=57 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "velocities/u-fps"
+abs = 1e-07
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 7.7e-09 (rel 2.5e-08) at t=108 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "velocities/v-fps"
+abs = 5e-09
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: libm differ in the last digit between Rust libm and Apple libm; observed max 4.6e-10 (rel 4.3e-10) at t=57 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "velocities/v-fps"
+abs = 1e-07
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 5.8e-09 (rel 1.9e-09) at t=98 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "velocities/w-fps"
+abs = 2e-09
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: libm differ in the last digit between Rust libm and Apple libm; observed max 1.5e-10 (rel 3.7e-11) at t=60 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "velocities/w-fps"
+abs = 1e-07
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8.2e-09 (rel 5.7e-09) at t=112 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "velocities/p-rad_sec"
+abs = 2e-11
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: libm differ in the last digit between Rust libm and Apple libm; observed max 1.2e-12 (rel 1.3e-06) at t=54 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "velocities/p-rad_sec"
+abs = 2e-10
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1e-11 (rel 5.7e-06) at t=87 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "velocities/q-rad_sec"
+abs = 1e-08
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: libm differ in the last digit between Rust libm and Apple libm; observed max 5.8e-10 (rel 5.8e-13) at t=60 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "velocities/q-rad_sec"
+abs = 5e-07
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.8e-08 (rel 2.8e-11) at t=97 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "velocities/r-rad_sec"
+abs = 2e-07
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: libm differ in the last digit between Rust libm and Apple libm; observed max 1.1e-08 (rel 1.9e-10) at t=60 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "velocities/r-rad_sec"
+abs = 1e-06
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8e-08 (rel 3.4e-10) at t=99 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "velocities/pi-rad_sec"
+abs = 2e-11
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: libm differ in the last digit between Rust libm and Apple libm; observed max 1.2e-12 (rel 2.8e-08) at t=54 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "velocities/pi-rad_sec"
+abs = 2e-10
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1e-11 (rel 2.4e-07) at t=87 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "velocities/qi-rad_sec"
+abs = 1e-08
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: libm differ in the last digit between Rust libm and Apple libm; observed max 5.8e-10 (rel 5.8e-13) at t=60 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "velocities/qi-rad_sec"
+abs = 5e-07
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.8e-08 (rel 2.8e-11) at t=97 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "velocities/ri-rad_sec"
+abs = 2e-07
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: libm differ in the last digit between Rust libm and Apple libm; observed max 1.1e-08 (rel 1.9e-10) at t=60 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "velocities/ri-rad_sec"
+abs = 1e-06
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8e-08 (rel 3.4e-10) at t=99 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "attitude/phi-rad"
+abs = 2e-10
+rel = 0.0
+period = 6.283185307179586
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 1.3e-11 (rel 4.3e-10) at t=59 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "attitude/phi-rad"
+abs = 2e-09
+rel = 0.0
+period = 6.283185307179586
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.1e-10 (rel 3e-10) at t=83 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "attitude/theta-rad"
+abs = 5e-11
+rel = 0.0
+period = 6.283185307179586
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 3e-12 (rel 1.1e-11) at t=60 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "attitude/theta-rad"
+abs = 2e-09
+rel = 0.0
+period = 6.283185307179586
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.4e-10 (rel 4e-09) at t=117 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "attitude/psi-rad"
+abs = 5e-11
+rel = 0.0
+period = 6.283185307179586
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 2.9e-12 (rel 4.3e-12) at t=59 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "attitude/psi-rad"
+abs = 2e-09
+rel = 0.0
+period = 6.283185307179586
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.1e-10 (rel 1.7e-10) at t=83 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "accelerations/udot-ft_sec2"
+abs = 2e-06
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: libm differ in the last digit between Rust libm and Apple libm; observed max 1.5e-07 (rel 3.7e-11) at t=59 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "accelerations/udot-ft_sec2"
+abs = 0.0001
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 9e-06 (rel 5.8e-08) at t=113 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "accelerations/vdot-ft_sec2"
+abs = 1e-05
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: libm differ in the last digit between Rust libm and Apple libm; observed max 5.5e-07 (rel 1.9e-10) at t=59 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "accelerations/vdot-ft_sec2"
+abs = 0.0001
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 5.8e-06 (rel 2.5e-08) at t=96 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "accelerations/wdot-ft_sec2"
+abs = 2e-06
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: libm differ in the last digit between Rust libm and Apple libm; observed max 1.4e-07 (rel 1e-11) at t=57 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "accelerations/wdot-ft_sec2"
+abs = 0.0001
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 7.8e-06 (rel 2.5e-08) at t=108 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "forces/fbx-total-lbs"
+abs = 5e-07
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: libm differ in the last digit between Rust libm and Apple libm; observed max 4.6e-08 (rel 1.1e-11) at t=57 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "forces/fbx-total-lbs"
+abs = 5e-05
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.4e-06 (rel 4e-09) at t=110 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "forces/fby-total-lbs"
+abs = 2e-06
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: libm differ in the last digit between Rust libm and Apple libm; observed max 1.7e-07 (rel 4.3e-10) at t=57 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "forces/fby-total-lbs"
+abs = 2e-05
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.6e-06 (rel 2.1e-09) at t=99 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "forces/fbz-total-lbs"
+abs = 1e-06
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: libm differ in the last digit between Rust libm and Apple libm; observed max 5.6e-08 (rel 3.7e-11) at t=60 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "forces/fbz-total-lbs"
+abs = 5e-05
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.5e-06 (rel 2.5e-09) at t=117 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "moments/m-total-lbsft"
+abs = 1e-06
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: libm differ in the last digit between Rust libm and Apple libm; observed max 5.6e-08 (rel 3.7e-11) at t=60 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "moments/m-total-lbsft"
+abs = 5e-05
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.5e-06 (rel 2.5e-09) at t=117 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "moments/n-total-lbsft"
+abs = 2e-06
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: libm differ in the last digit between Rust libm and Apple libm; observed max 1.7e-07 (rel 4.3e-10) at t=57 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "moments/n-total-lbsft"
+abs = 2e-05
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.6e-06 (rel 2.1e-09) at t=99 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "aero/qbar-psf"
+abs = 2e-12
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: the standard atmosphere's pow/exp differ in the last digit between Rust libm and Apple libm; observed max 1.1e-13 (rel 1.1e-15) at t=28 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "aero/qbar-psf"
+abs = 5e-14
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.4e-15 (rel 1.9e-15) at t=66 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "velocities/vt-fps"
+abs = 2e-12
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: the standard atmosphere's pow/exp differ in the last digit between Rust libm and Apple libm; observed max 1.1e-13 (rel 5.2e-16) at t=31 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "velocities/vt-fps"
+abs = 5e-13
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.3e-14 (rel 1e-15) at t=66 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "atmosphere/rho-slugs_ft3"
+abs = 1e-17
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: the standard atmosphere's pow/exp differ in the last digit between Rust libm and Apple libm; observed max 6.5e-19 (rel 3.7e-16) at t=1 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "atmosphere/rho-slugs_ft3"
+abs = 5e-18
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.3e-19 (rel 1.9e-16) at t=72 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "forces/fbx-external-lbs"
+abs = 5e-07
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: libm differ in the last digit between Rust libm and Apple libm; observed max 4.6e-08 (rel 1.1e-11) at t=57 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute"
+property = "forces/fbx-external-lbs"
+abs = 5e-05
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.4e-06 (rel 4e-09) at t=110 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the same IEEE operations in JSBSim's order."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "position/lat-gc-deg"
+abs = 5e-17
+rel = 0.0
+reason = "Output only, the state being bit-identical here: the geodetic/geocentric conversion's atan2 and sqrt differ in the last digit between Rust libm and Apple libm; observed max 3.5e-18 (rel 2.5e-16) at t=18 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "position/long-gc-deg"
+abs = 2e-13
+rel = 0.0
+period = 360.0
+reason = "Output only, the state being bit-identical here: the geodetic/geocentric conversion's atan2 and sqrt differ in the last digit between Rust libm and Apple libm; observed max 1.4e-14 (rel 1.6e-16) at t=0 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "velocities/eci-x-fps"
+abs = 5e-12
+rel = 0.0
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.3e-13 (rel 1.5e-16) at t=32 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "velocities/eci-y-fps"
+abs = 2e-12
+rel = 0.0
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.1e-13 (rel 4.6e-16) at t=31 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "velocities/eci-z-fps"
+abs = 1e-12
+rel = 0.0
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8.5e-14 (rel 1e-12) at t=31 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "velocities/u-fps"
+abs = 2e-09
+rel = 0.0
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.6e-10 (rel 5.3e-10) at t=60 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "velocities/v-fps"
+abs = 1e-08
+rel = 0.0
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 5.8e-10 (rel 4.3e-10) at t=60 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "velocities/w-fps"
+abs = 2e-09
+rel = 0.0
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.6e-10 (rel 7.2e-08) at t=59 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "velocities/p-rad_sec"
+abs = 2e-11
+rel = 0.0
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.3e-12 (rel 1.3e-06) at t=54 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "velocities/q-rad_sec"
+abs = 1e-08
+rel = 0.0
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 5.9e-10 (rel 5.8e-13) at t=59 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "velocities/r-rad_sec"
+abs = 2e-07
+rel = 0.0
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.1e-08 (rel 1.9e-10) at t=60 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "velocities/pi-rad_sec"
+abs = 2e-11
+rel = 0.0
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.3e-12 (rel 3e-08) at t=54 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "velocities/qi-rad_sec"
+abs = 1e-08
+rel = 0.0
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 5.9e-10 (rel 5.8e-13) at t=59 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "velocities/ri-rad_sec"
+abs = 2e-07
+rel = 0.0
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.1e-08 (rel 1.9e-10) at t=60 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "attitude/phi-rad"
+abs = 2e-08
+rel = 0.0
+period = 6.283185307179586
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.5e-09 (rel 1.9e-09) at t=58 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "attitude/theta-rad"
+abs = 5e-11
+rel = 0.0
+period = 6.283185307179586
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3e-12 (rel 5.6e-10) at t=60 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "attitude/psi-rad"
+abs = 2e-08
+rel = 0.0
+period = 6.283185307179586
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.5e-09 (rel 2.9e-10) at t=58 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "accelerations/udot-ft_sec2"
+abs = 2e-06
+rel = 0.0
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.6e-07 (rel 6.5e-08) at t=60 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "accelerations/vdot-ft_sec2"
+abs = 1e-05
+rel = 0.0
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 5.8e-07 (rel 7e-10) at t=60 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "accelerations/wdot-ft_sec2"
+abs = 2e-06
+rel = 0.0
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.6e-07 (rel 5.3e-10) at t=60 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "forces/fbx-total-lbs"
+abs = 1e-06
+rel = 0.0
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 5.8e-08 (rel 5.3e-10) at t=60 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "forces/fby-total-lbs"
+abs = 5e-06
+rel = 0.0
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.1e-07 (rel 4.3e-10) at t=60 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "forces/fbz-total-lbs"
+abs = 1e-06
+rel = 0.0
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 5.8e-08 (rel 7.2e-08) at t=59 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "moments/m-total-lbsft"
+abs = 1e-06
+rel = 0.0
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 5.8e-08 (rel 7.2e-08) at t=59 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "moments/n-total-lbsft"
+abs = 5e-06
+rel = 0.0
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.1e-07 (rel 4.3e-10) at t=60 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "aero/qbar-psf"
+abs = 1e-11
+rel = 0.0
+reason = "Output only, the state being bit-identical here: the standard atmosphere's pow/exp differ in the last digit between Rust libm and Apple libm; observed max 6.8e-13 (rel 2.5e-15) at t=31 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "velocities/vt-fps"
+abs = 5e-12
+rel = 0.0
+reason = "Output only, the state being bit-identical here: the standard atmosphere's pow/exp differ in the last digit between Rust libm and Apple libm; observed max 4.5e-13 (rel 1.1e-15) at t=31 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "atmosphere/rho-slugs_ft3"
+abs = 1e-17
+rel = 0.0
+reason = "Output only, the state being bit-identical here: the standard atmosphere's pow/exp differ in the last digit between Rust libm and Apple libm; observed max 6.5e-19 (rel 3.9e-16) at t=1 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_chute-60s"
+property = "forces/fbx-external-lbs"
+abs = 1e-06
+rel = 0.0
+reason = "The integrated state first differs at t=31 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 5.8e-08 (rel 5.3e-10) at t=60 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the same IEEE operations in JSBSim's order."
+
+[[tolerance]]
+case = "mk82"
+property = "position/lat-gc-deg"
+abs = 5e-17
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.5e-18 (rel 3.7e-16) at t=19 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "position/long-gc-deg"
+abs = 1e-16
+rel = 0.0
+period = 360.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1e-17 (rel 2.9e-12) at t=13 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "position/lat-geod-deg"
+abs = 5e-17
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.5e-18 (rel 3.1e-16) at t=23 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "position/eci-y-ft"
+abs = 5e-11
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.6e-12 (rel 2.4e-16) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "position/eci-z-ft"
+abs = 1e-11
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 9.1e-13 (rel 2.2e-16) at t=23 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "position/ecef-y-ft"
+abs = 5e-11
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.6e-12 (rel 2.9e-12) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "position/ecef-z-ft"
+abs = 1e-11
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 9.1e-13 (rel 2.2e-16) at t=23 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "velocities/eci-x-fps"
+abs = 2e-12
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.7e-13 (rel 2.2e-13) at t=29 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "velocities/eci-y-fps"
+abs = 1e-11
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 9.1e-13 (rel 6e-16) at t=42 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "velocities/eci-z-fps"
+abs = 5e-12
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.6e-13 (rel 1.9e-15) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "velocities/u-fps"
+abs = 1e-11
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 6.8e-13 (rel 1.5e-15) at t=40 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "velocities/v-fps"
+abs = 5e-11
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.1e-12 (rel 2.2e-11) at t=15 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "velocities/w-fps"
+abs = 5e-11
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.5e-12 (rel 2.8e-11) at t=14 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "velocities/p-rad_sec"
+abs = 1e-12
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8.8e-14 (rel 3.2e-14) at t=14 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "velocities/q-rad_sec"
+abs = 2e-13
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.5e-14 (rel 8.4e-12) at t=13 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "velocities/r-rad_sec"
+abs = 2e-13
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.4e-14 (rel 2.6e-12) at t=13 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "velocities/pi-rad_sec"
+abs = 1e-12
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8.8e-14 (rel 2) at t=14 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "velocities/qi-rad_sec"
+abs = 2e-13
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.5e-14 (rel 8.4e-12) at t=13 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "velocities/ri-rad_sec"
+abs = 2e-13
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.4e-14 (rel 2.6e-12) at t=13 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "attitude/phi-rad"
+abs = 1e-12
+rel = 0.0
+period = 6.283185307179586
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 6.2e-14 (rel 1.4e-12) at t=18 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "attitude/theta-rad"
+abs = 2e-13
+rel = 0.0
+period = 6.283185307179586
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.1e-14 (rel 1.3e-13) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "attitude/psi-rad"
+abs = 1e-12
+rel = 0.0
+period = 6.283185307179586
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 6.8e-14 (rel 2.5e-14) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "accelerations/udot-ft_sec2"
+abs = 5e-12
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.6e-13 (rel 1.9e-11) at t=42 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "accelerations/vdot-ft_sec2"
+abs = 2e-10
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2e-11 (rel 5e-12) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "accelerations/wdot-ft_sec2"
+abs = 5e-10
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2e-11 (rel 8.9e-12) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "forces/fbx-total-lbs"
+abs = 5e-11
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.6e-12 (rel 4.4e-12) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "forces/fby-total-lbs"
+abs = 5e-10
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.2e-11 (rel 2.2e-11) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "forces/fbz-total-lbs"
+abs = 5e-11
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.6e-12 (rel 2.8e-11) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "moments/l-total-lbsft"
+abs = 5e-12
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.5e-13 (rel 2.2e-11) at t=14 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "moments/m-total-lbsft"
+abs = 2e-10
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.3e-11 (rel 1.4e-11) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "moments/n-total-lbsft"
+abs = 2e-10
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.7e-11 (rel 5e-12) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "aero/qbar-psf"
+abs = 2e-11
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1e-12 (rel 2.6e-15) at t=40 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "velocities/vt-fps"
+abs = 1e-11
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 6.8e-13 (rel 1.3e-15) at t=40 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "atmosphere/rho-slugs_ft3"
+abs = 1e-17
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 6.5e-19 (rel 3.8e-16) at t=22 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "aero/alpha-rad"
+abs = 5e-13
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2e-14 (rel 2.8e-11) at t=14 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "aero/beta-rad"
+abs = 2e-13
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.7e-14 (rel 2.2e-11) at t=15 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "velocities/mach"
+abs = 1e-14
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 6.7e-16 (rel 1.4e-15) at t=40 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "forces/fbx-aero-lbs"
+abs = 5e-11
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.6e-12 (rel 4.4e-12) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "forces/fby-aero-lbs"
+abs = 5e-10
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.2e-11 (rel 2.2e-11) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "forces/fbz-aero-lbs"
+abs = 5e-11
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.6e-12 (rel 2.8e-11) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "forces/fwx-aero-lbs"
+abs = 2e-11
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.5e-12 (rel 6.8e-14) at t=14 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "forces/fwy-aero-lbs"
+abs = 5e-10
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.1e-11 (rel 2.2e-11) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "forces/fwz-aero-lbs"
+abs = 5e-11
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4e-12 (rel 11) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "forces/fsx-aero-lbs"
+abs = 5e-11
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.6e-12 (rel 2.3e-12) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "forces/fsy-aero-lbs"
+abs = 5e-10
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.2e-11 (rel 2.2e-11) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "forces/fsz-aero-lbs"
+abs = 5e-11
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4e-12 (rel 11) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "moments/l-aero-lbsft"
+abs = 5e-12
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.5e-13 (rel 2.2e-11) at t=14 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "moments/m-aero-lbsft"
+abs = 2e-10
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.3e-11 (rel 1.4e-11) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "moments/n-aero-lbsft"
+abs = 2e-10
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.7e-11 (rel 5e-12) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "moments/roll-stab-aero-lbsft"
+abs = 5e-11
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.9e-12 (rel 2.8e-11) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "moments/pitch-stab-aero-lbsft"
+abs = 2e-10
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.3e-11 (rel 1.4e-11) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "moments/yaw-stab-aero-lbsft"
+abs = 2e-10
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.7e-11 (rel 4.9e-12) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "moments/roll-wind-aero-lbsft"
+abs = 1e-11
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 5.4e-13 (rel 2.7e-11) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "moments/pitch-wind-aero-lbsft"
+abs = 2e-10
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.3e-11 (rel 2.2e-11) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82"
+property = "moments/yaw-wind-aero-lbsft"
+abs = 2e-10
+rel = 0.0
+reason = "The integrated state first differs at t=8 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.7e-11 (rel 4.9e-12) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the same IEEE operations in JSBSim's order."
+
+[[tolerance]]
+case = "mk82_body"
+property = "position/lat-gc-deg"
+abs = 5e-13
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.6e-14 (rel 2.5e-12) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "position/long-gc-deg"
+abs = 5e-13
+rel = 0.0
+period = 360.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.7e-14 (rel 7e-11) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "position/lat-geod-deg"
+abs = 5e-13
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.6e-14 (rel 2.5e-12) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "position/eci-y-ft"
+abs = 1e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 9.9e-09 (rel 1.5e-13) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "position/eci-z-ft"
+abs = 2e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.7e-08 (rel 2.5e-12) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "position/ecef-y-ft"
+abs = 1e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 9.9e-09 (rel 7e-11) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "position/ecef-z-ft"
+abs = 2e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.7e-08 (rel 2.5e-12) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "velocities/eci-x-fps"
+abs = 1e-08
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 7e-10 (rel 1.1e-12) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "velocities/eci-y-fps"
+abs = 5e-08
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.2e-09 (rel 1.5e-12) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "velocities/eci-z-fps"
+abs = 5e-08
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.3e-09 (rel 3.2e-11) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "velocities/u-fps"
+abs = 5e-09
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.4e-10 (rel 3.5e-13) at t=41 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "velocities/v-fps"
+abs = 2e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1e-08 (rel 2.3e-08) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "velocities/w-fps"
+abs = 1e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 9.3e-09 (rel 3.1e-09) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "velocities/p-rad_sec"
+abs = 2e-09
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.3e-10 (rel 6.5e-11) at t=42 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "velocities/q-rad_sec"
+abs = 5e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.8e-11 (rel 5.8e-08) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "velocities/r-rad_sec"
+abs = 5e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.1e-11 (rel 2.7e-09) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "velocities/pi-rad_sec"
+abs = 2e-09
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.3e-10 (rel 0.66) at t=42 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "velocities/qi-rad_sec"
+abs = 5e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.8e-11 (rel 4.9e-08) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "velocities/ri-rad_sec"
+abs = 5e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.1e-11 (rel 2.7e-09) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "attitude/phi-rad"
+abs = 5e-09
+rel = 0.0
+period = 6.283185307179586
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.8e-10 (rel 3.4e-09) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "attitude/theta-rad"
+abs = 1e-10
+rel = 0.0
+period = 6.283185307179586
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8.7e-12 (rel 6e-12) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "attitude/psi-rad"
+abs = 5e-10
+rel = 0.0
+period = 6.283185307179586
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.7e-11 (rel 1.3e-11) at t=40 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "accelerations/udot-ft_sec2"
+abs = 1e-08
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 6.3e-10 (rel 1.6e-10) at t=40 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "accelerations/vdot-ft_sec2"
+abs = 5e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.8e-08 (rel 1.1e-08) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "accelerations/wdot-ft_sec2"
+abs = 5e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.1e-08 (rel 1.3e-08) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "forces/fbx-total-lbs"
+abs = 5e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.8e-11 (rel 2.9e-13) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "forces/fby-total-lbs"
+abs = 1e-06
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8.2e-08 (rel 2.3e-08) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "forces/fbz-total-lbs"
+abs = 1e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 6.4e-09 (rel 6.1e-09) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "moments/l-total-lbsft"
+abs = 5e-09
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.7e-10 (rel 3.5e-09) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "moments/m-total-lbsft"
+abs = 5e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.4e-08 (rel 3.1e-09) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "moments/n-total-lbsft"
+abs = 5e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.6e-08 (rel 4.5e-07) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "aero/qbar-psf"
+abs = 2e-09
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.3e-10 (rel 2.8e-13) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "velocities/vt-fps"
+abs = 1e-09
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 9.2e-11 (rel 1.4e-13) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "atmosphere/rho-slugs_ft3"
+abs = 1e-17
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 6.5e-19 (rel 3.7e-16) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "aero/alpha-rad"
+abs = 2e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.4e-11 (rel 3.1e-09) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "aero/beta-rad"
+abs = 2e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.4e-11 (rel 2.3e-08) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "velocities/mach"
+abs = 1e-12
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8.3e-14 (rel 1.4e-13) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "forces/fbx-aero-lbs"
+abs = 5e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.8e-11 (rel 2.9e-13) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "forces/fby-aero-lbs"
+abs = 1e-06
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8.2e-08 (rel 2.3e-08) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "forces/fbz-aero-lbs"
+abs = 1e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 6.4e-09 (rel 6.1e-09) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "forces/fwx-aero-lbs"
+abs = 5e-08
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.8e-09 (rel 2e-11) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "forces/fwy-aero-lbs"
+abs = 1e-06
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 7.9e-08 (rel 2.3e-08) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "forces/fwz-aero-lbs"
+abs = 5e-08
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.6e-09 (rel 4.2e-09) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "forces/fsx-aero-lbs"
+abs = 5e-09
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 5e-10 (rel 3e-12) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "forces/fsy-aero-lbs"
+abs = 1e-06
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8.2e-08 (rel 2.3e-08) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "forces/fsz-aero-lbs"
+abs = 5e-08
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.6e-09 (rel 4.2e-09) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "moments/l-aero-lbsft"
+abs = 5e-09
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.7e-10 (rel 3.5e-09) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "moments/m-aero-lbsft"
+abs = 5e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.4e-08 (rel 3.1e-09) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "moments/n-aero-lbsft"
+abs = 5e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.6e-08 (rel 4.5e-07) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "moments/roll-stab-aero-lbsft"
+abs = 5e-08
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.9e-09 (rel 4.5e-07) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "moments/pitch-stab-aero-lbsft"
+abs = 5e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.4e-08 (rel 3.1e-09) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "moments/yaw-stab-aero-lbsft"
+abs = 5e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.6e-08 (rel 4.5e-07) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "moments/roll-wind-aero-lbsft"
+abs = 2e-08
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.3e-09 (rel 9.5e-09) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "moments/pitch-wind-aero-lbsft"
+abs = 5e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.4e-08 (rel 3.1e-09) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_body"
+property = "moments/yaw-wind-aero-lbsft"
+abs = 5e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.6e-08 (rel 4.5e-07) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the same IEEE operations in JSBSim's order."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "position/lat-gc-deg"
+abs = 5e-13
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.6e-14 (rel 2.5e-12) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "position/long-gc-deg"
+abs = 5e-13
+rel = 0.0
+period = 360.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.7e-14 (rel 7e-11) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "position/lat-geod-deg"
+abs = 5e-13
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.6e-14 (rel 2.5e-12) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "position/eci-y-ft"
+abs = 1e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 9.9e-09 (rel 1.5e-13) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "position/eci-z-ft"
+abs = 2e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.7e-08 (rel 2.5e-12) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "position/ecef-y-ft"
+abs = 1e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 9.9e-09 (rel 7e-11) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "position/ecef-z-ft"
+abs = 2e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.7e-08 (rel 2.5e-12) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "velocities/eci-x-fps"
+abs = 1e-08
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 7e-10 (rel 1.1e-12) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "velocities/eci-y-fps"
+abs = 5e-08
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.2e-09 (rel 1.5e-12) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "velocities/eci-z-fps"
+abs = 5e-08
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.3e-09 (rel 3.2e-11) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "velocities/u-fps"
+abs = 5e-09
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.4e-10 (rel 3.5e-13) at t=41 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "velocities/v-fps"
+abs = 2e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1e-08 (rel 2.3e-08) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "velocities/w-fps"
+abs = 1e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 9.3e-09 (rel 3.1e-09) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "velocities/p-rad_sec"
+abs = 2e-09
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.3e-10 (rel 6.5e-11) at t=42 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "velocities/q-rad_sec"
+abs = 5e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.8e-11 (rel 5.8e-08) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "velocities/r-rad_sec"
+abs = 5e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.1e-11 (rel 2.7e-09) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "velocities/pi-rad_sec"
+abs = 2e-09
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.3e-10 (rel 0.66) at t=42 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "velocities/qi-rad_sec"
+abs = 5e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.8e-11 (rel 4.9e-08) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "velocities/ri-rad_sec"
+abs = 5e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.1e-11 (rel 2.7e-09) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "attitude/phi-rad"
+abs = 5e-09
+rel = 0.0
+period = 6.283185307179586
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.8e-10 (rel 3.4e-09) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "attitude/theta-rad"
+abs = 1e-10
+rel = 0.0
+period = 6.283185307179586
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8.7e-12 (rel 6e-12) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "attitude/psi-rad"
+abs = 5e-10
+rel = 0.0
+period = 6.283185307179586
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.7e-11 (rel 1.3e-11) at t=40 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "accelerations/udot-ft_sec2"
+abs = 1e-08
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 6.3e-10 (rel 1.6e-10) at t=40 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "accelerations/vdot-ft_sec2"
+abs = 5e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.8e-08 (rel 1.1e-08) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "accelerations/wdot-ft_sec2"
+abs = 5e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.1e-08 (rel 1.3e-08) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "forces/fbx-total-lbs"
+abs = 5e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.8e-11 (rel 2.9e-13) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "forces/fby-total-lbs"
+abs = 1e-06
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8.2e-08 (rel 2.3e-08) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "forces/fbz-total-lbs"
+abs = 1e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 6.4e-09 (rel 6.1e-09) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "moments/l-total-lbsft"
+abs = 5e-09
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.7e-10 (rel 3.5e-09) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "moments/m-total-lbsft"
+abs = 5e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.4e-08 (rel 3.1e-09) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "moments/n-total-lbsft"
+abs = 5e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.6e-08 (rel 4.5e-07) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "aero/qbar-psf"
+abs = 2e-09
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.3e-10 (rel 2.8e-13) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "velocities/vt-fps"
+abs = 1e-09
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 9.2e-11 (rel 1.4e-13) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "atmosphere/rho-slugs_ft3"
+abs = 1e-17
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 6.5e-19 (rel 3.7e-16) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "aero/alpha-rad"
+abs = 2e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.4e-11 (rel 3.1e-09) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "aero/beta-rad"
+abs = 2e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.4e-11 (rel 2.3e-08) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "velocities/mach"
+abs = 1e-12
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8.3e-14 (rel 1.4e-13) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "forces/fbx-aero-lbs"
+abs = 5e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.8e-11 (rel 2.9e-13) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "forces/fby-aero-lbs"
+abs = 1e-06
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8.2e-08 (rel 2.3e-08) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "forces/fbz-aero-lbs"
+abs = 1e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 6.4e-09 (rel 6.1e-09) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "forces/fwx-aero-lbs"
+abs = 5e-08
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.8e-09 (rel 2e-11) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "forces/fwy-aero-lbs"
+abs = 1e-06
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 7.9e-08 (rel 2.3e-08) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "forces/fwz-aero-lbs"
+abs = 5e-08
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.6e-09 (rel 4.2e-09) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "forces/fsx-aero-lbs"
+abs = 5e-09
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 5e-10 (rel 3e-12) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "forces/fsy-aero-lbs"
+abs = 1e-06
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8.2e-08 (rel 2.3e-08) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "forces/fsz-aero-lbs"
+abs = 5e-08
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.6e-09 (rel 4.2e-09) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "moments/l-aero-lbsft"
+abs = 5e-09
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.7e-10 (rel 3.5e-09) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "moments/m-aero-lbsft"
+abs = 5e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.4e-08 (rel 3.1e-09) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "moments/n-aero-lbsft"
+abs = 5e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.6e-08 (rel 4.5e-07) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "moments/roll-stab-aero-lbsft"
+abs = 5e-08
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.9e-09 (rel 4.5e-07) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "moments/pitch-stab-aero-lbsft"
+abs = 5e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.4e-08 (rel 3.1e-09) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "moments/yaw-stab-aero-lbsft"
+abs = 5e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.6e-08 (rel 4.5e-07) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "moments/roll-wind-aero-lbsft"
+abs = 2e-08
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.3e-09 (rel 9.5e-09) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "moments/pitch-wind-aero-lbsft"
+abs = 5e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.4e-08 (rel 3.1e-09) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_axial"
+property = "moments/yaw-wind-aero-lbsft"
+abs = 5e-07
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.6e-08 (rel 4.5e-07) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the same IEEE operations in JSBSim's order."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "position/lat-gc-deg"
+abs = 5e-15
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4e-16 (rel 2.1e-14) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "position/long-gc-deg"
+abs = 2e-15
+rel = 0.0
+period = 360.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2e-16 (rel 5.2e-13) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "position/lat-geod-deg"
+abs = 5e-15
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4e-16 (rel 2.1e-14) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "position/eci-y-ft"
+abs = 1e-09
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 7.3e-11 (rel 1.1e-15) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "position/eci-z-ft"
+abs = 2e-09
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.4e-10 (rel 2.1e-14) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "position/ecef-y-ft"
+abs = 1e-09
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 7.3e-11 (rel 5.2e-13) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "position/ecef-z-ft"
+abs = 2e-09
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.4e-10 (rel 2.1e-14) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "velocities/eci-x-fps"
+abs = 5e-11
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.9e-12 (rel 3e-13) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "velocities/eci-y-fps"
+abs = 2e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.2e-11 (rel 8e-15) at t=41 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "velocities/eci-z-fps"
+abs = 2e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.9e-11 (rel 1.7e-13) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "velocities/u-fps"
+abs = 2e-11
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1e-12 (rel 1.8e-15) at t=36 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "velocities/v-fps"
+abs = 1e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8.1e-12 (rel 2.7e-10) at t=37 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "velocities/w-fps"
+abs = 1e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 9.6e-12 (rel 5.7e-11) at t=31 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "velocities/p-rad_sec"
+abs = 2e-12
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1e-13 (rel 2.7e-12) at t=30 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "velocities/q-rad_sec"
+abs = 5e-13
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.3e-14 (rel 3.1e-11) at t=16 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "velocities/r-rad_sec"
+abs = 5e-13
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.3e-14 (rel 1.2e-10) at t=29 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "velocities/pi-rad_sec"
+abs = 2e-12
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1e-13 (rel 2.7e-12) at t=30 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "velocities/qi-rad_sec"
+abs = 5e-13
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.3e-14 (rel 2.5e-11) at t=16 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "velocities/ri-rad_sec"
+abs = 5e-13
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.3e-14 (rel 2e-10) at t=29 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "attitude/phi-rad"
+abs = 2e-11
+rel = 0.0
+period = 6.283185307179586
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.6e-12 (rel 5.2e-11) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "attitude/theta-rad"
+abs = 5e-13
+rel = 0.0
+period = 6.283185307179586
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.8e-14 (rel 9.9e-13) at t=42 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "attitude/psi-rad"
+abs = 2e-12
+rel = 0.0
+period = 6.283185307179586
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1e-13 (rel 3.2e-14) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "accelerations/udot-ft_sec2"
+abs = 5e-12
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.5e-13 (rel 6.5e-13) at t=29 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "accelerations/vdot-ft_sec2"
+abs = 2e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.3e-11 (rel 3.1e-10) at t=41 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "accelerations/wdot-ft_sec2"
+abs = 2e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.4e-11 (rel 3.4e-10) at t=40 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "forces/fbx-total-lbs"
+abs = 2e-11
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.6e-12 (rel 1.7e-12) at t=31 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "forces/fby-total-lbs"
+abs = 1e-09
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 5.5e-11 (rel 2.7e-10) at t=37 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "forces/fbz-total-lbs"
+abs = 5e-11
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3e-12 (rel 5.7e-11) at t=31 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "moments/l-total-lbsft"
+abs = 2e-12
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.1e-13 (rel 1.8e-10) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "moments/m-total-lbsft"
+abs = 5e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.2e-11 (rel 1.3e-10) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "moments/n-total-lbsft"
+abs = 5e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.8e-11 (rel 5.9e-11) at t=37 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "aero/qbar-psf"
+abs = 2e-11
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.7e-12 (rel 3.6e-15) at t=42 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "velocities/vt-fps"
+abs = 2e-11
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.1e-12 (rel 1.8e-15) at t=42 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "atmosphere/rho-slugs_ft3"
+abs = 5e-18
+rel = 0.0
+reason = "Output only, the state being bit-identical here: the standard atmosphere's pow/exp differ in the last digit between Rust libm and Apple libm; observed max 4.3e-19 (rel 2.6e-16) at t=3 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "aero/alpha-rad"
+abs = 5e-13
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.1e-14 (rel 5.7e-11) at t=31 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "aero/beta-rad"
+abs = 5e-13
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.2e-14 (rel 2.7e-10) at t=24 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "velocities/mach"
+abs = 1e-14
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1e-15 (rel 1.8e-15) at t=38 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "forces/fbx-aero-lbs"
+abs = 2e-11
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.6e-12 (rel 1.7e-12) at t=31 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "forces/fby-aero-lbs"
+abs = 1e-09
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 5.5e-11 (rel 2.7e-10) at t=37 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "forces/fbz-aero-lbs"
+abs = 5e-11
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3e-12 (rel 5.7e-11) at t=31 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "forces/fwx-aero-lbs"
+abs = 1e-11
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 6.8e-13 (rel 3.8e-15) at t=44 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "forces/fwy-aero-lbs"
+abs = 1e-09
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 5.3e-11 (rel 2.7e-10) at t=37 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "forces/fwz-aero-lbs"
+abs = 2e-11
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.6e-12 (rel 13) at t=31 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "forces/fsx-aero-lbs"
+abs = 2e-11
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.6e-12 (rel 1.7e-12) at t=31 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "forces/fsy-aero-lbs"
+abs = 1e-09
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 5.5e-11 (rel 2.7e-10) at t=37 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "forces/fsz-aero-lbs"
+abs = 2e-11
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.6e-12 (rel 13) at t=31 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "moments/l-aero-lbsft"
+abs = 2e-12
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.1e-13 (rel 1.8e-10) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "moments/m-aero-lbsft"
+abs = 5e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.2e-11 (rel 1.3e-10) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "moments/n-aero-lbsft"
+abs = 5e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.8e-11 (rel 5.9e-11) at t=37 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "moments/roll-stab-aero-lbsft"
+abs = 1e-11
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8e-13 (rel 2.7e-10) at t=31 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "moments/pitch-stab-aero-lbsft"
+abs = 5e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.2e-11 (rel 1.3e-10) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "moments/yaw-stab-aero-lbsft"
+abs = 5e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.8e-11 (rel 4.7e-11) at t=37 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "moments/roll-wind-aero-lbsft"
+abs = 5e-12
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.1e-13 (rel 2.7e-10) at t=31 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "moments/pitch-wind-aero-lbsft"
+abs = 5e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.2e-11 (rel 1.3e-10) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_wind"
+property = "moments/yaw-wind-aero-lbsft"
+abs = 5e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.8e-11 (rel 4.7e-11) at t=37 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the same IEEE operations in JSBSim's order."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "position/lat-gc-deg"
+abs = 1e-16
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 6.9e-18 (rel 4.6e-16) at t=31 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "position/long-gc-deg"
+abs = 2e-16
+rel = 0.0
+period = 360.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2e-17 (rel 1.5e-12) at t=34 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "position/lat-geod-deg"
+abs = 1e-16
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 6.9e-18 (rel 3.5e-16) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "position/eci-y-ft"
+abs = 1e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 7.3e-12 (rel 1.4e-16) at t=33 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "position/eci-z-ft"
+abs = 2e-11
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.8e-12 (rel 2.5e-16) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "position/ecef-y-ft"
+abs = 1e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 7.3e-12 (rel 1.5e-12) at t=33 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "position/ecef-z-ft"
+abs = 2e-11
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.8e-12 (rel 2.5e-16) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "velocities/eci-x-fps"
+abs = 2e-12
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.7e-13 (rel 1.2e-14) at t=29 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "velocities/eci-y-fps"
+abs = 5e-12
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.5e-13 (rel 3e-16) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "velocities/eci-z-fps"
+abs = 5e-12
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.1e-13 (rel 2.3e-15) at t=42 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "velocities/u-fps"
+abs = 5e-12
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.5e-13 (rel 1.1e-15) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "velocities/v-fps"
+abs = 5e-11
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.6e-12 (rel 5.9e-12) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "velocities/w-fps"
+abs = 2e-11
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.6e-12 (rel 6.2e-12) at t=42 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "velocities/p-rad_sec"
+abs = 5e-12
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.4e-13 (rel 6.2e-11) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "velocities/q-rad_sec"
+abs = 5e-14
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.3e-15 (rel 5.1e-13) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "velocities/r-rad_sec"
+abs = 1e-13
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 9.1e-15 (rel 1.6e-11) at t=42 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "velocities/pi-rad_sec"
+abs = 5e-12
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.4e-13 (rel 5.7e-11) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "velocities/qi-rad_sec"
+abs = 5e-14
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.3e-15 (rel 5.1e-13) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "velocities/ri-rad_sec"
+abs = 1e-13
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 9.1e-15 (rel 4.4e-11) at t=42 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "attitude/phi-rad"
+abs = 1e-12
+rel = 0.0
+period = 6.283185307179586
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8e-14 (rel 2.8e-14) at t=41 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "attitude/theta-rad"
+abs = 5e-14
+rel = 0.0
+period = 6.283185307179586
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.4e-15 (rel 1e-13) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "attitude/psi-rad"
+abs = 1e-13
+rel = 0.0
+period = 6.283185307179586
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8e-15 (rel 2.5e-15) at t=41 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "accelerations/udot-ft_sec2"
+abs = 2e-12
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.1e-13 (rel 6.7e-13) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "accelerations/vdot-ft_sec2"
+abs = 2e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1e-11 (rel 1.9e-11) at t=41 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "accelerations/wdot-ft_sec2"
+abs = 5e-11
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.9e-12 (rel 6.4e-12) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "forces/fbx-total-lbs"
+abs = 5e-12
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.8e-13 (rel 4.7e-15) at t=42 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "forces/fby-total-lbs"
+abs = 2e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.9e-11 (rel 5.9e-12) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "forces/fbz-total-lbs"
+abs = 2e-11
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.7e-12 (rel 6.2e-12) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "moments/l-total-lbsft"
+abs = 5e-12
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.7e-13 (rel 8e-11) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "moments/m-total-lbsft"
+abs = 1e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 7.3e-12 (rel 4.7e-13) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "moments/n-total-lbsft"
+abs = 2e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.3e-11 (rel 1.4e-11) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "aero/qbar-psf"
+abs = 1e-11
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 9.1e-13 (rel 1.8e-15) at t=42 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "velocities/vt-fps"
+abs = 1e-11
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 5.7e-13 (rel 9e-16) at t=42 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "atmosphere/rho-slugs_ft3"
+abs = 5e-18
+rel = 0.0
+reason = "Output only, the state being bit-identical here: the standard atmosphere's pow/exp differ in the last digit between Rust libm and Apple libm; observed max 4.3e-19 (rel 2.5e-16) at t=1 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "aero/alpha-rad"
+abs = 5e-14
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.4e-15 (rel 6.2e-12) at t=22 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "aero/beta-rad"
+abs = 5e-14
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.6e-15 (rel 5.9e-12) at t=41 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "velocities/mach"
+abs = 5e-15
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.4e-16 (rel 9.4e-16) at t=32 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "forces/fbx-aero-lbs"
+abs = 5e-12
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.8e-13 (rel 4.7e-15) at t=42 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "forces/fby-aero-lbs"
+abs = 2e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.9e-11 (rel 5.9e-12) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "forces/fbz-aero-lbs"
+abs = 2e-11
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.7e-12 (rel 6.2e-12) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "forces/fwx-aero-lbs"
+abs = 1e-11
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 7.1e-13 (rel 4e-15) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "forces/fwy-aero-lbs"
+abs = 2e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.8e-11 (rel 5.9e-12) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "forces/fwz-aero-lbs"
+abs = 2e-11
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.3e-12 (rel 2) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "forces/fsx-aero-lbs"
+abs = 5e-12
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.1e-13 (rel 4e-15) at t=42 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "forces/fsy-aero-lbs"
+abs = 2e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.9e-11 (rel 5.9e-12) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "forces/fsz-aero-lbs"
+abs = 2e-11
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.3e-12 (rel 2) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "moments/l-aero-lbsft"
+abs = 5e-12
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.7e-13 (rel 8e-11) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "moments/m-aero-lbsft"
+abs = 1e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 7.3e-12 (rel 4.7e-13) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "moments/n-aero-lbsft"
+abs = 2e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.3e-11 (rel 1.4e-11) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "moments/roll-stab-aero-lbsft"
+abs = 2e-12
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.8e-13 (rel 6.4e-12) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "moments/pitch-stab-aero-lbsft"
+abs = 1e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 7.3e-12 (rel 4.7e-13) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "moments/yaw-stab-aero-lbsft"
+abs = 2e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.3e-11 (rel 1.4e-11) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "moments/roll-wind-aero-lbsft"
+abs = 5e-12
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.4e-13 (rel 5.9e-12) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "moments/pitch-wind-aero-lbsft"
+abs = 1e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 7.3e-12 (rel 4.7e-13) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_stability"
+property = "moments/yaw-wind-aero-lbsft"
+abs = 2e-10
+rel = 0.0
+reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.3e-11 (rel 1.4e-11) at t=43 s; bound 10x that."

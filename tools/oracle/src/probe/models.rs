@@ -12,7 +12,7 @@ use super::ProbeContext;
 
 /// Property subtrees of the models the port covers; keep in step with
 /// `kPrefixes` in the C++ probe.
-pub const PREFIXES: [&str; 14] = [
+pub const PREFIXES: [&str; 16] = [
     "inertia/",
     "metrics/",
     "position/",
@@ -27,6 +27,8 @@ pub const PREFIXES: [&str; 14] = [
     "fcs/",
     "systems/",
     "simulation/",
+    "contact/",
+    "gear/",
 ];
 
 /// Output types made by `<output>` I/O directives, which the port ignores.

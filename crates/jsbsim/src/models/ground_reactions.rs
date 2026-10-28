@@ -3,35 +3,31 @@
 // FGLGear: Copyright (C) 1999 Jon S. Berndt (jon@jsbsim.org).
 // FGSurface: Copyright (C) 2013 Ansgar Schwarz, Bertrand Coconnier.
 // Derived from JSBSim src/models/FGGroundReactions.{h,cpp},
-// FGLGear.{h,cpp} (contact geometry and the touching test) and
+// FGLGear.{h,cpp} (GetBodyForces up to the contact test) and
 // FGSurface.{h,cpp}.
 //
-//! Ground contacts. Only their geometry is ported: a contact that touches
-//! the terrain, under the condition `FGLGear::GetBodyForces` uses, stops
-//! the simulation with [`Error::Unsupported`] until the gear model is.
+//! Ground contacts. Everything `FGLGear` loads and binds is ported, and
+//! each frame runs `GetBodyForces` as far as a contact that is not
+//! compressed goes; a contact that touches the terrain stops the
+//! simulation with [`Error::Touchdown`] until the gear forces are.
+
+mod contact;
+mod contact_bind;
+#[cfg(test)]
+mod tests;
+
+pub use contact::{
+    BrakeGroup, Contact, ContactState, ContactType, DampType, Friction, SteerType, Steering, Strut,
+};
+pub use contact_bind::indexed_name;
 
 use super::base::ModelBase;
 use super::inertial::Inertial;
 use crate::Error;
-use crate::fdm::{Binder, Kind};
+use crate::fdm::{Binder, Kind, LoadContext};
 use crate::math::{ColumnVector3, Location, Matrix33};
 use crate::units::INCHTOFT;
 use crate::xml::Element;
-
-/// A `<contact>` (geometry of `FGLGear`).
-#[derive(Debug, Clone)]
-pub struct Contact {
-    /// Contact name.
-    pub name: String,
-    /// Location, structural frame, in.
-    pub location: ColumnVector3,
-    /// Whether it retracts.
-    pub retractable: bool,
-    /// Unit gear position (`GearPos`).
-    pub gear_pos: f64,
-    /// Sticky switch to the FCS gear position (`useFCSGearPos`).
-    pub use_fcs_gear_pos: bool,
-}
 
 /// Surface properties (`FGSurface`).
 #[derive(Debug, Clone, Copy)]
@@ -60,8 +56,10 @@ impl Default for Surface {
     }
 }
 
-/// What the touching test reads.
-#[derive(Debug, Clone)]
+/// What the executive loads before each run (`FGGroundReactions::in`,
+/// the fields the airborne part of `FGLGear::GetBodyForces` and the
+/// constructor read).
+#[derive(Debug, Clone, Default)]
 pub struct Inputs {
     /// Vehicle location.
     pub location: Location,
@@ -71,6 +69,10 @@ pub struct Inputs {
     pub xyz_cg: ColumnVector3,
     /// FCS gear position.
     pub fcs_gear_pos: f64,
+    /// Empty weight, lbs.
+    pub empty_weight: f64,
+    /// `dt` times the model rate, s.
+    pub total_delta_t: f64,
 }
 
 /// `FGGroundReactions`.
@@ -78,13 +80,15 @@ pub struct Inputs {
 pub struct GroundReactions {
     /// Scheduling.
     pub base: ModelBase,
+    /// Inputs.
+    pub input: Inputs,
     /// Contacts in load order.
     pub contacts: Vec<Contact>,
     /// Surface.
     pub surface: Surface,
     /// Steering command.
     pub ds_cmd: f64,
-    /// Force, body frame (zero: no contact is ever loaded).
+    /// Force, body frame (zero: no contact force is computed).
     pub forces: ColumnVector3,
     /// Moment (zero).
     pub moments: ColumnVector3,
@@ -96,71 +100,140 @@ fn ts2b() -> Matrix33 {
 }
 
 impl GroundReactions {
-    /// `Load`: the contacts, after the executive's `Upload`.
-    pub fn load(&mut self, document: &Element) -> Result<(), Error> {
+    /// `InitModel`.
+    pub fn init_model(&mut self) {
+        self.base.init();
+        self.forces = ColumnVector3::zero();
+        self.moments = ColumnVector3::zero();
+        self.ds_cmd = 0.0;
+        for contact in &mut self.contacts {
+            contact.reset_to_ic();
+        }
+    }
+
+    /// `Load`: the contacts, after the executive's `Upload`, each bound as
+    /// it is constructed.
+    pub fn load(&mut self, document: &Element, ctx: &mut LoadContext<'_>) -> Result<(), Error> {
         for el in document.find_elements("contact") {
-            let name = el.attribute("name").to_owned();
-            let Some(location) = el.find_element("location") else {
-                return Err(Error::Model {
-                    message: format!("{}: No location given for contact {name}", el.location()),
-                });
-            };
-            let retractable = match el.find_element("retractable") {
-                Some(_) => el.find_element_value_as_number("retractable")? as u32 > 0,
-                None => false,
-            };
-            self.contacts.push(Contact {
-                name,
-                location: location.find_element_triplet_convert_to("IN")?,
-                retractable,
-                gear_pos: 1.0,
-                use_fcs_gear_pos: false,
-            });
+            let number = self.contacts.len();
+            let contact = Contact::load(el, number, self.input.empty_weight, ctx)?;
+            contact_bind::bind(&mut ctx.binder, &contact)?;
+            self.contacts.push(contact);
         }
         Ok(())
     }
 
-    /// The touching test of `FGLGear::GetBodyForces`, for every contact in
-    /// order: the gear is down and the terrain height under the contact is
-    /// negative.
+    /// `GetWOW`: whether any BOGEY has weight on it.
+    #[must_use]
+    pub fn wow(&self) -> bool {
+        self.contacts
+            .iter()
+            .any(|c| c.kind == ContactType::Bogey && c.state.wow)
+    }
+
+    /// `SetDsCmd`.
+    pub fn set_ds_cmd(&mut self, cmd: f64) {
+        self.ds_cmd = cmd;
+        for contact in &mut self.contacts {
+            contact.set_steer_cmd(cmd);
+        }
+    }
+
+    /// `FGLGear::GetBodyForces` for every contact in order, up to the
+    /// point where a contact first compresses against the terrain, which is
+    /// refused with [`Error::Touchdown`].
     pub fn check_contacts(
         &mut self,
-        input: &Inputs,
         inertial: &Inertial,
         trim_status: bool,
         sim_time: f64,
     ) -> Result<(), Error> {
+        let bump = self.surface.bump_height();
         for contact in &mut self.contacts {
-            let body = ts2b() * (contact.location - input.xyz_cg);
-            let local = input.tb2l * body;
-            let gear_loc = input.location.local_to_location(local);
-            let mut height = inertial.contact(&gear_loc).agl;
-            let gear_pos = if contact.retractable {
-                if contact.use_fcs_gear_pos || input.fcs_gear_pos != 1.0 {
-                    contact.use_fcs_gear_pos = true;
-                    input.fcs_gear_pos
-                } else {
-                    contact.gear_pos
-                }
-            } else {
-                1.0
-            };
-            if gear_pos > 0.99 {
-                if !trim_status {
-                    height -= self.surface.bump_height();
-                }
-                if height < 0.0 {
-                    return Err(Error::Unsupported {
-                        construct: format!(
-                            "ground contact \"{}\" touching the terrain at t={sim_time} s (FGLGear forces)",
-                            contact.name
-                        ),
-                        path: "ground_reactions".to_owned(),
-                    });
-                }
+            if contact.airborne_frame(
+                &self.input,
+                inertial,
+                &self.surface,
+                bump,
+                trim_status,
+                sim_time,
+            ) {
+                return Err(Error::Touchdown {
+                    contact: contact.name.clone(),
+                    time: sim_time,
+                });
             }
         }
         Ok(())
+    }
+}
+
+/// `std::max(a, b)`, which is `a < b ? b : a`: unlike [`f64::max`], it
+/// keeps `a` when either is NaN and when both are zeros.
+fn cpp_max(a: f64, b: f64) -> f64 {
+    if a < b { b } else { a }
+}
+
+impl Contact {
+    /// `GetBodyForces` while the contact is not compressed. Returns true,
+    /// having changed nothing past the height test, where JSBSim would
+    /// start computing the gear forces.
+    fn airborne_frame(
+        &mut self,
+        input: &Inputs,
+        inertial: &Inertial,
+        surface: &Surface,
+        bump: f64,
+        trim_status: bool,
+        sim_time: f64,
+    ) -> bool {
+        let mut gear_pos = 1.0;
+        let body = ts2b() * (self.location - input.xyz_cg);
+        self.state.local_gear = input.tb2l * body;
+        let gear_loc = input.location.local_to_location(self.state.local_gear);
+        let mut height = inertial.contact(&gear_loc).agl;
+        self.state.agl = cpp_max(height, 0.0);
+        if self.retractable {
+            gear_pos = self.gear_unit_pos(input.fcs_gear_pos);
+        }
+        if gear_pos > 0.99 {
+            if !trim_status {
+                height -= bump;
+            }
+            self.surface.static_factor = surface.static_factor;
+            self.surface.rolling_factor = surface.rolling_factor;
+            self.surface.maximum_force = surface.maximum_force;
+            self.surface.bumpiness = surface.bumpiness;
+            self.surface.solid = surface.solid;
+            if height < 0.0 {
+                return true;
+            }
+            let s = &mut self.state;
+            s.wow = false;
+            s.compress_length = 0.0;
+            s.compress_speed = 0.0;
+            s.wheel_slip = 0.0;
+            s.strut_force = 0.0;
+            self.steering.angle *= cpp_max(gear_pos - 0.8, 0.0) / 0.2;
+        }
+        let s = &mut self.state;
+        if !s.wow {
+            s.wheel_vel[1] -= 13.0 * input.total_delta_t;
+            if s.wheel_vel[1] < 0.0 {
+                s.wheel_vel[1] = 0.0;
+            }
+        }
+        if !trim_status {
+            if s.last_wow != s.wow {
+                tracing::info!(
+                    "GEAR_CONTACT: {sim_time:.6} seconds: {} {}",
+                    self.name,
+                    u8::from(s.wow)
+                );
+            }
+            s.last_wow = s.wow;
+        }
+        false
     }
 }
 
@@ -218,12 +291,14 @@ pub fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
     b.typed_getter("gear/num-units", Kind::Int, |m| {
         m.ground_reactions.contacts.len() as f64
     })?;
-    b.typed_getter("gear/wow", Kind::Bool, |_| 0.0)?;
+    b.typed_getter("gear/wow", Kind::Bool, |m| {
+        f64::from(u8::from(m.ground_reactions.wow()))
+    })?;
     b.property(
         "fcs/steer-cmd-norm",
         d,
         |m| m.ground_reactions.ds_cmd,
-        |m, v| m.ground_reactions.ds_cmd = v,
+        |m, v| m.ground_reactions.set_ds_cmd(v),
     )?;
     Ok(())
 }

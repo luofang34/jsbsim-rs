@@ -186,18 +186,50 @@ pub fn port_script_blocking(
     let dir = repo_root.join("oracle").join("goldens").join(case);
     let (candidate, error) = crate::port_script::run_script(&spec.rust_root(repo_root), spec);
     let mut reference = Series::read_blocking(&dir.join(REFERENCE_FILE))?;
+    let mut expected_stop = false;
     if let Some(e) = &error {
         let cut = candidate
             .time(candidate.rows.len().saturating_sub(1))
             .unwrap_or(f64::NAN);
-        error!("{case}: the Rust run stopped after t={cut}: {e}");
+        expected_stop = is_expected_touchdown(e, spec.touchdown.as_ref());
+        if expected_stop {
+            info!(
+                "{case}: the Rust run stops at the declared touchdown cut-off ({e}); compared up to t={cut}"
+            );
+        } else {
+            error!("{case}: the Rust run stopped after t={cut}: {e}");
+        }
         reference.rows.truncate(candidate.rows.len());
+    } else if let Some(t) = &spec.touchdown {
+        error!(
+            "{case}: the manifest expects a touchdown cut-off at t={} on {:?}, but the Rust run went on",
+            t.time, t.contact
+        );
     }
     let table = ToleranceTable::read_blocking(&repo_root.join("oracle").join("tolerances.toml"))?;
     let outcome = compare(case, &reference, &candidate, &table)?;
-    Ok(if report(case, &outcome) && error.is_none() {
+    let stopped_as_declared = match &error {
+        None => spec.touchdown.is_none(),
+        Some(_) => expected_stop,
+    };
+    Ok(if report(case, &outcome) && stopped_as_declared {
         ExitCode::SUCCESS
     } else {
         ExitCode::FAILURE
     })
+}
+
+/// Whether `stop` is the touchdown cut-off `declared` names: the only
+/// run-time Unsupported, at exactly the declared time and contact.
+#[must_use]
+pub fn is_expected_touchdown(
+    stop: &crate::port_script::Stop,
+    declared: Option<&crate::manifest::Touchdown>,
+) -> bool {
+    match (stop, declared) {
+        (crate::port_script::Stop::Port(jsbsim::Error::Touchdown { contact, time }), Some(t)) => {
+            *contact == t.contact && *time == t.time
+        }
+        _ => false,
+    }
 }
