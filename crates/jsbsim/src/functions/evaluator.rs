@@ -72,6 +72,7 @@ impl<'a> Evaluator<'a> {
     /// `getDoubleValue()` of `node`: aliases are followed, an unreadable
     /// node reads 0, and a node bound to a function or table evaluates it
     /// and stores the result.
+    #[inline]
     pub fn read_node(&mut self, node: NodeId) -> Result<f64, Error> {
         let Some(target) = self.tree.read_target(node) else {
             return Ok(0.0);
@@ -108,6 +109,7 @@ impl<'a> Evaluator<'a> {
     }
 
     /// `FGPropertyValue::GetValue()`: the node's value times the sign.
+    #[inline]
     pub fn property(&mut self, value: &PropertyValue) -> Result<f64, Error> {
         let node = value.node(self.tree)?;
         Ok(self.read_node(node)? * value.sign())
