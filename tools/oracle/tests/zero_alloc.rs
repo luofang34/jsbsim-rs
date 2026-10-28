@@ -89,7 +89,7 @@ fn steady_state_frames_allocate_nothing() {
 
     // The derived tripods run every ported FCS component family.
     let oracle_resolver = FileResolver::new(oracle_dir());
-    for system in &oracle::derived::tripod::SYSTEMS {
+    for system in oracle::derived::tripod::SYSTEMS.iter().filter(|s| s.loads) {
         let name = format!("tripod_{}", system.suffix);
         let mut fdm = Fdm::new().unwrap();
         fdm.set_systems_path(system.systems_path);

@@ -1,0 +1,7422 @@
+# Upstream tests/function.xml without its random components
+# (oracle/derived/systems/function_no_random.xml) driven as
+# TestFunctions.test_functions, test_rotations, test_wf_to_bf and
+# test_table_exception drive it, on tripod_function and
+# tripod_function_bad_table; test_functions then sweeps test/input
+# over the table.
+# The tripod starts at 10000 ft so that its contacts stay clear of the
+# ground; nothing else differs from the upstream test.
+paths ../.. derived/aircraft derived/systems
+new
+load tripod_function
+watch test/sum-values test/sum-values-inverted-input-sign test/sum-value-property test/sum-properties test/summer test/summer-with-bias test/output test/product-values test/product-value-property test/product-as-a-no-op test/sin-value test/sin-property test/interpolate1d test/table simulation/frame
+set ic/h-sl-ft 10000
+runic
+set test/reference 1.5
+run
+set test/input 0.0
+run
+set test/input 0.5
+run
+set test/input 1.0
+run
+set test/input 1.5
+run
+set test/input 3.0
+run
+set test/input -1.0
+run
+paths ../.. derived/aircraft derived/systems
+new
+load tripod_function
+watch test/alpha_local test/beta_local test/gamma_local
+set ic/h-sl-ft 10000
+runic
+set test/alpha -170
+set test/gamma -170
+run
+set test/alpha -170
+set test/gamma -160
+run
+set test/alpha -170
+set test/gamma -150
+run
+set test/alpha -170
+set test/gamma -140
+run
+set test/alpha -170
+set test/gamma -130
+run
+set test/alpha -170
+set test/gamma -120
+run
+set test/alpha -170
+set test/gamma -110
+run
+set test/alpha -170
+set test/gamma -100
+run
+set test/alpha -170
+set test/gamma -90
+run
+set test/alpha -170
+set test/gamma -80
+run
+set test/alpha -170
+set test/gamma -70
+run
+set test/alpha -170
+set test/gamma -60
+run
+set test/alpha -170
+set test/gamma -50
+run
+set test/alpha -170
+set test/gamma -40
+run
+set test/alpha -170
+set test/gamma -30
+run
+set test/alpha -170
+set test/gamma -20
+run
+set test/alpha -170
+set test/gamma -10
+run
+set test/alpha -170
+set test/gamma 0
+run
+set test/alpha -170
+set test/gamma 10
+run
+set test/alpha -170
+set test/gamma 20
+run
+set test/alpha -170
+set test/gamma 30
+run
+set test/alpha -170
+set test/gamma 40
+run
+set test/alpha -170
+set test/gamma 50
+run
+set test/alpha -170
+set test/gamma 60
+run
+set test/alpha -170
+set test/gamma 70
+run
+set test/alpha -170
+set test/gamma 80
+run
+set test/alpha -170
+set test/gamma 90
+run
+set test/alpha -170
+set test/gamma 100
+run
+set test/alpha -170
+set test/gamma 110
+run
+set test/alpha -170
+set test/gamma 120
+run
+set test/alpha -170
+set test/gamma 130
+run
+set test/alpha -170
+set test/gamma 140
+run
+set test/alpha -170
+set test/gamma 150
+run
+set test/alpha -170
+set test/gamma 160
+run
+set test/alpha -170
+set test/gamma 170
+run
+set test/alpha -170
+set test/gamma 180
+run
+set test/alpha -160
+set test/gamma -170
+run
+set test/alpha -160
+set test/gamma -160
+run
+set test/alpha -160
+set test/gamma -150
+run
+set test/alpha -160
+set test/gamma -140
+run
+set test/alpha -160
+set test/gamma -130
+run
+set test/alpha -160
+set test/gamma -120
+run
+set test/alpha -160
+set test/gamma -110
+run
+set test/alpha -160
+set test/gamma -100
+run
+set test/alpha -160
+set test/gamma -90
+run
+set test/alpha -160
+set test/gamma -80
+run
+set test/alpha -160
+set test/gamma -70
+run
+set test/alpha -160
+set test/gamma -60
+run
+set test/alpha -160
+set test/gamma -50
+run
+set test/alpha -160
+set test/gamma -40
+run
+set test/alpha -160
+set test/gamma -30
+run
+set test/alpha -160
+set test/gamma -20
+run
+set test/alpha -160
+set test/gamma -10
+run
+set test/alpha -160
+set test/gamma 0
+run
+set test/alpha -160
+set test/gamma 10
+run
+set test/alpha -160
+set test/gamma 20
+run
+set test/alpha -160
+set test/gamma 30
+run
+set test/alpha -160
+set test/gamma 40
+run
+set test/alpha -160
+set test/gamma 50
+run
+set test/alpha -160
+set test/gamma 60
+run
+set test/alpha -160
+set test/gamma 70
+run
+set test/alpha -160
+set test/gamma 80
+run
+set test/alpha -160
+set test/gamma 90
+run
+set test/alpha -160
+set test/gamma 100
+run
+set test/alpha -160
+set test/gamma 110
+run
+set test/alpha -160
+set test/gamma 120
+run
+set test/alpha -160
+set test/gamma 130
+run
+set test/alpha -160
+set test/gamma 140
+run
+set test/alpha -160
+set test/gamma 150
+run
+set test/alpha -160
+set test/gamma 160
+run
+set test/alpha -160
+set test/gamma 170
+run
+set test/alpha -160
+set test/gamma 180
+run
+set test/alpha -150
+set test/gamma -170
+run
+set test/alpha -150
+set test/gamma -160
+run
+set test/alpha -150
+set test/gamma -150
+run
+set test/alpha -150
+set test/gamma -140
+run
+set test/alpha -150
+set test/gamma -130
+run
+set test/alpha -150
+set test/gamma -120
+run
+set test/alpha -150
+set test/gamma -110
+run
+set test/alpha -150
+set test/gamma -100
+run
+set test/alpha -150
+set test/gamma -90
+run
+set test/alpha -150
+set test/gamma -80
+run
+set test/alpha -150
+set test/gamma -70
+run
+set test/alpha -150
+set test/gamma -60
+run
+set test/alpha -150
+set test/gamma -50
+run
+set test/alpha -150
+set test/gamma -40
+run
+set test/alpha -150
+set test/gamma -30
+run
+set test/alpha -150
+set test/gamma -20
+run
+set test/alpha -150
+set test/gamma -10
+run
+set test/alpha -150
+set test/gamma 0
+run
+set test/alpha -150
+set test/gamma 10
+run
+set test/alpha -150
+set test/gamma 20
+run
+set test/alpha -150
+set test/gamma 30
+run
+set test/alpha -150
+set test/gamma 40
+run
+set test/alpha -150
+set test/gamma 50
+run
+set test/alpha -150
+set test/gamma 60
+run
+set test/alpha -150
+set test/gamma 70
+run
+set test/alpha -150
+set test/gamma 80
+run
+set test/alpha -150
+set test/gamma 90
+run
+set test/alpha -150
+set test/gamma 100
+run
+set test/alpha -150
+set test/gamma 110
+run
+set test/alpha -150
+set test/gamma 120
+run
+set test/alpha -150
+set test/gamma 130
+run
+set test/alpha -150
+set test/gamma 140
+run
+set test/alpha -150
+set test/gamma 150
+run
+set test/alpha -150
+set test/gamma 160
+run
+set test/alpha -150
+set test/gamma 170
+run
+set test/alpha -150
+set test/gamma 180
+run
+set test/alpha -140
+set test/gamma -170
+run
+set test/alpha -140
+set test/gamma -160
+run
+set test/alpha -140
+set test/gamma -150
+run
+set test/alpha -140
+set test/gamma -140
+run
+set test/alpha -140
+set test/gamma -130
+run
+set test/alpha -140
+set test/gamma -120
+run
+set test/alpha -140
+set test/gamma -110
+run
+set test/alpha -140
+set test/gamma -100
+run
+set test/alpha -140
+set test/gamma -90
+run
+set test/alpha -140
+set test/gamma -80
+run
+set test/alpha -140
+set test/gamma -70
+run
+set test/alpha -140
+set test/gamma -60
+run
+set test/alpha -140
+set test/gamma -50
+run
+set test/alpha -140
+set test/gamma -40
+run
+set test/alpha -140
+set test/gamma -30
+run
+set test/alpha -140
+set test/gamma -20
+run
+set test/alpha -140
+set test/gamma -10
+run
+set test/alpha -140
+set test/gamma 0
+run
+set test/alpha -140
+set test/gamma 10
+run
+set test/alpha -140
+set test/gamma 20
+run
+set test/alpha -140
+set test/gamma 30
+run
+set test/alpha -140
+set test/gamma 40
+run
+set test/alpha -140
+set test/gamma 50
+run
+set test/alpha -140
+set test/gamma 60
+run
+set test/alpha -140
+set test/gamma 70
+run
+set test/alpha -140
+set test/gamma 80
+run
+set test/alpha -140
+set test/gamma 90
+run
+set test/alpha -140
+set test/gamma 100
+run
+set test/alpha -140
+set test/gamma 110
+run
+set test/alpha -140
+set test/gamma 120
+run
+set test/alpha -140
+set test/gamma 130
+run
+set test/alpha -140
+set test/gamma 140
+run
+set test/alpha -140
+set test/gamma 150
+run
+set test/alpha -140
+set test/gamma 160
+run
+set test/alpha -140
+set test/gamma 170
+run
+set test/alpha -140
+set test/gamma 180
+run
+set test/alpha -130
+set test/gamma -170
+run
+set test/alpha -130
+set test/gamma -160
+run
+set test/alpha -130
+set test/gamma -150
+run
+set test/alpha -130
+set test/gamma -140
+run
+set test/alpha -130
+set test/gamma -130
+run
+set test/alpha -130
+set test/gamma -120
+run
+set test/alpha -130
+set test/gamma -110
+run
+set test/alpha -130
+set test/gamma -100
+run
+set test/alpha -130
+set test/gamma -90
+run
+set test/alpha -130
+set test/gamma -80
+run
+set test/alpha -130
+set test/gamma -70
+run
+set test/alpha -130
+set test/gamma -60
+run
+set test/alpha -130
+set test/gamma -50
+run
+set test/alpha -130
+set test/gamma -40
+run
+set test/alpha -130
+set test/gamma -30
+run
+set test/alpha -130
+set test/gamma -20
+run
+set test/alpha -130
+set test/gamma -10
+run
+set test/alpha -130
+set test/gamma 0
+run
+set test/alpha -130
+set test/gamma 10
+run
+set test/alpha -130
+set test/gamma 20
+run
+set test/alpha -130
+set test/gamma 30
+run
+set test/alpha -130
+set test/gamma 40
+run
+set test/alpha -130
+set test/gamma 50
+run
+set test/alpha -130
+set test/gamma 60
+run
+set test/alpha -130
+set test/gamma 70
+run
+set test/alpha -130
+set test/gamma 80
+run
+set test/alpha -130
+set test/gamma 90
+run
+set test/alpha -130
+set test/gamma 100
+run
+set test/alpha -130
+set test/gamma 110
+run
+set test/alpha -130
+set test/gamma 120
+run
+set test/alpha -130
+set test/gamma 130
+run
+set test/alpha -130
+set test/gamma 140
+run
+set test/alpha -130
+set test/gamma 150
+run
+set test/alpha -130
+set test/gamma 160
+run
+set test/alpha -130
+set test/gamma 170
+run
+set test/alpha -130
+set test/gamma 180
+run
+set test/alpha -120
+set test/gamma -170
+run
+set test/alpha -120
+set test/gamma -160
+run
+set test/alpha -120
+set test/gamma -150
+run
+set test/alpha -120
+set test/gamma -140
+run
+set test/alpha -120
+set test/gamma -130
+run
+set test/alpha -120
+set test/gamma -120
+run
+set test/alpha -120
+set test/gamma -110
+run
+set test/alpha -120
+set test/gamma -100
+run
+set test/alpha -120
+set test/gamma -90
+run
+set test/alpha -120
+set test/gamma -80
+run
+set test/alpha -120
+set test/gamma -70
+run
+set test/alpha -120
+set test/gamma -60
+run
+set test/alpha -120
+set test/gamma -50
+run
+set test/alpha -120
+set test/gamma -40
+run
+set test/alpha -120
+set test/gamma -30
+run
+set test/alpha -120
+set test/gamma -20
+run
+set test/alpha -120
+set test/gamma -10
+run
+set test/alpha -120
+set test/gamma 0
+run
+set test/alpha -120
+set test/gamma 10
+run
+set test/alpha -120
+set test/gamma 20
+run
+set test/alpha -120
+set test/gamma 30
+run
+set test/alpha -120
+set test/gamma 40
+run
+set test/alpha -120
+set test/gamma 50
+run
+set test/alpha -120
+set test/gamma 60
+run
+set test/alpha -120
+set test/gamma 70
+run
+set test/alpha -120
+set test/gamma 80
+run
+set test/alpha -120
+set test/gamma 90
+run
+set test/alpha -120
+set test/gamma 100
+run
+set test/alpha -120
+set test/gamma 110
+run
+set test/alpha -120
+set test/gamma 120
+run
+set test/alpha -120
+set test/gamma 130
+run
+set test/alpha -120
+set test/gamma 140
+run
+set test/alpha -120
+set test/gamma 150
+run
+set test/alpha -120
+set test/gamma 160
+run
+set test/alpha -120
+set test/gamma 170
+run
+set test/alpha -120
+set test/gamma 180
+run
+set test/alpha -110
+set test/gamma -170
+run
+set test/alpha -110
+set test/gamma -160
+run
+set test/alpha -110
+set test/gamma -150
+run
+set test/alpha -110
+set test/gamma -140
+run
+set test/alpha -110
+set test/gamma -130
+run
+set test/alpha -110
+set test/gamma -120
+run
+set test/alpha -110
+set test/gamma -110
+run
+set test/alpha -110
+set test/gamma -100
+run
+set test/alpha -110
+set test/gamma -90
+run
+set test/alpha -110
+set test/gamma -80
+run
+set test/alpha -110
+set test/gamma -70
+run
+set test/alpha -110
+set test/gamma -60
+run
+set test/alpha -110
+set test/gamma -50
+run
+set test/alpha -110
+set test/gamma -40
+run
+set test/alpha -110
+set test/gamma -30
+run
+set test/alpha -110
+set test/gamma -20
+run
+set test/alpha -110
+set test/gamma -10
+run
+set test/alpha -110
+set test/gamma 0
+run
+set test/alpha -110
+set test/gamma 10
+run
+set test/alpha -110
+set test/gamma 20
+run
+set test/alpha -110
+set test/gamma 30
+run
+set test/alpha -110
+set test/gamma 40
+run
+set test/alpha -110
+set test/gamma 50
+run
+set test/alpha -110
+set test/gamma 60
+run
+set test/alpha -110
+set test/gamma 70
+run
+set test/alpha -110
+set test/gamma 80
+run
+set test/alpha -110
+set test/gamma 90
+run
+set test/alpha -110
+set test/gamma 100
+run
+set test/alpha -110
+set test/gamma 110
+run
+set test/alpha -110
+set test/gamma 120
+run
+set test/alpha -110
+set test/gamma 130
+run
+set test/alpha -110
+set test/gamma 140
+run
+set test/alpha -110
+set test/gamma 150
+run
+set test/alpha -110
+set test/gamma 160
+run
+set test/alpha -110
+set test/gamma 170
+run
+set test/alpha -110
+set test/gamma 180
+run
+set test/alpha -100
+set test/gamma -170
+run
+set test/alpha -100
+set test/gamma -160
+run
+set test/alpha -100
+set test/gamma -150
+run
+set test/alpha -100
+set test/gamma -140
+run
+set test/alpha -100
+set test/gamma -130
+run
+set test/alpha -100
+set test/gamma -120
+run
+set test/alpha -100
+set test/gamma -110
+run
+set test/alpha -100
+set test/gamma -100
+run
+set test/alpha -100
+set test/gamma -90
+run
+set test/alpha -100
+set test/gamma -80
+run
+set test/alpha -100
+set test/gamma -70
+run
+set test/alpha -100
+set test/gamma -60
+run
+set test/alpha -100
+set test/gamma -50
+run
+set test/alpha -100
+set test/gamma -40
+run
+set test/alpha -100
+set test/gamma -30
+run
+set test/alpha -100
+set test/gamma -20
+run
+set test/alpha -100
+set test/gamma -10
+run
+set test/alpha -100
+set test/gamma 0
+run
+set test/alpha -100
+set test/gamma 10
+run
+set test/alpha -100
+set test/gamma 20
+run
+set test/alpha -100
+set test/gamma 30
+run
+set test/alpha -100
+set test/gamma 40
+run
+set test/alpha -100
+set test/gamma 50
+run
+set test/alpha -100
+set test/gamma 60
+run
+set test/alpha -100
+set test/gamma 70
+run
+set test/alpha -100
+set test/gamma 80
+run
+set test/alpha -100
+set test/gamma 90
+run
+set test/alpha -100
+set test/gamma 100
+run
+set test/alpha -100
+set test/gamma 110
+run
+set test/alpha -100
+set test/gamma 120
+run
+set test/alpha -100
+set test/gamma 130
+run
+set test/alpha -100
+set test/gamma 140
+run
+set test/alpha -100
+set test/gamma 150
+run
+set test/alpha -100
+set test/gamma 160
+run
+set test/alpha -100
+set test/gamma 170
+run
+set test/alpha -100
+set test/gamma 180
+run
+set test/alpha -90
+set test/gamma -170
+run
+set test/alpha -90
+set test/gamma -160
+run
+set test/alpha -90
+set test/gamma -150
+run
+set test/alpha -90
+set test/gamma -140
+run
+set test/alpha -90
+set test/gamma -130
+run
+set test/alpha -90
+set test/gamma -120
+run
+set test/alpha -90
+set test/gamma -110
+run
+set test/alpha -90
+set test/gamma -100
+run
+set test/alpha -90
+set test/gamma -90
+run
+set test/alpha -90
+set test/gamma -80
+run
+set test/alpha -90
+set test/gamma -70
+run
+set test/alpha -90
+set test/gamma -60
+run
+set test/alpha -90
+set test/gamma -50
+run
+set test/alpha -90
+set test/gamma -40
+run
+set test/alpha -90
+set test/gamma -30
+run
+set test/alpha -90
+set test/gamma -20
+run
+set test/alpha -90
+set test/gamma -10
+run
+set test/alpha -90
+set test/gamma 0
+run
+set test/alpha -90
+set test/gamma 10
+run
+set test/alpha -90
+set test/gamma 20
+run
+set test/alpha -90
+set test/gamma 30
+run
+set test/alpha -90
+set test/gamma 40
+run
+set test/alpha -90
+set test/gamma 50
+run
+set test/alpha -90
+set test/gamma 60
+run
+set test/alpha -90
+set test/gamma 70
+run
+set test/alpha -90
+set test/gamma 80
+run
+set test/alpha -90
+set test/gamma 90
+run
+set test/alpha -90
+set test/gamma 100
+run
+set test/alpha -90
+set test/gamma 110
+run
+set test/alpha -90
+set test/gamma 120
+run
+set test/alpha -90
+set test/gamma 130
+run
+set test/alpha -90
+set test/gamma 140
+run
+set test/alpha -90
+set test/gamma 150
+run
+set test/alpha -90
+set test/gamma 160
+run
+set test/alpha -90
+set test/gamma 170
+run
+set test/alpha -90
+set test/gamma 180
+run
+set test/alpha -80
+set test/gamma -170
+run
+set test/alpha -80
+set test/gamma -160
+run
+set test/alpha -80
+set test/gamma -150
+run
+set test/alpha -80
+set test/gamma -140
+run
+set test/alpha -80
+set test/gamma -130
+run
+set test/alpha -80
+set test/gamma -120
+run
+set test/alpha -80
+set test/gamma -110
+run
+set test/alpha -80
+set test/gamma -100
+run
+set test/alpha -80
+set test/gamma -90
+run
+set test/alpha -80
+set test/gamma -80
+run
+set test/alpha -80
+set test/gamma -70
+run
+set test/alpha -80
+set test/gamma -60
+run
+set test/alpha -80
+set test/gamma -50
+run
+set test/alpha -80
+set test/gamma -40
+run
+set test/alpha -80
+set test/gamma -30
+run
+set test/alpha -80
+set test/gamma -20
+run
+set test/alpha -80
+set test/gamma -10
+run
+set test/alpha -80
+set test/gamma 0
+run
+set test/alpha -80
+set test/gamma 10
+run
+set test/alpha -80
+set test/gamma 20
+run
+set test/alpha -80
+set test/gamma 30
+run
+set test/alpha -80
+set test/gamma 40
+run
+set test/alpha -80
+set test/gamma 50
+run
+set test/alpha -80
+set test/gamma 60
+run
+set test/alpha -80
+set test/gamma 70
+run
+set test/alpha -80
+set test/gamma 80
+run
+set test/alpha -80
+set test/gamma 90
+run
+set test/alpha -80
+set test/gamma 100
+run
+set test/alpha -80
+set test/gamma 110
+run
+set test/alpha -80
+set test/gamma 120
+run
+set test/alpha -80
+set test/gamma 130
+run
+set test/alpha -80
+set test/gamma 140
+run
+set test/alpha -80
+set test/gamma 150
+run
+set test/alpha -80
+set test/gamma 160
+run
+set test/alpha -80
+set test/gamma 170
+run
+set test/alpha -80
+set test/gamma 180
+run
+set test/alpha -70
+set test/gamma -170
+run
+set test/alpha -70
+set test/gamma -160
+run
+set test/alpha -70
+set test/gamma -150
+run
+set test/alpha -70
+set test/gamma -140
+run
+set test/alpha -70
+set test/gamma -130
+run
+set test/alpha -70
+set test/gamma -120
+run
+set test/alpha -70
+set test/gamma -110
+run
+set test/alpha -70
+set test/gamma -100
+run
+set test/alpha -70
+set test/gamma -90
+run
+set test/alpha -70
+set test/gamma -80
+run
+set test/alpha -70
+set test/gamma -70
+run
+set test/alpha -70
+set test/gamma -60
+run
+set test/alpha -70
+set test/gamma -50
+run
+set test/alpha -70
+set test/gamma -40
+run
+set test/alpha -70
+set test/gamma -30
+run
+set test/alpha -70
+set test/gamma -20
+run
+set test/alpha -70
+set test/gamma -10
+run
+set test/alpha -70
+set test/gamma 0
+run
+set test/alpha -70
+set test/gamma 10
+run
+set test/alpha -70
+set test/gamma 20
+run
+set test/alpha -70
+set test/gamma 30
+run
+set test/alpha -70
+set test/gamma 40
+run
+set test/alpha -70
+set test/gamma 50
+run
+set test/alpha -70
+set test/gamma 60
+run
+set test/alpha -70
+set test/gamma 70
+run
+set test/alpha -70
+set test/gamma 80
+run
+set test/alpha -70
+set test/gamma 90
+run
+set test/alpha -70
+set test/gamma 100
+run
+set test/alpha -70
+set test/gamma 110
+run
+set test/alpha -70
+set test/gamma 120
+run
+set test/alpha -70
+set test/gamma 130
+run
+set test/alpha -70
+set test/gamma 140
+run
+set test/alpha -70
+set test/gamma 150
+run
+set test/alpha -70
+set test/gamma 160
+run
+set test/alpha -70
+set test/gamma 170
+run
+set test/alpha -70
+set test/gamma 180
+run
+set test/alpha -60
+set test/gamma -170
+run
+set test/alpha -60
+set test/gamma -160
+run
+set test/alpha -60
+set test/gamma -150
+run
+set test/alpha -60
+set test/gamma -140
+run
+set test/alpha -60
+set test/gamma -130
+run
+set test/alpha -60
+set test/gamma -120
+run
+set test/alpha -60
+set test/gamma -110
+run
+set test/alpha -60
+set test/gamma -100
+run
+set test/alpha -60
+set test/gamma -90
+run
+set test/alpha -60
+set test/gamma -80
+run
+set test/alpha -60
+set test/gamma -70
+run
+set test/alpha -60
+set test/gamma -60
+run
+set test/alpha -60
+set test/gamma -50
+run
+set test/alpha -60
+set test/gamma -40
+run
+set test/alpha -60
+set test/gamma -30
+run
+set test/alpha -60
+set test/gamma -20
+run
+set test/alpha -60
+set test/gamma -10
+run
+set test/alpha -60
+set test/gamma 0
+run
+set test/alpha -60
+set test/gamma 10
+run
+set test/alpha -60
+set test/gamma 20
+run
+set test/alpha -60
+set test/gamma 30
+run
+set test/alpha -60
+set test/gamma 40
+run
+set test/alpha -60
+set test/gamma 50
+run
+set test/alpha -60
+set test/gamma 60
+run
+set test/alpha -60
+set test/gamma 70
+run
+set test/alpha -60
+set test/gamma 80
+run
+set test/alpha -60
+set test/gamma 90
+run
+set test/alpha -60
+set test/gamma 100
+run
+set test/alpha -60
+set test/gamma 110
+run
+set test/alpha -60
+set test/gamma 120
+run
+set test/alpha -60
+set test/gamma 130
+run
+set test/alpha -60
+set test/gamma 140
+run
+set test/alpha -60
+set test/gamma 150
+run
+set test/alpha -60
+set test/gamma 160
+run
+set test/alpha -60
+set test/gamma 170
+run
+set test/alpha -60
+set test/gamma 180
+run
+set test/alpha -50
+set test/gamma -170
+run
+set test/alpha -50
+set test/gamma -160
+run
+set test/alpha -50
+set test/gamma -150
+run
+set test/alpha -50
+set test/gamma -140
+run
+set test/alpha -50
+set test/gamma -130
+run
+set test/alpha -50
+set test/gamma -120
+run
+set test/alpha -50
+set test/gamma -110
+run
+set test/alpha -50
+set test/gamma -100
+run
+set test/alpha -50
+set test/gamma -90
+run
+set test/alpha -50
+set test/gamma -80
+run
+set test/alpha -50
+set test/gamma -70
+run
+set test/alpha -50
+set test/gamma -60
+run
+set test/alpha -50
+set test/gamma -50
+run
+set test/alpha -50
+set test/gamma -40
+run
+set test/alpha -50
+set test/gamma -30
+run
+set test/alpha -50
+set test/gamma -20
+run
+set test/alpha -50
+set test/gamma -10
+run
+set test/alpha -50
+set test/gamma 0
+run
+set test/alpha -50
+set test/gamma 10
+run
+set test/alpha -50
+set test/gamma 20
+run
+set test/alpha -50
+set test/gamma 30
+run
+set test/alpha -50
+set test/gamma 40
+run
+set test/alpha -50
+set test/gamma 50
+run
+set test/alpha -50
+set test/gamma 60
+run
+set test/alpha -50
+set test/gamma 70
+run
+set test/alpha -50
+set test/gamma 80
+run
+set test/alpha -50
+set test/gamma 90
+run
+set test/alpha -50
+set test/gamma 100
+run
+set test/alpha -50
+set test/gamma 110
+run
+set test/alpha -50
+set test/gamma 120
+run
+set test/alpha -50
+set test/gamma 130
+run
+set test/alpha -50
+set test/gamma 140
+run
+set test/alpha -50
+set test/gamma 150
+run
+set test/alpha -50
+set test/gamma 160
+run
+set test/alpha -50
+set test/gamma 170
+run
+set test/alpha -50
+set test/gamma 180
+run
+set test/alpha -40
+set test/gamma -170
+run
+set test/alpha -40
+set test/gamma -160
+run
+set test/alpha -40
+set test/gamma -150
+run
+set test/alpha -40
+set test/gamma -140
+run
+set test/alpha -40
+set test/gamma -130
+run
+set test/alpha -40
+set test/gamma -120
+run
+set test/alpha -40
+set test/gamma -110
+run
+set test/alpha -40
+set test/gamma -100
+run
+set test/alpha -40
+set test/gamma -90
+run
+set test/alpha -40
+set test/gamma -80
+run
+set test/alpha -40
+set test/gamma -70
+run
+set test/alpha -40
+set test/gamma -60
+run
+set test/alpha -40
+set test/gamma -50
+run
+set test/alpha -40
+set test/gamma -40
+run
+set test/alpha -40
+set test/gamma -30
+run
+set test/alpha -40
+set test/gamma -20
+run
+set test/alpha -40
+set test/gamma -10
+run
+set test/alpha -40
+set test/gamma 0
+run
+set test/alpha -40
+set test/gamma 10
+run
+set test/alpha -40
+set test/gamma 20
+run
+set test/alpha -40
+set test/gamma 30
+run
+set test/alpha -40
+set test/gamma 40
+run
+set test/alpha -40
+set test/gamma 50
+run
+set test/alpha -40
+set test/gamma 60
+run
+set test/alpha -40
+set test/gamma 70
+run
+set test/alpha -40
+set test/gamma 80
+run
+set test/alpha -40
+set test/gamma 90
+run
+set test/alpha -40
+set test/gamma 100
+run
+set test/alpha -40
+set test/gamma 110
+run
+set test/alpha -40
+set test/gamma 120
+run
+set test/alpha -40
+set test/gamma 130
+run
+set test/alpha -40
+set test/gamma 140
+run
+set test/alpha -40
+set test/gamma 150
+run
+set test/alpha -40
+set test/gamma 160
+run
+set test/alpha -40
+set test/gamma 170
+run
+set test/alpha -40
+set test/gamma 180
+run
+set test/alpha -30
+set test/gamma -170
+run
+set test/alpha -30
+set test/gamma -160
+run
+set test/alpha -30
+set test/gamma -150
+run
+set test/alpha -30
+set test/gamma -140
+run
+set test/alpha -30
+set test/gamma -130
+run
+set test/alpha -30
+set test/gamma -120
+run
+set test/alpha -30
+set test/gamma -110
+run
+set test/alpha -30
+set test/gamma -100
+run
+set test/alpha -30
+set test/gamma -90
+run
+set test/alpha -30
+set test/gamma -80
+run
+set test/alpha -30
+set test/gamma -70
+run
+set test/alpha -30
+set test/gamma -60
+run
+set test/alpha -30
+set test/gamma -50
+run
+set test/alpha -30
+set test/gamma -40
+run
+set test/alpha -30
+set test/gamma -30
+run
+set test/alpha -30
+set test/gamma -20
+run
+set test/alpha -30
+set test/gamma -10
+run
+set test/alpha -30
+set test/gamma 0
+run
+set test/alpha -30
+set test/gamma 10
+run
+set test/alpha -30
+set test/gamma 20
+run
+set test/alpha -30
+set test/gamma 30
+run
+set test/alpha -30
+set test/gamma 40
+run
+set test/alpha -30
+set test/gamma 50
+run
+set test/alpha -30
+set test/gamma 60
+run
+set test/alpha -30
+set test/gamma 70
+run
+set test/alpha -30
+set test/gamma 80
+run
+set test/alpha -30
+set test/gamma 90
+run
+set test/alpha -30
+set test/gamma 100
+run
+set test/alpha -30
+set test/gamma 110
+run
+set test/alpha -30
+set test/gamma 120
+run
+set test/alpha -30
+set test/gamma 130
+run
+set test/alpha -30
+set test/gamma 140
+run
+set test/alpha -30
+set test/gamma 150
+run
+set test/alpha -30
+set test/gamma 160
+run
+set test/alpha -30
+set test/gamma 170
+run
+set test/alpha -30
+set test/gamma 180
+run
+set test/alpha -20
+set test/gamma -170
+run
+set test/alpha -20
+set test/gamma -160
+run
+set test/alpha -20
+set test/gamma -150
+run
+set test/alpha -20
+set test/gamma -140
+run
+set test/alpha -20
+set test/gamma -130
+run
+set test/alpha -20
+set test/gamma -120
+run
+set test/alpha -20
+set test/gamma -110
+run
+set test/alpha -20
+set test/gamma -100
+run
+set test/alpha -20
+set test/gamma -90
+run
+set test/alpha -20
+set test/gamma -80
+run
+set test/alpha -20
+set test/gamma -70
+run
+set test/alpha -20
+set test/gamma -60
+run
+set test/alpha -20
+set test/gamma -50
+run
+set test/alpha -20
+set test/gamma -40
+run
+set test/alpha -20
+set test/gamma -30
+run
+set test/alpha -20
+set test/gamma -20
+run
+set test/alpha -20
+set test/gamma -10
+run
+set test/alpha -20
+set test/gamma 0
+run
+set test/alpha -20
+set test/gamma 10
+run
+set test/alpha -20
+set test/gamma 20
+run
+set test/alpha -20
+set test/gamma 30
+run
+set test/alpha -20
+set test/gamma 40
+run
+set test/alpha -20
+set test/gamma 50
+run
+set test/alpha -20
+set test/gamma 60
+run
+set test/alpha -20
+set test/gamma 70
+run
+set test/alpha -20
+set test/gamma 80
+run
+set test/alpha -20
+set test/gamma 90
+run
+set test/alpha -20
+set test/gamma 100
+run
+set test/alpha -20
+set test/gamma 110
+run
+set test/alpha -20
+set test/gamma 120
+run
+set test/alpha -20
+set test/gamma 130
+run
+set test/alpha -20
+set test/gamma 140
+run
+set test/alpha -20
+set test/gamma 150
+run
+set test/alpha -20
+set test/gamma 160
+run
+set test/alpha -20
+set test/gamma 170
+run
+set test/alpha -20
+set test/gamma 180
+run
+set test/alpha -10
+set test/gamma -170
+run
+set test/alpha -10
+set test/gamma -160
+run
+set test/alpha -10
+set test/gamma -150
+run
+set test/alpha -10
+set test/gamma -140
+run
+set test/alpha -10
+set test/gamma -130
+run
+set test/alpha -10
+set test/gamma -120
+run
+set test/alpha -10
+set test/gamma -110
+run
+set test/alpha -10
+set test/gamma -100
+run
+set test/alpha -10
+set test/gamma -90
+run
+set test/alpha -10
+set test/gamma -80
+run
+set test/alpha -10
+set test/gamma -70
+run
+set test/alpha -10
+set test/gamma -60
+run
+set test/alpha -10
+set test/gamma -50
+run
+set test/alpha -10
+set test/gamma -40
+run
+set test/alpha -10
+set test/gamma -30
+run
+set test/alpha -10
+set test/gamma -20
+run
+set test/alpha -10
+set test/gamma -10
+run
+set test/alpha -10
+set test/gamma 0
+run
+set test/alpha -10
+set test/gamma 10
+run
+set test/alpha -10
+set test/gamma 20
+run
+set test/alpha -10
+set test/gamma 30
+run
+set test/alpha -10
+set test/gamma 40
+run
+set test/alpha -10
+set test/gamma 50
+run
+set test/alpha -10
+set test/gamma 60
+run
+set test/alpha -10
+set test/gamma 70
+run
+set test/alpha -10
+set test/gamma 80
+run
+set test/alpha -10
+set test/gamma 90
+run
+set test/alpha -10
+set test/gamma 100
+run
+set test/alpha -10
+set test/gamma 110
+run
+set test/alpha -10
+set test/gamma 120
+run
+set test/alpha -10
+set test/gamma 130
+run
+set test/alpha -10
+set test/gamma 140
+run
+set test/alpha -10
+set test/gamma 150
+run
+set test/alpha -10
+set test/gamma 160
+run
+set test/alpha -10
+set test/gamma 170
+run
+set test/alpha -10
+set test/gamma 180
+run
+set test/alpha 0
+set test/gamma -170
+run
+set test/alpha 0
+set test/gamma -160
+run
+set test/alpha 0
+set test/gamma -150
+run
+set test/alpha 0
+set test/gamma -140
+run
+set test/alpha 0
+set test/gamma -130
+run
+set test/alpha 0
+set test/gamma -120
+run
+set test/alpha 0
+set test/gamma -110
+run
+set test/alpha 0
+set test/gamma -100
+run
+set test/alpha 0
+set test/gamma -90
+run
+set test/alpha 0
+set test/gamma -80
+run
+set test/alpha 0
+set test/gamma -70
+run
+set test/alpha 0
+set test/gamma -60
+run
+set test/alpha 0
+set test/gamma -50
+run
+set test/alpha 0
+set test/gamma -40
+run
+set test/alpha 0
+set test/gamma -30
+run
+set test/alpha 0
+set test/gamma -20
+run
+set test/alpha 0
+set test/gamma -10
+run
+set test/alpha 0
+set test/gamma 0
+run
+set test/alpha 0
+set test/gamma 10
+run
+set test/alpha 0
+set test/gamma 20
+run
+set test/alpha 0
+set test/gamma 30
+run
+set test/alpha 0
+set test/gamma 40
+run
+set test/alpha 0
+set test/gamma 50
+run
+set test/alpha 0
+set test/gamma 60
+run
+set test/alpha 0
+set test/gamma 70
+run
+set test/alpha 0
+set test/gamma 80
+run
+set test/alpha 0
+set test/gamma 90
+run
+set test/alpha 0
+set test/gamma 100
+run
+set test/alpha 0
+set test/gamma 110
+run
+set test/alpha 0
+set test/gamma 120
+run
+set test/alpha 0
+set test/gamma 130
+run
+set test/alpha 0
+set test/gamma 140
+run
+set test/alpha 0
+set test/gamma 150
+run
+set test/alpha 0
+set test/gamma 160
+run
+set test/alpha 0
+set test/gamma 170
+run
+set test/alpha 0
+set test/gamma 180
+run
+set test/alpha 10
+set test/gamma -170
+run
+set test/alpha 10
+set test/gamma -160
+run
+set test/alpha 10
+set test/gamma -150
+run
+set test/alpha 10
+set test/gamma -140
+run
+set test/alpha 10
+set test/gamma -130
+run
+set test/alpha 10
+set test/gamma -120
+run
+set test/alpha 10
+set test/gamma -110
+run
+set test/alpha 10
+set test/gamma -100
+run
+set test/alpha 10
+set test/gamma -90
+run
+set test/alpha 10
+set test/gamma -80
+run
+set test/alpha 10
+set test/gamma -70
+run
+set test/alpha 10
+set test/gamma -60
+run
+set test/alpha 10
+set test/gamma -50
+run
+set test/alpha 10
+set test/gamma -40
+run
+set test/alpha 10
+set test/gamma -30
+run
+set test/alpha 10
+set test/gamma -20
+run
+set test/alpha 10
+set test/gamma -10
+run
+set test/alpha 10
+set test/gamma 0
+run
+set test/alpha 10
+set test/gamma 10
+run
+set test/alpha 10
+set test/gamma 20
+run
+set test/alpha 10
+set test/gamma 30
+run
+set test/alpha 10
+set test/gamma 40
+run
+set test/alpha 10
+set test/gamma 50
+run
+set test/alpha 10
+set test/gamma 60
+run
+set test/alpha 10
+set test/gamma 70
+run
+set test/alpha 10
+set test/gamma 80
+run
+set test/alpha 10
+set test/gamma 90
+run
+set test/alpha 10
+set test/gamma 100
+run
+set test/alpha 10
+set test/gamma 110
+run
+set test/alpha 10
+set test/gamma 120
+run
+set test/alpha 10
+set test/gamma 130
+run
+set test/alpha 10
+set test/gamma 140
+run
+set test/alpha 10
+set test/gamma 150
+run
+set test/alpha 10
+set test/gamma 160
+run
+set test/alpha 10
+set test/gamma 170
+run
+set test/alpha 10
+set test/gamma 180
+run
+set test/alpha 20
+set test/gamma -170
+run
+set test/alpha 20
+set test/gamma -160
+run
+set test/alpha 20
+set test/gamma -150
+run
+set test/alpha 20
+set test/gamma -140
+run
+set test/alpha 20
+set test/gamma -130
+run
+set test/alpha 20
+set test/gamma -120
+run
+set test/alpha 20
+set test/gamma -110
+run
+set test/alpha 20
+set test/gamma -100
+run
+set test/alpha 20
+set test/gamma -90
+run
+set test/alpha 20
+set test/gamma -80
+run
+set test/alpha 20
+set test/gamma -70
+run
+set test/alpha 20
+set test/gamma -60
+run
+set test/alpha 20
+set test/gamma -50
+run
+set test/alpha 20
+set test/gamma -40
+run
+set test/alpha 20
+set test/gamma -30
+run
+set test/alpha 20
+set test/gamma -20
+run
+set test/alpha 20
+set test/gamma -10
+run
+set test/alpha 20
+set test/gamma 0
+run
+set test/alpha 20
+set test/gamma 10
+run
+set test/alpha 20
+set test/gamma 20
+run
+set test/alpha 20
+set test/gamma 30
+run
+set test/alpha 20
+set test/gamma 40
+run
+set test/alpha 20
+set test/gamma 50
+run
+set test/alpha 20
+set test/gamma 60
+run
+set test/alpha 20
+set test/gamma 70
+run
+set test/alpha 20
+set test/gamma 80
+run
+set test/alpha 20
+set test/gamma 90
+run
+set test/alpha 20
+set test/gamma 100
+run
+set test/alpha 20
+set test/gamma 110
+run
+set test/alpha 20
+set test/gamma 120
+run
+set test/alpha 20
+set test/gamma 130
+run
+set test/alpha 20
+set test/gamma 140
+run
+set test/alpha 20
+set test/gamma 150
+run
+set test/alpha 20
+set test/gamma 160
+run
+set test/alpha 20
+set test/gamma 170
+run
+set test/alpha 20
+set test/gamma 180
+run
+set test/alpha 30
+set test/gamma -170
+run
+set test/alpha 30
+set test/gamma -160
+run
+set test/alpha 30
+set test/gamma -150
+run
+set test/alpha 30
+set test/gamma -140
+run
+set test/alpha 30
+set test/gamma -130
+run
+set test/alpha 30
+set test/gamma -120
+run
+set test/alpha 30
+set test/gamma -110
+run
+set test/alpha 30
+set test/gamma -100
+run
+set test/alpha 30
+set test/gamma -90
+run
+set test/alpha 30
+set test/gamma -80
+run
+set test/alpha 30
+set test/gamma -70
+run
+set test/alpha 30
+set test/gamma -60
+run
+set test/alpha 30
+set test/gamma -50
+run
+set test/alpha 30
+set test/gamma -40
+run
+set test/alpha 30
+set test/gamma -30
+run
+set test/alpha 30
+set test/gamma -20
+run
+set test/alpha 30
+set test/gamma -10
+run
+set test/alpha 30
+set test/gamma 0
+run
+set test/alpha 30
+set test/gamma 10
+run
+set test/alpha 30
+set test/gamma 20
+run
+set test/alpha 30
+set test/gamma 30
+run
+set test/alpha 30
+set test/gamma 40
+run
+set test/alpha 30
+set test/gamma 50
+run
+set test/alpha 30
+set test/gamma 60
+run
+set test/alpha 30
+set test/gamma 70
+run
+set test/alpha 30
+set test/gamma 80
+run
+set test/alpha 30
+set test/gamma 90
+run
+set test/alpha 30
+set test/gamma 100
+run
+set test/alpha 30
+set test/gamma 110
+run
+set test/alpha 30
+set test/gamma 120
+run
+set test/alpha 30
+set test/gamma 130
+run
+set test/alpha 30
+set test/gamma 140
+run
+set test/alpha 30
+set test/gamma 150
+run
+set test/alpha 30
+set test/gamma 160
+run
+set test/alpha 30
+set test/gamma 170
+run
+set test/alpha 30
+set test/gamma 180
+run
+set test/alpha 40
+set test/gamma -170
+run
+set test/alpha 40
+set test/gamma -160
+run
+set test/alpha 40
+set test/gamma -150
+run
+set test/alpha 40
+set test/gamma -140
+run
+set test/alpha 40
+set test/gamma -130
+run
+set test/alpha 40
+set test/gamma -120
+run
+set test/alpha 40
+set test/gamma -110
+run
+set test/alpha 40
+set test/gamma -100
+run
+set test/alpha 40
+set test/gamma -90
+run
+set test/alpha 40
+set test/gamma -80
+run
+set test/alpha 40
+set test/gamma -70
+run
+set test/alpha 40
+set test/gamma -60
+run
+set test/alpha 40
+set test/gamma -50
+run
+set test/alpha 40
+set test/gamma -40
+run
+set test/alpha 40
+set test/gamma -30
+run
+set test/alpha 40
+set test/gamma -20
+run
+set test/alpha 40
+set test/gamma -10
+run
+set test/alpha 40
+set test/gamma 0
+run
+set test/alpha 40
+set test/gamma 10
+run
+set test/alpha 40
+set test/gamma 20
+run
+set test/alpha 40
+set test/gamma 30
+run
+set test/alpha 40
+set test/gamma 40
+run
+set test/alpha 40
+set test/gamma 50
+run
+set test/alpha 40
+set test/gamma 60
+run
+set test/alpha 40
+set test/gamma 70
+run
+set test/alpha 40
+set test/gamma 80
+run
+set test/alpha 40
+set test/gamma 90
+run
+set test/alpha 40
+set test/gamma 100
+run
+set test/alpha 40
+set test/gamma 110
+run
+set test/alpha 40
+set test/gamma 120
+run
+set test/alpha 40
+set test/gamma 130
+run
+set test/alpha 40
+set test/gamma 140
+run
+set test/alpha 40
+set test/gamma 150
+run
+set test/alpha 40
+set test/gamma 160
+run
+set test/alpha 40
+set test/gamma 170
+run
+set test/alpha 40
+set test/gamma 180
+run
+set test/alpha 50
+set test/gamma -170
+run
+set test/alpha 50
+set test/gamma -160
+run
+set test/alpha 50
+set test/gamma -150
+run
+set test/alpha 50
+set test/gamma -140
+run
+set test/alpha 50
+set test/gamma -130
+run
+set test/alpha 50
+set test/gamma -120
+run
+set test/alpha 50
+set test/gamma -110
+run
+set test/alpha 50
+set test/gamma -100
+run
+set test/alpha 50
+set test/gamma -90
+run
+set test/alpha 50
+set test/gamma -80
+run
+set test/alpha 50
+set test/gamma -70
+run
+set test/alpha 50
+set test/gamma -60
+run
+set test/alpha 50
+set test/gamma -50
+run
+set test/alpha 50
+set test/gamma -40
+run
+set test/alpha 50
+set test/gamma -30
+run
+set test/alpha 50
+set test/gamma -20
+run
+set test/alpha 50
+set test/gamma -10
+run
+set test/alpha 50
+set test/gamma 0
+run
+set test/alpha 50
+set test/gamma 10
+run
+set test/alpha 50
+set test/gamma 20
+run
+set test/alpha 50
+set test/gamma 30
+run
+set test/alpha 50
+set test/gamma 40
+run
+set test/alpha 50
+set test/gamma 50
+run
+set test/alpha 50
+set test/gamma 60
+run
+set test/alpha 50
+set test/gamma 70
+run
+set test/alpha 50
+set test/gamma 80
+run
+set test/alpha 50
+set test/gamma 90
+run
+set test/alpha 50
+set test/gamma 100
+run
+set test/alpha 50
+set test/gamma 110
+run
+set test/alpha 50
+set test/gamma 120
+run
+set test/alpha 50
+set test/gamma 130
+run
+set test/alpha 50
+set test/gamma 140
+run
+set test/alpha 50
+set test/gamma 150
+run
+set test/alpha 50
+set test/gamma 160
+run
+set test/alpha 50
+set test/gamma 170
+run
+set test/alpha 50
+set test/gamma 180
+run
+set test/alpha 60
+set test/gamma -170
+run
+set test/alpha 60
+set test/gamma -160
+run
+set test/alpha 60
+set test/gamma -150
+run
+set test/alpha 60
+set test/gamma -140
+run
+set test/alpha 60
+set test/gamma -130
+run
+set test/alpha 60
+set test/gamma -120
+run
+set test/alpha 60
+set test/gamma -110
+run
+set test/alpha 60
+set test/gamma -100
+run
+set test/alpha 60
+set test/gamma -90
+run
+set test/alpha 60
+set test/gamma -80
+run
+set test/alpha 60
+set test/gamma -70
+run
+set test/alpha 60
+set test/gamma -60
+run
+set test/alpha 60
+set test/gamma -50
+run
+set test/alpha 60
+set test/gamma -40
+run
+set test/alpha 60
+set test/gamma -30
+run
+set test/alpha 60
+set test/gamma -20
+run
+set test/alpha 60
+set test/gamma -10
+run
+set test/alpha 60
+set test/gamma 0
+run
+set test/alpha 60
+set test/gamma 10
+run
+set test/alpha 60
+set test/gamma 20
+run
+set test/alpha 60
+set test/gamma 30
+run
+set test/alpha 60
+set test/gamma 40
+run
+set test/alpha 60
+set test/gamma 50
+run
+set test/alpha 60
+set test/gamma 60
+run
+set test/alpha 60
+set test/gamma 70
+run
+set test/alpha 60
+set test/gamma 80
+run
+set test/alpha 60
+set test/gamma 90
+run
+set test/alpha 60
+set test/gamma 100
+run
+set test/alpha 60
+set test/gamma 110
+run
+set test/alpha 60
+set test/gamma 120
+run
+set test/alpha 60
+set test/gamma 130
+run
+set test/alpha 60
+set test/gamma 140
+run
+set test/alpha 60
+set test/gamma 150
+run
+set test/alpha 60
+set test/gamma 160
+run
+set test/alpha 60
+set test/gamma 170
+run
+set test/alpha 60
+set test/gamma 180
+run
+set test/alpha 70
+set test/gamma -170
+run
+set test/alpha 70
+set test/gamma -160
+run
+set test/alpha 70
+set test/gamma -150
+run
+set test/alpha 70
+set test/gamma -140
+run
+set test/alpha 70
+set test/gamma -130
+run
+set test/alpha 70
+set test/gamma -120
+run
+set test/alpha 70
+set test/gamma -110
+run
+set test/alpha 70
+set test/gamma -100
+run
+set test/alpha 70
+set test/gamma -90
+run
+set test/alpha 70
+set test/gamma -80
+run
+set test/alpha 70
+set test/gamma -70
+run
+set test/alpha 70
+set test/gamma -60
+run
+set test/alpha 70
+set test/gamma -50
+run
+set test/alpha 70
+set test/gamma -40
+run
+set test/alpha 70
+set test/gamma -30
+run
+set test/alpha 70
+set test/gamma -20
+run
+set test/alpha 70
+set test/gamma -10
+run
+set test/alpha 70
+set test/gamma 0
+run
+set test/alpha 70
+set test/gamma 10
+run
+set test/alpha 70
+set test/gamma 20
+run
+set test/alpha 70
+set test/gamma 30
+run
+set test/alpha 70
+set test/gamma 40
+run
+set test/alpha 70
+set test/gamma 50
+run
+set test/alpha 70
+set test/gamma 60
+run
+set test/alpha 70
+set test/gamma 70
+run
+set test/alpha 70
+set test/gamma 80
+run
+set test/alpha 70
+set test/gamma 90
+run
+set test/alpha 70
+set test/gamma 100
+run
+set test/alpha 70
+set test/gamma 110
+run
+set test/alpha 70
+set test/gamma 120
+run
+set test/alpha 70
+set test/gamma 130
+run
+set test/alpha 70
+set test/gamma 140
+run
+set test/alpha 70
+set test/gamma 150
+run
+set test/alpha 70
+set test/gamma 160
+run
+set test/alpha 70
+set test/gamma 170
+run
+set test/alpha 70
+set test/gamma 180
+run
+set test/alpha 80
+set test/gamma -170
+run
+set test/alpha 80
+set test/gamma -160
+run
+set test/alpha 80
+set test/gamma -150
+run
+set test/alpha 80
+set test/gamma -140
+run
+set test/alpha 80
+set test/gamma -130
+run
+set test/alpha 80
+set test/gamma -120
+run
+set test/alpha 80
+set test/gamma -110
+run
+set test/alpha 80
+set test/gamma -100
+run
+set test/alpha 80
+set test/gamma -90
+run
+set test/alpha 80
+set test/gamma -80
+run
+set test/alpha 80
+set test/gamma -70
+run
+set test/alpha 80
+set test/gamma -60
+run
+set test/alpha 80
+set test/gamma -50
+run
+set test/alpha 80
+set test/gamma -40
+run
+set test/alpha 80
+set test/gamma -30
+run
+set test/alpha 80
+set test/gamma -20
+run
+set test/alpha 80
+set test/gamma -10
+run
+set test/alpha 80
+set test/gamma 0
+run
+set test/alpha 80
+set test/gamma 10
+run
+set test/alpha 80
+set test/gamma 20
+run
+set test/alpha 80
+set test/gamma 30
+run
+set test/alpha 80
+set test/gamma 40
+run
+set test/alpha 80
+set test/gamma 50
+run
+set test/alpha 80
+set test/gamma 60
+run
+set test/alpha 80
+set test/gamma 70
+run
+set test/alpha 80
+set test/gamma 80
+run
+set test/alpha 80
+set test/gamma 90
+run
+set test/alpha 80
+set test/gamma 100
+run
+set test/alpha 80
+set test/gamma 110
+run
+set test/alpha 80
+set test/gamma 120
+run
+set test/alpha 80
+set test/gamma 130
+run
+set test/alpha 80
+set test/gamma 140
+run
+set test/alpha 80
+set test/gamma 150
+run
+set test/alpha 80
+set test/gamma 160
+run
+set test/alpha 80
+set test/gamma 170
+run
+set test/alpha 80
+set test/gamma 180
+run
+set test/alpha 90
+set test/gamma -170
+run
+set test/alpha 90
+set test/gamma -160
+run
+set test/alpha 90
+set test/gamma -150
+run
+set test/alpha 90
+set test/gamma -140
+run
+set test/alpha 90
+set test/gamma -130
+run
+set test/alpha 90
+set test/gamma -120
+run
+set test/alpha 90
+set test/gamma -110
+run
+set test/alpha 90
+set test/gamma -100
+run
+set test/alpha 90
+set test/gamma -90
+run
+set test/alpha 90
+set test/gamma -80
+run
+set test/alpha 90
+set test/gamma -70
+run
+set test/alpha 90
+set test/gamma -60
+run
+set test/alpha 90
+set test/gamma -50
+run
+set test/alpha 90
+set test/gamma -40
+run
+set test/alpha 90
+set test/gamma -30
+run
+set test/alpha 90
+set test/gamma -20
+run
+set test/alpha 90
+set test/gamma -10
+run
+set test/alpha 90
+set test/gamma 0
+run
+set test/alpha 90
+set test/gamma 10
+run
+set test/alpha 90
+set test/gamma 20
+run
+set test/alpha 90
+set test/gamma 30
+run
+set test/alpha 90
+set test/gamma 40
+run
+set test/alpha 90
+set test/gamma 50
+run
+set test/alpha 90
+set test/gamma 60
+run
+set test/alpha 90
+set test/gamma 70
+run
+set test/alpha 90
+set test/gamma 80
+run
+set test/alpha 90
+set test/gamma 90
+run
+set test/alpha 90
+set test/gamma 100
+run
+set test/alpha 90
+set test/gamma 110
+run
+set test/alpha 90
+set test/gamma 120
+run
+set test/alpha 90
+set test/gamma 130
+run
+set test/alpha 90
+set test/gamma 140
+run
+set test/alpha 90
+set test/gamma 150
+run
+set test/alpha 90
+set test/gamma 160
+run
+set test/alpha 90
+set test/gamma 170
+run
+set test/alpha 90
+set test/gamma 180
+run
+set test/alpha 100
+set test/gamma -170
+run
+set test/alpha 100
+set test/gamma -160
+run
+set test/alpha 100
+set test/gamma -150
+run
+set test/alpha 100
+set test/gamma -140
+run
+set test/alpha 100
+set test/gamma -130
+run
+set test/alpha 100
+set test/gamma -120
+run
+set test/alpha 100
+set test/gamma -110
+run
+set test/alpha 100
+set test/gamma -100
+run
+set test/alpha 100
+set test/gamma -90
+run
+set test/alpha 100
+set test/gamma -80
+run
+set test/alpha 100
+set test/gamma -70
+run
+set test/alpha 100
+set test/gamma -60
+run
+set test/alpha 100
+set test/gamma -50
+run
+set test/alpha 100
+set test/gamma -40
+run
+set test/alpha 100
+set test/gamma -30
+run
+set test/alpha 100
+set test/gamma -20
+run
+set test/alpha 100
+set test/gamma -10
+run
+set test/alpha 100
+set test/gamma 0
+run
+set test/alpha 100
+set test/gamma 10
+run
+set test/alpha 100
+set test/gamma 20
+run
+set test/alpha 100
+set test/gamma 30
+run
+set test/alpha 100
+set test/gamma 40
+run
+set test/alpha 100
+set test/gamma 50
+run
+set test/alpha 100
+set test/gamma 60
+run
+set test/alpha 100
+set test/gamma 70
+run
+set test/alpha 100
+set test/gamma 80
+run
+set test/alpha 100
+set test/gamma 90
+run
+set test/alpha 100
+set test/gamma 100
+run
+set test/alpha 100
+set test/gamma 110
+run
+set test/alpha 100
+set test/gamma 120
+run
+set test/alpha 100
+set test/gamma 130
+run
+set test/alpha 100
+set test/gamma 140
+run
+set test/alpha 100
+set test/gamma 150
+run
+set test/alpha 100
+set test/gamma 160
+run
+set test/alpha 100
+set test/gamma 170
+run
+set test/alpha 100
+set test/gamma 180
+run
+set test/alpha 110
+set test/gamma -170
+run
+set test/alpha 110
+set test/gamma -160
+run
+set test/alpha 110
+set test/gamma -150
+run
+set test/alpha 110
+set test/gamma -140
+run
+set test/alpha 110
+set test/gamma -130
+run
+set test/alpha 110
+set test/gamma -120
+run
+set test/alpha 110
+set test/gamma -110
+run
+set test/alpha 110
+set test/gamma -100
+run
+set test/alpha 110
+set test/gamma -90
+run
+set test/alpha 110
+set test/gamma -80
+run
+set test/alpha 110
+set test/gamma -70
+run
+set test/alpha 110
+set test/gamma -60
+run
+set test/alpha 110
+set test/gamma -50
+run
+set test/alpha 110
+set test/gamma -40
+run
+set test/alpha 110
+set test/gamma -30
+run
+set test/alpha 110
+set test/gamma -20
+run
+set test/alpha 110
+set test/gamma -10
+run
+set test/alpha 110
+set test/gamma 0
+run
+set test/alpha 110
+set test/gamma 10
+run
+set test/alpha 110
+set test/gamma 20
+run
+set test/alpha 110
+set test/gamma 30
+run
+set test/alpha 110
+set test/gamma 40
+run
+set test/alpha 110
+set test/gamma 50
+run
+set test/alpha 110
+set test/gamma 60
+run
+set test/alpha 110
+set test/gamma 70
+run
+set test/alpha 110
+set test/gamma 80
+run
+set test/alpha 110
+set test/gamma 90
+run
+set test/alpha 110
+set test/gamma 100
+run
+set test/alpha 110
+set test/gamma 110
+run
+set test/alpha 110
+set test/gamma 120
+run
+set test/alpha 110
+set test/gamma 130
+run
+set test/alpha 110
+set test/gamma 140
+run
+set test/alpha 110
+set test/gamma 150
+run
+set test/alpha 110
+set test/gamma 160
+run
+set test/alpha 110
+set test/gamma 170
+run
+set test/alpha 110
+set test/gamma 180
+run
+set test/alpha 120
+set test/gamma -170
+run
+set test/alpha 120
+set test/gamma -160
+run
+set test/alpha 120
+set test/gamma -150
+run
+set test/alpha 120
+set test/gamma -140
+run
+set test/alpha 120
+set test/gamma -130
+run
+set test/alpha 120
+set test/gamma -120
+run
+set test/alpha 120
+set test/gamma -110
+run
+set test/alpha 120
+set test/gamma -100
+run
+set test/alpha 120
+set test/gamma -90
+run
+set test/alpha 120
+set test/gamma -80
+run
+set test/alpha 120
+set test/gamma -70
+run
+set test/alpha 120
+set test/gamma -60
+run
+set test/alpha 120
+set test/gamma -50
+run
+set test/alpha 120
+set test/gamma -40
+run
+set test/alpha 120
+set test/gamma -30
+run
+set test/alpha 120
+set test/gamma -20
+run
+set test/alpha 120
+set test/gamma -10
+run
+set test/alpha 120
+set test/gamma 0
+run
+set test/alpha 120
+set test/gamma 10
+run
+set test/alpha 120
+set test/gamma 20
+run
+set test/alpha 120
+set test/gamma 30
+run
+set test/alpha 120
+set test/gamma 40
+run
+set test/alpha 120
+set test/gamma 50
+run
+set test/alpha 120
+set test/gamma 60
+run
+set test/alpha 120
+set test/gamma 70
+run
+set test/alpha 120
+set test/gamma 80
+run
+set test/alpha 120
+set test/gamma 90
+run
+set test/alpha 120
+set test/gamma 100
+run
+set test/alpha 120
+set test/gamma 110
+run
+set test/alpha 120
+set test/gamma 120
+run
+set test/alpha 120
+set test/gamma 130
+run
+set test/alpha 120
+set test/gamma 140
+run
+set test/alpha 120
+set test/gamma 150
+run
+set test/alpha 120
+set test/gamma 160
+run
+set test/alpha 120
+set test/gamma 170
+run
+set test/alpha 120
+set test/gamma 180
+run
+set test/alpha 130
+set test/gamma -170
+run
+set test/alpha 130
+set test/gamma -160
+run
+set test/alpha 130
+set test/gamma -150
+run
+set test/alpha 130
+set test/gamma -140
+run
+set test/alpha 130
+set test/gamma -130
+run
+set test/alpha 130
+set test/gamma -120
+run
+set test/alpha 130
+set test/gamma -110
+run
+set test/alpha 130
+set test/gamma -100
+run
+set test/alpha 130
+set test/gamma -90
+run
+set test/alpha 130
+set test/gamma -80
+run
+set test/alpha 130
+set test/gamma -70
+run
+set test/alpha 130
+set test/gamma -60
+run
+set test/alpha 130
+set test/gamma -50
+run
+set test/alpha 130
+set test/gamma -40
+run
+set test/alpha 130
+set test/gamma -30
+run
+set test/alpha 130
+set test/gamma -20
+run
+set test/alpha 130
+set test/gamma -10
+run
+set test/alpha 130
+set test/gamma 0
+run
+set test/alpha 130
+set test/gamma 10
+run
+set test/alpha 130
+set test/gamma 20
+run
+set test/alpha 130
+set test/gamma 30
+run
+set test/alpha 130
+set test/gamma 40
+run
+set test/alpha 130
+set test/gamma 50
+run
+set test/alpha 130
+set test/gamma 60
+run
+set test/alpha 130
+set test/gamma 70
+run
+set test/alpha 130
+set test/gamma 80
+run
+set test/alpha 130
+set test/gamma 90
+run
+set test/alpha 130
+set test/gamma 100
+run
+set test/alpha 130
+set test/gamma 110
+run
+set test/alpha 130
+set test/gamma 120
+run
+set test/alpha 130
+set test/gamma 130
+run
+set test/alpha 130
+set test/gamma 140
+run
+set test/alpha 130
+set test/gamma 150
+run
+set test/alpha 130
+set test/gamma 160
+run
+set test/alpha 130
+set test/gamma 170
+run
+set test/alpha 130
+set test/gamma 180
+run
+set test/alpha 140
+set test/gamma -170
+run
+set test/alpha 140
+set test/gamma -160
+run
+set test/alpha 140
+set test/gamma -150
+run
+set test/alpha 140
+set test/gamma -140
+run
+set test/alpha 140
+set test/gamma -130
+run
+set test/alpha 140
+set test/gamma -120
+run
+set test/alpha 140
+set test/gamma -110
+run
+set test/alpha 140
+set test/gamma -100
+run
+set test/alpha 140
+set test/gamma -90
+run
+set test/alpha 140
+set test/gamma -80
+run
+set test/alpha 140
+set test/gamma -70
+run
+set test/alpha 140
+set test/gamma -60
+run
+set test/alpha 140
+set test/gamma -50
+run
+set test/alpha 140
+set test/gamma -40
+run
+set test/alpha 140
+set test/gamma -30
+run
+set test/alpha 140
+set test/gamma -20
+run
+set test/alpha 140
+set test/gamma -10
+run
+set test/alpha 140
+set test/gamma 0
+run
+set test/alpha 140
+set test/gamma 10
+run
+set test/alpha 140
+set test/gamma 20
+run
+set test/alpha 140
+set test/gamma 30
+run
+set test/alpha 140
+set test/gamma 40
+run
+set test/alpha 140
+set test/gamma 50
+run
+set test/alpha 140
+set test/gamma 60
+run
+set test/alpha 140
+set test/gamma 70
+run
+set test/alpha 140
+set test/gamma 80
+run
+set test/alpha 140
+set test/gamma 90
+run
+set test/alpha 140
+set test/gamma 100
+run
+set test/alpha 140
+set test/gamma 110
+run
+set test/alpha 140
+set test/gamma 120
+run
+set test/alpha 140
+set test/gamma 130
+run
+set test/alpha 140
+set test/gamma 140
+run
+set test/alpha 140
+set test/gamma 150
+run
+set test/alpha 140
+set test/gamma 160
+run
+set test/alpha 140
+set test/gamma 170
+run
+set test/alpha 140
+set test/gamma 180
+run
+set test/alpha 150
+set test/gamma -170
+run
+set test/alpha 150
+set test/gamma -160
+run
+set test/alpha 150
+set test/gamma -150
+run
+set test/alpha 150
+set test/gamma -140
+run
+set test/alpha 150
+set test/gamma -130
+run
+set test/alpha 150
+set test/gamma -120
+run
+set test/alpha 150
+set test/gamma -110
+run
+set test/alpha 150
+set test/gamma -100
+run
+set test/alpha 150
+set test/gamma -90
+run
+set test/alpha 150
+set test/gamma -80
+run
+set test/alpha 150
+set test/gamma -70
+run
+set test/alpha 150
+set test/gamma -60
+run
+set test/alpha 150
+set test/gamma -50
+run
+set test/alpha 150
+set test/gamma -40
+run
+set test/alpha 150
+set test/gamma -30
+run
+set test/alpha 150
+set test/gamma -20
+run
+set test/alpha 150
+set test/gamma -10
+run
+set test/alpha 150
+set test/gamma 0
+run
+set test/alpha 150
+set test/gamma 10
+run
+set test/alpha 150
+set test/gamma 20
+run
+set test/alpha 150
+set test/gamma 30
+run
+set test/alpha 150
+set test/gamma 40
+run
+set test/alpha 150
+set test/gamma 50
+run
+set test/alpha 150
+set test/gamma 60
+run
+set test/alpha 150
+set test/gamma 70
+run
+set test/alpha 150
+set test/gamma 80
+run
+set test/alpha 150
+set test/gamma 90
+run
+set test/alpha 150
+set test/gamma 100
+run
+set test/alpha 150
+set test/gamma 110
+run
+set test/alpha 150
+set test/gamma 120
+run
+set test/alpha 150
+set test/gamma 130
+run
+set test/alpha 150
+set test/gamma 140
+run
+set test/alpha 150
+set test/gamma 150
+run
+set test/alpha 150
+set test/gamma 160
+run
+set test/alpha 150
+set test/gamma 170
+run
+set test/alpha 150
+set test/gamma 180
+run
+set test/alpha 160
+set test/gamma -170
+run
+set test/alpha 160
+set test/gamma -160
+run
+set test/alpha 160
+set test/gamma -150
+run
+set test/alpha 160
+set test/gamma -140
+run
+set test/alpha 160
+set test/gamma -130
+run
+set test/alpha 160
+set test/gamma -120
+run
+set test/alpha 160
+set test/gamma -110
+run
+set test/alpha 160
+set test/gamma -100
+run
+set test/alpha 160
+set test/gamma -90
+run
+set test/alpha 160
+set test/gamma -80
+run
+set test/alpha 160
+set test/gamma -70
+run
+set test/alpha 160
+set test/gamma -60
+run
+set test/alpha 160
+set test/gamma -50
+run
+set test/alpha 160
+set test/gamma -40
+run
+set test/alpha 160
+set test/gamma -30
+run
+set test/alpha 160
+set test/gamma -20
+run
+set test/alpha 160
+set test/gamma -10
+run
+set test/alpha 160
+set test/gamma 0
+run
+set test/alpha 160
+set test/gamma 10
+run
+set test/alpha 160
+set test/gamma 20
+run
+set test/alpha 160
+set test/gamma 30
+run
+set test/alpha 160
+set test/gamma 40
+run
+set test/alpha 160
+set test/gamma 50
+run
+set test/alpha 160
+set test/gamma 60
+run
+set test/alpha 160
+set test/gamma 70
+run
+set test/alpha 160
+set test/gamma 80
+run
+set test/alpha 160
+set test/gamma 90
+run
+set test/alpha 160
+set test/gamma 100
+run
+set test/alpha 160
+set test/gamma 110
+run
+set test/alpha 160
+set test/gamma 120
+run
+set test/alpha 160
+set test/gamma 130
+run
+set test/alpha 160
+set test/gamma 140
+run
+set test/alpha 160
+set test/gamma 150
+run
+set test/alpha 160
+set test/gamma 160
+run
+set test/alpha 160
+set test/gamma 170
+run
+set test/alpha 160
+set test/gamma 180
+run
+set test/alpha 170
+set test/gamma -170
+run
+set test/alpha 170
+set test/gamma -160
+run
+set test/alpha 170
+set test/gamma -150
+run
+set test/alpha 170
+set test/gamma -140
+run
+set test/alpha 170
+set test/gamma -130
+run
+set test/alpha 170
+set test/gamma -120
+run
+set test/alpha 170
+set test/gamma -110
+run
+set test/alpha 170
+set test/gamma -100
+run
+set test/alpha 170
+set test/gamma -90
+run
+set test/alpha 170
+set test/gamma -80
+run
+set test/alpha 170
+set test/gamma -70
+run
+set test/alpha 170
+set test/gamma -60
+run
+set test/alpha 170
+set test/gamma -50
+run
+set test/alpha 170
+set test/gamma -40
+run
+set test/alpha 170
+set test/gamma -30
+run
+set test/alpha 170
+set test/gamma -20
+run
+set test/alpha 170
+set test/gamma -10
+run
+set test/alpha 170
+set test/gamma 0
+run
+set test/alpha 170
+set test/gamma 10
+run
+set test/alpha 170
+set test/gamma 20
+run
+set test/alpha 170
+set test/gamma 30
+run
+set test/alpha 170
+set test/gamma 40
+run
+set test/alpha 170
+set test/gamma 50
+run
+set test/alpha 170
+set test/gamma 60
+run
+set test/alpha 170
+set test/gamma 70
+run
+set test/alpha 170
+set test/gamma 80
+run
+set test/alpha 170
+set test/gamma 90
+run
+set test/alpha 170
+set test/gamma 100
+run
+set test/alpha 170
+set test/gamma 110
+run
+set test/alpha 170
+set test/gamma 120
+run
+set test/alpha 170
+set test/gamma 130
+run
+set test/alpha 170
+set test/gamma 140
+run
+set test/alpha 170
+set test/gamma 150
+run
+set test/alpha 170
+set test/gamma 160
+run
+set test/alpha 170
+set test/gamma 170
+run
+set test/alpha 170
+set test/gamma 180
+run
+set test/alpha 180
+set test/gamma -170
+run
+set test/alpha 180
+set test/gamma -160
+run
+set test/alpha 180
+set test/gamma -150
+run
+set test/alpha 180
+set test/gamma -140
+run
+set test/alpha 180
+set test/gamma -130
+run
+set test/alpha 180
+set test/gamma -120
+run
+set test/alpha 180
+set test/gamma -110
+run
+set test/alpha 180
+set test/gamma -100
+run
+set test/alpha 180
+set test/gamma -90
+run
+set test/alpha 180
+set test/gamma -80
+run
+set test/alpha 180
+set test/gamma -70
+run
+set test/alpha 180
+set test/gamma -60
+run
+set test/alpha 180
+set test/gamma -50
+run
+set test/alpha 180
+set test/gamma -40
+run
+set test/alpha 180
+set test/gamma -30
+run
+set test/alpha 180
+set test/gamma -20
+run
+set test/alpha 180
+set test/gamma -10
+run
+set test/alpha 180
+set test/gamma 0
+run
+set test/alpha 180
+set test/gamma 10
+run
+set test/alpha 180
+set test/gamma 20
+run
+set test/alpha 180
+set test/gamma 30
+run
+set test/alpha 180
+set test/gamma 40
+run
+set test/alpha 180
+set test/gamma 50
+run
+set test/alpha 180
+set test/gamma 60
+run
+set test/alpha 180
+set test/gamma 70
+run
+set test/alpha 180
+set test/gamma 80
+run
+set test/alpha 180
+set test/gamma 90
+run
+set test/alpha 180
+set test/gamma 100
+run
+set test/alpha 180
+set test/gamma 110
+run
+set test/alpha 180
+set test/gamma 120
+run
+set test/alpha 180
+set test/gamma 130
+run
+set test/alpha 180
+set test/gamma 140
+run
+set test/alpha 180
+set test/gamma 150
+run
+set test/alpha 180
+set test/gamma 160
+run
+set test/alpha 180
+set test/gamma 170
+run
+set test/alpha 180
+set test/gamma 180
+run
+set test/alpha 0.
+set test/beta -80
+set test/gamma -170
+run
+set test/beta -80
+set test/gamma -160
+run
+set test/beta -80
+set test/gamma -150
+run
+set test/beta -80
+set test/gamma -140
+run
+set test/beta -80
+set test/gamma -130
+run
+set test/beta -80
+set test/gamma -120
+run
+set test/beta -80
+set test/gamma -110
+run
+set test/beta -80
+set test/gamma -100
+run
+set test/beta -80
+set test/gamma -90
+run
+set test/beta -80
+set test/gamma -80
+run
+set test/beta -80
+set test/gamma -70
+run
+set test/beta -80
+set test/gamma -60
+run
+set test/beta -80
+set test/gamma -50
+run
+set test/beta -80
+set test/gamma -40
+run
+set test/beta -80
+set test/gamma -30
+run
+set test/beta -80
+set test/gamma -20
+run
+set test/beta -80
+set test/gamma -10
+run
+set test/beta -80
+set test/gamma 0
+run
+set test/beta -80
+set test/gamma 10
+run
+set test/beta -80
+set test/gamma 20
+run
+set test/beta -80
+set test/gamma 30
+run
+set test/beta -80
+set test/gamma 40
+run
+set test/beta -80
+set test/gamma 50
+run
+set test/beta -80
+set test/gamma 60
+run
+set test/beta -80
+set test/gamma 70
+run
+set test/beta -80
+set test/gamma 80
+run
+set test/beta -80
+set test/gamma 90
+run
+set test/beta -80
+set test/gamma 100
+run
+set test/beta -80
+set test/gamma 110
+run
+set test/beta -80
+set test/gamma 120
+run
+set test/beta -80
+set test/gamma 130
+run
+set test/beta -80
+set test/gamma 140
+run
+set test/beta -80
+set test/gamma 150
+run
+set test/beta -80
+set test/gamma 160
+run
+set test/beta -80
+set test/gamma 170
+run
+set test/beta -80
+set test/gamma 180
+run
+set test/beta -70
+set test/gamma -170
+run
+set test/beta -70
+set test/gamma -160
+run
+set test/beta -70
+set test/gamma -150
+run
+set test/beta -70
+set test/gamma -140
+run
+set test/beta -70
+set test/gamma -130
+run
+set test/beta -70
+set test/gamma -120
+run
+set test/beta -70
+set test/gamma -110
+run
+set test/beta -70
+set test/gamma -100
+run
+set test/beta -70
+set test/gamma -90
+run
+set test/beta -70
+set test/gamma -80
+run
+set test/beta -70
+set test/gamma -70
+run
+set test/beta -70
+set test/gamma -60
+run
+set test/beta -70
+set test/gamma -50
+run
+set test/beta -70
+set test/gamma -40
+run
+set test/beta -70
+set test/gamma -30
+run
+set test/beta -70
+set test/gamma -20
+run
+set test/beta -70
+set test/gamma -10
+run
+set test/beta -70
+set test/gamma 0
+run
+set test/beta -70
+set test/gamma 10
+run
+set test/beta -70
+set test/gamma 20
+run
+set test/beta -70
+set test/gamma 30
+run
+set test/beta -70
+set test/gamma 40
+run
+set test/beta -70
+set test/gamma 50
+run
+set test/beta -70
+set test/gamma 60
+run
+set test/beta -70
+set test/gamma 70
+run
+set test/beta -70
+set test/gamma 80
+run
+set test/beta -70
+set test/gamma 90
+run
+set test/beta -70
+set test/gamma 100
+run
+set test/beta -70
+set test/gamma 110
+run
+set test/beta -70
+set test/gamma 120
+run
+set test/beta -70
+set test/gamma 130
+run
+set test/beta -70
+set test/gamma 140
+run
+set test/beta -70
+set test/gamma 150
+run
+set test/beta -70
+set test/gamma 160
+run
+set test/beta -70
+set test/gamma 170
+run
+set test/beta -70
+set test/gamma 180
+run
+set test/beta -60
+set test/gamma -170
+run
+set test/beta -60
+set test/gamma -160
+run
+set test/beta -60
+set test/gamma -150
+run
+set test/beta -60
+set test/gamma -140
+run
+set test/beta -60
+set test/gamma -130
+run
+set test/beta -60
+set test/gamma -120
+run
+set test/beta -60
+set test/gamma -110
+run
+set test/beta -60
+set test/gamma -100
+run
+set test/beta -60
+set test/gamma -90
+run
+set test/beta -60
+set test/gamma -80
+run
+set test/beta -60
+set test/gamma -70
+run
+set test/beta -60
+set test/gamma -60
+run
+set test/beta -60
+set test/gamma -50
+run
+set test/beta -60
+set test/gamma -40
+run
+set test/beta -60
+set test/gamma -30
+run
+set test/beta -60
+set test/gamma -20
+run
+set test/beta -60
+set test/gamma -10
+run
+set test/beta -60
+set test/gamma 0
+run
+set test/beta -60
+set test/gamma 10
+run
+set test/beta -60
+set test/gamma 20
+run
+set test/beta -60
+set test/gamma 30
+run
+set test/beta -60
+set test/gamma 40
+run
+set test/beta -60
+set test/gamma 50
+run
+set test/beta -60
+set test/gamma 60
+run
+set test/beta -60
+set test/gamma 70
+run
+set test/beta -60
+set test/gamma 80
+run
+set test/beta -60
+set test/gamma 90
+run
+set test/beta -60
+set test/gamma 100
+run
+set test/beta -60
+set test/gamma 110
+run
+set test/beta -60
+set test/gamma 120
+run
+set test/beta -60
+set test/gamma 130
+run
+set test/beta -60
+set test/gamma 140
+run
+set test/beta -60
+set test/gamma 150
+run
+set test/beta -60
+set test/gamma 160
+run
+set test/beta -60
+set test/gamma 170
+run
+set test/beta -60
+set test/gamma 180
+run
+set test/beta -50
+set test/gamma -170
+run
+set test/beta -50
+set test/gamma -160
+run
+set test/beta -50
+set test/gamma -150
+run
+set test/beta -50
+set test/gamma -140
+run
+set test/beta -50
+set test/gamma -130
+run
+set test/beta -50
+set test/gamma -120
+run
+set test/beta -50
+set test/gamma -110
+run
+set test/beta -50
+set test/gamma -100
+run
+set test/beta -50
+set test/gamma -90
+run
+set test/beta -50
+set test/gamma -80
+run
+set test/beta -50
+set test/gamma -70
+run
+set test/beta -50
+set test/gamma -60
+run
+set test/beta -50
+set test/gamma -50
+run
+set test/beta -50
+set test/gamma -40
+run
+set test/beta -50
+set test/gamma -30
+run
+set test/beta -50
+set test/gamma -20
+run
+set test/beta -50
+set test/gamma -10
+run
+set test/beta -50
+set test/gamma 0
+run
+set test/beta -50
+set test/gamma 10
+run
+set test/beta -50
+set test/gamma 20
+run
+set test/beta -50
+set test/gamma 30
+run
+set test/beta -50
+set test/gamma 40
+run
+set test/beta -50
+set test/gamma 50
+run
+set test/beta -50
+set test/gamma 60
+run
+set test/beta -50
+set test/gamma 70
+run
+set test/beta -50
+set test/gamma 80
+run
+set test/beta -50
+set test/gamma 90
+run
+set test/beta -50
+set test/gamma 100
+run
+set test/beta -50
+set test/gamma 110
+run
+set test/beta -50
+set test/gamma 120
+run
+set test/beta -50
+set test/gamma 130
+run
+set test/beta -50
+set test/gamma 140
+run
+set test/beta -50
+set test/gamma 150
+run
+set test/beta -50
+set test/gamma 160
+run
+set test/beta -50
+set test/gamma 170
+run
+set test/beta -50
+set test/gamma 180
+run
+set test/beta -40
+set test/gamma -170
+run
+set test/beta -40
+set test/gamma -160
+run
+set test/beta -40
+set test/gamma -150
+run
+set test/beta -40
+set test/gamma -140
+run
+set test/beta -40
+set test/gamma -130
+run
+set test/beta -40
+set test/gamma -120
+run
+set test/beta -40
+set test/gamma -110
+run
+set test/beta -40
+set test/gamma -100
+run
+set test/beta -40
+set test/gamma -90
+run
+set test/beta -40
+set test/gamma -80
+run
+set test/beta -40
+set test/gamma -70
+run
+set test/beta -40
+set test/gamma -60
+run
+set test/beta -40
+set test/gamma -50
+run
+set test/beta -40
+set test/gamma -40
+run
+set test/beta -40
+set test/gamma -30
+run
+set test/beta -40
+set test/gamma -20
+run
+set test/beta -40
+set test/gamma -10
+run
+set test/beta -40
+set test/gamma 0
+run
+set test/beta -40
+set test/gamma 10
+run
+set test/beta -40
+set test/gamma 20
+run
+set test/beta -40
+set test/gamma 30
+run
+set test/beta -40
+set test/gamma 40
+run
+set test/beta -40
+set test/gamma 50
+run
+set test/beta -40
+set test/gamma 60
+run
+set test/beta -40
+set test/gamma 70
+run
+set test/beta -40
+set test/gamma 80
+run
+set test/beta -40
+set test/gamma 90
+run
+set test/beta -40
+set test/gamma 100
+run
+set test/beta -40
+set test/gamma 110
+run
+set test/beta -40
+set test/gamma 120
+run
+set test/beta -40
+set test/gamma 130
+run
+set test/beta -40
+set test/gamma 140
+run
+set test/beta -40
+set test/gamma 150
+run
+set test/beta -40
+set test/gamma 160
+run
+set test/beta -40
+set test/gamma 170
+run
+set test/beta -40
+set test/gamma 180
+run
+set test/beta -30
+set test/gamma -170
+run
+set test/beta -30
+set test/gamma -160
+run
+set test/beta -30
+set test/gamma -150
+run
+set test/beta -30
+set test/gamma -140
+run
+set test/beta -30
+set test/gamma -130
+run
+set test/beta -30
+set test/gamma -120
+run
+set test/beta -30
+set test/gamma -110
+run
+set test/beta -30
+set test/gamma -100
+run
+set test/beta -30
+set test/gamma -90
+run
+set test/beta -30
+set test/gamma -80
+run
+set test/beta -30
+set test/gamma -70
+run
+set test/beta -30
+set test/gamma -60
+run
+set test/beta -30
+set test/gamma -50
+run
+set test/beta -30
+set test/gamma -40
+run
+set test/beta -30
+set test/gamma -30
+run
+set test/beta -30
+set test/gamma -20
+run
+set test/beta -30
+set test/gamma -10
+run
+set test/beta -30
+set test/gamma 0
+run
+set test/beta -30
+set test/gamma 10
+run
+set test/beta -30
+set test/gamma 20
+run
+set test/beta -30
+set test/gamma 30
+run
+set test/beta -30
+set test/gamma 40
+run
+set test/beta -30
+set test/gamma 50
+run
+set test/beta -30
+set test/gamma 60
+run
+set test/beta -30
+set test/gamma 70
+run
+set test/beta -30
+set test/gamma 80
+run
+set test/beta -30
+set test/gamma 90
+run
+set test/beta -30
+set test/gamma 100
+run
+set test/beta -30
+set test/gamma 110
+run
+set test/beta -30
+set test/gamma 120
+run
+set test/beta -30
+set test/gamma 130
+run
+set test/beta -30
+set test/gamma 140
+run
+set test/beta -30
+set test/gamma 150
+run
+set test/beta -30
+set test/gamma 160
+run
+set test/beta -30
+set test/gamma 170
+run
+set test/beta -30
+set test/gamma 180
+run
+set test/beta -20
+set test/gamma -170
+run
+set test/beta -20
+set test/gamma -160
+run
+set test/beta -20
+set test/gamma -150
+run
+set test/beta -20
+set test/gamma -140
+run
+set test/beta -20
+set test/gamma -130
+run
+set test/beta -20
+set test/gamma -120
+run
+set test/beta -20
+set test/gamma -110
+run
+set test/beta -20
+set test/gamma -100
+run
+set test/beta -20
+set test/gamma -90
+run
+set test/beta -20
+set test/gamma -80
+run
+set test/beta -20
+set test/gamma -70
+run
+set test/beta -20
+set test/gamma -60
+run
+set test/beta -20
+set test/gamma -50
+run
+set test/beta -20
+set test/gamma -40
+run
+set test/beta -20
+set test/gamma -30
+run
+set test/beta -20
+set test/gamma -20
+run
+set test/beta -20
+set test/gamma -10
+run
+set test/beta -20
+set test/gamma 0
+run
+set test/beta -20
+set test/gamma 10
+run
+set test/beta -20
+set test/gamma 20
+run
+set test/beta -20
+set test/gamma 30
+run
+set test/beta -20
+set test/gamma 40
+run
+set test/beta -20
+set test/gamma 50
+run
+set test/beta -20
+set test/gamma 60
+run
+set test/beta -20
+set test/gamma 70
+run
+set test/beta -20
+set test/gamma 80
+run
+set test/beta -20
+set test/gamma 90
+run
+set test/beta -20
+set test/gamma 100
+run
+set test/beta -20
+set test/gamma 110
+run
+set test/beta -20
+set test/gamma 120
+run
+set test/beta -20
+set test/gamma 130
+run
+set test/beta -20
+set test/gamma 140
+run
+set test/beta -20
+set test/gamma 150
+run
+set test/beta -20
+set test/gamma 160
+run
+set test/beta -20
+set test/gamma 170
+run
+set test/beta -20
+set test/gamma 180
+run
+set test/beta -10
+set test/gamma -170
+run
+set test/beta -10
+set test/gamma -160
+run
+set test/beta -10
+set test/gamma -150
+run
+set test/beta -10
+set test/gamma -140
+run
+set test/beta -10
+set test/gamma -130
+run
+set test/beta -10
+set test/gamma -120
+run
+set test/beta -10
+set test/gamma -110
+run
+set test/beta -10
+set test/gamma -100
+run
+set test/beta -10
+set test/gamma -90
+run
+set test/beta -10
+set test/gamma -80
+run
+set test/beta -10
+set test/gamma -70
+run
+set test/beta -10
+set test/gamma -60
+run
+set test/beta -10
+set test/gamma -50
+run
+set test/beta -10
+set test/gamma -40
+run
+set test/beta -10
+set test/gamma -30
+run
+set test/beta -10
+set test/gamma -20
+run
+set test/beta -10
+set test/gamma -10
+run
+set test/beta -10
+set test/gamma 0
+run
+set test/beta -10
+set test/gamma 10
+run
+set test/beta -10
+set test/gamma 20
+run
+set test/beta -10
+set test/gamma 30
+run
+set test/beta -10
+set test/gamma 40
+run
+set test/beta -10
+set test/gamma 50
+run
+set test/beta -10
+set test/gamma 60
+run
+set test/beta -10
+set test/gamma 70
+run
+set test/beta -10
+set test/gamma 80
+run
+set test/beta -10
+set test/gamma 90
+run
+set test/beta -10
+set test/gamma 100
+run
+set test/beta -10
+set test/gamma 110
+run
+set test/beta -10
+set test/gamma 120
+run
+set test/beta -10
+set test/gamma 130
+run
+set test/beta -10
+set test/gamma 140
+run
+set test/beta -10
+set test/gamma 150
+run
+set test/beta -10
+set test/gamma 160
+run
+set test/beta -10
+set test/gamma 170
+run
+set test/beta -10
+set test/gamma 180
+run
+set test/beta 0
+set test/gamma -170
+run
+set test/beta 0
+set test/gamma -160
+run
+set test/beta 0
+set test/gamma -150
+run
+set test/beta 0
+set test/gamma -140
+run
+set test/beta 0
+set test/gamma -130
+run
+set test/beta 0
+set test/gamma -120
+run
+set test/beta 0
+set test/gamma -110
+run
+set test/beta 0
+set test/gamma -100
+run
+set test/beta 0
+set test/gamma -90
+run
+set test/beta 0
+set test/gamma -80
+run
+set test/beta 0
+set test/gamma -70
+run
+set test/beta 0
+set test/gamma -60
+run
+set test/beta 0
+set test/gamma -50
+run
+set test/beta 0
+set test/gamma -40
+run
+set test/beta 0
+set test/gamma -30
+run
+set test/beta 0
+set test/gamma -20
+run
+set test/beta 0
+set test/gamma -10
+run
+set test/beta 0
+set test/gamma 0
+run
+set test/beta 0
+set test/gamma 10
+run
+set test/beta 0
+set test/gamma 20
+run
+set test/beta 0
+set test/gamma 30
+run
+set test/beta 0
+set test/gamma 40
+run
+set test/beta 0
+set test/gamma 50
+run
+set test/beta 0
+set test/gamma 60
+run
+set test/beta 0
+set test/gamma 70
+run
+set test/beta 0
+set test/gamma 80
+run
+set test/beta 0
+set test/gamma 90
+run
+set test/beta 0
+set test/gamma 100
+run
+set test/beta 0
+set test/gamma 110
+run
+set test/beta 0
+set test/gamma 120
+run
+set test/beta 0
+set test/gamma 130
+run
+set test/beta 0
+set test/gamma 140
+run
+set test/beta 0
+set test/gamma 150
+run
+set test/beta 0
+set test/gamma 160
+run
+set test/beta 0
+set test/gamma 170
+run
+set test/beta 0
+set test/gamma 180
+run
+set test/beta 10
+set test/gamma -170
+run
+set test/beta 10
+set test/gamma -160
+run
+set test/beta 10
+set test/gamma -150
+run
+set test/beta 10
+set test/gamma -140
+run
+set test/beta 10
+set test/gamma -130
+run
+set test/beta 10
+set test/gamma -120
+run
+set test/beta 10
+set test/gamma -110
+run
+set test/beta 10
+set test/gamma -100
+run
+set test/beta 10
+set test/gamma -90
+run
+set test/beta 10
+set test/gamma -80
+run
+set test/beta 10
+set test/gamma -70
+run
+set test/beta 10
+set test/gamma -60
+run
+set test/beta 10
+set test/gamma -50
+run
+set test/beta 10
+set test/gamma -40
+run
+set test/beta 10
+set test/gamma -30
+run
+set test/beta 10
+set test/gamma -20
+run
+set test/beta 10
+set test/gamma -10
+run
+set test/beta 10
+set test/gamma 0
+run
+set test/beta 10
+set test/gamma 10
+run
+set test/beta 10
+set test/gamma 20
+run
+set test/beta 10
+set test/gamma 30
+run
+set test/beta 10
+set test/gamma 40
+run
+set test/beta 10
+set test/gamma 50
+run
+set test/beta 10
+set test/gamma 60
+run
+set test/beta 10
+set test/gamma 70
+run
+set test/beta 10
+set test/gamma 80
+run
+set test/beta 10
+set test/gamma 90
+run
+set test/beta 10
+set test/gamma 100
+run
+set test/beta 10
+set test/gamma 110
+run
+set test/beta 10
+set test/gamma 120
+run
+set test/beta 10
+set test/gamma 130
+run
+set test/beta 10
+set test/gamma 140
+run
+set test/beta 10
+set test/gamma 150
+run
+set test/beta 10
+set test/gamma 160
+run
+set test/beta 10
+set test/gamma 170
+run
+set test/beta 10
+set test/gamma 180
+run
+set test/beta 20
+set test/gamma -170
+run
+set test/beta 20
+set test/gamma -160
+run
+set test/beta 20
+set test/gamma -150
+run
+set test/beta 20
+set test/gamma -140
+run
+set test/beta 20
+set test/gamma -130
+run
+set test/beta 20
+set test/gamma -120
+run
+set test/beta 20
+set test/gamma -110
+run
+set test/beta 20
+set test/gamma -100
+run
+set test/beta 20
+set test/gamma -90
+run
+set test/beta 20
+set test/gamma -80
+run
+set test/beta 20
+set test/gamma -70
+run
+set test/beta 20
+set test/gamma -60
+run
+set test/beta 20
+set test/gamma -50
+run
+set test/beta 20
+set test/gamma -40
+run
+set test/beta 20
+set test/gamma -30
+run
+set test/beta 20
+set test/gamma -20
+run
+set test/beta 20
+set test/gamma -10
+run
+set test/beta 20
+set test/gamma 0
+run
+set test/beta 20
+set test/gamma 10
+run
+set test/beta 20
+set test/gamma 20
+run
+set test/beta 20
+set test/gamma 30
+run
+set test/beta 20
+set test/gamma 40
+run
+set test/beta 20
+set test/gamma 50
+run
+set test/beta 20
+set test/gamma 60
+run
+set test/beta 20
+set test/gamma 70
+run
+set test/beta 20
+set test/gamma 80
+run
+set test/beta 20
+set test/gamma 90
+run
+set test/beta 20
+set test/gamma 100
+run
+set test/beta 20
+set test/gamma 110
+run
+set test/beta 20
+set test/gamma 120
+run
+set test/beta 20
+set test/gamma 130
+run
+set test/beta 20
+set test/gamma 140
+run
+set test/beta 20
+set test/gamma 150
+run
+set test/beta 20
+set test/gamma 160
+run
+set test/beta 20
+set test/gamma 170
+run
+set test/beta 20
+set test/gamma 180
+run
+set test/beta 30
+set test/gamma -170
+run
+set test/beta 30
+set test/gamma -160
+run
+set test/beta 30
+set test/gamma -150
+run
+set test/beta 30
+set test/gamma -140
+run
+set test/beta 30
+set test/gamma -130
+run
+set test/beta 30
+set test/gamma -120
+run
+set test/beta 30
+set test/gamma -110
+run
+set test/beta 30
+set test/gamma -100
+run
+set test/beta 30
+set test/gamma -90
+run
+set test/beta 30
+set test/gamma -80
+run
+set test/beta 30
+set test/gamma -70
+run
+set test/beta 30
+set test/gamma -60
+run
+set test/beta 30
+set test/gamma -50
+run
+set test/beta 30
+set test/gamma -40
+run
+set test/beta 30
+set test/gamma -30
+run
+set test/beta 30
+set test/gamma -20
+run
+set test/beta 30
+set test/gamma -10
+run
+set test/beta 30
+set test/gamma 0
+run
+set test/beta 30
+set test/gamma 10
+run
+set test/beta 30
+set test/gamma 20
+run
+set test/beta 30
+set test/gamma 30
+run
+set test/beta 30
+set test/gamma 40
+run
+set test/beta 30
+set test/gamma 50
+run
+set test/beta 30
+set test/gamma 60
+run
+set test/beta 30
+set test/gamma 70
+run
+set test/beta 30
+set test/gamma 80
+run
+set test/beta 30
+set test/gamma 90
+run
+set test/beta 30
+set test/gamma 100
+run
+set test/beta 30
+set test/gamma 110
+run
+set test/beta 30
+set test/gamma 120
+run
+set test/beta 30
+set test/gamma 130
+run
+set test/beta 30
+set test/gamma 140
+run
+set test/beta 30
+set test/gamma 150
+run
+set test/beta 30
+set test/gamma 160
+run
+set test/beta 30
+set test/gamma 170
+run
+set test/beta 30
+set test/gamma 180
+run
+set test/beta 40
+set test/gamma -170
+run
+set test/beta 40
+set test/gamma -160
+run
+set test/beta 40
+set test/gamma -150
+run
+set test/beta 40
+set test/gamma -140
+run
+set test/beta 40
+set test/gamma -130
+run
+set test/beta 40
+set test/gamma -120
+run
+set test/beta 40
+set test/gamma -110
+run
+set test/beta 40
+set test/gamma -100
+run
+set test/beta 40
+set test/gamma -90
+run
+set test/beta 40
+set test/gamma -80
+run
+set test/beta 40
+set test/gamma -70
+run
+set test/beta 40
+set test/gamma -60
+run
+set test/beta 40
+set test/gamma -50
+run
+set test/beta 40
+set test/gamma -40
+run
+set test/beta 40
+set test/gamma -30
+run
+set test/beta 40
+set test/gamma -20
+run
+set test/beta 40
+set test/gamma -10
+run
+set test/beta 40
+set test/gamma 0
+run
+set test/beta 40
+set test/gamma 10
+run
+set test/beta 40
+set test/gamma 20
+run
+set test/beta 40
+set test/gamma 30
+run
+set test/beta 40
+set test/gamma 40
+run
+set test/beta 40
+set test/gamma 50
+run
+set test/beta 40
+set test/gamma 60
+run
+set test/beta 40
+set test/gamma 70
+run
+set test/beta 40
+set test/gamma 80
+run
+set test/beta 40
+set test/gamma 90
+run
+set test/beta 40
+set test/gamma 100
+run
+set test/beta 40
+set test/gamma 110
+run
+set test/beta 40
+set test/gamma 120
+run
+set test/beta 40
+set test/gamma 130
+run
+set test/beta 40
+set test/gamma 140
+run
+set test/beta 40
+set test/gamma 150
+run
+set test/beta 40
+set test/gamma 160
+run
+set test/beta 40
+set test/gamma 170
+run
+set test/beta 40
+set test/gamma 180
+run
+set test/beta 50
+set test/gamma -170
+run
+set test/beta 50
+set test/gamma -160
+run
+set test/beta 50
+set test/gamma -150
+run
+set test/beta 50
+set test/gamma -140
+run
+set test/beta 50
+set test/gamma -130
+run
+set test/beta 50
+set test/gamma -120
+run
+set test/beta 50
+set test/gamma -110
+run
+set test/beta 50
+set test/gamma -100
+run
+set test/beta 50
+set test/gamma -90
+run
+set test/beta 50
+set test/gamma -80
+run
+set test/beta 50
+set test/gamma -70
+run
+set test/beta 50
+set test/gamma -60
+run
+set test/beta 50
+set test/gamma -50
+run
+set test/beta 50
+set test/gamma -40
+run
+set test/beta 50
+set test/gamma -30
+run
+set test/beta 50
+set test/gamma -20
+run
+set test/beta 50
+set test/gamma -10
+run
+set test/beta 50
+set test/gamma 0
+run
+set test/beta 50
+set test/gamma 10
+run
+set test/beta 50
+set test/gamma 20
+run
+set test/beta 50
+set test/gamma 30
+run
+set test/beta 50
+set test/gamma 40
+run
+set test/beta 50
+set test/gamma 50
+run
+set test/beta 50
+set test/gamma 60
+run
+set test/beta 50
+set test/gamma 70
+run
+set test/beta 50
+set test/gamma 80
+run
+set test/beta 50
+set test/gamma 90
+run
+set test/beta 50
+set test/gamma 100
+run
+set test/beta 50
+set test/gamma 110
+run
+set test/beta 50
+set test/gamma 120
+run
+set test/beta 50
+set test/gamma 130
+run
+set test/beta 50
+set test/gamma 140
+run
+set test/beta 50
+set test/gamma 150
+run
+set test/beta 50
+set test/gamma 160
+run
+set test/beta 50
+set test/gamma 170
+run
+set test/beta 50
+set test/gamma 180
+run
+set test/beta 60
+set test/gamma -170
+run
+set test/beta 60
+set test/gamma -160
+run
+set test/beta 60
+set test/gamma -150
+run
+set test/beta 60
+set test/gamma -140
+run
+set test/beta 60
+set test/gamma -130
+run
+set test/beta 60
+set test/gamma -120
+run
+set test/beta 60
+set test/gamma -110
+run
+set test/beta 60
+set test/gamma -100
+run
+set test/beta 60
+set test/gamma -90
+run
+set test/beta 60
+set test/gamma -80
+run
+set test/beta 60
+set test/gamma -70
+run
+set test/beta 60
+set test/gamma -60
+run
+set test/beta 60
+set test/gamma -50
+run
+set test/beta 60
+set test/gamma -40
+run
+set test/beta 60
+set test/gamma -30
+run
+set test/beta 60
+set test/gamma -20
+run
+set test/beta 60
+set test/gamma -10
+run
+set test/beta 60
+set test/gamma 0
+run
+set test/beta 60
+set test/gamma 10
+run
+set test/beta 60
+set test/gamma 20
+run
+set test/beta 60
+set test/gamma 30
+run
+set test/beta 60
+set test/gamma 40
+run
+set test/beta 60
+set test/gamma 50
+run
+set test/beta 60
+set test/gamma 60
+run
+set test/beta 60
+set test/gamma 70
+run
+set test/beta 60
+set test/gamma 80
+run
+set test/beta 60
+set test/gamma 90
+run
+set test/beta 60
+set test/gamma 100
+run
+set test/beta 60
+set test/gamma 110
+run
+set test/beta 60
+set test/gamma 120
+run
+set test/beta 60
+set test/gamma 130
+run
+set test/beta 60
+set test/gamma 140
+run
+set test/beta 60
+set test/gamma 150
+run
+set test/beta 60
+set test/gamma 160
+run
+set test/beta 60
+set test/gamma 170
+run
+set test/beta 60
+set test/gamma 180
+run
+set test/beta 70
+set test/gamma -170
+run
+set test/beta 70
+set test/gamma -160
+run
+set test/beta 70
+set test/gamma -150
+run
+set test/beta 70
+set test/gamma -140
+run
+set test/beta 70
+set test/gamma -130
+run
+set test/beta 70
+set test/gamma -120
+run
+set test/beta 70
+set test/gamma -110
+run
+set test/beta 70
+set test/gamma -100
+run
+set test/beta 70
+set test/gamma -90
+run
+set test/beta 70
+set test/gamma -80
+run
+set test/beta 70
+set test/gamma -70
+run
+set test/beta 70
+set test/gamma -60
+run
+set test/beta 70
+set test/gamma -50
+run
+set test/beta 70
+set test/gamma -40
+run
+set test/beta 70
+set test/gamma -30
+run
+set test/beta 70
+set test/gamma -20
+run
+set test/beta 70
+set test/gamma -10
+run
+set test/beta 70
+set test/gamma 0
+run
+set test/beta 70
+set test/gamma 10
+run
+set test/beta 70
+set test/gamma 20
+run
+set test/beta 70
+set test/gamma 30
+run
+set test/beta 70
+set test/gamma 40
+run
+set test/beta 70
+set test/gamma 50
+run
+set test/beta 70
+set test/gamma 60
+run
+set test/beta 70
+set test/gamma 70
+run
+set test/beta 70
+set test/gamma 80
+run
+set test/beta 70
+set test/gamma 90
+run
+set test/beta 70
+set test/gamma 100
+run
+set test/beta 70
+set test/gamma 110
+run
+set test/beta 70
+set test/gamma 120
+run
+set test/beta 70
+set test/gamma 130
+run
+set test/beta 70
+set test/gamma 140
+run
+set test/beta 70
+set test/gamma 150
+run
+set test/beta 70
+set test/gamma 160
+run
+set test/beta 70
+set test/gamma 170
+run
+set test/beta 70
+set test/gamma 180
+run
+set test/beta 80
+set test/gamma -170
+run
+set test/beta 80
+set test/gamma -160
+run
+set test/beta 80
+set test/gamma -150
+run
+set test/beta 80
+set test/gamma -140
+run
+set test/beta 80
+set test/gamma -130
+run
+set test/beta 80
+set test/gamma -120
+run
+set test/beta 80
+set test/gamma -110
+run
+set test/beta 80
+set test/gamma -100
+run
+set test/beta 80
+set test/gamma -90
+run
+set test/beta 80
+set test/gamma -80
+run
+set test/beta 80
+set test/gamma -70
+run
+set test/beta 80
+set test/gamma -60
+run
+set test/beta 80
+set test/gamma -50
+run
+set test/beta 80
+set test/gamma -40
+run
+set test/beta 80
+set test/gamma -30
+run
+set test/beta 80
+set test/gamma -20
+run
+set test/beta 80
+set test/gamma -10
+run
+set test/beta 80
+set test/gamma 0
+run
+set test/beta 80
+set test/gamma 10
+run
+set test/beta 80
+set test/gamma 20
+run
+set test/beta 80
+set test/gamma 30
+run
+set test/beta 80
+set test/gamma 40
+run
+set test/beta 80
+set test/gamma 50
+run
+set test/beta 80
+set test/gamma 60
+run
+set test/beta 80
+set test/gamma 70
+run
+set test/beta 80
+set test/gamma 80
+run
+set test/beta 80
+set test/gamma 90
+run
+set test/beta 80
+set test/gamma 100
+run
+set test/beta 80
+set test/gamma 110
+run
+set test/beta 80
+set test/gamma 120
+run
+set test/beta 80
+set test/gamma 130
+run
+set test/beta 80
+set test/gamma 140
+run
+set test/beta 80
+set test/gamma 150
+run
+set test/beta 80
+set test/gamma 160
+run
+set test/beta 80
+set test/gamma 170
+run
+set test/beta 80
+set test/gamma 180
+run
+set test/alpha 10.
+set test/beta 0.
+set test/theta -10.
+set test/gamma -170
+run
+set test/gamma -160
+run
+set test/gamma -150
+run
+set test/gamma -140
+run
+set test/gamma -130
+run
+set test/gamma -120
+run
+set test/gamma -110
+run
+set test/gamma -100
+run
+set test/gamma -90
+run
+set test/gamma -80
+run
+set test/gamma -70
+run
+set test/gamma -60
+run
+set test/gamma -50
+run
+set test/gamma -40
+run
+set test/gamma -30
+run
+set test/gamma -20
+run
+set test/gamma -10
+run
+set test/gamma 0
+run
+set test/gamma 10
+run
+set test/gamma 20
+run
+set test/gamma 30
+run
+set test/gamma 40
+run
+set test/gamma 50
+run
+set test/gamma 60
+run
+set test/gamma 70
+run
+set test/gamma 80
+run
+set test/gamma 90
+run
+set test/gamma 100
+run
+set test/gamma 110
+run
+set test/gamma 120
+run
+set test/gamma 130
+run
+set test/gamma 140
+run
+set test/gamma 150
+run
+set test/gamma 160
+run
+set test/gamma 170
+run
+set test/gamma 180
+run
+set test/alpha 0.
+set test/beta 10.
+set test/theta 0.
+set test/psi 10.
+set test/gamma -170
+run
+set test/gamma -160
+run
+set test/gamma -150
+run
+set test/gamma -140
+run
+set test/gamma -130
+run
+set test/gamma -120
+run
+set test/gamma -110
+run
+set test/gamma -100
+run
+set test/gamma -90
+run
+set test/gamma -80
+run
+set test/gamma -70
+run
+set test/gamma -60
+run
+set test/gamma -50
+run
+set test/gamma -40
+run
+set test/gamma -30
+run
+set test/gamma -20
+run
+set test/gamma -10
+run
+set test/gamma 0
+run
+set test/gamma 10
+run
+set test/gamma 20
+run
+set test/gamma 30
+run
+set test/gamma 40
+run
+set test/gamma 50
+run
+set test/gamma 60
+run
+set test/gamma 70
+run
+set test/gamma 80
+run
+set test/gamma 90
+run
+set test/gamma 100
+run
+set test/gamma 110
+run
+set test/gamma 120
+run
+set test/gamma 130
+run
+set test/gamma 140
+run
+set test/gamma 150
+run
+set test/gamma 160
+run
+set test/gamma 170
+run
+set test/gamma 180
+run
+set test/alpha 10.
+set test/beta 5.
+set test/phi 0.
+set test/psi 0.
+set test/theta -80
+set test/gamma -170
+run
+set test/gamma -160
+run
+set test/gamma -150
+run
+set test/gamma -140
+run
+set test/gamma -130
+run
+set test/gamma -120
+run
+set test/gamma -110
+run
+set test/gamma -100
+run
+set test/gamma -90
+run
+set test/gamma -80
+run
+set test/gamma -70
+run
+set test/gamma -60
+run
+set test/gamma -50
+run
+set test/gamma -40
+run
+set test/gamma -30
+run
+set test/gamma -20
+run
+set test/gamma -10
+run
+set test/gamma 0
+run
+set test/gamma 10
+run
+set test/gamma 20
+run
+set test/gamma 30
+run
+set test/gamma 40
+run
+set test/gamma 50
+run
+set test/gamma 60
+run
+set test/gamma 70
+run
+set test/gamma 80
+run
+set test/gamma 90
+run
+set test/gamma 100
+run
+set test/gamma 110
+run
+set test/gamma 120
+run
+set test/gamma 130
+run
+set test/gamma 140
+run
+set test/gamma 150
+run
+set test/gamma 160
+run
+set test/gamma 170
+run
+set test/gamma 180
+run
+set test/theta -70
+set test/gamma -170
+run
+set test/gamma -160
+run
+set test/gamma -150
+run
+set test/gamma -140
+run
+set test/gamma -130
+run
+set test/gamma -120
+run
+set test/gamma -110
+run
+set test/gamma -100
+run
+set test/gamma -90
+run
+set test/gamma -80
+run
+set test/gamma -70
+run
+set test/gamma -60
+run
+set test/gamma -50
+run
+set test/gamma -40
+run
+set test/gamma -30
+run
+set test/gamma -20
+run
+set test/gamma -10
+run
+set test/gamma 0
+run
+set test/gamma 10
+run
+set test/gamma 20
+run
+set test/gamma 30
+run
+set test/gamma 40
+run
+set test/gamma 50
+run
+set test/gamma 60
+run
+set test/gamma 70
+run
+set test/gamma 80
+run
+set test/gamma 90
+run
+set test/gamma 100
+run
+set test/gamma 110
+run
+set test/gamma 120
+run
+set test/gamma 130
+run
+set test/gamma 140
+run
+set test/gamma 150
+run
+set test/gamma 160
+run
+set test/gamma 170
+run
+set test/gamma 180
+run
+set test/theta -60
+set test/gamma -170
+run
+set test/gamma -160
+run
+set test/gamma -150
+run
+set test/gamma -140
+run
+set test/gamma -130
+run
+set test/gamma -120
+run
+set test/gamma -110
+run
+set test/gamma -100
+run
+set test/gamma -90
+run
+set test/gamma -80
+run
+set test/gamma -70
+run
+set test/gamma -60
+run
+set test/gamma -50
+run
+set test/gamma -40
+run
+set test/gamma -30
+run
+set test/gamma -20
+run
+set test/gamma -10
+run
+set test/gamma 0
+run
+set test/gamma 10
+run
+set test/gamma 20
+run
+set test/gamma 30
+run
+set test/gamma 40
+run
+set test/gamma 50
+run
+set test/gamma 60
+run
+set test/gamma 70
+run
+set test/gamma 80
+run
+set test/gamma 90
+run
+set test/gamma 100
+run
+set test/gamma 110
+run
+set test/gamma 120
+run
+set test/gamma 130
+run
+set test/gamma 140
+run
+set test/gamma 150
+run
+set test/gamma 160
+run
+set test/gamma 170
+run
+set test/gamma 180
+run
+set test/theta -50
+set test/gamma -170
+run
+set test/gamma -160
+run
+set test/gamma -150
+run
+set test/gamma -140
+run
+set test/gamma -130
+run
+set test/gamma -120
+run
+set test/gamma -110
+run
+set test/gamma -100
+run
+set test/gamma -90
+run
+set test/gamma -80
+run
+set test/gamma -70
+run
+set test/gamma -60
+run
+set test/gamma -50
+run
+set test/gamma -40
+run
+set test/gamma -30
+run
+set test/gamma -20
+run
+set test/gamma -10
+run
+set test/gamma 0
+run
+set test/gamma 10
+run
+set test/gamma 20
+run
+set test/gamma 30
+run
+set test/gamma 40
+run
+set test/gamma 50
+run
+set test/gamma 60
+run
+set test/gamma 70
+run
+set test/gamma 80
+run
+set test/gamma 90
+run
+set test/gamma 100
+run
+set test/gamma 110
+run
+set test/gamma 120
+run
+set test/gamma 130
+run
+set test/gamma 140
+run
+set test/gamma 150
+run
+set test/gamma 160
+run
+set test/gamma 170
+run
+set test/gamma 180
+run
+set test/theta -40
+set test/gamma -170
+run
+set test/gamma -160
+run
+set test/gamma -150
+run
+set test/gamma -140
+run
+set test/gamma -130
+run
+set test/gamma -120
+run
+set test/gamma -110
+run
+set test/gamma -100
+run
+set test/gamma -90
+run
+set test/gamma -80
+run
+set test/gamma -70
+run
+set test/gamma -60
+run
+set test/gamma -50
+run
+set test/gamma -40
+run
+set test/gamma -30
+run
+set test/gamma -20
+run
+set test/gamma -10
+run
+set test/gamma 0
+run
+set test/gamma 10
+run
+set test/gamma 20
+run
+set test/gamma 30
+run
+set test/gamma 40
+run
+set test/gamma 50
+run
+set test/gamma 60
+run
+set test/gamma 70
+run
+set test/gamma 80
+run
+set test/gamma 90
+run
+set test/gamma 100
+run
+set test/gamma 110
+run
+set test/gamma 120
+run
+set test/gamma 130
+run
+set test/gamma 140
+run
+set test/gamma 150
+run
+set test/gamma 160
+run
+set test/gamma 170
+run
+set test/gamma 180
+run
+set test/theta -30
+set test/gamma -170
+run
+set test/gamma -160
+run
+set test/gamma -150
+run
+set test/gamma -140
+run
+set test/gamma -130
+run
+set test/gamma -120
+run
+set test/gamma -110
+run
+set test/gamma -100
+run
+set test/gamma -90
+run
+set test/gamma -80
+run
+set test/gamma -70
+run
+set test/gamma -60
+run
+set test/gamma -50
+run
+set test/gamma -40
+run
+set test/gamma -30
+run
+set test/gamma -20
+run
+set test/gamma -10
+run
+set test/gamma 0
+run
+set test/gamma 10
+run
+set test/gamma 20
+run
+set test/gamma 30
+run
+set test/gamma 40
+run
+set test/gamma 50
+run
+set test/gamma 60
+run
+set test/gamma 70
+run
+set test/gamma 80
+run
+set test/gamma 90
+run
+set test/gamma 100
+run
+set test/gamma 110
+run
+set test/gamma 120
+run
+set test/gamma 130
+run
+set test/gamma 140
+run
+set test/gamma 150
+run
+set test/gamma 160
+run
+set test/gamma 170
+run
+set test/gamma 180
+run
+set test/theta -20
+set test/gamma -170
+run
+set test/gamma -160
+run
+set test/gamma -150
+run
+set test/gamma -140
+run
+set test/gamma -130
+run
+set test/gamma -120
+run
+set test/gamma -110
+run
+set test/gamma -100
+run
+set test/gamma -90
+run
+set test/gamma -80
+run
+set test/gamma -70
+run
+set test/gamma -60
+run
+set test/gamma -50
+run
+set test/gamma -40
+run
+set test/gamma -30
+run
+set test/gamma -20
+run
+set test/gamma -10
+run
+set test/gamma 0
+run
+set test/gamma 10
+run
+set test/gamma 20
+run
+set test/gamma 30
+run
+set test/gamma 40
+run
+set test/gamma 50
+run
+set test/gamma 60
+run
+set test/gamma 70
+run
+set test/gamma 80
+run
+set test/gamma 90
+run
+set test/gamma 100
+run
+set test/gamma 110
+run
+set test/gamma 120
+run
+set test/gamma 130
+run
+set test/gamma 140
+run
+set test/gamma 150
+run
+set test/gamma 160
+run
+set test/gamma 170
+run
+set test/gamma 180
+run
+set test/theta -10
+set test/gamma -170
+run
+set test/gamma -160
+run
+set test/gamma -150
+run
+set test/gamma -140
+run
+set test/gamma -130
+run
+set test/gamma -120
+run
+set test/gamma -110
+run
+set test/gamma -100
+run
+set test/gamma -90
+run
+set test/gamma -80
+run
+set test/gamma -70
+run
+set test/gamma -60
+run
+set test/gamma -50
+run
+set test/gamma -40
+run
+set test/gamma -30
+run
+set test/gamma -20
+run
+set test/gamma -10
+run
+set test/gamma 0
+run
+set test/gamma 10
+run
+set test/gamma 20
+run
+set test/gamma 30
+run
+set test/gamma 40
+run
+set test/gamma 50
+run
+set test/gamma 60
+run
+set test/gamma 70
+run
+set test/gamma 80
+run
+set test/gamma 90
+run
+set test/gamma 100
+run
+set test/gamma 110
+run
+set test/gamma 120
+run
+set test/gamma 130
+run
+set test/gamma 140
+run
+set test/gamma 150
+run
+set test/gamma 160
+run
+set test/gamma 170
+run
+set test/gamma 180
+run
+set test/theta 0
+set test/gamma -170
+run
+set test/gamma -160
+run
+set test/gamma -150
+run
+set test/gamma -140
+run
+set test/gamma -130
+run
+set test/gamma -120
+run
+set test/gamma -110
+run
+set test/gamma -100
+run
+set test/gamma -90
+run
+set test/gamma -80
+run
+set test/gamma -70
+run
+set test/gamma -60
+run
+set test/gamma -50
+run
+set test/gamma -40
+run
+set test/gamma -30
+run
+set test/gamma -20
+run
+set test/gamma -10
+run
+set test/gamma 0
+run
+set test/gamma 10
+run
+set test/gamma 20
+run
+set test/gamma 30
+run
+set test/gamma 40
+run
+set test/gamma 50
+run
+set test/gamma 60
+run
+set test/gamma 70
+run
+set test/gamma 80
+run
+set test/gamma 90
+run
+set test/gamma 100
+run
+set test/gamma 110
+run
+set test/gamma 120
+run
+set test/gamma 130
+run
+set test/gamma 140
+run
+set test/gamma 150
+run
+set test/gamma 160
+run
+set test/gamma 170
+run
+set test/gamma 180
+run
+set test/theta 10
+set test/gamma -170
+run
+set test/gamma -160
+run
+set test/gamma -150
+run
+set test/gamma -140
+run
+set test/gamma -130
+run
+set test/gamma -120
+run
+set test/gamma -110
+run
+set test/gamma -100
+run
+set test/gamma -90
+run
+set test/gamma -80
+run
+set test/gamma -70
+run
+set test/gamma -60
+run
+set test/gamma -50
+run
+set test/gamma -40
+run
+set test/gamma -30
+run
+set test/gamma -20
+run
+set test/gamma -10
+run
+set test/gamma 0
+run
+set test/gamma 10
+run
+set test/gamma 20
+run
+set test/gamma 30
+run
+set test/gamma 40
+run
+set test/gamma 50
+run
+set test/gamma 60
+run
+set test/gamma 70
+run
+set test/gamma 80
+run
+set test/gamma 90
+run
+set test/gamma 100
+run
+set test/gamma 110
+run
+set test/gamma 120
+run
+set test/gamma 130
+run
+set test/gamma 140
+run
+set test/gamma 150
+run
+set test/gamma 160
+run
+set test/gamma 170
+run
+set test/gamma 180
+run
+set test/theta 20
+set test/gamma -170
+run
+set test/gamma -160
+run
+set test/gamma -150
+run
+set test/gamma -140
+run
+set test/gamma -130
+run
+set test/gamma -120
+run
+set test/gamma -110
+run
+set test/gamma -100
+run
+set test/gamma -90
+run
+set test/gamma -80
+run
+set test/gamma -70
+run
+set test/gamma -60
+run
+set test/gamma -50
+run
+set test/gamma -40
+run
+set test/gamma -30
+run
+set test/gamma -20
+run
+set test/gamma -10
+run
+set test/gamma 0
+run
+set test/gamma 10
+run
+set test/gamma 20
+run
+set test/gamma 30
+run
+set test/gamma 40
+run
+set test/gamma 50
+run
+set test/gamma 60
+run
+set test/gamma 70
+run
+set test/gamma 80
+run
+set test/gamma 90
+run
+set test/gamma 100
+run
+set test/gamma 110
+run
+set test/gamma 120
+run
+set test/gamma 130
+run
+set test/gamma 140
+run
+set test/gamma 150
+run
+set test/gamma 160
+run
+set test/gamma 170
+run
+set test/gamma 180
+run
+set test/theta 30
+set test/gamma -170
+run
+set test/gamma -160
+run
+set test/gamma -150
+run
+set test/gamma -140
+run
+set test/gamma -130
+run
+set test/gamma -120
+run
+set test/gamma -110
+run
+set test/gamma -100
+run
+set test/gamma -90
+run
+set test/gamma -80
+run
+set test/gamma -70
+run
+set test/gamma -60
+run
+set test/gamma -50
+run
+set test/gamma -40
+run
+set test/gamma -30
+run
+set test/gamma -20
+run
+set test/gamma -10
+run
+set test/gamma 0
+run
+set test/gamma 10
+run
+set test/gamma 20
+run
+set test/gamma 30
+run
+set test/gamma 40
+run
+set test/gamma 50
+run
+set test/gamma 60
+run
+set test/gamma 70
+run
+set test/gamma 80
+run
+set test/gamma 90
+run
+set test/gamma 100
+run
+set test/gamma 110
+run
+set test/gamma 120
+run
+set test/gamma 130
+run
+set test/gamma 140
+run
+set test/gamma 150
+run
+set test/gamma 160
+run
+set test/gamma 170
+run
+set test/gamma 180
+run
+set test/theta 40
+set test/gamma -170
+run
+set test/gamma -160
+run
+set test/gamma -150
+run
+set test/gamma -140
+run
+set test/gamma -130
+run
+set test/gamma -120
+run
+set test/gamma -110
+run
+set test/gamma -100
+run
+set test/gamma -90
+run
+set test/gamma -80
+run
+set test/gamma -70
+run
+set test/gamma -60
+run
+set test/gamma -50
+run
+set test/gamma -40
+run
+set test/gamma -30
+run
+set test/gamma -20
+run
+set test/gamma -10
+run
+set test/gamma 0
+run
+set test/gamma 10
+run
+set test/gamma 20
+run
+set test/gamma 30
+run
+set test/gamma 40
+run
+set test/gamma 50
+run
+set test/gamma 60
+run
+set test/gamma 70
+run
+set test/gamma 80
+run
+set test/gamma 90
+run
+set test/gamma 100
+run
+set test/gamma 110
+run
+set test/gamma 120
+run
+set test/gamma 130
+run
+set test/gamma 140
+run
+set test/gamma 150
+run
+set test/gamma 160
+run
+set test/gamma 170
+run
+set test/gamma 180
+run
+set test/theta 50
+set test/gamma -170
+run
+set test/gamma -160
+run
+set test/gamma -150
+run
+set test/gamma -140
+run
+set test/gamma -130
+run
+set test/gamma -120
+run
+set test/gamma -110
+run
+set test/gamma -100
+run
+set test/gamma -90
+run
+set test/gamma -80
+run
+set test/gamma -70
+run
+set test/gamma -60
+run
+set test/gamma -50
+run
+set test/gamma -40
+run
+set test/gamma -30
+run
+set test/gamma -20
+run
+set test/gamma -10
+run
+set test/gamma 0
+run
+set test/gamma 10
+run
+set test/gamma 20
+run
+set test/gamma 30
+run
+set test/gamma 40
+run
+set test/gamma 50
+run
+set test/gamma 60
+run
+set test/gamma 70
+run
+set test/gamma 80
+run
+set test/gamma 90
+run
+set test/gamma 100
+run
+set test/gamma 110
+run
+set test/gamma 120
+run
+set test/gamma 130
+run
+set test/gamma 140
+run
+set test/gamma 150
+run
+set test/gamma 160
+run
+set test/gamma 170
+run
+set test/gamma 180
+run
+set test/theta 60
+set test/gamma -170
+run
+set test/gamma -160
+run
+set test/gamma -150
+run
+set test/gamma -140
+run
+set test/gamma -130
+run
+set test/gamma -120
+run
+set test/gamma -110
+run
+set test/gamma -100
+run
+set test/gamma -90
+run
+set test/gamma -80
+run
+set test/gamma -70
+run
+set test/gamma -60
+run
+set test/gamma -50
+run
+set test/gamma -40
+run
+set test/gamma -30
+run
+set test/gamma -20
+run
+set test/gamma -10
+run
+set test/gamma 0
+run
+set test/gamma 10
+run
+set test/gamma 20
+run
+set test/gamma 30
+run
+set test/gamma 40
+run
+set test/gamma 50
+run
+set test/gamma 60
+run
+set test/gamma 70
+run
+set test/gamma 80
+run
+set test/gamma 90
+run
+set test/gamma 100
+run
+set test/gamma 110
+run
+set test/gamma 120
+run
+set test/gamma 130
+run
+set test/gamma 140
+run
+set test/gamma 150
+run
+set test/gamma 160
+run
+set test/gamma 170
+run
+set test/gamma 180
+run
+set test/theta 70
+set test/gamma -170
+run
+set test/gamma -160
+run
+set test/gamma -150
+run
+set test/gamma -140
+run
+set test/gamma -130
+run
+set test/gamma -120
+run
+set test/gamma -110
+run
+set test/gamma -100
+run
+set test/gamma -90
+run
+set test/gamma -80
+run
+set test/gamma -70
+run
+set test/gamma -60
+run
+set test/gamma -50
+run
+set test/gamma -40
+run
+set test/gamma -30
+run
+set test/gamma -20
+run
+set test/gamma -10
+run
+set test/gamma 0
+run
+set test/gamma 10
+run
+set test/gamma 20
+run
+set test/gamma 30
+run
+set test/gamma 40
+run
+set test/gamma 50
+run
+set test/gamma 60
+run
+set test/gamma 70
+run
+set test/gamma 80
+run
+set test/gamma 90
+run
+set test/gamma 100
+run
+set test/gamma 110
+run
+set test/gamma 120
+run
+set test/gamma 130
+run
+set test/gamma 140
+run
+set test/gamma 150
+run
+set test/gamma 160
+run
+set test/gamma 170
+run
+set test/gamma 180
+run
+set test/theta 80
+set test/gamma -170
+run
+set test/gamma -160
+run
+set test/gamma -150
+run
+set test/gamma -140
+run
+set test/gamma -130
+run
+set test/gamma -120
+run
+set test/gamma -110
+run
+set test/gamma -100
+run
+set test/gamma -90
+run
+set test/gamma -80
+run
+set test/gamma -70
+run
+set test/gamma -60
+run
+set test/gamma -50
+run
+set test/gamma -40
+run
+set test/gamma -30
+run
+set test/gamma -20
+run
+set test/gamma -10
+run
+set test/gamma 0
+run
+set test/gamma 10
+run
+set test/gamma 20
+run
+set test/gamma 30
+run
+set test/gamma 40
+run
+set test/gamma 50
+run
+set test/gamma 60
+run
+set test/gamma 70
+run
+set test/gamma 80
+run
+set test/gamma 90
+run
+set test/gamma 100
+run
+set test/gamma 110
+run
+set test/gamma 120
+run
+set test/gamma 130
+run
+set test/gamma 140
+run
+set test/gamma 150
+run
+set test/gamma 160
+run
+set test/gamma 170
+run
+set test/gamma 180
+run
+set test/theta 90
+set test/gamma -170
+run
+set test/gamma -160
+run
+set test/gamma -150
+run
+set test/gamma -140
+run
+set test/gamma -130
+run
+set test/gamma -120
+run
+set test/gamma -110
+run
+set test/gamma -100
+run
+set test/gamma -90
+run
+set test/gamma -80
+run
+set test/gamma -70
+run
+set test/gamma -60
+run
+set test/gamma -50
+run
+set test/gamma -40
+run
+set test/gamma -30
+run
+set test/gamma -20
+run
+set test/gamma -10
+run
+set test/gamma 0
+run
+set test/gamma 10
+run
+set test/gamma 20
+run
+set test/gamma 30
+run
+set test/gamma 40
+run
+set test/gamma 50
+run
+set test/gamma 60
+run
+set test/gamma 70
+run
+set test/gamma 80
+run
+set test/gamma 90
+run
+set test/gamma 100
+run
+set test/gamma 110
+run
+set test/gamma 120
+run
+set test/gamma 130
+run
+set test/gamma 140
+run
+set test/gamma 150
+run
+set test/gamma 160
+run
+set test/gamma 170
+run
+set test/gamma 180
+run
+paths ../.. derived/aircraft derived/systems
+new
+load tripod_function
+watch test/bf_to_wf/x test/bf_to_wf/y test/bf_to_wf/z test/wf_to_bf/x test/wf_to_bf/y test/wf_to_bf/z
+set ic/h-sl-ft 10000
+runic
+set test/alpha 10.5
+set test/rx 1.0
+set test/ry 0.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 1.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 0.0
+set test/rz 1.0
+run
+set test/rx 1.0
+set test/ry 0.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 1.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 0.0
+set test/rz 1.0
+run
+set test/alpha 0.0
+set test/beta -8.6
+set test/rx 1.0
+set test/ry 0.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 1.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 0.0
+set test/rz 1.0
+run
+set test/rx 1.0
+set test/ry 0.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 1.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 0.0
+set test/rz 1.0
+run
+set test/beta 0.0
+set test/gamma 45.0
+set test/rx 1.0
+set test/ry 0.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 1.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 0.0
+set test/rz 1.0
+run
+set test/rx 1.0
+set test/ry 0.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 1.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 0.0
+set test/rz 1.0
+run
+set test/alpha 10.5
+set test/beta -8.6
+set test/gamma 0.0
+set test/rx 1.0
+set test/ry 0.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 1.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 0.0
+set test/rz 1.0
+run
+set test/rx 1.0
+set test/ry 0.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 1.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 0.0
+set test/rz 1.0
+run
+set test/alpha 10.5
+set test/beta 0.0
+set test/gamma 45.0
+set test/rx 1.0
+set test/ry 0.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 1.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 0.0
+set test/rz 1.0
+run
+set test/rx 1.0
+set test/ry 0.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 1.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 0.0
+set test/rz 1.0
+run
+set test/alpha 0.0
+set test/beta -8.6
+set test/gamma 45.0
+set test/rx 1.0
+set test/ry 0.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 1.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 0.0
+set test/rz 1.0
+run
+set test/rx 1.0
+set test/ry 0.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 1.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 0.0
+set test/rz 1.0
+run
+set test/alpha 10.5
+set test/beta -8.6
+set test/gamma 45.0
+set test/rx 1.0
+set test/ry 0.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 1.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 0.0
+set test/rz 1.0
+run
+set test/rx 1.0
+set test/ry 0.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 1.0
+set test/rz 0.0
+run
+set test/rx 0.0
+set test/ry 0.0
+set test/rz 1.0
+run
+paths ../.. derived/aircraft derived/systems
+new
+load tripod_function_bad_table

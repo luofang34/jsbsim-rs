@@ -11,10 +11,12 @@
 
 mod bind;
 pub mod component;
+pub mod deadband;
 pub mod families;
 pub mod function;
 pub mod gain;
 mod load;
+pub mod summer;
 #[cfg(test)]
 mod tests;
 

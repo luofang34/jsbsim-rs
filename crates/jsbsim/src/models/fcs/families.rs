@@ -168,4 +168,8 @@ families! {
     Function(super::function::FcsFunction) = "fcs_function";
     /// `<pure_gain>`, `<scheduled_gain>` and `<aerosurface_scale>` (`FGGain`).
     Gain(super::gain::Gain) = "pure_gain" | "scheduled_gain" | "aerosurface_scale";
+    /// `<summer>` (`FGSummer`).
+    Summer(super::summer::Summer) = "summer";
+    /// `<deadband>` (`FGDeadBand`).
+    DeadBand(super::deadband::DeadBand) = "deadband";
 }

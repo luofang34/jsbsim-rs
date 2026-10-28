@@ -17,14 +17,35 @@ pub struct System {
     pub file: &'static str,
     /// Systems path the file is found on, relative to `oracle/`.
     pub systems_path: &'static str,
+    /// Whether JSBSim loads it; one exists to fail as an upstream test
+    /// expects.
+    pub loads: bool,
 }
 
 /// Every derived tripod.
-pub const SYSTEMS: [System; 3] = [
+pub const SYSTEMS: [System; 7] = [
     upstream("gain", "gain.xml"),
+    upstream("deadband", "deadband.xml"),
+    derived("function", "function_no_random.xml"),
+    System {
+        loads: false,
+        ..derived("function_bad_table", "function_bad_table.xml")
+    },
     scenario("fcs_base", "fcs_base.xml"),
     scenario("fcs_gain", "fcs_gain.xml"),
+    scenario("fcs_summer_deadband", "fcs_summer_deadband.xml"),
 ];
+
+/// A tripod including a system of `oracle/derived/systems`
+/// ([`super::systems`]).
+const fn derived(suffix: &'static str, file: &'static str) -> System {
+    System {
+        suffix,
+        file,
+        systems_path: "derived/systems",
+        loads: true,
+    }
+}
 
 /// A tripod including an upstream `tests/` system, vendored in
 /// `oracle/inputs/tests`.
@@ -33,6 +54,7 @@ const fn upstream(suffix: &'static str, file: &'static str) -> System {
         suffix,
         file,
         systems_path: "inputs/tests",
+        loads: true,
     }
 }
 
@@ -42,6 +64,7 @@ const fn scenario(suffix: &'static str, file: &'static str) -> System {
         suffix,
         file,
         systems_path: "scenarios/systems",
+        loads: true,
     }
 }
 

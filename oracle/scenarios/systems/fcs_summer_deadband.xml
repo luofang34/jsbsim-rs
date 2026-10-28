@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  FGSummer and FGDeadBand beyond the upstream tests: summers of several
+  signed inputs, of none, with a bias and clipped; deadbands with a gain,
+  the default zero width, a negative width and clipping. The
+  fcs-summer-deadband golden drives it.
+-->
+<system name="fcs-summer-deadband">
+  <property>test/input</property>
+  <property value="0.25">test/other</property>
+  <property value="1.0">test/width</property>
+  <channel name="summers">
+    <summer name="test/sum">
+      <input>test/input</input>
+      <input>-test/other</input>
+      <input>test/input</input>
+    </summer>
+    <summer name="test/sum-bias-only">
+      <bias>-2.5</bias>
+    </summer>
+    <summer name="test/sum-biased-clipped">
+      <input>test/input</input>
+      <input>test/other</input>
+      <bias>0.1</bias>
+      <clipto>
+        <min>-1.0</min>
+        <max>test/width</max>
+      </clipto>
+    </summer>
+  </channel>
+  <channel name="deadbands">
+    <deadband name="test/db-gain">
+      <input>test/input</input>
+      <width>test/width</width>
+      <gain>-3.0</gain>
+    </deadband>
+    <deadband name="test/db-no-width">
+      <input>test/input</input>
+    </deadband>
+    <deadband name="test/db-negative-width">
+      <input>test/input</input>
+      <width>-1.5</width>
+    </deadband>
+    <deadband name="test/db-clipped">
+      <input>-test/input</input>
+      <width>0.5</width>
+      <gain>2.0</gain>
+      <clipto>
+        <min>-1.0</min>
+        <max>1.5</max>
+      </clipto>
+    </deadband>
+  </channel>
+</system>

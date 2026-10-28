@@ -208,3 +208,14 @@ fn gains_refuse_what_jsbsim_throws_on() {
         assert!(message.contains(expected), "{body}: {message}");
     }
 }
+
+#[test]
+fn a_deadband_needs_an_input_and_a_summer_does_not() {
+    let message = component_error("<deadband name=\"d\"/>");
+    assert!(message.contains("Not enough <input> nodes"), "{message}");
+    let system =
+        "<system><channel name=\"c\"><summer name=\"s\"><bias>2</bias></summer></channel></system>";
+    let mut fdm = load_system(system, LoadOptions::default()).unwrap();
+    fdm.run_ic().unwrap();
+    assert_eq!(fdm.get_property("fcs/s").unwrap(), 2.0);
+}

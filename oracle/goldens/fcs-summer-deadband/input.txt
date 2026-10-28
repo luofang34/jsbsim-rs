@@ -1,0 +1,118 @@
+# oracle/scenarios/systems/fcs_summer_deadband.xml on tripod_fcs_summer_deadband:
+# summers of signed inputs, of none, biased and clipped; deadbands with a gain, no width, a negative width and clipping.
+# The tripod starts at 10000 ft so that its contacts stay clear of the
+# ground; nothing else differs from the upstream test.
+paths ../.. derived/aircraft scenarios/systems
+new
+load tripod_fcs_summer_deadband
+watch test/input test/other test/width test/sum test/sum-bias-only test/sum-biased-clipped test/db-gain test/db-no-width test/db-negative-width test/db-clipped
+set ic/h-sl-ft 10000
+runic
+set test/width 1.0
+set test/input -2.0
+run
+set test/input -1.75
+run
+set test/input -1.5
+run
+set test/input -1.25
+run
+set test/input -1.0
+run
+set test/input -0.75
+run
+set test/input -0.5
+run
+set test/input -0.25
+run
+set test/input 0.0
+run
+set test/input 0.25
+run
+set test/input 0.5
+run
+set test/input 0.75
+run
+set test/input 1.0
+run
+set test/input 1.25
+run
+set test/input 1.5
+run
+set test/input 1.75
+run
+set test/input 2.0
+run
+set test/width 0.3
+set test/input -2.0
+run
+set test/input -1.75
+run
+set test/input -1.5
+run
+set test/input -1.25
+run
+set test/input -1.0
+run
+set test/input -0.75
+run
+set test/input -0.5
+run
+set test/input -0.25
+run
+set test/input 0.0
+run
+set test/input 0.25
+run
+set test/input 0.5
+run
+set test/input 0.75
+run
+set test/input 1.0
+run
+set test/input 1.25
+run
+set test/input 1.5
+run
+set test/input 1.75
+run
+set test/input 2.0
+run
+set test/width -0.6
+set test/input -2.0
+run
+set test/input -1.75
+run
+set test/input -1.5
+run
+set test/input -1.25
+run
+set test/input -1.0
+run
+set test/input -0.75
+run
+set test/input -0.5
+run
+set test/input -0.25
+run
+set test/input 0.0
+run
+set test/input 0.25
+run
+set test/input 0.5
+run
+set test/input 0.75
+run
+set test/input 1.0
+run
+set test/input 1.25
+run
+set test/input 1.5
+run
+set test/input 1.75
+run
+set test/input 2.0
+run
+set test/other -0.75
+set test/input 0.375
+run
