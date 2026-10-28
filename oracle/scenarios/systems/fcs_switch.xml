@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  FGSwitch beyond upstream tests/switch.xml: a sample-and-hold reading its
+  own output, property and negated-property values and defaults, no
+  default, tests and defaults without a value or with a malformed
+  condition (both ignored), clipping, and the transport delay in frames
+  and in seconds. The fcs-switch-forms golden drives it.
+-->
+<system name="fcs-switch">
+  <property>test/input</property>
+  <property value="1">test/hold</property>
+  <property value="3.5">test/value</property>
+  <channel name="switches">
+    <switch name="test/sample-and-hold">
+      <default value="test/sample-and-hold"/>
+      <test value="test/input">
+        test/hold eq 0
+      </test>
+    </switch>
+    <switch name="test/negated-default">
+      <default value="-test/value"/>
+      <test value="-test/input" logic="OR">
+        test/input gt 1.0
+        test/input lt -1.0
+      </test>
+    </switch>
+    <switch name="test/no-default">
+      <test value="2">
+        test/input ge 0.5
+      </test>
+    </switch>
+    <switch name="test/ignored-tests">
+      <default/>
+      <test>
+        test/input gt 0.0
+      </test>
+      <test value="9">
+        test/input ~ 0.0
+      </test>
+      <test value="-4">
+        test/input lt 0.0
+      </test>
+    </switch>
+    <switch name="test/clipped">
+      <default value="test/input"/>
+      <clipto>
+        <min>-0.75</min>
+        <max>test/value</max>
+      </clipto>
+    </switch>
+    <switch name="test/delay-frames">
+      <default value="test/input"/>
+      <delay type="frames">3</delay>
+    </switch>
+    <switch name="test/delay-time">
+      <default value="7"/>
+      <test value="test/input">
+        test/hold eq 1
+      </test>
+      <delay>0.02</delay>
+    </switch>
+  </channel>
+</system>

@@ -1,0 +1,55 @@
+# Upstream tests/switch.xml (vendored in oracle/inputs) driven as
+# TestSwitch.test_conditions and test_nested drives it, on tripod_switch (tests/tripod.xml with
+# the system appended, as the test includes it).
+# The tripod starts at 10000 ft so that its contacts stay clear of the
+# ground; nothing else differs from the upstream test.
+paths ../.. derived/aircraft inputs/tests
+new
+load tripod_switch
+watch test/input test/reference test/sign1 test/sign2 test/compare test/interval test/group test/nested
+set ic/h-sl-ft 10000
+runic
+set test/input -1.5
+set test/reference 0.2
+run
+set test/input 0.0
+run
+set test/input 0.1
+run
+set test/input 0.2
+run
+set test/input 0.235
+run
+set test/input -1.5
+set test/reference -0.5
+run
+set test/input 0.0
+run
+set test/input 0.2
+run
+set test/input 0.235
+run
+paths ../.. derived/aircraft inputs/tests
+new
+load tripod_switch
+watch test/input test/reference test/sign1 test/sign2 test/compare test/interval test/group test/nested
+set ic/h-sl-ft 10000
+runic
+set test/reference 150
+set test/input 30
+run
+set test/reference 180
+set test/input 30
+run
+set test/reference 180
+set test/input 25
+run
+set test/reference 210
+set test/input 25
+run
+set test/reference 210
+set test/input 30
+run
+set test/reference 210
+set test/input 15
+run

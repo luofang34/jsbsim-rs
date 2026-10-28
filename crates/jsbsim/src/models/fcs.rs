@@ -17,6 +17,7 @@ pub mod function;
 pub mod gain;
 mod load;
 pub mod summer;
+pub mod switch;
 #[cfg(test)]
 mod tests;
 

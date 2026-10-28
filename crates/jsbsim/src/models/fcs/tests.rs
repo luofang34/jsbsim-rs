@@ -219,3 +219,42 @@ fn a_deadband_needs_an_input_and_a_summer_does_not() {
     fdm.run_ic().unwrap();
     assert_eq!(fdm.get_property("fcs/s").unwrap(), 2.0);
 }
+
+const SWITCH_WITH_BAD_TESTS: &str = r#"<system><channel name="c">
+  <switch name="s">
+    <default/>
+    <test> x gt 0 </test>
+    <test value="1"> x ~ 0 </test>
+    <test value="2" logic="XOR"> x gt 0 </test>
+    <test value="3"> x lt 0 </test>
+  </switch>
+</channel></system>"#;
+
+#[test]
+fn a_switch_ignores_malformed_tests_unless_strict() {
+    let fdm = load_system(SWITCH_WITH_BAD_TESTS, LoadOptions::default()).unwrap();
+    let kind = &fdm.models.fcs.channels[0].components[0].kind;
+    let super::Kind::Switch(switch) = kind else {
+        panic!("{kind:?}");
+    };
+    assert_eq!(switch.tests.len(), 1);
+    let strict = LoadOptions { strict: true };
+    let err = load_error(SWITCH_WITH_BAD_TESTS, strict);
+    assert!(
+        matches!(&err, Error::Model { message } if message.contains("No VALUE supplied for switch component: s")),
+        "{err:?}"
+    );
+}
+
+#[test]
+fn a_switch_reports_a_missing_property_on_its_first_run() {
+    let system = r#"<system><channel name="c">
+  <switch name="s">
+    <default value="0"/>
+    <test value="test/missing"> test/never gt 0 </test>
+  </switch>
+</channel></system>"#;
+    let mut fdm = load_system(system, LoadOptions::default()).unwrap();
+    let err = fdm.run_ic().unwrap_err();
+    assert!(err.to_string().contains("test/never"), "{err}");
+}

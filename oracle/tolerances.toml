@@ -4770,3 +4770,17 @@ property = "run/test/gamma_local"
 abs = 3e-13
 rel = 0.0
 reason = "rotation_gamma_local goes through FGQuaternion and atan2, where Rust's libm and the platform libm used by C++ may differ in the last ulp; observed max |diff| 2.8e-14 (rel 2.4e-16) on angles near 120 deg; bound 10x that."
+
+[[tolerance]]
+case = "fcs-switch"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Switches only compare and copy values (FGCondition tests, AND/OR groups, signed property values), so they must be bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-switch-forms"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Switch values, defaults, clipping and the transport delay buffer only compare and copy values, so they must be bit-identical; observed max |diff| 0."

@@ -172,4 +172,6 @@ families! {
     Summer(super::summer::Summer) = "summer";
     /// `<deadband>` (`FGDeadBand`).
     DeadBand(super::deadband::DeadBand) = "deadband";
+    /// `<switch>` (`FGSwitch`).
+    Switch(super::switch::Switch) = "switch";
 }

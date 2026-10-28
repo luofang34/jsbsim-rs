@@ -1,0 +1,47 @@
+# oracle/scenarios/systems/fcs_switch.xml on tripod_fcs_switch:
+# sample-and-hold, property and negated values and defaults, ignored tests, clipping and transport delays.
+# The tripod starts at 10000 ft so that its contacts stay clear of the
+# ground; nothing else differs from the upstream test.
+paths ../.. derived/aircraft scenarios/systems
+new
+load tripod_fcs_switch
+watch test/input test/hold test/value test/sample-and-hold test/negated-default test/no-default test/ignored-tests test/clipped test/delay-frames test/delay-time
+set ic/h-sl-ft 10000
+runic
+set test/input 0.25
+run
+set test/input 0.5
+run
+set test/input -0.5
+run
+set test/input 1.5
+run
+set test/input -2.0
+run
+set test/input 4.0
+run
+set test/input 0.0
+run
+set test/hold 0
+set test/input 0.75
+run
+set test/input -1.25
+run
+set test/input 2.5
+run
+set test/hold 1
+set test/value 0.6
+set test/input 3.0
+run
+set test/input -3.0
+run
+set test/input 0.1
+run
+set test/input 0.2
+run
+set test/input 0.3
+run
+set simulation/reset 0
+print
+run
+run
