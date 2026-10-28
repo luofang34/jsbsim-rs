@@ -92,6 +92,7 @@ impl Fdm {
     /// `LoadModelConstants`.
     pub(super) fn load_model_constants(&mut self) {
         let m = &mut self.models;
+        m.winds.input.wingspan = m.aircraft.wing_span;
         let a = &mut m.aerodynamics.input;
         a.wing_area = m.aircraft.wing_area;
         a.wing_chord = m.aircraft.cbar;

@@ -1,0 +1,9 @@
+[case]
+kind = "transcript"
+probe = "winds"
+
+[provenance]
+upstream_commit = "66f7fafc07fe13e7ede9db20873030fed2881713"
+driver = "tools/oracle/cpp"
+cxx_flags = "-ffp-contract=off"
+rows = 195

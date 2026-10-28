@@ -378,3 +378,52 @@ property = "units/nu"
 abs = 0.0
 rel = 1e-15
 reason = "Kinematic viscosity divides pow-based viscosity by pow/exp density; observed max rel 3.6e-16."
+
+[[tolerance]]
+case = "winds"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Gust and turbulence components, turbulence parameters, seeds and every value not listed below use only IEEE basic operations and sqrt in JSBSim's order, so they must be bit-identical."
+
+[[tolerance]]
+case = "winds"
+property = "*/atmosphere/wind-north-fps"
+abs = 0.0
+rel = 1e-15
+reason = "SetWindspeed scales cos(psiw) (libm last-ulp differences); observed max rel 4.5e-16."
+
+[[tolerance]]
+case = "winds"
+property = "*/atmosphere/wind-east-fps"
+abs = 0.0
+rel = 1e-15
+reason = "SetWindspeed scales sin(psiw) (libm last-ulp differences); observed max rel 3.9e-16."
+
+[[tolerance]]
+case = "winds"
+property = "*/atmosphere/psiw-rad"
+abs = 0.0
+rel = 1e-15
+reason = "Run takes atan2 of the steady wind (libm last-ulp differences); observed max rel 1.1e-16."
+
+[[tolerance]]
+case = "winds"
+property = "*/atmosphere/total-wind-north-fps"
+abs = 0.0
+rel = 1e-15
+reason = "Sums the cos(psiw)-scaled steady wind and the cosine-shaped gust (libm last-ulp differences); observed max rel 4.5e-16."
+
+[[tolerance]]
+case = "winds"
+property = "*/atmosphere/total-wind-east-fps"
+abs = 0.0
+rel = 1e-15
+reason = "Sums the sin(psiw)-scaled steady wind and the cosine-shaped gust (libm last-ulp differences); observed max rel 3.9e-16."
+
+[[tolerance]]
+case = "winds"
+property = "*/atmosphere/total-wind-down-fps"
+abs = 0.0
+rel = 1e-15
+reason = "Includes the one-minus-cosine gust profile (libm last-ulp differences in cos); observed max rel 8.3e-16."

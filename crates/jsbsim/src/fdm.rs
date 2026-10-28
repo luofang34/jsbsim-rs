@@ -195,6 +195,7 @@ impl Fdm {
         enable!("FGAtmosphere", atmosphere);
         crate::models::atmosphere::bind(b)?;
         enable!("FGWinds", winds);
+        crate::models::winds::bind(b)?;
         enable!("FGFCS", fcs);
         crate::models::fcs::bind(b)?;
         enable!("FGMassBalance", mass_balance);

@@ -60,6 +60,15 @@ impl Models {
                 a.geod_latitude_deg = self.propagate.state.location.geod_latitude_deg();
                 a.longitude_deg = self.propagate.state.location.longitude_deg();
             }
+            Model::Winds => {
+                let w = &mut self.winds.input;
+                w.altitude_asl = self.propagate.altitude_asl();
+                w.distance_agl = self.propagate.distance_agl(&self.inertial);
+                w.tl2b = self.propagate.frames.tl2b;
+                w.tw2b = self.auxiliary.tw2b;
+                w.uvw = self.propagate.state.uvw;
+                w.total_delta_t = self.exec.dt * f64::from(self.winds.base.rate);
+            }
             Model::Aerodynamics => {
                 let x = &self.auxiliary;
                 let a = &mut self.aerodynamics.input;
@@ -139,7 +148,7 @@ impl Models {
             Model::Inertial => self.inertial.base.init(),
             Model::Aircraft => self.aircraft.init_model(),
             Model::Accelerations => self.accelerations.init_model(),
-            Model::Winds => self.winds.base.init(),
+            Model::Winds => self.winds.init_model(),
             Model::MassBalance => self.mass_balance.init_model(),
             Model::Auxiliary => self.auxiliary.base.init(),
             Model::Systems => self.fcs.init_model(),
@@ -254,6 +263,7 @@ impl Fdm {
         match model {
             Model::Propagate => m.propagate.run(holding, suspended, &m.inertial),
             Model::Inertial => m.inertial.run(holding),
+            Model::Winds => m.winds.run(holding)?,
             Model::MassBalance => {
                 if !m.mass_balance.base.skip() && !holding {
                     self.run_model_functions(model, true)?;
@@ -295,7 +305,7 @@ impl Fdm {
             ic.uvw,
             ic.pqr,
         );
-        m.winds.wind_ned = ic.wind_ned;
+        m.winds.set_wind_ned(ic.wind_ned);
         self.run()?;
         Ok(())
     }

@@ -1,0 +1,209 @@
+# Constructor state: Milspec turbulence with zero severity.
+print
+uvw 150 3 -4
+tl2b 1 0 0 0 1 0 0 0 1
+tw2b 1 0 0 0 1 0 0 0 1
+dt 0.1
+alt 2500 2400 35.8
+# Default turbulence (Milspec, severity 0) runs turbulence-free.
+run
+# Steady wind: from calm the magnitude blows north and resets psi.
+set atmosphere/psiw-rad 1.3
+set atmosphere/wind-mag-fps 20
+set atmosphere/psiw-rad 1.2
+run
+set atmosphere/wind-down-fps 3
+set atmosphere/wind-mag-fps 25
+set atmosphere/psiw-rad -0.5
+run
+set atmosphere/wind-north-fps -7.25
+run
+set atmosphere/wind-north-fps 0
+set atmosphere/wind-east-fps -10
+run
+set atmosphere/psiw-rad 4
+run
+set atmosphere/wind-east-fps 0
+set atmosphere/wind-down-fps 6
+set atmosphere/wind-mag-fps 12
+run
+windned 0 0 0
+set atmosphere/psiw-rad 2
+set atmosphere/wind-mag-fps 0
+windned 3 -4 2
+run
+# User gust and turbulence components.
+set atmosphere/gust-north-fps 1.5
+set atmosphere/gust-east-fps -2.25
+set atmosphere/gust-down-fps 0.75
+run
+set atmosphere/turb-north-fps 4
+set atmosphere/turb-east-fps 3
+set atmosphere/turb-down-fps -1
+hold
+run
+# Turbulence parameters and the deterministic branches.
+set atmosphere/turb-rate 12.5
+set atmosphere/turb-gain 0.4
+set atmosphere/turb-rhythmicity 0.3
+set atmosphere/turbulence/milspec/windspeed_at_20ft_AGL-fps 25
+set atmosphere/turb-type 0
+set atmosphere/turbulence/milspec/severity 3.7
+set atmosphere/turb-north-fps 2
+run
+set atmosphere/turb-type 1
+set atmosphere/turb-north-fps 2
+run
+set atmosphere/turb-type 7
+run
+set atmosphere/turb-type 2.9
+set atmosphere/turb-gain 0
+set atmosphere/turb-east-fps 5
+run
+set atmosphere/turb-type 3
+# Airspeed equal to the wind plus gust: no airspeed relative to the air.
+uvw 4.5 -6.25 2.75
+run
+set atmosphere/turb-type 4
+run
+set atmosphere/turbulence/milspec/severity 0
+uvw 150 3 -4
+run
+set atmosphere/turb-type 0
+set atmosphere/turb-gain 0.4
+set atmosphere/updownburst/number-of-cells 3
+set atmosphere/updownburst/number-of-cells -1
+# Random seeds: the executive's until the winds get their own.
+set simulation/randomseed 7
+set atmosphere/randomseed 3
+set simulation/randomseed 11
+set atmosphere/gust-north-fps 0
+set atmosphere/gust-east-fps 0
+set atmosphere/gust-down-fps 0
+# Local-frame cosine gust through its whole history.
+set atmosphere/cosine-gust/startup-duration-sec 0.5
+set atmosphere/cosine-gust/steady-duration-sec 0.3
+set atmosphere/cosine-gust/end-duration-sec 0.4
+set atmosphere/cosine-gust/magnitude-ft_sec 15
+set atmosphere/cosine-gust/frame 3
+set atmosphere/cosine-gust/X-velocity-ft_sec 1
+set atmosphere/cosine-gust/Y-velocity-ft_sec 2
+set atmosphere/cosine-gust/Z-velocity-ft_sec -2
+set atmosphere/cosine-gust/start 1
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+# Body-frame gust, frozen by start 0 and resumed; the aircraft turns.
+tl2b 0.7495962650805187 0.6313762241158432 -0.19866933079506122 -0.6258295260508243 0.7737984714229248 0.09784339500725571 0.21550601778218983 0.05099008967207086 0.975170327201816
+tw2b 0.9985505170011335 -0.019973673567518554 -0.04997916927067833 0.01999866669333308 0.9998000066665778 0.0 0.04996917377001421 -0.000999516747853971 0.9987502603949663
+dt 0.05
+set atmosphere/cosine-gust/frame 1
+set atmosphere/cosine-gust/startup-duration-sec 0.2
+set atmosphere/cosine-gust/steady-duration-sec 0.1
+set atmosphere/cosine-gust/end-duration-sec 0.25
+set atmosphere/cosine-gust/X-velocity-ft_sec -3
+set atmosphere/cosine-gust/start 0.25
+run
+run
+run
+set atmosphere/cosine-gust/start 0
+run
+run
+tl2b -0.7971412344550964 0.5954822761863076 -0.09983341664682815 -0.5481063036008882 -0.7830183280989254 -0.29404383655185584 -0.2532692880796565 -0.17967514187871858 0.9505637859220634
+set atmosphere/cosine-gust/start 1
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+# Wind-frame gust, repeated after it ends.
+set atmosphere/cosine-gust/frame 2
+set atmosphere/cosine-gust/magnitude-ft_sec -8.5
+set atmosphere/cosine-gust/start 1
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+set atmosphere/cosine-gust/start 1
+run
+run
+run
+run
+# InitModel mid-gust keeps the steady wind and the transformed direction.
+init
+set atmosphere/cosine-gust/start 1
+tl2b 1 0 0 0 1 0 0 0 1
+run
+run
+run
+# Run to the end, which clears the transformed direction.
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+# Frames outside the enum blow nothing.
+set atmosphere/cosine-gust/frame 0
+set atmosphere/cosine-gust/start 1
+run
+run
+set atmosphere/cosine-gust/frame 9
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+# A model rate of 2 runs every other call.
+init
+rate 2
+set atmosphere/cosine-gust/frame 3
+set atmosphere/cosine-gust/Y-velocity-ft_sec 0
+set atmosphere/cosine-gust/start 1
+run
+run
+run
+run
+run
+run
+run
+run
+rate 1
+hold
+run

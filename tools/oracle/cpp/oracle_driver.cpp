@@ -145,7 +145,8 @@ int main(int argc, char** argv)
     if (mode == "xml") return RunXmlProbe(argv[2], argv[3]);
     if (mode == "mass-balance") return RunMassBalanceProbe(argv[2], argv[3]);
     if (mode == "atmosphere") return RunAtmosphereProbe(argv[2], argv[3]);
+    if (mode == "winds") return RunWindsProbe(argv[2], argv[3]);
   }
-  std::fprintf(stderr, "usage: %s script|properties|units|xml|math|functions|table|mass-balance|atmosphere ...\n", argv[0]);
+  std::fprintf(stderr, "usage: %s script|properties|units|xml|math|functions|table|mass-balance|atmosphere|winds ...\n", argv[0]);
   return 2;
 }

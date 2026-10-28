@@ -10,6 +10,7 @@ mod math;
 mod properties;
 mod table;
 mod units;
+mod winds;
 mod xml;
 
 use std::path::PathBuf;
@@ -39,6 +40,7 @@ pub fn run(name: &str, input: &str, context: &ProbeContext) -> Result<String, Or
             probe: "atmosphere",
             source,
         }),
+        "winds" => Ok(winds::run(input)),
         other => Err(OracleError::Provenance(format!("unknown probe {other}"))),
     }
 }
