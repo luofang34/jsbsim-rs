@@ -1,0 +1,54 @@
+# Upstream tests/gain.xml (vendored in oracle/inputs) driven as
+# TestGain.test_conditions drives it, on tripod_gain (tests/tripod.xml with
+# the system appended, as the test includes it).
+# The tripod starts at 10000 ft so that its contacts stay clear of the
+# ground; nothing else differs from the upstream test.
+paths ../.. derived/aircraft inputs/tests
+new
+load tripod_gain
+watch test/input test/reference test/gain-value test/gain-property test/gain-property-inverted-sign test/gain-property-inverted-input-sign test/output
+set ic/h-sl-ft 10000
+runic
+set test/reference 1.5
+set test/input -2.0
+run
+set test/input -1.5
+run
+set test/input -1.0
+run
+set test/input -0.5
+run
+set test/input 0.0
+run
+set test/input 0.5
+run
+set test/input 1.0
+run
+set test/input 1.5
+run
+set test/input 2.0
+run
+set test/input 2.5
+run
+set test/reference -0.707
+set test/input -2.0
+run
+set test/input -1.5
+run
+set test/input -1.0
+run
+set test/input -0.5
+run
+set test/input 0.0
+run
+set test/input 0.5
+run
+set test/input 1.0
+run
+set test/input 1.5
+run
+set test/input 2.0
+run
+set test/input 2.5
+run
+run

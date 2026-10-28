@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  FGGain beyond upstream tests/gain.xml: the default gain, scheduled gains
+  with an internal and a named table, and aerosurface_scale with and
+  without a domain, zero-centered or linear, with a property gain and
+  clipping. The fcs-gain-types golden drives it.
+-->
+<system name="fcs-gain">
+  <property>test/input</property>
+  <property value="2.0">test/k</property>
+  <channel name="gains">
+    <pure_gain name="test/no-gain">
+      <input>test/input</input>
+    </pure_gain>
+    <scheduled_gain name="test/scheduled">
+      <input>test/input</input>
+      <table>
+        <independentVar>test/input</independentVar>
+        <tableData>
+          -2.0  0.5
+           0.0  1.0
+           2.0  3.0
+        </tableData>
+      </table>
+      <gain>test/k</gain>
+    </scheduled_gain>
+    <scheduled_gain name="test/scheduled-named">
+      <input>-test/input</input>
+      <table name="test/schedule-table">
+        <independentVar>test/k</independentVar>
+        <tableData>
+          -1.0  -3.0
+           3.0   0.7
+        </tableData>
+      </table>
+    </scheduled_gain>
+    <aerosurface_scale name="test/scale-centered">
+      <input>test/input</input>
+      <range>
+        <min>-0.35</min>
+        <max>0.26</max>
+      </range>
+    </aerosurface_scale>
+    <aerosurface_scale name="test/scale-domain">
+      <input>test/input</input>
+      <domain>
+        <min>-2.0</min>
+        <max>3.0</max>
+      </domain>
+      <range>
+        <min>-10.0</min>
+        <max>20.0</max>
+      </range>
+      <gain>-test/k</gain>
+    </aerosurface_scale>
+    <aerosurface_scale name="test/scale-linear">
+      <input>test/input</input>
+      <zero_centered>false</zero_centered>
+      <domain>
+        <min>-2.0</min>
+        <max>3.0</max>
+      </domain>
+      <range>
+        <min>-10.0</min>
+        <max>20.0</max>
+      </range>
+      <clipto>
+        <min>-5.0</min>
+        <max>15.0</max>
+      </clipto>
+    </aerosurface_scale>
+    <aerosurface_scale name="test/scale-zc-0">
+      <input>test/input</input>
+      <zero_centered>0</zero_centered>
+      <range>
+        <min>0.0</min>
+        <max>1.0</max>
+      </range>
+    </aerosurface_scale>
+    <aerosurface_scale name="test/scale-zc-true">
+      <input>test/input</input>
+      <zero_centered>true</zero_centered>
+      <range>
+        <min>-1.0</min>
+        <max>2.0</max>
+      </range>
+      <gain>0.5</gain>
+    </aerosurface_scale>
+    <aerosurface_scale name="test/scale-half-domain">
+      <input>test/input</input>
+      <domain>
+        <max>5.0</max>
+      </domain>
+      <range>
+        <min>-4.0</min>
+        <max>4.0</max>
+      </range>
+    </aerosurface_scale>
+    <pure_gain name="test/gain-two-inputs">
+      <input>test/input</input>
+      <input>test/k</input>
+      <gain>3.0</gain>
+    </pure_gain>
+  </channel>
+</system>

@@ -13,6 +13,7 @@ mod bind;
 pub mod component;
 pub mod families;
 pub mod function;
+pub mod gain;
 mod load;
 #[cfg(test)]
 mod tests;

@@ -4714,3 +4714,17 @@ property = "*"
 abs = 0.0
 rel = 0.0
 reason = "fcs_function products, clipping (Constrain and the cyclic fmod), execrate, the execute switch and simulation/channel-dt use only IEEE basic operations and fmod in JSBSim's order, so they must be bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-gain"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "pure_gain multiplies the input by a value or a signed property in JSBSim's order, so it must be bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-gain-types"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Scheduled gains (linear table lookups), aerosurface_scale's domain-to-range mapping and clipping use only IEEE basic operations in JSBSim's order, so they must be bit-identical; observed max |diff| 0."

@@ -20,11 +20,30 @@ pub struct System {
 }
 
 /// Every derived tripod.
-pub const SYSTEMS: [System; 1] = [System {
-    suffix: "fcs_base",
-    file: "fcs_base.xml",
-    systems_path: "scenarios/systems",
-}];
+pub const SYSTEMS: [System; 3] = [
+    upstream("gain", "gain.xml"),
+    scenario("fcs_base", "fcs_base.xml"),
+    scenario("fcs_gain", "fcs_gain.xml"),
+];
+
+/// A tripod including an upstream `tests/` system, vendored in
+/// `oracle/inputs/tests`.
+const fn upstream(suffix: &'static str, file: &'static str) -> System {
+    System {
+        suffix,
+        file,
+        systems_path: "inputs/tests",
+    }
+}
+
+/// A tripod including a system of `oracle/scenarios/systems`.
+const fn scenario(suffix: &'static str, file: &'static str) -> System {
+    System {
+        suffix,
+        file,
+        systems_path: "scenarios/systems",
+    }
+}
 
 /// The derived aircraft text from the upstream `tripod.xml` text.
 pub fn derive(text: &str, suffix: &str, system: &str) -> Result<String, OracleError> {

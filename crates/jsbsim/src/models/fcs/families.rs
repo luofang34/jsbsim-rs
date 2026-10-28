@@ -5,12 +5,13 @@
 //
 //! The component families and their dispatch.
 //!
-//! A family is a module beside this one with a type implementing
-//! [`Family`], registered by one line in the `families!` invocation below:
+//! A family is a module beside this one (declared in `fcs.rs`) with a type
+//! implementing [`Family`], registered by one line in the `families!`
+//! invocation at the end of this file:
 //!
 //! ```text
 //! /// `<kinematic>` (`FGKinemat`).
-//! Kinematic(kinematic::Kinemat) = "kinematic";
+//! Kinematic(super::kinematic::Kinemat) = "kinematic";
 //! ```
 //!
 //! naming the enum variant, the type and the element names it loads. The
@@ -28,7 +29,6 @@
 
 use super::Fcs;
 use super::component::{Base, Tick};
-use super::function;
 use crate::Error;
 use crate::fdm::{Env, LoadContext, Models};
 use crate::functions::Evaluator;
@@ -165,5 +165,7 @@ macro_rules! families {
 
 families! {
     /// `<fcs_function>` (`FGFCSFunction`).
-    Function(function::FcsFunction) = "fcs_function";
+    Function(super::function::FcsFunction) = "fcs_function";
+    /// `<pure_gain>`, `<scheduled_gain>` and `<aerosurface_scale>` (`FGGain`).
+    Gain(super::gain::Gain) = "pure_gain" | "scheduled_gain" | "aerosurface_scale";
 }

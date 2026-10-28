@@ -171,3 +171,40 @@ fn delays_convert_seconds_with_the_channel_step() {
         2.0 / 120.0
     );
 }
+
+/// The `Error::Model` message loading one component `body` in a channel
+/// fails with.
+#[cfg(test)]
+fn component_error(body: &str) -> String {
+    let system = format!("<system><channel name=\"c\">{body}</channel></system>");
+    match load_error(&system, LoadOptions::default()) {
+        Error::Model { message } => message,
+        other => panic!("{other:?}"),
+    }
+}
+
+#[test]
+fn gains_refuse_what_jsbsim_throws_on() {
+    for (body, expected) in [
+        ("<pure_gain name=\"g\"/>", "Not enough <input> nodes"),
+        (
+            "<scheduled_gain name=\"g\"><input>x</input></scheduled_gain>",
+            "A table must be provided",
+        ),
+        (
+            "<aerosurface_scale name=\"g\"><input>x</input></aerosurface_scale>",
+            "No range supplied",
+        ),
+        (
+            "<aerosurface_scale name=\"g\"><input>x</input><range><max>1</max></range></aerosurface_scale>",
+            "Maximum and minimum output values must be supplied",
+        ),
+        (
+            "<pure_gain name=\"g\"><input>x</input><gain>1\n2</gain></pure_gain>",
+            "must either contain a value number or a property name",
+        ),
+    ] {
+        let message = component_error(body);
+        assert!(message.contains(expected), "{body}: {message}");
+    }
+}
