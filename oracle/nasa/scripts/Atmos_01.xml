@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  Check-case 1, dragless sphere: Appendix C.1.1, Table 25; 30 s duration.
+  Written for jsbsim-rs from the physical parameters in NASA/TM-2015-218675,
+  "Check-Cases for Verification of 6-Degree-of-Freedom Flight Vehicle
+  Simulations", Volume II: Appendices.
+-->
+<runscript name="NASA EOM check-case Atmos 01">
+  <description>Check-case 1 of NASA/TM-2015-218675: dragless sphere</description>
+  <use aircraft="sphere_dragless" initialize="reset_Atmos_01"/>
+  <run start="0.0" end="30" dt="0.01"/>
+</runscript>

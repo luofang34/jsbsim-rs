@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  Check-case 7, sphere through a steady wind: Appendix C.1.7, Table 31; 30 s duration.
+  Written for jsbsim-rs from the physical parameters in NASA/TM-2015-218675,
+  "Check-Cases for Verification of 6-Degree-of-Freedom Flight Vehicle
+  Simulations", Volume II: Appendices.
+-->
+<runscript name="NASA EOM check-case Atmos 07">
+  <description>Check-case 7 of NASA/TM-2015-218675: sphere through a steady wind</description>
+  <use aircraft="sphere" initialize="reset_Atmos_07"/>
+  <run start="0.0" end="30" dt="0.01"/>
+</runscript>

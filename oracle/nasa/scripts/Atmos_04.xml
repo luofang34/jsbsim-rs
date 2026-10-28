@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  Check-case 4, sphere over a non-rotating spherical Earth: Appendix C.1.4, Table 28; 30 s duration.
+  Written for jsbsim-rs from the physical parameters in NASA/TM-2015-218675,
+  "Check-Cases for Verification of 6-Degree-of-Freedom Flight Vehicle
+  Simulations", Volume II: Appendices.
+-->
+<runscript name="NASA EOM check-case Atmos 04">
+  <description>Check-case 4 of NASA/TM-2015-218675: sphere over a non-rotating spherical Earth</description>
+  <use aircraft="sphere_round_fixed" initialize="reset_Atmos_04"/>
+  <run start="0.0" end="30" dt="0.01"/>
+</runscript>

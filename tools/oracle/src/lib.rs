@@ -12,6 +12,7 @@ pub mod compare;
 pub mod corpus;
 pub mod error;
 pub mod manifest;
+pub mod nasa;
 pub mod port_script;
 pub mod probe;
 pub mod series;

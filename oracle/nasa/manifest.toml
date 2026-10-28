@@ -1,0 +1,128 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+# Atmospheric check-case data of NASA/TM-2015-218675 for the optional
+# comparison run by scripts/oracle-nasa.sh. Only these pins are committed:
+# `oracle nasa fetch` downloads each archive into target/oracle/nasa and
+# fails unless its size and sha256 match.
+#
+# A case's script is found under `root`: "jsbsim" is the JSBSim checkout
+# for C++ and oracle/inputs for Rust; "nasa" is oracle/nasa for both.
+
+[[archive]]
+name = "Atmos_01_DroppedSphere"
+url = "https://nescacademy.nasa.gov/src/flightsim/Datasets/Atmos_01_DroppedSphere.zip"
+size = 927935
+sha256 = "f04f139835db9e6c5be54d434c4dc6221ddc9ae6f34b6035d0798731bc0bf171"
+retrieved = "2026-10-28"
+
+[[archive]]
+name = "Atmos_02_TumblingBrickNoDamping"
+url = "https://nescacademy.nasa.gov/src/flightsim/Datasets/Atmos_02_TumblingBrickNoDamping.zip"
+size = 1025034
+sha256 = "2a20c244e55575582782bdd294c7e88392a952bd91504fe3ddffc291d1241926"
+retrieved = "2026-10-28"
+
+[[archive]]
+name = "Atmos_04_DroppedSphereRoundNonRotation"
+url = "https://nescacademy.nasa.gov/src/flightsim/Datasets/Atmos_04_DroppedSphereRoundNonRotation.zip"
+size = 948961
+sha256 = "55cb6b10743a0b9c2f45f72288d5d796fd26183d48d6457a58aea4a6316a3af6"
+retrieved = "2026-10-28"
+
+[[archive]]
+name = "Atmos_05_DroppedSphereRoundRotation"
+url = "https://nescacademy.nasa.gov/src/flightsim/Datasets/Atmos_05_DroppedSphereRoundRotation.zip"
+size = 1004717
+sha256 = "dad6baed4bf0973fed95ce9008c3354d949285e5ea1a1917f75060db85499014"
+retrieved = "2026-10-28"
+
+[[archive]]
+name = "Atmos_06_DroppedSphereEllipsoidalNoWind"
+url = "https://nescacademy.nasa.gov/src/flightsim/Datasets/Atmos_06_DroppedSphereEllipsoidalNoWind.zip"
+size = 1064919
+sha256 = "be0f4ba87afae026a2a0769e39bdc104fe77729d18754d8601a2a6f264f9febf"
+retrieved = "2026-10-28"
+
+[[archive]]
+name = "Atmos_07_DroppedSphereSteadyWind"
+url = "https://nescacademy.nasa.gov/src/flightsim/Datasets/Atmos_07_DroppedSphereSteadyWind.zip"
+size = 1058843
+sha256 = "0579ca2e51b80339400dd9b28cb61ded81bdcf08871ca1631e387907ffd04add"
+retrieved = "2026-10-28"
+
+[[archive]]
+name = "Atmos_09_EastwardCannonball"
+url = "https://nescacademy.nasa.gov/src/flightsim/Datasets/Atmos_09_EastwardCannonball.zip"
+size = 1046978
+sha256 = "090d77c1d465b471bb5e01845aec4813c75f49ce808556d4e86c9420e7d895ef"
+retrieved = "2026-10-28"
+
+[[archive]]
+name = "Atmos_10_NorthwardCannonball"
+url = "https://nescacademy.nasa.gov/src/flightsim/Datasets/Atmos_10_NorthwardCannonball.zip"
+size = 1095669
+sha256 = "27d7ee39c7a7b97b9505566e6d2636bf06472ad81c10fd86b8b50a2be958feca"
+retrieved = "2026-10-28"
+
+[[case]]
+name = "Atmos_01"
+archive = "Atmos_01_DroppedSphere"
+root = "nasa"
+script = "scripts/Atmos_01.xml"
+aircraft_path = "aircraft"
+section = "Appendix C.1.1, Table 25"
+
+[[case]]
+name = "Atmos_02"
+archive = "Atmos_02_TumblingBrickNoDamping"
+root = "jsbsim"
+script = "check_cases/NASA_EOM_2015/scripts/Atmos_02.xml"
+aircraft_path = "check_cases/NASA_EOM_2015/aircraft"
+section = "Appendix C.1.2, Table 26"
+
+[[case]]
+name = "Atmos_04"
+archive = "Atmos_04_DroppedSphereRoundNonRotation"
+root = "nasa"
+script = "scripts/Atmos_04.xml"
+aircraft_path = "aircraft"
+section = "Appendix C.1.4, Table 28"
+
+[[case]]
+name = "Atmos_05"
+archive = "Atmos_05_DroppedSphereRoundRotation"
+root = "nasa"
+script = "scripts/Atmos_05.xml"
+aircraft_path = "aircraft"
+section = "Appendix C.1.5, Table 29"
+
+[[case]]
+name = "Atmos_06"
+archive = "Atmos_06_DroppedSphereEllipsoidalNoWind"
+root = "nasa"
+script = "scripts/Atmos_06.xml"
+aircraft_path = "aircraft"
+section = "Appendix C.1.6, Table 30"
+
+[[case]]
+name = "Atmos_07"
+archive = "Atmos_07_DroppedSphereSteadyWind"
+root = "nasa"
+script = "scripts/Atmos_07.xml"
+aircraft_path = "aircraft"
+section = "Appendix C.1.7, Table 31"
+
+[[case]]
+name = "Atmos_09"
+archive = "Atmos_09_EastwardCannonball"
+root = "nasa"
+script = "scripts/Atmos_09.xml"
+aircraft_path = "aircraft"
+section = "Appendix C.1.9, Table 33"
+
+[[case]]
+name = "Atmos_10"
+archive = "Atmos_10_NorthwardCannonball"
+root = "nasa"
+script = "scripts/Atmos_10.xml"
+aircraft_path = "aircraft"
+section = "Appendix C.1.10, Table 34"

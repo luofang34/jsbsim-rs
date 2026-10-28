@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  Initial conditions of check-case 10: Appendix C.1.10, Table 34.
+  Velocity is Earth-relative in local NED axes; the rate is the
+  Earth-relative body rate of the table.
+  Written for jsbsim-rs from the physical parameters in NASA/TM-2015-218675,
+  "Check-Cases for Verification of 6-Degree-of-Freedom Flight Vehicle
+  Simulations", Volume II: Appendices.
+-->
+<initialize name="Atmos 10" version="2.0">
+  <position frame="ECEF">
+    <latitude unit="DEG" type="geodetic"> 0.0 </latitude>
+    <longitude unit="DEG"> 0.0 </longitude>
+    <altitudeMSL unit="FT"> 0.0 </altitudeMSL>
+  </position>
+  <orientation unit="DEG" frame="LOCAL">
+    <roll> 0.0 </roll>
+    <pitch> 0.0 </pitch>
+    <yaw> 0.0 </yaw>
+  </orientation>
+  <velocity unit="FT/SEC" frame="LOCAL">
+    <x> 1000.0 </x>
+    <y> 0.0 </y>
+    <z> -1000.0 </z>
+  </velocity>
+  <attitude_rate unit="DEG/SEC" frame="BODY">
+    <x> 0.0 </x>
+    <y> 0.0 </y>
+    <z> 0.0 </z>
+  </attitude_rate>
+</initialize>

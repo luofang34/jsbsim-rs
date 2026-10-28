@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  Initial conditions of check-case 7: Appendix C.1.7, Table 31: at rest
+  relative to the Earth, 20 ft/s wind from due west. JSBSim's winddir is
+  the direction the wind blows toward, so 90 degrees.
+  Only the version 1 format carries wind, and it sets the body rates
+  to zero relative to the Earth instead of the table's -0.004178073
+  deg/s roll rate (zero inertial rate). The roll angle therefore departs
+  from the table's case by about 0.0042 deg/s, and so do the body-axis
+  components of the drag; the trajectory does not depend on attitude.
+  Written for jsbsim-rs from the physical parameters in NASA/TM-2015-218675,
+  "Check-Cases for Verification of 6-Degree-of-Freedom Flight Vehicle
+  Simulations", Volume II: Appendices.
+-->
+<initialize name="Atmos 07">
+  <latitude unit="DEG" type="geodetic"> 0.0 </latitude>
+  <longitude unit="DEG"> 0.0 </longitude>
+  <altitudeMSL unit="FT"> 30000.0 </altitudeMSL>
+  <phi unit="DEG"> 0.0 </phi>
+  <theta unit="DEG"> 0.0 </theta>
+  <psi unit="DEG"> 0.0 </psi>
+  <vnorth unit="FT/SEC"> 0.0 </vnorth>
+  <veast unit="FT/SEC"> 0.0 </veast>
+  <vdown unit="FT/SEC"> 0.0 </vdown>
+  <vwind unit="FT/SEC"> 20.0 </vwind>
+  <winddir unit="DEG"> 90.0 </winddir>
+</initialize>

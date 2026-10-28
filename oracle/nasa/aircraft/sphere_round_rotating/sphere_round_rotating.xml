@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  Sphere with constant CD of check-case 5 (Appendix C.1.5).
+  Vehicle: the atmospheric spheroid of Appendix B.1.1, Tables 1 and 2
+  (1 slug, 3.6 slug-ft2 about each axis, CM at the origin).
+  Planet: the equal-area sphere of B.2.2 with inverse-square gravitation
+  (B.4.2), constants of Table 73; rotating at the Table 73 rate.
+  Written for jsbsim-rs from the physical parameters in NASA/TM-2015-218675,
+  "Check-Cases for Verification of 6-Degree-of-Freedom Flight Vehicle
+  Simulations", Volume II: Appendices.
+-->
+<fdm_config name="sphere_round_rotating" version="2.0" release="BETA">
+  <fileheader/>
+  <planet name="Spherical Earth">
+    <equatorial_radius unit="FT"> 20902254.5305 </equatorial_radius>
+    <semiminor_axis unit="FT"> 20902254.5305 </semiminor_axis>
+    <rotation_rate unit="RAD/SEC"> 7.292115E-05 </rotation_rate>
+    <GM unit="FT3/SEC2"> 1.407644175720511E16 </GM>
+    <J2> 0.0 </J2>
+  </planet>
+  <metrics/>
+  <mass_balance>
+    <ixx unit="SLUG*FT2"> 3.6 </ixx>
+    <iyy unit="SLUG*FT2"> 3.6 </iyy>
+    <izz unit="SLUG*FT2"> 3.6 </izz>
+    <emptywt unit="SLUG"> 1.0 </emptywt>
+  </mass_balance>
+  <ground_reactions/>
+  <aerodynamics>
+    <axis name="DRAG">
+      <function name="aero/force/drag">
+        <description>CD qbar S with CD = 0.1 and S = 0.1963495 ft2 (Table 2)</description>
+        <product>
+          <property> aero/qbar-psf </property>
+          <value> 0.1963495 </value>
+          <value> 0.1 </value>
+        </product>
+      </function>
+    </axis>
+  </aerodynamics>
+</fdm_config>

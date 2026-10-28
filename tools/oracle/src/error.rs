@@ -99,6 +99,15 @@ pub enum OracleError {
     /// The upstream checkout or a manifest is not in the expected state.
     #[error("{0}")]
     Provenance(String),
+    /// NASA check-case data that is missing, unreachable or not the data
+    /// the manifest pins.
+    #[error("NASA data {archive}: {message}")]
+    NasaData {
+        /// Archive name from `oracle/nasa/manifest.toml`.
+        archive: String,
+        /// What is wrong.
+        message: String,
+    },
     /// Invalid command-line usage.
     #[error(transparent)]
     Usage(#[from] clap::Error),

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  Check-case 5, sphere over a rotating spherical Earth: Appendix C.1.5, Table 29; 30 s duration.
+  Written for jsbsim-rs from the physical parameters in NASA/TM-2015-218675,
+  "Check-Cases for Verification of 6-Degree-of-Freedom Flight Vehicle
+  Simulations", Volume II: Appendices.
+-->
+<runscript name="NASA EOM check-case Atmos 05">
+  <description>Check-case 5 of NASA/TM-2015-218675: sphere over a rotating spherical Earth</description>
+  <use aircraft="sphere_round_rotating" initialize="reset_Atmos_05"/>
+  <run start="0.0" end="30" dt="0.01"/>
+</runscript>

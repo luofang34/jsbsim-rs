@@ -82,7 +82,7 @@ impl Paths {
     }
 }
 
-fn run_blocking(command: &mut Command) -> Result<Output, OracleError> {
+pub(crate) fn run_blocking(command: &mut Command) -> Result<Output, OracleError> {
     let program = command.get_program().to_string_lossy().into_owned();
     let output = command.output().map_err(|e| OracleError::Command {
         program: program.clone(),
@@ -176,6 +176,17 @@ pub fn run_script_blocking(
     spec: &ScriptSpec,
     run_dir: &Path,
 ) -> Result<Run, OracleError> {
+    run_script_in_blocking(paths, &paths.jsbsim_root, spec, run_dir)
+}
+
+/// As [`run_script_blocking`], with the script and aircraft found under
+/// `root` instead of the JSBSim checkout.
+pub fn run_script_in_blocking(
+    paths: &Paths,
+    root: &Path,
+    spec: &ScriptSpec,
+    run_dir: &Path,
+) -> Result<Run, OracleError> {
     let upstream_commit = upstream_commit_blocking(&paths.jsbsim_root)?;
     std::fs::create_dir_all(run_dir).map_err(|e| OracleError::io("creating", run_dir, e))?;
     let csv = run_dir.join("driver.csv");
@@ -191,8 +202,8 @@ pub fn run_script_blocking(
                 spec.aircraft_path.as_deref().unwrap_or("aircraft"),
             )
             .arg("script")
-            .arg(&paths.jsbsim_root)
-            .arg(paths.jsbsim_root.join(&spec.script))
+            .arg(root)
+            .arg(root.join(&spec.script))
             .arg(format!("{:?}", spec.rate_hz))
             .arg(end)
             .arg(&csv)

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
-//! Command-line interface: `build`, `generate`, `check-drift`, `check-xml`
-//! and `compare`.
+//! Command-line interface: `build`, `generate`, `check-drift`, `check-xml`,
+//! `port`, `compare` and `nasa`.
 
 use std::ffi::OsString;
 use std::path::{Path, PathBuf};
@@ -12,7 +12,7 @@ use tracing::{error, info};
 use crate::manifest;
 use crate::upstream::{self, Paths};
 use crate::{OracleError, Outcome, Series, ToleranceTable, compare};
-use crate::{cases, corpus};
+use crate::{cases, corpus, nasa};
 
 #[cfg(test)]
 mod tests;
@@ -59,7 +59,26 @@ pub fn command() -> Command {
         .subcommand(
             Command::new("check-xml")
                 .about("Parse every JSBSim XML file in C++ and Rust and compare the trees")
-                .arg(jsbsim_root),
+                .arg(jsbsim_root.clone()),
+        )
+        .subcommand(
+            Command::new("nasa")
+                .about("Optional comparison with the NASA TM-2015-218675 check-case data")
+                .subcommand_required(true)
+                .subcommand(
+                    Command::new("fetch")
+                        .about("Download the pinned archives into target/oracle/nasa and verify them"),
+                )
+                .subcommand(
+                    Command::new("compare")
+                        .about("Run the check-cases in C++ and Rust and compare both with the simulators' spread")
+                        .arg(jsbsim_root)
+                        .arg(
+                            Arg::new("case")
+                                .action(ArgAction::Append)
+                                .help("Check-case names; all when omitted"),
+                        ),
+                ),
         )
         .subcommand(
             Command::new("port")
@@ -123,6 +142,9 @@ where
             &tolerances,
         );
     }
+    if name == "nasa" {
+        return run_nasa(repo_root, sub);
+    }
     let paths = Paths {
         repo_root,
         jsbsim_root: path(sub, "jsbsim-root"),
@@ -139,6 +161,33 @@ where
         "check-drift" => cases::check_drift_blocking(&paths, &cases),
         _ => Ok(ExitCode::SUCCESS),
     }
+}
+
+fn run_nasa(repo_root: PathBuf, sub: &ArgMatches) -> Result<ExitCode, OracleError> {
+    let Some((name, sub)) = sub.subcommand() else {
+        return Ok(ExitCode::FAILURE);
+    };
+    let jsbsim_root = sub
+        .try_get_one::<PathBuf>("jsbsim-root")
+        .ok()
+        .flatten()
+        .cloned()
+        .unwrap_or_default();
+    let paths = Paths {
+        repo_root,
+        jsbsim_root,
+    };
+    if name == "fetch" {
+        return nasa::fetch_blocking(&paths).map(|()| ExitCode::SUCCESS);
+    }
+    upstream::build_blocking(&paths)?;
+    let names: Vec<String> = sub
+        .try_get_many::<String>("case")
+        .ok()
+        .flatten()
+        .map(|values| values.cloned().collect())
+        .unwrap_or_default();
+    nasa::compare_blocking(&paths, &names)
 }
 
 fn selected_cases(paths: &Paths, sub: &ArgMatches) -> Result<Vec<String>, OracleError> {

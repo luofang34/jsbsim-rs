@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  Dragless sphere of check-case 1 (Appendix C.1.1): CD set to zero.
+  Vehicle: the atmospheric spheroid of Appendix B.1.1, Tables 1 and 2
+  (1 slug, 3.6 slug-ft2 about each axis, CM at the origin).
+  Planet: WGS-84 with J2 gravitation (B.2.3, B.4.3), constants of Table 73;
+  the semi-minor axis follows from the flattening 1/298.257223563.
+  Written for jsbsim-rs from the physical parameters in NASA/TM-2015-218675,
+  "Check-Cases for Verification of 6-Degree-of-Freedom Flight Vehicle
+  Simulations", Volume II: Appendices.
+-->
+<fdm_config name="sphere_dragless" version="2.0" release="BETA">
+  <fileheader/>
+  <planet name="WGS-84 Earth">
+    <equatorial_radius unit="FT"> 20925646.32546 </equatorial_radius>
+    <semiminor_axis unit="FT"> 20855486.595293265 </semiminor_axis>
+    <rotation_rate unit="RAD/SEC"> 7.292115E-05 </rotation_rate>
+    <GM unit="FT3/SEC2"> 1.407644175720511E16 </GM>
+    <J2> 0.00108262982 </J2>
+  </planet>
+  <metrics/>
+  <mass_balance>
+    <ixx unit="SLUG*FT2"> 3.6 </ixx>
+    <iyy unit="SLUG*FT2"> 3.6 </iyy>
+    <izz unit="SLUG*FT2"> 3.6 </izz>
+    <emptywt unit="SLUG"> 1.0 </emptywt>
+  </mass_balance>
+  <ground_reactions/>
+  <aerodynamics/>
+</fdm_config>
