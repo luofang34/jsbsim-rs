@@ -1,0 +1,5 @@
+<r z="last" a="first" m="middle">
+  <l1><l2><l3 k="v">deep
+  value</l3></l2>tail2</l1>tail1
+  <dup/><dup>second</dup>
+</r>

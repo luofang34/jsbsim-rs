@@ -1,0 +1,82 @@
+== local files/bom.xml
+E bom line=2
+  |ok
+== local files/crlf.xml
+E a line=2
+  |1 2
+  |3
+  E b line=4
+    @x=1
+== local files/data.xml
+E table line=2
+  @name=t
+  |text before
+  |text after
+  |splitword
+  E tableData line=4
+    |0.0   1.0
+    |2.0   3.0
+    |4.0	5.0
+  E child line=10
+    @a=1
+  E cdata line=12
+    |<not-a-tag> & raw
+  E refs line=13
+    |<>&"' AB
+  E newline-ref line=14
+    |line1
+    |line2
+  E attr-ws line=15
+    @a=x y z
+    @b=tab	kept
+    @c=nl\nkept
+  E empty line=17
+  E selfclosed line=17
+  E blank line=17
+== local files/deep.xml
+E r line=1
+  @a=first
+  @m=middle
+  @z=last
+  |tail1
+  E l1 line=2
+    |tail2
+    E l2 line=2
+      E l3 line=2
+        @k=v
+        |deep
+        |value
+  E dup line=4
+  E dup line=4
+    |second
+== local files/dtd.xml
+E runscript line=8
+  @name=two words
+  E set line=9
+    @name=propulsion/magneto_cmd
+    @value=3
+  E value line=10
+    |0
+== local files/latin1.xml
+E a line=2
+  @name=café
+  |naïve °C
+== local files/malformed.xml
+ERROR
+== local files/namespaces.xml
+E fdm_config line=2
+  @name=ns
+  @release=BETA
+  @version=2.0
+  @xmlns:xsi=http://www.w3.org/2001/XMLSchema-instance
+  @xsi:noNamespaceSchemaLocation=http://jsbsim.sourceforge.net/JSBSim.xsd
+  E inner line=5
+    @plain=p
+    @xmlns=urn:default
+    E deeper line=6
+== local files/pi-and-spaces.xml
+ERROR
+== local files/undefined-entity.xml
+ERROR
+== local files/unknown-encoding.xml
+ERROR

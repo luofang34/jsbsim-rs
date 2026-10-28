@@ -31,6 +31,7 @@ fn round_trips_through_files() {
     m.provenance = Some(Provenance {
         upstream_commit: "abc".into(),
         driver: "tools/oracle/cpp".into(),
+        cxx_flags: "-ffp-contract=off".into(),
         dt: Some(0.01),
         every_n_frames: Some(1000),
         rows: 2,

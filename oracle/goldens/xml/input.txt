@@ -1,0 +1,11 @@
+local files/bom.xml
+local files/crlf.xml
+local files/data.xml
+local files/deep.xml
+local files/dtd.xml
+local files/latin1.xml
+local files/malformed.xml
+local files/namespaces.xml
+local files/pi-and-spaces.xml
+local files/undefined-entity.xml
+local files/unknown-encoding.xml

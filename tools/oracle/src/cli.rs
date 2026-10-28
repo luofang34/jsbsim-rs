@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
-//! Command-line interface: `build`, `generate`, `check-drift` and `compare`.
+//! Command-line interface: `build`, `generate`, `check-drift`, `check-xml`
+//! and `compare`.
 
 use std::ffi::OsString;
 use std::path::{Path, PathBuf};
@@ -8,10 +9,10 @@ use std::process::ExitCode;
 use clap::{Arg, ArgAction, ArgMatches, Command, value_parser};
 use tracing::{error, info};
 
-use crate::cases;
 use crate::manifest;
 use crate::upstream::{self, Paths};
 use crate::{OracleError, Outcome, Series, ToleranceTable, compare};
+use crate::{cases, corpus};
 
 #[cfg(test)]
 mod tests;
@@ -52,8 +53,13 @@ pub fn command() -> Command {
         .subcommand(
             Command::new("check-drift")
                 .about("Regenerate cases and compare them against the committed references")
-                .arg(jsbsim_root)
+                .arg(jsbsim_root.clone())
                 .arg(cases),
+        )
+        .subcommand(
+            Command::new("check-xml")
+                .about("Parse every JSBSim XML file in C++ and Rust and compare the trees")
+                .arg(jsbsim_root),
         )
         .subcommand(
             Command::new("compare")
@@ -113,8 +119,10 @@ where
         jsbsim_root: path(sub, "jsbsim-root"),
     };
     upstream::build_blocking(&paths)?;
-    if name == "build" {
-        return Ok(ExitCode::SUCCESS);
+    match name {
+        "build" => return Ok(ExitCode::SUCCESS),
+        "check-xml" => return corpus::check_xml_blocking(&paths),
+        _ => {}
     }
     let cases = selected_cases(&paths, sub)?;
     match name {

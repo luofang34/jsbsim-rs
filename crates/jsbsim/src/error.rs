@@ -3,6 +3,9 @@
 
 use thiserror::Error as ThisError;
 
+use crate::properties::PathError;
+use crate::xml::XmlError;
+
 /// Errors produced while loading or running a simulation.
 #[derive(Debug, ThisError, Clone, PartialEq, Eq)]
 pub enum Error {
@@ -18,7 +21,13 @@ pub enum Error {
     Unsupported {
         /// Element or attribute that is not supported, e.g. `<rotor>`.
         construct: String,
-        /// Resource in which it appeared.
+        /// Resource in which it appeared, with its line when known.
         path: String,
     },
+    /// Malformed XML or an invalid value in it.
+    #[error(transparent)]
+    Xml(#[from] XmlError),
+    /// A property path SimGear would reject.
+    #[error("invalid property path: {0}")]
+    PropertyPath(#[from] PathError),
 }

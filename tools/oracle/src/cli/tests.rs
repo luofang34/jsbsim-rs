@@ -21,7 +21,7 @@ fn compare_requires_a_case() {
 
 #[test]
 fn every_subcommand_parses_without_a_case_argument() {
-    for sub in ["build", "generate", "check-drift"] {
+    for sub in ["build", "generate", "check-drift", "check-xml"] {
         let matches = command()
             .try_get_matches_from(["oracle", sub, "--jsbsim-root", "/nonexistent"])
             .unwrap();

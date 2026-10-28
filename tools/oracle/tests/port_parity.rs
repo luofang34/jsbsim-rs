@@ -19,7 +19,11 @@ fn transcript_parity(case: &str) {
     };
     let input = std::fs::read_to_string(dir.join(INPUT_FILE)).unwrap();
     let reference = std::fs::read_to_string(dir.join(TRANSCRIPT_FILE)).unwrap();
-    let candidate = oracle::probe::run(&spec.probe, &input).unwrap();
+    let context = oracle::probe::ProbeContext {
+        input_dir: dir.clone(),
+        jsbsim_root: None,
+    };
+    let candidate = oracle::probe::run(&spec.probe, &input, &context).unwrap();
     if let Some((line, expected, got)) = first_line_difference(&reference, &candidate) {
         panic!("{case} line {line}:\n  C++:  {expected}\n  Rust: {got}");
     }
@@ -27,7 +31,7 @@ fn transcript_parity(case: &str) {
 
 #[test]
 fn every_transcript_case_has_a_parity_test() {
-    let tested = ["properties"];
+    let tested = ["properties", "units", "xml"];
     let cases = manifest::list_cases_blocking(&goldens()).unwrap();
     for case in cases {
         let manifest = Manifest::read_blocking(&goldens().join(&case)).unwrap();
@@ -40,4 +44,14 @@ fn every_transcript_case_has_a_parity_test() {
 #[test]
 fn properties() {
     transcript_parity("properties");
+}
+
+#[test]
+fn units() {
+    transcript_parity("units");
+}
+
+#[test]
+fn xml() {
+    transcript_parity("xml");
 }

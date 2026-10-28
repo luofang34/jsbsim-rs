@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<table name="t">
+  <!-- comment before data -->
+  <tableData>
+     0.0   1.0
+	2.0   3.0
+
+     4.0	5.0
+  </tableData>
+  text before <child a="1"/> text after
+  split<!-- by a comment -->word
+  <cdata><![CDATA[  <not-a-tag> & raw  ]]></cdata>
+  <refs>&lt;&gt;&amp;&quot;&apos; &#65;&#x42;</refs>
+  <newline-ref>line1&#10;line2</newline-ref>
+  <attr-ws a="x	y
+z" b="tab&#9;kept" c="nl&#10;kept"/>
+  <empty></empty><selfclosed/><blank>   	 </blank>
+</table>

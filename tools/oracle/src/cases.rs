@@ -89,6 +89,13 @@ pub fn check_drift_blocking(paths: &Paths, cases: &[String]) -> Result<ExitCode,
             OracleError::Provenance(format!("{case}: manifest has no provenance; run generate"))
         })?;
         let (fresh, provenance) = run_fresh_blocking(paths, case, &manifest)?;
+        if provenance.cxx_flags != recorded.cxx_flags {
+            error!(
+                "{case}: reference was built with {:?} but the oracle uses {:?}",
+                recorded.cxx_flags, provenance.cxx_flags
+            );
+            code = ExitCode::FAILURE;
+        }
         if provenance.upstream_commit != recorded.upstream_commit {
             error!(
                 "{case}: reference is from {} but the checkout is at {}",

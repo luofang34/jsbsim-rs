@@ -17,6 +17,12 @@ use crate::{OracleError, Series};
 #[cfg(test)]
 mod tests;
 
+/// Extra compiler flags for libJSBSim and the driver. Clang contracts
+/// `a * b + c` into fused multiply-adds on targets that have them (arm64)
+/// unless told not to; Rust never does, and neither does an x86-64 build
+/// without `-march`, so references are built without contraction.
+pub const CXX_FLAGS: &str = "-ffp-contract=off";
+
 /// Driver sources, relative to the repository root.
 pub const DRIVER_DIR: &str = "tools/oracle/cpp";
 
@@ -115,22 +121,22 @@ pub fn upstream_commit_blocking(jsbsim_root: &Path) -> Result<String, OracleErro
 /// compiles the driver against it.
 pub fn build_blocking(paths: &Paths) -> Result<(), OracleError> {
     let build_dir = paths.build_dir();
-    if !build_dir.join("build.ninja").is_file() {
-        info!(
-            "configuring {} into {}",
-            paths.jsbsim_root.display(),
-            build_dir.display()
-        );
-        run_blocking(
-            Command::new("cmake")
-                .arg("-S")
-                .arg(&paths.jsbsim_root)
-                .arg("-B")
-                .arg(&build_dir)
-                .args(["-G", "Ninja", "-DCMAKE_BUILD_TYPE=Release"])
-                .args(["-DBUILD_DOCS=OFF", "-DBUILD_PYTHON_MODULE=OFF"]),
-        )?;
-    }
+    info!(
+        "configuring {} into {}",
+        paths.jsbsim_root.display(),
+        build_dir.display()
+    );
+    run_blocking(
+        Command::new("cmake")
+            .arg("-S")
+            .arg(&paths.jsbsim_root)
+            .arg("-B")
+            .arg(&build_dir)
+            .args(["-G", "Ninja", "-DCMAKE_BUILD_TYPE=Release"])
+            .args(["-DBUILD_DOCS=OFF", "-DBUILD_PYTHON_MODULE=OFF"])
+            .arg(format!("-DCMAKE_CXX_FLAGS={CXX_FLAGS}"))
+            .arg(format!("-DCMAKE_C_FLAGS={CXX_FLAGS}")),
+    )?;
     info!("building libJSBSim");
     run_blocking(
         Command::new("ninja")
@@ -142,7 +148,7 @@ pub fn build_blocking(paths: &Paths) -> Result<(), OracleError> {
     let sources = driver_sources_blocking(&paths.repo_root.join(DRIVER_DIR))?;
     run_blocking(
         Command::new("c++")
-            .args(["-std=c++17", "-O2", "-I"])
+            .args(["-std=c++17", "-O2", CXX_FLAGS, "-I"])
             .arg(paths.jsbsim_root.join("src"))
             .arg("-I")
             .arg(build_dir.join("src"))
@@ -205,6 +211,7 @@ pub fn run_script_blocking(
         provenance: Provenance {
             upstream_commit,
             driver: DRIVER_DIR.to_owned(),
+            cxx_flags: CXX_FLAGS.to_owned(),
             dt: Some(dt),
             every_n_frames: Some(every_n_frames),
             rows,
@@ -245,6 +252,7 @@ pub fn run_transcript_blocking(
         provenance: Provenance {
             upstream_commit,
             driver: DRIVER_DIR.to_owned(),
+            cxx_flags: CXX_FLAGS.to_owned(),
             dt: None,
             every_n_frames: None,
             rows: text.lines().count(),

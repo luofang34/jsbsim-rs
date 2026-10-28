@@ -16,6 +16,11 @@ mod tests;
 pub trait Resolver {
     /// Returns the contents of `path`, or [`Error::ResourceNotFound`].
     fn resolve(&self, path: &str) -> Result<Vec<u8>, Error>;
+
+    /// Whether `path` exists; JSBSim probes candidate locations with it.
+    fn exists(&self, path: &str) -> bool {
+        self.resolve(path).is_ok()
+    }
 }
 
 /// Resolver backed by an in-memory map from path to bytes.
@@ -37,6 +42,11 @@ impl MemoryResolver {
     }
 }
 
+#[cfg(feature = "fs")]
+mod fs;
+#[cfg(feature = "fs")]
+pub use fs::FileResolver;
+
 impl Resolver for MemoryResolver {
     fn resolve(&self, path: &str) -> Result<Vec<u8>, Error> {
         self.files
@@ -45,5 +55,9 @@ impl Resolver for MemoryResolver {
             .ok_or_else(|| Error::ResourceNotFound {
                 path: path.to_owned(),
             })
+    }
+
+    fn exists(&self, path: &str) -> bool {
+        self.files.contains_key(path)
     }
 }

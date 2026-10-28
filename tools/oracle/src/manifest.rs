@@ -64,8 +64,11 @@ pub struct Provenance {
     /// `git rev-parse HEAD` of the JSBSim checkout, which had no tracked
     /// changes.
     pub upstream_commit: String,
-    /// Driver source that produced the CSV, relative to the repository root.
+    /// Driver sources that produced the reference, relative to the
+    /// repository root.
     pub driver: String,
+    /// Extra compiler flags libJSBSim and the driver were built with.
+    pub cxx_flags: String,
     /// Integration time step reported by the script.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub dt: Option<f64>,

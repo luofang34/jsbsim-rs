@@ -11,6 +11,7 @@ rust-version = "1.99"
 [workspace.dependencies]
 clap = { version = "4", default-features = false, features = ["std", "help", "usage", "error-context", "env"] }
 libm = "0.2"
+roxmltree = "0.21"
 serde = { version = "1", features = ["derive"] }
 tempfile = "3"
 thiserror = "2"

@@ -9,8 +9,13 @@ rust-version.workspace = true
 
 [dependencies]
 libm.workspace = true
+roxmltree.workspace = true
 thiserror.workspace = true
 tracing.workspace = true
+
+[features]
+# Filesystem resolver for native front ends; the core itself does no I/O.
+fs = []
 
 [lints]
 workspace = true

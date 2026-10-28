@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSimScript.xsl"?>
+<!DOCTYPE runscript [
+  <!ENTITY none  "0"> <!-- No magnetos -->
+  <!ENTITY both  "3">
+  <!ENTITY phrase "two words">
+]>
+<runscript name="&phrase;">
+  <set name="propulsion/magneto_cmd" value="&both;"/>
+  <value>&none;</value>
+</runscript>

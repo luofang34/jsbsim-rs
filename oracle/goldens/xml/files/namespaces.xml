@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<fdm_config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd"
+    name="ns" version="2.0" release="BETA">
+  <inner xmlns="urn:default" plain="p">
+    <deeper/>
+  </inner>
+</fdm_config>

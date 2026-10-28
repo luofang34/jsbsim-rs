@@ -48,14 +48,16 @@ live in `oracle/`:
 
 `cargo test` uses the committed goldens and needs no C++ build. Regenerating
 needs a JSBSim checkout with no tracked changes, CMake, Ninja and a C++
-compiler. The checkout is only read; the build goes to `target/oracle/`.
+compiler. The checkout is only read; the build goes to `target/oracle/` and
+uses `-ffp-contract=off`, because Rust never fuses multiply-adds.
 
 ```sh
 export JSBSIM_ROOT=~/jsbsim
 cargo run -p oracle -- build               # configure and build C++ JSBSim, compile the driver
 cargo run -p oracle -- generate ball       # rewrite oracle/goldens/ball/{reference.csv,manifest.toml}
 cargo run -p oracle -- check-drift         # regenerate all cases and compare with the goldens
-scripts/oracle-drift.sh                    # the same, as run by CI
+cargo run -p oracle -- check-xml           # parse every JSBSim XML file in C++ and Rust, compare trees
+scripts/oracle-ci.sh                       # check-drift and check-xml, as run by CI
 cargo run -p oracle -- compare --case ball oracle/goldens/ball/reference.csv candidate.csv
 ```
 
