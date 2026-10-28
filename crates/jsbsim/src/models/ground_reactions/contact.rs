@@ -114,7 +114,9 @@ pub struct ContactState {
     pub wow: bool,
     /// `lastWOW`.
     pub last_wow: bool,
-    /// `AGL`, ft: the uncompressed contact's height, never negative.
+    /// `AGL`, ft: the uncompressed contact's height, never negative. 0
+    /// until the first frame computes it; C++ leaves it uninitialized
+    /// until then (FGLGear.h:369).
     pub agl: f64,
     /// `compressLength`, ft.
     pub compress_length: f64,
@@ -124,7 +126,9 @@ pub struct ContactState {
     pub wheel_slip: f64,
     /// `StrutForce`, lbs.
     pub strut_force: f64,
-    /// `FCoeff`, the side friction coefficient.
+    /// `FCoeff`, the side friction coefficient. 0 until the gear forces
+    /// first compute it; C++ leaves it uninitialized until then
+    /// (FGLGear.h:350).
     pub side_coeff: f64,
     /// `vWhlVelVec`, gear frame, ft/s.
     pub wheel_vel: ColumnVector3,
