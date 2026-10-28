@@ -4698,13 +4698,12 @@ reason = "A meridional heading is 0 or pi up to the round-off of libm's sin, cos
 [[tolerance]]
 case = "geodesic"
 property = "tiny/s"
-abs = 0.0
-rel = 7.2e-6
-reason = "Over a separation of 1e-10 to 1e-6 rad, a last-ulp difference (about 1e-16) of libm's sin and cos of either latitude, of hypot and atan2 in the ported inverse, or of the start point's derived longitude and latitude, is up to 1e-6 of the separation; observed max rel 7.2e-7 (2.2e-7 from identical start points)."
-
+abs = 3.2e-8
+rel = 0.0
+reason = "Distances of 1e-10 to 1e-6 rad (up to 13.5 ft): a last-ulp difference of libm's sin, cos, hypot and atan2 in the ported inverse, or of the start point's derived longitude and latitude, moves a near-zero distance by a few ulps of the ECEF position; bounded absolutely, as a relative bound overstates it near zero; observed max 3.1e-9 ft (9.6e-10 m), bound 10x that."
 [[tolerance]]
 case = "geodesic"
 property = "tiny/psi"
 abs = 8e-6
 rel = 0.0
-reason = "Over a separation of 1e-10 to 1e-6 rad, a last-ulp difference (about 1e-16) of libm's sin and cos of either latitude, of hypot and atan2 in the ported inverse, or of the start point's derived longitude and latitude, turns the heading by up to 1e-6 rad; observed max |diff| 8.0e-7 (5.0e-7 from identical start points)."
+reason = "The heading between points 1e-10 to 1e-6 rad apart is ill-conditioned: one ulp of either position (about 2e-9 ft) over a separation down to a few thousandths of a foot turns the direction by up to about 1e-6 rad, and C++'s own inputs are only determined to those ulps, so no tighter absolute bound is meaningful; observed max 8.0e-7 rad, bound 10x that."

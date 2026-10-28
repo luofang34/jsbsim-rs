@@ -61,3 +61,73 @@ fn reversing_a_pair_keeps_the_distance_on_oblate_and_prolate_ellipsoids() {
         }
     }
 }
+
+/// The bits `Location::distance_to` and `heading_to` give on JSBSim's
+/// WGS-84 ellipse for random, near-antipodal and tiny-separation pairs.
+/// They are pinned because every target must compute the same bits (the
+/// libm crate, not platform maths); a target that differs fails here.
+#[test]
+fn distances_and_headings_are_the_same_bits_on_every_target() {
+    let pins: [(u64, u64); 6] = [
+        (0x4181a648758f201f, 0xc00608dd4fc3338d),
+        (0x4184c61e0c269b74, 0xbff99ca8290004b4),
+        (0x418f4b700302a6c1, 0xc00921fb51d2b861),
+        (0x418f4b51f7bfcfc4, 0xc009217dfcecfa38),
+        (0x3ff26ee8c9820c85, 0xbfd215b4aa219b2d),
+        (0x3fa82c0e3c8faa8b, 0x3fdccba55567e073),
+    ];
+    for ((lon1, lat1, h, lon2, lat2), (s, psi)) in PINNED_PAIRS.into_iter().zip(pins) {
+        let mut l = crate::math::Location::default();
+        l.set_ellipse(20_925_646.325_46, 20_855_486.595_293_265);
+        l.set_position_geodetic(lon1, lat1, h);
+        assert_eq!(l.distance_to(lon2, lat2).to_bits(), s, "{lon1} {lat1}");
+        assert_eq!(l.heading_to(lon2, lat2).to_bits(), psi, "{lon1} {lat1}");
+    }
+}
+
+/// Pairs from the geodesic golden's input.
+#[cfg(test)]
+const PINNED_PAIRS: [(f64, f64, f64, f64, f64); 6] = [
+    (
+        2.9689007974638644,
+        0.11723052177444813,
+        468635.48815817514,
+        1.1540859241615804,
+        -1.1805329947316525,
+    ),
+    (
+        1.7391448542260006,
+        0.5830662353151713,
+        0.0,
+        -0.25633173776953955,
+        -0.29874072077210084,
+    ),
+    (
+        1.7856404696455925,
+        0.1604306598232724,
+        0.0,
+        -1.3559521837550683,
+        -0.16043066031742897,
+    ),
+    (
+        0.7542944088002157,
+        0.026373400569765462,
+        0.0,
+        -2.387295718626915,
+        -0.02641965406362223,
+    ),
+    (
+        -1.5719650718809024,
+        0.12220753011717533,
+        0.0,
+        -1.571965087346642,
+        0.1222075833378568,
+    ),
+    (
+        0.9112586747477582,
+        0.7938889580187675,
+        53376.86264008654,
+        0.9112586761449321,
+        0.7938889600536256,
+    ),
+];
