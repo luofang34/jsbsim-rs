@@ -34,6 +34,23 @@ const char* const kPrefixes[] = {
 // Output types made by <output> I/O directives, which the port ignores.
 const char* const kExcluded = "simulation/output";
 
+// Contact properties tied to FGLGear members the constructor leaves
+// uninitialized until the first force calculation (AGL, FGLGear.h:369;
+// FCoeff, FGLGear.h:350); before any frame they read indeterminate memory.
+// Keep in step with UNINITIALIZED in tools/oracle/src/probe/models.rs.
+const char* const kUninitialized[] = {"/AGL-ft", "/side_friction_coeff"};
+
+bool Uninitialized(const std::string& path)
+{
+  for (const char* s : kUninitialized) {
+    const std::string suffix(s);
+    if (path.size() >= suffix.size() &&
+        path.compare(path.size() - suffix.size(), suffix.size(), suffix) == 0)
+      return true;
+  }
+  return false;
+}
+
 std::string Number(double v)
 {
   char buf[64];
@@ -57,7 +74,8 @@ void Walk(SGPropertyNode* node, std::vector<std::string>& lines)
       continue;
     }
     std::string path = JSBSim::GetRelativeName(child, "/fdm/jsbsim/");
-    if (!Covered(path) || path.compare(0, std::string(kExcluded).size(), kExcluded) == 0)
+    if (!Covered(path) || path.compare(0, std::string(kExcluded).size(), kExcluded) == 0 ||
+        Uninitialized(path))
       continue;
     switch (child->getType()) {
     case simgear::props::BOOL:

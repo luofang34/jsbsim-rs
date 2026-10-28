@@ -34,6 +34,13 @@ pub const PREFIXES: [&str; 16] = [
 /// Output types made by `<output>` I/O directives, which the port ignores.
 pub const EXCLUDED: &str = "simulation/output";
 
+/// Contact properties tied to `FGLGear` members its constructor leaves
+/// uninitialized until the first force calculation (`AGL`, FGLGear.h:369,
+/// first set at FGLGear.cpp:304; `FCoeff`, FGLGear.h:350), so before any
+/// frame C++ reads whatever memory held. Keep in step with
+/// `kUninitialized` in the C++ probe.
+pub const UNINITIALIZED: [&str; 2] = ["/AGL-ft", "/side_friction_coeff"];
+
 fn walk(fdm: &mut Fdm, node: NodeId, lines: &mut Vec<String>) -> Result<(), jsbsim::Error> {
     let children = fdm.tree().children(node).to_vec();
     for child in children {
@@ -42,7 +49,10 @@ fn walk(fdm: &mut Fdm, node: NodeId, lines: &mut Vec<String>) -> Result<(), jsbs
             continue;
         }
         let path = fdm.tree().relative_name(child, "/");
-        if !PREFIXES.iter().any(|p| path.starts_with(p)) || path.starts_with(EXCLUDED) {
+        if !PREFIXES.iter().any(|p| path.starts_with(p))
+            || path.starts_with(EXCLUDED)
+            || UNINITIALIZED.iter().any(|s| path.ends_with(s))
+        {
             continue;
         }
         match fdm.tree().value_type(child) {
