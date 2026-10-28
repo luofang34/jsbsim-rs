@@ -8,6 +8,7 @@
 //! `oracle derive`; a test checks that they match their upstream source.
 
 pub mod accelerometers;
+pub mod actuator;
 pub mod systems;
 pub mod tripod;
 
@@ -220,6 +221,10 @@ pub fn expected_blocking(repo_root: &Path) -> Result<Vec<(String, String)>, Orac
     files.push((
         "systems/gnc_waypoint.xml".to_owned(),
         systems::gnc_waypoint(&gnc)?,
+    ));
+    files.push((
+        "systems/actuator_c172x.xml".to_owned(),
+        actuator::system(&read("aircraft/c172x/c172x.xml")?)?,
     ));
     Ok(files)
 }

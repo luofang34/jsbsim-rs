@@ -81,12 +81,29 @@ fn the_execute_property_must_exist() {
 
 #[test]
 fn unported_components_are_refused_and_unknown_ones_skipped() {
-    let actuator = "<system><channel name=\"c\"><actuator name=\"a\"/></channel></system>";
-    let err = load_error(actuator, LoadOptions::default());
-    assert!(
-        matches!(&err, Error::Unsupported { construct, .. } if construct == "<actuator> FCS component"),
-        "{err:?}"
-    );
+    // Any component JSBSim knows that no family registers yet.
+    let unported = [
+        "kinematic",
+        "sensor",
+        "accelerometer",
+        "magnetometer",
+        "gyro",
+        "waypoint_heading",
+        "waypoint_distance",
+        "angle",
+        "distributor",
+        "linear_actuator",
+    ]
+    .into_iter()
+    .find(|name| !super::families::registers(name));
+    if let Some(name) = unported {
+        let system = format!("<system><channel name=\"c\"><{name} name=\"a\"/></channel></system>");
+        let err = load_error(&system, LoadOptions::default());
+        assert!(
+            matches!(&err, Error::Unsupported { construct, .. } if *construct == format!("<{name}> FCS component")),
+            "{err:?}"
+        );
+    }
     let unknown = "<system><channel name=\"c\"><bogus name=\"a\"/></channel></system>";
     let fdm = load_system(unknown, LoadOptions::default()).unwrap();
     assert!(fdm.models.fcs.channels[0].components.is_empty());

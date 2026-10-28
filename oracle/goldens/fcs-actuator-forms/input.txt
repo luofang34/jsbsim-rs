@@ -1,0 +1,165 @@
+# oracle/scenarios/systems/fcs_actuator.xml on tripod_fcs_actuator:
+# lag, rate limits, deadband, hysteresis, bias, delays, clipping and the
+# saturated flag, the three malfunctions, and a reset.
+# The tripod starts at 10000 ft so that its contacts stay clear of the
+# ground.
+paths ../.. derived/aircraft scenarios/systems
+new
+load tripod_fcs_actuator
+watch simulation/sim-time-sec test/input test/lag test/rate test/lag-value test/lag-property test/deadband test/hysteresis test/bias test/delay-frames test/delay-time test/gimbal test/incr-only test/decr-only test/unknown-sense test/repeated test/negated-a test/negated-b test/zero-min test/zero-min/saturated test/zero-max test/zero-max/saturated test/gimbal/saturated test/elevator fcs/elevator-actuator fcs/elevator-actuator/saturated
+set ic/h-sl-ft 10000
+runic
+set test/input 0.3
+run
+run
+run
+run
+run
+run
+set test/input -0.2
+run
+run
+run
+run
+run
+run
+set test/input 0.9
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+set test/input 0.05
+run
+run
+run
+run
+set test/input -0.7
+run
+run
+run
+run
+run
+run
+run
+run
+set test/lag 4
+run
+run
+run
+run
+set test/rate 2
+set test/input 0.6
+run
+run
+run
+run
+set test/gimbal/malfunction/fail_stuck 1
+set fcs/elevator-actuator/malfunction/fail_stuck 1
+set test/delay-frames/malfunction/fail_stuck 1
+set test/input -0.4
+run
+run
+run
+run
+run
+set test/gimbal/malfunction/fail_stuck 0
+set fcs/elevator-actuator/malfunction/fail_stuck 0
+set test/delay-frames/malfunction/fail_stuck 0
+run
+run
+run
+set test/gimbal/malfunction/fail_hardover 1
+set fcs/elevator-actuator/malfunction/fail_hardover 1
+set test/hysteresis/malfunction/fail_hardover 1
+set test/zero-max/malfunction/fail_hardover 1
+run
+run
+run
+run
+set test/input 0.3
+run
+run
+run
+run
+run
+run
+set test/gimbal/malfunction/fail_zero 1
+set fcs/elevator-actuator/malfunction/fail_zero 1
+set test/bias/malfunction/fail_zero 1
+set test/lag-value/malfunction/fail_zero 1
+run
+run
+run
+run
+run
+run
+print
+set simulation/reset 0
+print
+run
+run
+run
+set test/gimbal/malfunction/fail_hardover 0
+set test/gimbal/malfunction/fail_zero 0
+set fcs/elevator-actuator/malfunction/fail_hardover 0
+set fcs/elevator-actuator/malfunction/fail_zero 0
+set test/hysteresis/malfunction/fail_hardover 0
+set test/hysteresis/malfunction/fail_zero 0
+set test/zero-max/malfunction/fail_hardover 0
+set test/zero-max/malfunction/fail_zero 0
+set test/bias/malfunction/fail_hardover 0
+set test/bias/malfunction/fail_zero 0
+set test/lag-value/malfunction/fail_hardover 0
+set test/lag-value/malfunction/fail_zero 0
+set test/input -1.2
+run
+run
+run
+run
+run
+run
+run
+run
+set test/input 0.0
+run
+run
+run
+run
+run
+run

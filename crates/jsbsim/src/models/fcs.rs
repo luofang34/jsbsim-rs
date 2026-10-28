@@ -10,6 +10,7 @@
 //! [`Error::Unsupported`](crate::Error::Unsupported).
 
 pub mod accelerometer;
+pub mod actuator;
 mod bind;
 pub mod component;
 pub mod deadband;

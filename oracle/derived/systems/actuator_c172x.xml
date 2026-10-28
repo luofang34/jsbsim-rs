@@ -1,0 +1,271 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  actuator_c172x.xml: fcs/left-aileron-actuator of aircraft/c172x/c172x.xml
+  in each configuration JSBSim's tests/TestActuator.py edits it into, one
+  channel per configuration, its properties prefixed fcs/<label>/.
+  Regenerate with `oracle derive`.
+-->
+<system name="actuator_c172x">
+  <property>fcs/bug1503/left-aileron-control</property>
+  <property>fcs/rateprop/left-aileron-control</property>
+  <property value=" 1.57 ">fcs/rateprop/rate-limit-value</property>
+  <property value="0.0">fcs/rate1/left-aileron-input</property>
+  <property value="0.15">fcs/rate1/rate-limit-value</property>
+  <property value="0.05">fcs/rate1/rate-limit-value2</property>
+  <property value="0.0">fcs/rate2/left-aileron-input</property>
+  <property value="0.15">fcs/rate2/rate-limit-value</property>
+  <property value="0.05">fcs/rate2/rate-limit-value2</property>
+  <property value="0.0">fcs/rate3/left-aileron-input</property>
+  <property value="0.15">fcs/rate3/rate-limit-value</property>
+  <property value="0.05">fcs/rate3/rate-limit-value2</property>
+  <property value="0.0">fcs/rate4/left-aileron-input</property>
+  <property value="0.15">fcs/rate4/rate-limit-value</property>
+  <property value="0.05">fcs/rate4/rate-limit-value2</property>
+  <property value="0.0">fcs/rate5/left-aileron-input</property>
+  <property value="0.15">fcs/rate5/rate-limit-value</property>
+  <property value="0.05">fcs/rate5/rate-limit-value2</property>
+  <property value="0.0">fcs/rate6/left-aileron-input</property>
+  <property value="0.15">fcs/rate6/rate-limit-value</property>
+  <property value="0.05">fcs/rate6/rate-limit-value2</property>
+  <property value="0.0">fcs/clip1/left-aileron-input</property>
+  <property value="0.0">fcs/clip2/left-aileron-input</property>
+  <property value="-0.15">fcs/clip2/clip-min-value</property>
+  <property value="0.05">fcs/clip2/clip-max-value</property>
+  <property value="0.0">fcs/clip3/left-aileron-input</property>
+  <property value="-0.15">fcs/clip3/clip-min-value</property>
+  <property value="0.05">fcs/clip3/clip-max-value</property>
+  <property value="0.0">fcs/clip4/left-aileron-input</property>
+  <property value="-0.15">fcs/clip4/clip-min-value</property>
+  <property value="0.05">fcs/clip4/clip-max-value</property>
+  <property value="0.0">fcs/clip5/left-aileron-input</property>
+  <property value="-0.15">fcs/clip5/clip-min-value</property>
+  <property value="0.05">fcs/clip5/clip-max-value</property>
+  <property value="0.0">fcs/clip6/left-aileron-input</property>
+  <property value="-0.15">fcs/clip6/clip-min-value</property>
+  <property value="0.05">fcs/clip6/clip-max-value</property>
+  <property value="0.0">fcs/cyclic1/left-aileron-input</property>
+  <property value="-0.15">fcs/cyclic1/clip-min-value</property>
+  <property value="0.05">fcs/cyclic1/clip-max-value</property>
+  <property value="0.0">fcs/cyclic2/left-aileron-input</property>
+  <property value="-0.15">fcs/cyclic2/clip-min-value</property>
+  <property value="0.05">fcs/cyclic2/clip-max-value</property>
+  <property value="0.0">fcs/cyclic3/left-aileron-input</property>
+  <property value="-0.15">fcs/cyclic3/clip-min-value</property>
+  <property value="0.05">fcs/cyclic3/clip-max-value</property>
+  <property value="0.0">fcs/noclip/left-aileron-input</property>
+  <channel name="bug1503">
+            <actuator name="fcs/bug1503/left-aileron-actuator">
+              <description> The input to this actuator is in radians. </description>
+              <input> fcs/bug1503/left-aileron-control </input>
+              <rate_limit sense="decr"> 1.57 </rate_limit>
+              <hysteresis_width> 0.005 </hysteresis_width>
+              <clipto>
+                <min> -0.350 </min>
+                <max>  0.260 </max>
+              </clipto>
+              <output>fcs/bug1503/left-aileron-pos-rad</output>
+            <rate_limit sense="incr">0.785</rate_limit></actuator>
+  </channel>
+  <channel name="rateprop">
+            <actuator name="fcs/rateprop/left-aileron-actuator">
+              <description> The input to this actuator is in radians. </description>
+              <input> fcs/rateprop/left-aileron-control </input>
+              <rate_limit sense="decr">fcs/rateprop/rate-limit-value</rate_limit>
+              <hysteresis_width> 0.005 </hysteresis_width>
+              <clipto>
+                <min> -0.350 </min>
+                <max>  0.260 </max>
+              </clipto>
+              <output>fcs/rateprop/left-aileron-pos-rad</output>
+            <rate_limit sense="incr">fcs/rateprop/rate-limit-value</rate_limit></actuator>
+  </channel>
+  <channel name="rate1">
+            <actuator name="fcs/rate1/left-aileron-actuator">
+              <description> The input to this actuator is in radians. </description>
+              <input>fcs/rate1/left-aileron-input</input>
+              <rate_limit>0.1</rate_limit>
+              <clipto>
+                <min> -0.350 </min>
+                <max>  0.260 </max>
+              </clipto>
+              <output>fcs/rate1/left-aileron-pos-rad</output>
+            </actuator>
+  </channel>
+  <channel name="rate2">
+            <actuator name="fcs/rate2/left-aileron-actuator">
+              <description> The input to this actuator is in radians. </description>
+              <input>fcs/rate2/left-aileron-input</input>
+              <rate_limit>fcs/rate2/rate-limit-value</rate_limit>
+              <clipto>
+                <min> -0.350 </min>
+                <max>  0.260 </max>
+              </clipto>
+              <output>fcs/rate2/left-aileron-pos-rad</output>
+            </actuator>
+  </channel>
+  <channel name="rate3">
+            <actuator name="fcs/rate3/left-aileron-actuator">
+              <description> The input to this actuator is in radians. </description>
+              <input>fcs/rate3/left-aileron-input</input>
+              <rate_limit sense="decr">0.1</rate_limit>
+              <clipto>
+                <min> -0.350 </min>
+                <max>  0.260 </max>
+              </clipto>
+              <output>fcs/rate3/left-aileron-pos-rad</output>
+            <rate_limit sense="incr">0.2</rate_limit></actuator>
+  </channel>
+  <channel name="rate4">
+            <actuator name="fcs/rate4/left-aileron-actuator">
+              <description> The input to this actuator is in radians. </description>
+              <input>fcs/rate4/left-aileron-input</input>
+              <rate_limit sense="decr">fcs/rate4/rate-limit-value</rate_limit>
+              <clipto>
+                <min> -0.350 </min>
+                <max>  0.260 </max>
+              </clipto>
+              <output>fcs/rate4/left-aileron-pos-rad</output>
+            <rate_limit sense="incr">0.2</rate_limit></actuator>
+  </channel>
+  <channel name="rate5">
+            <actuator name="fcs/rate5/left-aileron-actuator">
+              <description> The input to this actuator is in radians. </description>
+              <input>fcs/rate5/left-aileron-input</input>
+              <rate_limit sense="decr">0.1</rate_limit>
+              <clipto>
+                <min> -0.350 </min>
+                <max>  0.260 </max>
+              </clipto>
+              <output>fcs/rate5/left-aileron-pos-rad</output>
+            <rate_limit sense="incr">fcs/rate5/rate-limit-value</rate_limit></actuator>
+  </channel>
+  <channel name="rate6">
+            <actuator name="fcs/rate6/left-aileron-actuator">
+              <description> The input to this actuator is in radians. </description>
+              <input>fcs/rate6/left-aileron-input</input>
+              <rate_limit sense="decr">fcs/rate6/rate-limit-value2</rate_limit>
+              <clipto>
+                <min> -0.350 </min>
+                <max>  0.260 </max>
+              </clipto>
+              <output>fcs/rate6/left-aileron-pos-rad</output>
+            <rate_limit sense="incr">fcs/rate6/rate-limit-value</rate_limit></actuator>
+  </channel>
+  <channel name="clip1">
+            <actuator name="fcs/clip1/left-aileron-actuator">
+              <description> The input to this actuator is in radians. </description>
+              <input>fcs/clip1/left-aileron-input</input>
+              <rate_limit> 1.57 </rate_limit>
+              <clipto>
+                <min> -0.350 </min>
+                <max>  0.260 </max>
+              </clipto>
+              <output>fcs/clip1/left-aileron-pos-rad</output>
+            </actuator>
+  </channel>
+  <channel name="clip2">
+            <actuator name="fcs/clip2/left-aileron-actuator">
+              <description> The input to this actuator is in radians. </description>
+              <input>fcs/clip2/left-aileron-input</input>
+              <rate_limit> 1.57 </rate_limit>
+              <clipto>
+                <min>fcs/clip2/clip-min-value</min>
+                <max>  0.260 </max>
+              </clipto>
+              <output>fcs/clip2/left-aileron-pos-rad</output>
+            </actuator>
+  </channel>
+  <channel name="clip3">
+            <actuator name="fcs/clip3/left-aileron-actuator">
+              <description> The input to this actuator is in radians. </description>
+              <input>fcs/clip3/left-aileron-input</input>
+              <rate_limit> 1.57 </rate_limit>
+              <clipto>
+                <min>-fcs/clip3/clip-max-value</min>
+                <max>  0.260 </max>
+              </clipto>
+              <output>fcs/clip3/left-aileron-pos-rad</output>
+            </actuator>
+  </channel>
+  <channel name="clip4">
+            <actuator name="fcs/clip4/left-aileron-actuator">
+              <description> The input to this actuator is in radians. </description>
+              <input>fcs/clip4/left-aileron-input</input>
+              <rate_limit> 1.57 </rate_limit>
+              <clipto>
+                <min>-0.1</min>
+                <max>fcs/clip4/clip-max-value</max>
+              </clipto>
+              <output>fcs/clip4/left-aileron-pos-rad</output>
+            </actuator>
+  </channel>
+  <channel name="clip5">
+            <actuator name="fcs/clip5/left-aileron-actuator">
+              <description> The input to this actuator is in radians. </description>
+              <input>fcs/clip5/left-aileron-input</input>
+              <rate_limit> 1.57 </rate_limit>
+              <clipto>
+                <min>-0.1</min>
+                <max>-fcs/clip5/clip-min-value</max>
+              </clipto>
+              <output>fcs/clip5/left-aileron-pos-rad</output>
+            </actuator>
+  </channel>
+  <channel name="clip6">
+            <actuator name="fcs/clip6/left-aileron-actuator">
+              <description> The input to this actuator is in radians. </description>
+              <input>fcs/clip6/left-aileron-input</input>
+              <rate_limit> 1.57 </rate_limit>
+              <clipto>
+                <min>-fcs/clip6/clip-max-value</min>
+                <max>fcs/clip6/clip-max-value</max>
+              </clipto>
+              <output>fcs/clip6/left-aileron-pos-rad</output>
+            </actuator>
+  </channel>
+  <channel name="cyclic1">
+            <actuator name="fcs/cyclic1/left-aileron-actuator">
+              <description> The input to this actuator is in radians. </description>
+              <input>fcs/cyclic1/left-aileron-input</input>
+              <rate_limit> 1.57 </rate_limit>
+              <clipto type="cyclic">
+                <min>-3.141592653589793</min>
+                <max>3.141592653589793</max>
+              </clipto>
+              <output>fcs/cyclic1/left-aileron-pos-rad</output>
+            </actuator>
+  </channel>
+  <channel name="cyclic2">
+            <actuator name="fcs/cyclic2/left-aileron-actuator">
+              <description> The input to this actuator is in radians. </description>
+              <input>fcs/cyclic2/left-aileron-input</input>
+              <rate_limit> 1.57 </rate_limit>
+              <clipto type="cyclic">
+                <min>0.0</min>
+                <max>3.141592653589793</max>
+              </clipto>
+              <output>fcs/cyclic2/left-aileron-pos-rad</output>
+            </actuator>
+  </channel>
+  <channel name="cyclic3">
+            <actuator name="fcs/cyclic3/left-aileron-actuator">
+              <description> The input to this actuator is in radians. </description>
+              <input>fcs/cyclic3/left-aileron-input</input>
+              <rate_limit> 1.57 </rate_limit>
+              <clipto type="cyclic">
+                <min>-3.141592653589793</min>
+                <max>0.0</max>
+              </clipto>
+              <output>fcs/cyclic3/left-aileron-pos-rad</output>
+            </actuator>
+  </channel>
+  <channel name="noclip">
+            <actuator name="fcs/noclip/left-aileron-actuator">
+              <description> The input to this actuator is in radians. </description>
+              <input>fcs/noclip/left-aileron-input</input>
+              <rate_limit> 1.57 </rate_limit>
+              <output>fcs/noclip/left-aileron-pos-rad</output>
+            </actuator>
+  </channel>
+</system>

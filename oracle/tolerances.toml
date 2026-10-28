@@ -5008,3 +5008,45 @@ property = "*/test/mag-rotated"
 abs = 4.1e-10
 rel = 0.0
 reason = "From the 1000th run on, and after the reset, the WMM2005 expansion is evaluated at the tumbling tripod's geodetic position (47.5 N 122.3 W, then 33.9 S 151.2 E), through sin, cos, atan2 and sqrt of twelve orders and the geodetic conversion of the position, where Rust's libm and the platform libm differ in the last ulp; observed max 4.0e-11 nT (rel 4.4e-15); bound 10x that."
+
+[[tolerance]]
+case = "fcs-actuator-bug1503"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "An actuator with rate limits split by sense and hysteresis, at rest, only compares and copies values, so it must be bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-actuator-rate-property"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "An actuator with both rate limits read from a property, at rest, only compares and copies values, so it must be bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-actuator-rate-linear"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Rate limits from values, properties and per sense add the limit times the step in JSBSim's order (IEEE basic operations only), so they must be bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-actuator-clipto"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Rate limiting, clipping (Constrain and the cyclic fmod), the saturated flag and fail_hardover use IEEE basic operations and fmod in JSBSim's order, so they must be bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-actuator-hardover"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "fail_hardover without <clipto> drives the input to JSBSim's default limit 0 through the rate limit, IEEE basic operations only, so it must be bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-actuator-forms"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Actuator lag (coefficients recomputed when the property changes), rate limits, deadband, hysteresis, bias, delays, clipping, saturation, malfunctions and the reset use IEEE basic operations in JSBSim's order, so they must be bit-identical; observed max |diff| 0."

@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  FGActuator beyond upstream tests/TestActuator.py: lag from a value and
+  from a property that changes, deadband, hysteresis and bias alone, the
+  transport delay in frames and in seconds, the FGActuator documentation's
+  gimbal example with every stage, one-sided and unknown rate limit
+  senses, repeated rate limits, a negated input with two outputs, limits
+  at zero (which never saturate), a name without a slash, and the three
+  malfunctions. The fcs-actuator-forms golden drives it, resetting it once
+  through simulation/reset.
+-->
+<system name="fcs-actuator">
+  <property>test/input</property>
+  <property value="10">test/lag</property>
+  <property value="0.5">test/rate</property>
+  <channel name="actuators">
+    <actuator name="test/lag-value">
+      <input>test/input</input>
+      <lag>10</lag>
+    </actuator>
+    <actuator name="test/lag-property">
+      <input>test/input</input>
+      <lag>test/lag</lag>
+    </actuator>
+    <actuator name="test/deadband">
+      <input>test/input</input>
+      <deadband_width>0.4</deadband_width>
+    </actuator>
+    <actuator name="test/hysteresis">
+      <input>test/input</input>
+      <hysteresis_width>0.5</hysteresis_width>
+    </actuator>
+    <actuator name="test/bias">
+      <input>test/input</input>
+      <bias>0.125</bias>
+    </actuator>
+    <actuator name="test/delay-frames">
+      <input>test/input</input>
+      <rate_limit>2</rate_limit>
+      <delay type="frames">3</delay>
+    </actuator>
+    <actuator name="test/delay-time">
+      <input>test/input</input>
+      <delay type="time">0.025</delay>
+    </actuator>
+    <actuator name="test/gimbal">
+      <input>test/input</input>
+      <lag>60</lag>
+      <rate_limit>0.085</rate_limit>
+      <bias>0.002</bias>
+      <deadband_width>0.002</deadband_width>
+      <hysteresis_width>0.05</hysteresis_width>
+      <clipto>
+        <min>-0.17</min>
+        <max>0.17</max>
+      </clipto>
+    </actuator>
+    <actuator name="test/incr-only">
+      <input>test/input</input>
+      <rate_limit sense="increasing">test/rate</rate_limit>
+    </actuator>
+    <actuator name="test/decr-only">
+      <input>test/input</input>
+      <rate_limit sense="decreasing">-test/rate</rate_limit>
+    </actuator>
+    <actuator name="test/unknown-sense">
+      <input>test/input</input>
+      <rate_limit sense="both">0.1</rate_limit>
+    </actuator>
+    <actuator name="test/repeated">
+      <input>test/input</input>
+      <rate_limit>0.1</rate_limit>
+      <rate_limit>3</rate_limit>
+      <rate_limit sense="decr">1</rate_limit>
+    </actuator>
+    <actuator name="test/negated">
+      <input>-test/input</input>
+      <rate_limit>4</rate_limit>
+      <output>test/negated-a</output>
+      <output>test/negated-b</output>
+    </actuator>
+    <actuator name="test/zero-min">
+      <input>test/input</input>
+      <clipto>
+        <min>0</min>
+        <max>0.5</max>
+      </clipto>
+    </actuator>
+    <actuator name="test/zero-max">
+      <input>test/input</input>
+      <clipto>
+        <min>-0.5</min>
+        <max>0</max>
+      </clipto>
+    </actuator>
+    <actuator name="Elevator Actuator">
+      <input>test/input</input>
+      <lag>30</lag>
+      <rate_limit>1.5</rate_limit>
+      <hysteresis_width>0.1</hysteresis_width>
+      <clipto>
+        <min>-0.6</min>
+        <max>0.8</max>
+      </clipto>
+      <output>test/elevator</output>
+    </actuator>
+  </channel>
+</system>
