@@ -5,8 +5,8 @@
 //
 //! Loading and running scripts.
 
-use super::{Fdm, ModelGetters};
-use crate::functions::{Condition, Evaluator, Parameter, PropertyValue};
+use super::Fdm;
+use crate::functions::{Condition, Parameter, PropertyValue};
 use crate::script::{Event, Script, Set, SetAction, SetType};
 use crate::xml::{DocumentLoader, Element};
 use crate::{Error, Resolver};
@@ -19,8 +19,8 @@ fn script_error(message: impl Into<String>) -> Error {
 
 fn parse_set(el: &Element, fdm: &mut Fdm) -> Result<Set, Error> {
     let name = el.attribute("name").to_owned();
-    let node = if fdm.tree.has_node(&name)? {
-        fdm.tree.get(&name)?
+    let node = if fdm.env.tree.has_node(&name)? {
+        fdm.env.tree.get(&name)?
     } else {
         None
     };
@@ -29,7 +29,7 @@ fn parse_set(el: &Element, fdm: &mut Fdm) -> Result<Set, Error> {
     } else if let Some(f) = el.find_element("function") {
         (
             0.0,
-            Some(fdm.functions.load_function(&mut fdm.tree, f, "")?),
+            Some(fdm.env.functions.load_function(&mut fdm.env.tree, f, "")?),
         )
     } else {
         (0.0, None)
@@ -74,7 +74,7 @@ fn parse_event(el: &Element, fdm: &mut Fdm) -> Result<Event, Error> {
             el.attribute("name")
         )));
     };
-    let condition = Condition::load(condition_el, &fdm.tree)?;
+    let condition = Condition::load(condition_el, &fdm.env.tree)?;
     let delay = if el.find_element("delay").is_some() {
         el.find_element_value_as_number("delay")?
     } else {
@@ -99,9 +99,9 @@ fn parse_event(el: &Element, fdm: &mut Fdm) -> Result<Event, Error> {
         event.description = notify.find_element_value("description").to_owned();
         for p in notify.find_elements("property") {
             let name = p.data_line(0);
-            let value = PropertyValue::new(name, &fdm.tree, p.location())?;
+            let value = PropertyValue::new(name, &fdm.env.tree, p.location())?;
             let param = if p.has_attribute("apply") {
-                match fdm.functions.template(p.attribute("apply")) {
+                match fdm.env.functions.template(p.attribute("apply")) {
                     Some(template) => Parameter::Template {
                         template,
                         property: value,
@@ -210,11 +210,15 @@ impl Fdm {
             } else {
                 p.attribute_as_number("value")?
             };
-            let node = self.tree.get_or_create(self.tree.root(), p.data_line(0))?;
+            let node = self
+                .env
+                .tree
+                .get_or_create(self.env.tree.root(), p.data_line(0))?;
             self.write_node(node, value)?;
             declared.insert(node, value);
             if p.attribute("persistent") == "true" {
-                self.tree
+                self.env
+                    .tree
                     .set_attribute(node, crate::properties::Attribute::PRESERVE, true);
             }
         }
@@ -232,8 +236,9 @@ impl Fdm {
         let Some(mut script) = self.script.take() else {
             return Ok(());
         };
-        for (node, value) in script.local_properties.clone() {
+        for (&node, &value) in &script.local_properties {
             if !self
+                .env
                 .tree
                 .attribute(node, crate::properties::Attribute::PRESERVE)
             {
@@ -264,14 +269,8 @@ impl Fdm {
             return Ok(false);
         }
         for (counter, event) in script.events.iter_mut().enumerate() {
-            let fired = {
-                let getters = ModelGetters {
-                    bindings: &self.bindings,
-                    models: &self.models,
-                };
-                let mut ev = Evaluator::with_getters(&self.functions, &mut self.tree, &getters);
-                event.condition.evaluate(&mut ev)?
-            };
+            let condition = &event.condition;
+            let fired = self.env.eval(&self.models, |ev| condition.evaluate(ev))?;
             if fired {
                 if !event.triggered {
                     self.fire(event, now)?;
@@ -290,11 +289,7 @@ impl Fdm {
     }
 
     fn eval_function(&mut self, id: crate::functions::FnId) -> Result<f64, Error> {
-        let getters = ModelGetters {
-            bindings: &self.bindings,
-            models: &self.models,
-        };
-        Evaluator::with_getters(&self.functions, &mut self.tree, &getters).function(id)
+        self.env.eval(&self.models, |ev| ev.function(id))
     }
 
     fn fire(&mut self, event: &mut Event, now: f64) -> Result<(), Error> {
@@ -302,8 +297,8 @@ impl Fdm {
             let node = match set.node {
                 Some(n) => n,
                 None => {
-                    let n = if self.tree.has_node(&set.name)? {
-                        self.tree.get(&set.name)?
+                    let n = if self.env.tree.has_node(&set.name)? {
+                        self.env.tree.get(&set.name)?
                     } else {
                         None
                     };
@@ -376,12 +371,7 @@ impl Fdm {
             tracing::info!("    {}", event.description);
         }
         for (param, caption) in &event.notify_properties {
-            let getters = ModelGetters {
-                bindings: &self.bindings,
-                models: &self.models,
-            };
-            let value = Evaluator::with_getters(&self.functions, &mut self.tree, &getters)
-                .parameter(param)?;
+            let value = self.env.eval(&self.models, |ev| ev.parameter(param))?;
             tracing::info!("    {caption} = {value}");
         }
         event.notified = true;

@@ -48,17 +48,6 @@ pub struct ModelFunctions {
 }
 
 impl Fdm {
-    pub(super) fn context(&mut self) -> LoadContext<'_> {
-        LoadContext {
-            functions: &mut self.functions,
-            binder: Binder {
-                tree: &mut self.tree,
-                bindings: &mut self.bindings,
-            },
-            options: self.options,
-        }
-    }
-
     /// `FGPropertyReader::Load`: `<property value="v">path</property>`
     /// declarations. Existing nodes are overwritten only with `overwrite`.
     fn read_properties(&mut self, el: &Element, overwrite: bool, slot: Model) -> Result<(), Error> {
@@ -70,9 +59,9 @@ impl Fdm {
                 0.0
             };
             let name = p.data_line(0);
-            let node = match self.tree.has_node(name)? {
+            let node = match self.env.tree.has_node(name)? {
                 true => {
-                    let Some(node) = self.tree.get(name)? else {
+                    let Some(node) = self.env.tree.get(name)? else {
                         continue;
                     };
                     if !overwrite {
@@ -88,7 +77,7 @@ impl Fdm {
                     node
                 }
                 false => {
-                    let node = self.tree.get_or_create(self.tree.root(), name)?;
+                    let node = self.env.tree.get_or_create(self.env.tree.root(), name)?;
                     self.write_node(node, value)?;
                     node
                 }
@@ -97,7 +86,7 @@ impl Fdm {
                 .local_properties
                 .insert(node, value);
             if p.attribute("persistent") == "true" {
-                self.tree.set_attribute(node, Attribute::PRESERVE, true);
+                self.env.tree.set_attribute(node, Attribute::PRESERVE, true);
             }
         }
         Ok(())
@@ -115,12 +104,17 @@ impl Fdm {
         for f in el.find_elements("function") {
             match f.attribute("type") {
                 "" | "pre" => {
-                    let id = self.functions.load_function(&mut self.tree, f, prefix)?;
+                    let id = self
+                        .env
+                        .functions
+                        .load_function(&mut self.env.tree, f, prefix)?;
                     self.model_functions[slot as usize].pre.push(id);
                 }
                 "template" => {
                     let name = f.attribute("name").to_owned();
-                    self.functions.add_template(&mut self.tree, &name, f)?;
+                    self.env
+                        .functions
+                        .add_template(&mut self.env.tree, &name, f)?;
                 }
                 _ => {}
             }
@@ -139,7 +133,10 @@ impl Fdm {
             .find_elements("function")
             .filter(|f| f.attribute("type") == "post")
         {
-            let id = self.functions.load_function(&mut self.tree, f, prefix)?;
+            let id = self
+                .env
+                .functions
+                .load_function(&mut self.env.tree, f, prefix)?;
             self.model_functions[slot as usize].post.push(id);
         }
         Ok(())

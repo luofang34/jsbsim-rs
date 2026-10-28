@@ -6,6 +6,7 @@
 //! tree and the functions, and steps them in JSBSim's order.
 
 mod bindings;
+mod env;
 mod exec_bind;
 mod load;
 mod models_run;
@@ -21,7 +22,7 @@ pub use load::{LoadContext, ModelFunctions};
 pub use run::InitialState;
 
 use crate::Error;
-use crate::functions::{Evaluator, FunctionSet};
+use crate::functions::FunctionSet;
 use crate::models::accelerations::{self, Accelerations};
 use crate::models::aircraft::{self, Aircraft};
 use crate::models::atmosphere::Atmosphere;
@@ -133,9 +134,7 @@ pub struct Models {
 
 /// The executive.
 pub struct Fdm {
-    tree: PropertyTree,
-    functions: FunctionSet,
-    bindings: Bindings,
+    env: env::Env,
     /// The models.
     pub models: Models,
     /// Declarations and pre/post functions of each model, by `Model`.
@@ -155,9 +154,11 @@ impl Fdm {
     /// initialises them; models load with `options`.
     pub fn with_options(options: crate::LoadOptions) -> Result<Self, Error> {
         let mut fdm = Self {
-            tree: PropertyTree::new(),
-            functions: FunctionSet::new(),
-            bindings: Bindings::default(),
+            env: env::Env {
+                tree: PropertyTree::new(),
+                functions: FunctionSet::new(),
+                bindings: Bindings::default(),
+            },
             models: Models {
                 fcs: crate::models::fcs::Fcs::new(),
                 ..Models::default()
@@ -168,7 +169,7 @@ impl Fdm {
             aircraft_path: "aircraft".to_owned(),
         };
         fdm.options = options;
-        fdm.functions = FunctionSet::with_options(options);
+        fdm.env.functions = FunctionSet::with_options(options);
         fdm.bind_all()?;
         fdm.load_planet_constants();
         fdm.initialize_models()?;
@@ -180,10 +181,7 @@ impl Fdm {
     /// (each model's enable flag, then its properties), then the initial
     /// conditions, then the executive.
     fn bind_all(&mut self) -> Result<(), Error> {
-        let b = &mut Binder {
-            tree: &mut self.tree,
-            bindings: &mut self.bindings,
-        };
+        let b = &mut self.env.binder();
         macro_rules! enable {
             ($name:literal, $field:ident) => {
                 exec_bind::bind_enable(b, $name, |m| &m.$field.base, |m| &mut m.$field.base)?
@@ -228,11 +226,7 @@ impl Fdm {
     /// `FGMassBalance::Load(<mass_balance>)`, tying the point mass
     /// properties as it adds them.
     pub fn load_mass_balance(&mut self, el: &crate::xml::Element) -> Result<(), Error> {
-        let b = &mut Binder {
-            tree: &mut self.tree,
-            bindings: &mut self.bindings,
-        };
-        self.models.mass_balance.load(el, b)
+        self.models.mass_balance.load(el, &mut self.env.binder())
     }
 
     /// `SetAircraftPath`: where `load_script` finds aircraft, relative to
@@ -244,18 +238,18 @@ impl Fdm {
     /// The property tree.
     #[must_use]
     pub fn tree(&self) -> &PropertyTree {
-        &self.tree
+        &self.env.tree
     }
 
     /// The node at `path`, if it exists.
     pub fn node(&self, path: &str) -> Result<Option<NodeId>, Error> {
-        Ok(self.tree.get(path)?)
+        Ok(self.env.tree.get(path)?)
     }
 
     /// Reads `path` as JSBSim's `GetPropertyValue` does: tied nodes call
     /// their getter, function outputs evaluate.
     pub fn get_property(&mut self, path: &str) -> Result<f64, Error> {
-        let Some(node) = self.tree.get(path)? else {
+        let Some(node) = self.env.tree.get(path)? else {
             return Ok(0.0);
         };
         self.read_node(node)
@@ -263,33 +257,29 @@ impl Fdm {
 
     /// Reads one node through getters and functions.
     pub fn read_node(&mut self, node: NodeId) -> Result<f64, Error> {
-        let getters = ModelGetters {
-            bindings: &self.bindings,
-            models: &self.models,
-        };
-        Evaluator::with_getters(&self.functions, &mut self.tree, &getters).read_node(node)
+        self.env.eval(&self.models, |ev| ev.read_node(node))
     }
 
     /// Writes `path` as `SetPropertyValue` does: a node tied to a setter
     /// calls it, a read-only node ignores the write, others store the value.
     /// The node is created when missing.
     pub fn set_property(&mut self, path: &str, value: f64) -> Result<bool, Error> {
-        let node = self.tree.get_or_create(self.tree.root(), path)?;
+        let node = self.env.tree.get_or_create(self.env.tree.root(), path)?;
         self.write_node(node, value)
     }
 
     /// Writes one node; false when it, or a node it aliases, is not
     /// writable. Setter requests that need the executive are then run.
     pub fn write_node(&mut self, node: NodeId, value: f64) -> Result<bool, Error> {
-        let Some(target) = self.tree.write_target(node) else {
+        let Some(target) = self.env.tree.write_target(node) else {
             return Ok(false);
         };
-        let written = match self.bindings.setter(target) {
+        let written = match self.env.bindings.setter(target) {
             Some((kind, setter)) => {
                 setter(&mut self.models, convert_write(*kind, value));
                 true
             }
-            None => self.tree.set_double(node, value),
+            None => self.env.tree.set_double(node, value),
         };
         self.process_requests()?;
         Ok(written)

@@ -258,7 +258,7 @@ impl Fdm {
     /// The `atmosphere/override/*` properties that exist.
     fn atmosphere_overrides(&mut self) -> Result<Overrides, Error> {
         let mut read = |name: &str| -> Result<Option<f64>, Error> {
-            match self.tree.get(&format!("atmosphere/override/{name}"))? {
+            match self.env.tree.get(&format!("atmosphere/override/{name}"))? {
                 Some(node) => Ok(Some(self.read_node(node)?)),
                 None => Ok(None),
             }

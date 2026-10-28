@@ -9,15 +9,15 @@
 //! through getters, so their functions are evaluated first and the
 //! results applied to the model afterwards.
 
+use super::Fdm;
 use super::order::Model;
-use super::{Fdm, ModelGetters};
 use crate::Error;
 use crate::functions::Evaluator;
 use crate::math::ColumnVector3;
 use crate::models::aerodynamics::Values;
 use crate::models::external_reactions::{Magnitude, Transforms};
-use crate::models::fcs::FcsFunction;
-use crate::properties::Attribute;
+use crate::models::fcs::{Fcs, FcsFunction};
+use crate::properties::{Attribute, NodeId};
 use crate::units::constrain;
 use crate::xml::{DocumentLoader, Element, IncludeKind};
 
@@ -26,14 +26,9 @@ impl Fdm {
     /// function's value for the frame.
     pub(super) fn run_model_functions(&mut self, model: Model, pre: bool) -> Result<(), Error> {
         let mf = &self.model_functions[model as usize];
-        let ids = if pre { mf.pre.clone() } else { mf.post.clone() };
-        for id in ids {
-            let getters = ModelGetters {
-                bindings: &self.bindings,
-                models: &self.models,
-            };
-            self.functions
-                .cache_value_with(id, true, &mut self.tree, &getters)?;
+        let ids = if pre { &mf.pre } else { &mf.post };
+        for &id in ids {
+            self.env.cache_value(&self.models, id)?;
         }
         Ok(())
     }
@@ -47,7 +42,7 @@ impl Fdm {
             .map(|(n, v)| (*n, *v))
             .collect();
         for (node, value) in props {
-            if !self.tree.attribute(node, Attribute::PRESERVE) {
+            if !self.env.tree.attribute(node, Attribute::PRESERVE) {
                 self.write_node(node, value)?;
             }
         }
@@ -55,25 +50,19 @@ impl Fdm {
     }
 
     pub(super) fn load_ground_reactions(&mut self, el: &Element) -> Result<(), Error> {
-        let mut ground = std::mem::take(&mut self.models.ground_reactions);
-        let result = ground.load(el, &mut self.context());
-        self.models.ground_reactions = ground;
-        result?;
+        let ctx = &mut self.env.load_context(self.options);
+        self.models.ground_reactions.load(el, ctx)?;
         self.post_load(el, "", Model::GroundReactions)
     }
 
     pub(super) fn load_external_reactions(&mut self, el: &Element) -> Result<(), Error> {
-        let mut external = std::mem::take(&mut self.models.external_reactions);
-        let result = external.load(el, &mut self.context());
-        self.models.external_reactions = external;
-        result
+        let ctx = &mut self.env.load_context(self.options);
+        self.models.external_reactions.load(el, ctx)
     }
 
     pub(super) fn load_aerodynamics(&mut self, el: &Element) -> Result<(), Error> {
-        let mut aero = std::mem::take(&mut self.models.aerodynamics);
-        let result = aero.load(el, &mut self.context());
-        self.models.aerodynamics = aero;
-        result
+        let ctx = &mut self.env.load_context(self.options);
+        self.models.aerodynamics.load(el, ctx)
     }
 
     /// `FGFCS::Load` for one `<system>`, `<autopilot>` or `<flight_control>`.
@@ -84,10 +73,8 @@ impl Fdm {
         kind: IncludeKind,
     ) -> Result<(), Error> {
         self.upload(loader, el, kind, Model::Systems)?;
-        let mut fcs = std::mem::take(&mut self.models.fcs);
-        let result = fcs.load_channels(el, &mut self.context());
-        self.models.fcs = fcs;
-        result?;
+        let ctx = &mut self.env.load_context(self.options);
+        self.models.fcs.load_channels(el, ctx)?;
         self.post_load(el, "", Model::Systems)
     }
 
@@ -123,13 +110,7 @@ impl Fdm {
         let channel = &self.models.fcs.channels[c];
         self.models.fcs.channel_rate = channel.exec_rate;
         if let Some(node) = channel.on_off {
-            let getters = ModelGetters {
-                bindings: &self.bindings,
-                models: &self.models,
-            };
-            let on = Evaluator::with_getters(&self.functions, &mut self.tree, &getters)
-                .read_node(node)?
-                != 0.0;
+            let on = self.env.eval(&self.models, |ev| ev.read_node(node))? != 0.0;
             if !on {
                 return Ok(());
             }
@@ -140,46 +121,21 @@ impl Fdm {
             return Ok(());
         }
         for i in 0..self.models.fcs.channels[c].components.len() {
-            let component = self.models.fcs.channels[c].components[i].clone();
-            let output = self.evaluate_fcs_function(&component)?;
+            let component = &self.models.fcs.channels[c].components[i];
+            let output = self
+                .env
+                .eval(&self.models, |ev| evaluate_fcs_function(ev, component))?;
             self.models.fcs.channels[c].components[i].output = output;
-            for node in component.outputs {
+            // A setter may reach any model, and its request may reset the
+            // executive, so each output node is looked up afresh instead of
+            // being borrowed across the write.
+            let mut k = 0;
+            while let Some(node) = output_node(&self.models.fcs, c, i, k) {
                 self.write_node(node, output)?;
+                k += 1;
             }
         }
         Ok(())
-    }
-
-    /// `FGFCSFunction::Run` up to `SetOutput`.
-    fn evaluate_fcs_function(&mut self, component: &FcsFunction) -> Result<f64, Error> {
-        let getters = ModelGetters {
-            bindings: &self.bindings,
-            models: &self.models,
-        };
-        let mut ev = Evaluator::with_getters(&self.functions, &mut self.tree, &getters);
-        let mut output = ev.function(component.function)?;
-        if let Some(input) = component.inputs.first() {
-            output *= ev.property(input)?;
-        }
-        if let Some(clip) = &component.clip {
-            let vmin = ev.parameter(&clip.min)?;
-            let vmax = ev.parameter(&clip.max)?;
-            let range = vmax - vmin;
-            if range < 0.0 {
-                tracing::error!(
-                    "Trying to clip {} with a max value lower than the min value. Clipping is ignored.",
-                    component.name
-                );
-            } else if clip.cyclic && range != 0.0 {
-                output = libm::fmod(output - vmin, range) + vmin;
-                if output < vmin {
-                    output += range;
-                }
-            } else {
-                output = constrain(vmin, output, vmax);
-            }
-        }
-        Ok(output)
     }
 
     /// `FGAerodynamics::Run`.
@@ -190,48 +146,27 @@ impl Fdm {
         self.models.aerodynamics.begin_frame();
         self.run_model_functions(Model::Aerodynamics, true)?;
         self.models.aerodynamics.prepare();
-        let aero = &self.models.aerodynamics;
-        let (functions, at_cg, rp_shift) = (
-            aero.functions.clone(),
-            aero.functions_at_cg.clone(),
-            aero.rp_shift,
-        );
+        let (env, models) = (&mut self.env, &self.models);
+        let aero = &models.aerodynamics;
         let mut values = Values::default();
         for axis in 0..3 {
-            for id in &functions[axis] {
-                values.native[axis + 1] += self.cached_value(*id)?;
+            for &id in &aero.functions[axis] {
+                values.native[axis + 1] += env.cached_value(models, id)?;
             }
-            for id in &at_cg[axis] {
-                values.native_at_cg[axis + 1] += self.cached_value(*id)?;
+            for &id in &aero.functions_at_cg[axis] {
+                values.native_at_cg[axis + 1] += env.cached_value(models, id)?;
             }
         }
-        if let Some(id) = rp_shift {
-            let getters = ModelGetters {
-                bindings: &self.bindings,
-                models: &self.models,
-            };
-            values.rp_shift = Some(
-                Evaluator::with_getters(&self.functions, &mut self.tree, &getters).function(id)?,
-            );
+        if let Some(id) = aero.rp_shift {
+            values.rp_shift = Some(env.eval(models, |ev| ev.function(id))?);
         }
         for axis in 0..3 {
-            for id in &functions[axis + 3] {
-                values.moments_mrc[axis + 1] += self.cached_value(*id)?;
+            for &id in &aero.functions[axis + 3] {
+                values.moments_mrc[axis + 1] += env.cached_value(models, id)?;
             }
         }
         self.models.aerodynamics.finish(&values)?;
         self.run_model_functions(Model::Aerodynamics, false)
-    }
-
-    /// `cacheValue(true)` followed by `GetValue()`.
-    fn cached_value(&mut self, id: crate::functions::FnId) -> Result<f64, Error> {
-        let getters = ModelGetters {
-            bindings: &self.bindings,
-            models: &self.models,
-        };
-        self.functions
-            .cache_value_with(id, true, &mut self.tree, &getters)?;
-        Ok(self.functions.function(id).cached().unwrap_or(f64::NAN))
     }
 
     /// `FGExternalReactions::Run`.
@@ -246,20 +181,17 @@ impl Fdm {
         self.run_model_functions(Model::ExternalReactions, true)?;
         let mut read = Vec::with_capacity(self.models.external_reactions.forces.len());
         for f in &self.models.external_reactions.forces {
-            let getters = ModelGetters {
-                bindings: &self.bindings,
-                models: &self.models,
-            };
-            let mut ev = Evaluator::with_getters(&self.functions, &mut self.tree, &getters);
-            let magnitude = match f.magnitude {
-                Magnitude::Function(id) => ev.function(id)?,
-                Magnitude::Property(node) => ev.read_node(node)?,
-            };
-            let mut direction = ColumnVector3::zero();
-            for (i, node) in f.direction.iter().enumerate() {
-                direction[i + 1] = ev.read_node(*node)?;
-            }
-            read.push((magnitude, direction));
+            read.push(self.env.eval(&self.models, |ev| {
+                let magnitude = match f.magnitude {
+                    Magnitude::Function(id) => ev.function(id)?,
+                    Magnitude::Property(node) => ev.read_node(node)?,
+                };
+                let mut direction = ColumnVector3::zero();
+                for (i, node) in f.direction.iter().enumerate() {
+                    direction[i + 1] = ev.read_node(*node)?;
+                }
+                Ok((magnitude, direction))
+            })?);
         }
         let m = &mut self.models;
         let t = Transforms {
@@ -301,4 +233,37 @@ impl Fdm {
         m.ground_reactions.check_contacts(&m.inertial, trim, time)?;
         self.run_model_functions(Model::GroundReactions, false)
     }
+}
+
+/// Output node `k` of component `i` of channel `c`.
+fn output_node(fcs: &Fcs, c: usize, i: usize, k: usize) -> Option<NodeId> {
+    let component = fcs.channels.get(c)?.components.get(i)?;
+    component.outputs.get(k).copied()
+}
+
+/// `FGFCSFunction::Run` up to `SetOutput`.
+fn evaluate_fcs_function(ev: &mut Evaluator<'_>, component: &FcsFunction) -> Result<f64, Error> {
+    let mut output = ev.function(component.function)?;
+    if let Some(input) = component.inputs.first() {
+        output *= ev.property(input)?;
+    }
+    if let Some(clip) = &component.clip {
+        let vmin = ev.parameter(&clip.min)?;
+        let vmax = ev.parameter(&clip.max)?;
+        let range = vmax - vmin;
+        if range < 0.0 {
+            tracing::error!(
+                "Trying to clip {} with a max value lower than the min value. Clipping is ignored.",
+                component.name
+            );
+        } else if clip.cyclic && range != 0.0 {
+            output = libm::fmod(output - vmin, range) + vmin;
+            if output < vmin {
+                output += range;
+            }
+        } else {
+            output = constrain(vmin, output, vmax);
+        }
+    }
+    Ok(output)
 }
