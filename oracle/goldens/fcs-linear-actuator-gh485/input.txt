@@ -1,0 +1,25 @@
+# Upstream tests/linear_actuator.xml (vendored in oracle/inputs) on
+# tripod_linear_actuator (tests/tripod.xml with the system appended, as the
+# test includes it), driven as TestLinearActuator.test_bug_GH485 drives it.
+# The tripod starts at 10000 ft so that its contacts stay clear of the
+# ground; nothing else differs from the upstream test.
+paths ../.. derived/aircraft inputs/tests
+new
+load tripod_linear_actuator
+watch test/input test/output
+set ic/h-sl-ft 10000
+runic
+set test/input 2
+run
+set test/input 1
+run
+set test/input 358
+run
+set test/input 359
+run
+set test/input 1
+run
+set test/input 2
+run
+set test/input 359
+run

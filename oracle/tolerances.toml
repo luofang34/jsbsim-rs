@@ -5078,3 +5078,24 @@ property = "*"
 abs = 0.0
 rel = 0.0
 reason = "Kinematics with negative detents, zero transition times, scaled and negated inputs, outputs read back, clipping and a reset use IEEE basic operations in JSBSim's order, so they must be bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-linear-actuator-gh485"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "A linear actuator counting wraps of 360 only compares, adds and multiplies integers held in doubles, so it must be bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-linear-actuator-rotations"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "A linear actuator counting wraps of 360 over 2.5 clockwise and 4 anticlockwise rotations only compares, adds and multiplies integers held in doubles, so it must be bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-linear-actuator-forms"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Linear actuators with set/reset, versus (truncated to an int), bias, gain, lag, hysteresis, rate and forced values use IEEE basic operations in JSBSim's order, so they must be bit-identical; observed max |diff| 0."

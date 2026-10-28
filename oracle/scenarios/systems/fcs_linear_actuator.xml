@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  FGLinearActuator beyond upstream tests/linear_actuator.xml: <set> and
+  <reset> from properties and as constants, <versus> as a constant and
+  from a property (both truncate to JSBSim's int), <bias> as a constant and
+  from a property, <gain>, <lag>, <hysteresis> and <rate> with fractional
+  moves, out-of-range values JSBSim forces (with a warning), and a
+  <clipto> the component ignores. The fcs-linear-actuator-forms golden
+  drives it, resetting it once through simulation/reset.
+-->
+<system name="fcs-linear-actuator">
+  <property>test/input</property>
+  <property value="1">test/set</property>
+  <property>test/reset</property>
+  <property value="0.7">test/versus</property>
+  <property value="0.25">test/bias</property>
+  <channel name="linear-actuators">
+    <linear_actuator name="test/controlled">
+      <input>test/input</input>
+      <set>test/set</set>
+      <reset>test/reset</reset>
+      <bias>test/bias</bias>
+      <module>10</module>
+      <hysteresis>0.3</hysteresis>
+      <rate>0.4</rate>
+    </linear_actuator>
+    <linear_actuator name="test/versus-constant">
+      <input>test/input</input>
+      <versus>0.7</versus>
+      <module>10</module>
+      <gain>-2.5</gain>
+    </linear_actuator>
+    <linear_actuator name="test/versus-property">
+      <input>test/input</input>
+      <versus>test/versus</versus>
+      <module>10</module>
+      <bias>1.5</bias>
+    </linear_actuator>
+    <linear_actuator name="test/versus-negative">
+      <input>-test/input</input>
+      <versus>-1</versus>
+      <module>10</module>
+    </linear_actuator>
+    <linear_actuator name="test/never-set">
+      <input>test/input</input>
+      <set>0</set>
+      <bias>2</bias>
+    </linear_actuator>
+    <linear_actuator name="test/always-reset">
+      <input>test/input</input>
+      <reset>1</reset>
+      <lag>5</lag>
+    </linear_actuator>
+    <linear_actuator name="test/lagged">
+      <input>test/input</input>
+      <module>10</module>
+      <lag>20</lag>
+      <clipto>
+        <min>-1</min>
+        <max>1</max>
+      </clipto>
+      <output>test/lagged-out</output>
+    </linear_actuator>
+    <linear_actuator name="test/forced">
+      <input>test/input</input>
+      <module>-4</module>
+      <hysteresis>-1</hysteresis>
+      <lag>-2</lag>
+      <rate>2</rate>
+    </linear_actuator>
+  </channel>
+</system>

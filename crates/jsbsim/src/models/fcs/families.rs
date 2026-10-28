@@ -206,4 +206,6 @@ families! {
     Actuator(super::actuator::Actuator) = "actuator";
     /// `<kinematic>` (`FGKinemat`).
     Kinematic(super::kinematic::Kinemat) = "kinematic";
+    /// `<linear_actuator>` (`FGLinearActuator`).
+    LinearActuator(super::linear_actuator::LinearActuator) = "linear_actuator";
 }

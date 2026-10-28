@@ -20,6 +20,7 @@ pub mod function;
 pub mod gain;
 pub mod gyro;
 pub mod kinematic;
+pub mod linear_actuator;
 mod load;
 pub mod magnetometer;
 pub mod pid;

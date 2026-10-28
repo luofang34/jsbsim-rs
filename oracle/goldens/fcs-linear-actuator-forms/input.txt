@@ -1,0 +1,123 @@
+# oracle/scenarios/systems/fcs_linear_actuator.xml on tripod_fcs_linear_actuator:
+# set and reset, versus, bias, gain, lag, hysteresis, rate, forced values, and
+# a reset. The tripod starts at 10000 ft so that its contacts stay clear of
+# the ground.
+paths ../.. derived/aircraft scenarios/systems
+new
+load tripod_fcs_linear_actuator
+watch test/input test/set test/reset test/versus test/bias test/controlled test/versus-constant test/versus-property test/versus-negative test/never-set test/always-reset test/lagged test/lagged-out test/forced
+set ic/h-sl-ft 10000
+runic
+set test/input 0.5
+run
+set test/input 1.25
+run
+set test/input 1.4
+run
+set test/input 2.75
+run
+set test/input 4.5
+run
+set test/input 6.0
+run
+set test/input 7.5
+run
+set test/input 9.25
+run
+set test/input 0.5
+run
+set test/input 1.5
+run
+set test/input 3.0
+run
+set test/input 5.5
+run
+set test/input 8.0
+run
+set test/input 9.75
+run
+set test/input 1.0
+run
+set test/input 2.0
+run
+set test/versus 1
+set test/input 1.0
+run
+set test/input 9.5
+run
+set test/input 8.25
+run
+set test/input 7.0
+run
+set test/input 4.0
+run
+set test/input 1.5
+run
+set test/input 9.0
+run
+set test/input 6.5
+run
+set test/input 3.5
+run
+set test/input 4.5
+run
+set test/input 5.0
+run
+set test/versus -1.5
+set test/input 2.5
+run
+set test/input 1.5
+run
+set test/input 0.5
+run
+set test/input 9.5
+run
+set test/input 8.0
+run
+set test/input 9.0
+run
+set test/input 0.25
+run
+set test/versus 0.2
+set test/bias -1.0
+set test/input 1.75
+run
+set test/input 3.0
+run
+set test/input 2.0
+run
+set test/set 0
+set test/input 5.0
+run
+set test/input 7.0
+run
+set test/set 1
+set test/input 7.5
+run
+set test/input 8.5
+run
+set test/reset 1
+set test/input 9.0
+run
+set test/input 1.0
+run
+set test/reset 0
+set test/input 1.5
+run
+set test/input 3.0
+run
+set test/input 4.5
+run
+print
+set simulation/reset 0
+print
+set test/input 5.0
+run
+set test/input 6.5
+run
+set test/input 9.5
+run
+set test/input 0.5
+run
+set test/input 2.0
+run

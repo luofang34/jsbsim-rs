@@ -1,0 +1,4691 @@
+# Upstream tests/linear_actuator.xml (vendored in oracle/inputs) on
+# tripod_linear_actuator (tests/tripod.xml with the system appended, as the
+# test includes it), driven as TestLinearActuator.test_rotations drives it.
+# The tripod starts at 10000 ft so that its contacts stay clear of the
+# ground; nothing else differs from the upstream test.
+paths ../.. derived/aircraft inputs/tests
+new
+load tripod_linear_actuator
+watch test/input test/output
+set ic/h-sl-ft 10000
+runic
+set test/input 0
+run
+set test/input 1
+run
+set test/input 2
+run
+set test/input 3
+run
+set test/input 4
+run
+set test/input 5
+run
+set test/input 6
+run
+set test/input 7
+run
+set test/input 8
+run
+set test/input 9
+run
+set test/input 10
+run
+set test/input 11
+run
+set test/input 12
+run
+set test/input 13
+run
+set test/input 14
+run
+set test/input 15
+run
+set test/input 16
+run
+set test/input 17
+run
+set test/input 18
+run
+set test/input 19
+run
+set test/input 20
+run
+set test/input 21
+run
+set test/input 22
+run
+set test/input 23
+run
+set test/input 24
+run
+set test/input 25
+run
+set test/input 26
+run
+set test/input 27
+run
+set test/input 28
+run
+set test/input 29
+run
+set test/input 30
+run
+set test/input 31
+run
+set test/input 32
+run
+set test/input 33
+run
+set test/input 34
+run
+set test/input 35
+run
+set test/input 36
+run
+set test/input 37
+run
+set test/input 38
+run
+set test/input 39
+run
+set test/input 40
+run
+set test/input 41
+run
+set test/input 42
+run
+set test/input 43
+run
+set test/input 44
+run
+set test/input 45
+run
+set test/input 46
+run
+set test/input 47
+run
+set test/input 48
+run
+set test/input 49
+run
+set test/input 50
+run
+set test/input 51
+run
+set test/input 52
+run
+set test/input 53
+run
+set test/input 54
+run
+set test/input 55
+run
+set test/input 56
+run
+set test/input 57
+run
+set test/input 58
+run
+set test/input 59
+run
+set test/input 60
+run
+set test/input 61
+run
+set test/input 62
+run
+set test/input 63
+run
+set test/input 64
+run
+set test/input 65
+run
+set test/input 66
+run
+set test/input 67
+run
+set test/input 68
+run
+set test/input 69
+run
+set test/input 70
+run
+set test/input 71
+run
+set test/input 72
+run
+set test/input 73
+run
+set test/input 74
+run
+set test/input 75
+run
+set test/input 76
+run
+set test/input 77
+run
+set test/input 78
+run
+set test/input 79
+run
+set test/input 80
+run
+set test/input 81
+run
+set test/input 82
+run
+set test/input 83
+run
+set test/input 84
+run
+set test/input 85
+run
+set test/input 86
+run
+set test/input 87
+run
+set test/input 88
+run
+set test/input 89
+run
+set test/input 90
+run
+set test/input 91
+run
+set test/input 92
+run
+set test/input 93
+run
+set test/input 94
+run
+set test/input 95
+run
+set test/input 96
+run
+set test/input 97
+run
+set test/input 98
+run
+set test/input 99
+run
+set test/input 100
+run
+set test/input 101
+run
+set test/input 102
+run
+set test/input 103
+run
+set test/input 104
+run
+set test/input 105
+run
+set test/input 106
+run
+set test/input 107
+run
+set test/input 108
+run
+set test/input 109
+run
+set test/input 110
+run
+set test/input 111
+run
+set test/input 112
+run
+set test/input 113
+run
+set test/input 114
+run
+set test/input 115
+run
+set test/input 116
+run
+set test/input 117
+run
+set test/input 118
+run
+set test/input 119
+run
+set test/input 120
+run
+set test/input 121
+run
+set test/input 122
+run
+set test/input 123
+run
+set test/input 124
+run
+set test/input 125
+run
+set test/input 126
+run
+set test/input 127
+run
+set test/input 128
+run
+set test/input 129
+run
+set test/input 130
+run
+set test/input 131
+run
+set test/input 132
+run
+set test/input 133
+run
+set test/input 134
+run
+set test/input 135
+run
+set test/input 136
+run
+set test/input 137
+run
+set test/input 138
+run
+set test/input 139
+run
+set test/input 140
+run
+set test/input 141
+run
+set test/input 142
+run
+set test/input 143
+run
+set test/input 144
+run
+set test/input 145
+run
+set test/input 146
+run
+set test/input 147
+run
+set test/input 148
+run
+set test/input 149
+run
+set test/input 150
+run
+set test/input 151
+run
+set test/input 152
+run
+set test/input 153
+run
+set test/input 154
+run
+set test/input 155
+run
+set test/input 156
+run
+set test/input 157
+run
+set test/input 158
+run
+set test/input 159
+run
+set test/input 160
+run
+set test/input 161
+run
+set test/input 162
+run
+set test/input 163
+run
+set test/input 164
+run
+set test/input 165
+run
+set test/input 166
+run
+set test/input 167
+run
+set test/input 168
+run
+set test/input 169
+run
+set test/input 170
+run
+set test/input 171
+run
+set test/input 172
+run
+set test/input 173
+run
+set test/input 174
+run
+set test/input 175
+run
+set test/input 176
+run
+set test/input 177
+run
+set test/input 178
+run
+set test/input 179
+run
+set test/input 180
+run
+set test/input 181
+run
+set test/input 182
+run
+set test/input 183
+run
+set test/input 184
+run
+set test/input 185
+run
+set test/input 186
+run
+set test/input 187
+run
+set test/input 188
+run
+set test/input 189
+run
+set test/input 190
+run
+set test/input 191
+run
+set test/input 192
+run
+set test/input 193
+run
+set test/input 194
+run
+set test/input 195
+run
+set test/input 196
+run
+set test/input 197
+run
+set test/input 198
+run
+set test/input 199
+run
+set test/input 200
+run
+set test/input 201
+run
+set test/input 202
+run
+set test/input 203
+run
+set test/input 204
+run
+set test/input 205
+run
+set test/input 206
+run
+set test/input 207
+run
+set test/input 208
+run
+set test/input 209
+run
+set test/input 210
+run
+set test/input 211
+run
+set test/input 212
+run
+set test/input 213
+run
+set test/input 214
+run
+set test/input 215
+run
+set test/input 216
+run
+set test/input 217
+run
+set test/input 218
+run
+set test/input 219
+run
+set test/input 220
+run
+set test/input 221
+run
+set test/input 222
+run
+set test/input 223
+run
+set test/input 224
+run
+set test/input 225
+run
+set test/input 226
+run
+set test/input 227
+run
+set test/input 228
+run
+set test/input 229
+run
+set test/input 230
+run
+set test/input 231
+run
+set test/input 232
+run
+set test/input 233
+run
+set test/input 234
+run
+set test/input 235
+run
+set test/input 236
+run
+set test/input 237
+run
+set test/input 238
+run
+set test/input 239
+run
+set test/input 240
+run
+set test/input 241
+run
+set test/input 242
+run
+set test/input 243
+run
+set test/input 244
+run
+set test/input 245
+run
+set test/input 246
+run
+set test/input 247
+run
+set test/input 248
+run
+set test/input 249
+run
+set test/input 250
+run
+set test/input 251
+run
+set test/input 252
+run
+set test/input 253
+run
+set test/input 254
+run
+set test/input 255
+run
+set test/input 256
+run
+set test/input 257
+run
+set test/input 258
+run
+set test/input 259
+run
+set test/input 260
+run
+set test/input 261
+run
+set test/input 262
+run
+set test/input 263
+run
+set test/input 264
+run
+set test/input 265
+run
+set test/input 266
+run
+set test/input 267
+run
+set test/input 268
+run
+set test/input 269
+run
+set test/input 270
+run
+set test/input 271
+run
+set test/input 272
+run
+set test/input 273
+run
+set test/input 274
+run
+set test/input 275
+run
+set test/input 276
+run
+set test/input 277
+run
+set test/input 278
+run
+set test/input 279
+run
+set test/input 280
+run
+set test/input 281
+run
+set test/input 282
+run
+set test/input 283
+run
+set test/input 284
+run
+set test/input 285
+run
+set test/input 286
+run
+set test/input 287
+run
+set test/input 288
+run
+set test/input 289
+run
+set test/input 290
+run
+set test/input 291
+run
+set test/input 292
+run
+set test/input 293
+run
+set test/input 294
+run
+set test/input 295
+run
+set test/input 296
+run
+set test/input 297
+run
+set test/input 298
+run
+set test/input 299
+run
+set test/input 300
+run
+set test/input 301
+run
+set test/input 302
+run
+set test/input 303
+run
+set test/input 304
+run
+set test/input 305
+run
+set test/input 306
+run
+set test/input 307
+run
+set test/input 308
+run
+set test/input 309
+run
+set test/input 310
+run
+set test/input 311
+run
+set test/input 312
+run
+set test/input 313
+run
+set test/input 314
+run
+set test/input 315
+run
+set test/input 316
+run
+set test/input 317
+run
+set test/input 318
+run
+set test/input 319
+run
+set test/input 320
+run
+set test/input 321
+run
+set test/input 322
+run
+set test/input 323
+run
+set test/input 324
+run
+set test/input 325
+run
+set test/input 326
+run
+set test/input 327
+run
+set test/input 328
+run
+set test/input 329
+run
+set test/input 330
+run
+set test/input 331
+run
+set test/input 332
+run
+set test/input 333
+run
+set test/input 334
+run
+set test/input 335
+run
+set test/input 336
+run
+set test/input 337
+run
+set test/input 338
+run
+set test/input 339
+run
+set test/input 340
+run
+set test/input 341
+run
+set test/input 342
+run
+set test/input 343
+run
+set test/input 344
+run
+set test/input 345
+run
+set test/input 346
+run
+set test/input 347
+run
+set test/input 348
+run
+set test/input 349
+run
+set test/input 350
+run
+set test/input 351
+run
+set test/input 352
+run
+set test/input 353
+run
+set test/input 354
+run
+set test/input 355
+run
+set test/input 356
+run
+set test/input 357
+run
+set test/input 358
+run
+set test/input 359
+run
+set test/input 0
+run
+set test/input 1
+run
+set test/input 2
+run
+set test/input 3
+run
+set test/input 4
+run
+set test/input 5
+run
+set test/input 6
+run
+set test/input 7
+run
+set test/input 8
+run
+set test/input 9
+run
+set test/input 10
+run
+set test/input 11
+run
+set test/input 12
+run
+set test/input 13
+run
+set test/input 14
+run
+set test/input 15
+run
+set test/input 16
+run
+set test/input 17
+run
+set test/input 18
+run
+set test/input 19
+run
+set test/input 20
+run
+set test/input 21
+run
+set test/input 22
+run
+set test/input 23
+run
+set test/input 24
+run
+set test/input 25
+run
+set test/input 26
+run
+set test/input 27
+run
+set test/input 28
+run
+set test/input 29
+run
+set test/input 30
+run
+set test/input 31
+run
+set test/input 32
+run
+set test/input 33
+run
+set test/input 34
+run
+set test/input 35
+run
+set test/input 36
+run
+set test/input 37
+run
+set test/input 38
+run
+set test/input 39
+run
+set test/input 40
+run
+set test/input 41
+run
+set test/input 42
+run
+set test/input 43
+run
+set test/input 44
+run
+set test/input 45
+run
+set test/input 46
+run
+set test/input 47
+run
+set test/input 48
+run
+set test/input 49
+run
+set test/input 50
+run
+set test/input 51
+run
+set test/input 52
+run
+set test/input 53
+run
+set test/input 54
+run
+set test/input 55
+run
+set test/input 56
+run
+set test/input 57
+run
+set test/input 58
+run
+set test/input 59
+run
+set test/input 60
+run
+set test/input 61
+run
+set test/input 62
+run
+set test/input 63
+run
+set test/input 64
+run
+set test/input 65
+run
+set test/input 66
+run
+set test/input 67
+run
+set test/input 68
+run
+set test/input 69
+run
+set test/input 70
+run
+set test/input 71
+run
+set test/input 72
+run
+set test/input 73
+run
+set test/input 74
+run
+set test/input 75
+run
+set test/input 76
+run
+set test/input 77
+run
+set test/input 78
+run
+set test/input 79
+run
+set test/input 80
+run
+set test/input 81
+run
+set test/input 82
+run
+set test/input 83
+run
+set test/input 84
+run
+set test/input 85
+run
+set test/input 86
+run
+set test/input 87
+run
+set test/input 88
+run
+set test/input 89
+run
+set test/input 90
+run
+set test/input 91
+run
+set test/input 92
+run
+set test/input 93
+run
+set test/input 94
+run
+set test/input 95
+run
+set test/input 96
+run
+set test/input 97
+run
+set test/input 98
+run
+set test/input 99
+run
+set test/input 100
+run
+set test/input 101
+run
+set test/input 102
+run
+set test/input 103
+run
+set test/input 104
+run
+set test/input 105
+run
+set test/input 106
+run
+set test/input 107
+run
+set test/input 108
+run
+set test/input 109
+run
+set test/input 110
+run
+set test/input 111
+run
+set test/input 112
+run
+set test/input 113
+run
+set test/input 114
+run
+set test/input 115
+run
+set test/input 116
+run
+set test/input 117
+run
+set test/input 118
+run
+set test/input 119
+run
+set test/input 120
+run
+set test/input 121
+run
+set test/input 122
+run
+set test/input 123
+run
+set test/input 124
+run
+set test/input 125
+run
+set test/input 126
+run
+set test/input 127
+run
+set test/input 128
+run
+set test/input 129
+run
+set test/input 130
+run
+set test/input 131
+run
+set test/input 132
+run
+set test/input 133
+run
+set test/input 134
+run
+set test/input 135
+run
+set test/input 136
+run
+set test/input 137
+run
+set test/input 138
+run
+set test/input 139
+run
+set test/input 140
+run
+set test/input 141
+run
+set test/input 142
+run
+set test/input 143
+run
+set test/input 144
+run
+set test/input 145
+run
+set test/input 146
+run
+set test/input 147
+run
+set test/input 148
+run
+set test/input 149
+run
+set test/input 150
+run
+set test/input 151
+run
+set test/input 152
+run
+set test/input 153
+run
+set test/input 154
+run
+set test/input 155
+run
+set test/input 156
+run
+set test/input 157
+run
+set test/input 158
+run
+set test/input 159
+run
+set test/input 160
+run
+set test/input 161
+run
+set test/input 162
+run
+set test/input 163
+run
+set test/input 164
+run
+set test/input 165
+run
+set test/input 166
+run
+set test/input 167
+run
+set test/input 168
+run
+set test/input 169
+run
+set test/input 170
+run
+set test/input 171
+run
+set test/input 172
+run
+set test/input 173
+run
+set test/input 174
+run
+set test/input 175
+run
+set test/input 176
+run
+set test/input 177
+run
+set test/input 178
+run
+set test/input 179
+run
+set test/input 180
+run
+set test/input 181
+run
+set test/input 182
+run
+set test/input 183
+run
+set test/input 184
+run
+set test/input 185
+run
+set test/input 186
+run
+set test/input 187
+run
+set test/input 188
+run
+set test/input 189
+run
+set test/input 190
+run
+set test/input 191
+run
+set test/input 192
+run
+set test/input 193
+run
+set test/input 194
+run
+set test/input 195
+run
+set test/input 196
+run
+set test/input 197
+run
+set test/input 198
+run
+set test/input 199
+run
+set test/input 200
+run
+set test/input 201
+run
+set test/input 202
+run
+set test/input 203
+run
+set test/input 204
+run
+set test/input 205
+run
+set test/input 206
+run
+set test/input 207
+run
+set test/input 208
+run
+set test/input 209
+run
+set test/input 210
+run
+set test/input 211
+run
+set test/input 212
+run
+set test/input 213
+run
+set test/input 214
+run
+set test/input 215
+run
+set test/input 216
+run
+set test/input 217
+run
+set test/input 218
+run
+set test/input 219
+run
+set test/input 220
+run
+set test/input 221
+run
+set test/input 222
+run
+set test/input 223
+run
+set test/input 224
+run
+set test/input 225
+run
+set test/input 226
+run
+set test/input 227
+run
+set test/input 228
+run
+set test/input 229
+run
+set test/input 230
+run
+set test/input 231
+run
+set test/input 232
+run
+set test/input 233
+run
+set test/input 234
+run
+set test/input 235
+run
+set test/input 236
+run
+set test/input 237
+run
+set test/input 238
+run
+set test/input 239
+run
+set test/input 240
+run
+set test/input 241
+run
+set test/input 242
+run
+set test/input 243
+run
+set test/input 244
+run
+set test/input 245
+run
+set test/input 246
+run
+set test/input 247
+run
+set test/input 248
+run
+set test/input 249
+run
+set test/input 250
+run
+set test/input 251
+run
+set test/input 252
+run
+set test/input 253
+run
+set test/input 254
+run
+set test/input 255
+run
+set test/input 256
+run
+set test/input 257
+run
+set test/input 258
+run
+set test/input 259
+run
+set test/input 260
+run
+set test/input 261
+run
+set test/input 262
+run
+set test/input 263
+run
+set test/input 264
+run
+set test/input 265
+run
+set test/input 266
+run
+set test/input 267
+run
+set test/input 268
+run
+set test/input 269
+run
+set test/input 270
+run
+set test/input 271
+run
+set test/input 272
+run
+set test/input 273
+run
+set test/input 274
+run
+set test/input 275
+run
+set test/input 276
+run
+set test/input 277
+run
+set test/input 278
+run
+set test/input 279
+run
+set test/input 280
+run
+set test/input 281
+run
+set test/input 282
+run
+set test/input 283
+run
+set test/input 284
+run
+set test/input 285
+run
+set test/input 286
+run
+set test/input 287
+run
+set test/input 288
+run
+set test/input 289
+run
+set test/input 290
+run
+set test/input 291
+run
+set test/input 292
+run
+set test/input 293
+run
+set test/input 294
+run
+set test/input 295
+run
+set test/input 296
+run
+set test/input 297
+run
+set test/input 298
+run
+set test/input 299
+run
+set test/input 300
+run
+set test/input 301
+run
+set test/input 302
+run
+set test/input 303
+run
+set test/input 304
+run
+set test/input 305
+run
+set test/input 306
+run
+set test/input 307
+run
+set test/input 308
+run
+set test/input 309
+run
+set test/input 310
+run
+set test/input 311
+run
+set test/input 312
+run
+set test/input 313
+run
+set test/input 314
+run
+set test/input 315
+run
+set test/input 316
+run
+set test/input 317
+run
+set test/input 318
+run
+set test/input 319
+run
+set test/input 320
+run
+set test/input 321
+run
+set test/input 322
+run
+set test/input 323
+run
+set test/input 324
+run
+set test/input 325
+run
+set test/input 326
+run
+set test/input 327
+run
+set test/input 328
+run
+set test/input 329
+run
+set test/input 330
+run
+set test/input 331
+run
+set test/input 332
+run
+set test/input 333
+run
+set test/input 334
+run
+set test/input 335
+run
+set test/input 336
+run
+set test/input 337
+run
+set test/input 338
+run
+set test/input 339
+run
+set test/input 340
+run
+set test/input 341
+run
+set test/input 342
+run
+set test/input 343
+run
+set test/input 344
+run
+set test/input 345
+run
+set test/input 346
+run
+set test/input 347
+run
+set test/input 348
+run
+set test/input 349
+run
+set test/input 350
+run
+set test/input 351
+run
+set test/input 352
+run
+set test/input 353
+run
+set test/input 354
+run
+set test/input 355
+run
+set test/input 356
+run
+set test/input 357
+run
+set test/input 358
+run
+set test/input 359
+run
+set test/input 0
+run
+set test/input 1
+run
+set test/input 2
+run
+set test/input 3
+run
+set test/input 4
+run
+set test/input 5
+run
+set test/input 6
+run
+set test/input 7
+run
+set test/input 8
+run
+set test/input 9
+run
+set test/input 10
+run
+set test/input 11
+run
+set test/input 12
+run
+set test/input 13
+run
+set test/input 14
+run
+set test/input 15
+run
+set test/input 16
+run
+set test/input 17
+run
+set test/input 18
+run
+set test/input 19
+run
+set test/input 20
+run
+set test/input 21
+run
+set test/input 22
+run
+set test/input 23
+run
+set test/input 24
+run
+set test/input 25
+run
+set test/input 26
+run
+set test/input 27
+run
+set test/input 28
+run
+set test/input 29
+run
+set test/input 30
+run
+set test/input 31
+run
+set test/input 32
+run
+set test/input 33
+run
+set test/input 34
+run
+set test/input 35
+run
+set test/input 36
+run
+set test/input 37
+run
+set test/input 38
+run
+set test/input 39
+run
+set test/input 40
+run
+set test/input 41
+run
+set test/input 42
+run
+set test/input 43
+run
+set test/input 44
+run
+set test/input 45
+run
+set test/input 46
+run
+set test/input 47
+run
+set test/input 48
+run
+set test/input 49
+run
+set test/input 50
+run
+set test/input 51
+run
+set test/input 52
+run
+set test/input 53
+run
+set test/input 54
+run
+set test/input 55
+run
+set test/input 56
+run
+set test/input 57
+run
+set test/input 58
+run
+set test/input 59
+run
+set test/input 60
+run
+set test/input 61
+run
+set test/input 62
+run
+set test/input 63
+run
+set test/input 64
+run
+set test/input 65
+run
+set test/input 66
+run
+set test/input 67
+run
+set test/input 68
+run
+set test/input 69
+run
+set test/input 70
+run
+set test/input 71
+run
+set test/input 72
+run
+set test/input 73
+run
+set test/input 74
+run
+set test/input 75
+run
+set test/input 76
+run
+set test/input 77
+run
+set test/input 78
+run
+set test/input 79
+run
+set test/input 80
+run
+set test/input 81
+run
+set test/input 82
+run
+set test/input 83
+run
+set test/input 84
+run
+set test/input 85
+run
+set test/input 86
+run
+set test/input 87
+run
+set test/input 88
+run
+set test/input 89
+run
+set test/input 90
+run
+set test/input 91
+run
+set test/input 92
+run
+set test/input 93
+run
+set test/input 94
+run
+set test/input 95
+run
+set test/input 96
+run
+set test/input 97
+run
+set test/input 98
+run
+set test/input 99
+run
+set test/input 100
+run
+set test/input 101
+run
+set test/input 102
+run
+set test/input 103
+run
+set test/input 104
+run
+set test/input 105
+run
+set test/input 106
+run
+set test/input 107
+run
+set test/input 108
+run
+set test/input 109
+run
+set test/input 110
+run
+set test/input 111
+run
+set test/input 112
+run
+set test/input 113
+run
+set test/input 114
+run
+set test/input 115
+run
+set test/input 116
+run
+set test/input 117
+run
+set test/input 118
+run
+set test/input 119
+run
+set test/input 120
+run
+set test/input 121
+run
+set test/input 122
+run
+set test/input 123
+run
+set test/input 124
+run
+set test/input 125
+run
+set test/input 126
+run
+set test/input 127
+run
+set test/input 128
+run
+set test/input 129
+run
+set test/input 130
+run
+set test/input 131
+run
+set test/input 132
+run
+set test/input 133
+run
+set test/input 134
+run
+set test/input 135
+run
+set test/input 136
+run
+set test/input 137
+run
+set test/input 138
+run
+set test/input 139
+run
+set test/input 140
+run
+set test/input 141
+run
+set test/input 142
+run
+set test/input 143
+run
+set test/input 144
+run
+set test/input 145
+run
+set test/input 146
+run
+set test/input 147
+run
+set test/input 148
+run
+set test/input 149
+run
+set test/input 150
+run
+set test/input 151
+run
+set test/input 152
+run
+set test/input 153
+run
+set test/input 154
+run
+set test/input 155
+run
+set test/input 156
+run
+set test/input 157
+run
+set test/input 158
+run
+set test/input 159
+run
+set test/input 160
+run
+set test/input 161
+run
+set test/input 162
+run
+set test/input 163
+run
+set test/input 164
+run
+set test/input 165
+run
+set test/input 166
+run
+set test/input 167
+run
+set test/input 168
+run
+set test/input 169
+run
+set test/input 170
+run
+set test/input 171
+run
+set test/input 172
+run
+set test/input 173
+run
+set test/input 174
+run
+set test/input 175
+run
+set test/input 176
+run
+set test/input 177
+run
+set test/input 178
+run
+set test/input 179
+run
+set test/input 180
+run
+set test/input 179
+run
+set test/input 178
+run
+set test/input 177
+run
+set test/input 176
+run
+set test/input 175
+run
+set test/input 174
+run
+set test/input 173
+run
+set test/input 172
+run
+set test/input 171
+run
+set test/input 170
+run
+set test/input 169
+run
+set test/input 168
+run
+set test/input 167
+run
+set test/input 166
+run
+set test/input 165
+run
+set test/input 164
+run
+set test/input 163
+run
+set test/input 162
+run
+set test/input 161
+run
+set test/input 160
+run
+set test/input 159
+run
+set test/input 158
+run
+set test/input 157
+run
+set test/input 156
+run
+set test/input 155
+run
+set test/input 154
+run
+set test/input 153
+run
+set test/input 152
+run
+set test/input 151
+run
+set test/input 150
+run
+set test/input 149
+run
+set test/input 148
+run
+set test/input 147
+run
+set test/input 146
+run
+set test/input 145
+run
+set test/input 144
+run
+set test/input 143
+run
+set test/input 142
+run
+set test/input 141
+run
+set test/input 140
+run
+set test/input 139
+run
+set test/input 138
+run
+set test/input 137
+run
+set test/input 136
+run
+set test/input 135
+run
+set test/input 134
+run
+set test/input 133
+run
+set test/input 132
+run
+set test/input 131
+run
+set test/input 130
+run
+set test/input 129
+run
+set test/input 128
+run
+set test/input 127
+run
+set test/input 126
+run
+set test/input 125
+run
+set test/input 124
+run
+set test/input 123
+run
+set test/input 122
+run
+set test/input 121
+run
+set test/input 120
+run
+set test/input 119
+run
+set test/input 118
+run
+set test/input 117
+run
+set test/input 116
+run
+set test/input 115
+run
+set test/input 114
+run
+set test/input 113
+run
+set test/input 112
+run
+set test/input 111
+run
+set test/input 110
+run
+set test/input 109
+run
+set test/input 108
+run
+set test/input 107
+run
+set test/input 106
+run
+set test/input 105
+run
+set test/input 104
+run
+set test/input 103
+run
+set test/input 102
+run
+set test/input 101
+run
+set test/input 100
+run
+set test/input 99
+run
+set test/input 98
+run
+set test/input 97
+run
+set test/input 96
+run
+set test/input 95
+run
+set test/input 94
+run
+set test/input 93
+run
+set test/input 92
+run
+set test/input 91
+run
+set test/input 90
+run
+set test/input 89
+run
+set test/input 88
+run
+set test/input 87
+run
+set test/input 86
+run
+set test/input 85
+run
+set test/input 84
+run
+set test/input 83
+run
+set test/input 82
+run
+set test/input 81
+run
+set test/input 80
+run
+set test/input 79
+run
+set test/input 78
+run
+set test/input 77
+run
+set test/input 76
+run
+set test/input 75
+run
+set test/input 74
+run
+set test/input 73
+run
+set test/input 72
+run
+set test/input 71
+run
+set test/input 70
+run
+set test/input 69
+run
+set test/input 68
+run
+set test/input 67
+run
+set test/input 66
+run
+set test/input 65
+run
+set test/input 64
+run
+set test/input 63
+run
+set test/input 62
+run
+set test/input 61
+run
+set test/input 60
+run
+set test/input 59
+run
+set test/input 58
+run
+set test/input 57
+run
+set test/input 56
+run
+set test/input 55
+run
+set test/input 54
+run
+set test/input 53
+run
+set test/input 52
+run
+set test/input 51
+run
+set test/input 50
+run
+set test/input 49
+run
+set test/input 48
+run
+set test/input 47
+run
+set test/input 46
+run
+set test/input 45
+run
+set test/input 44
+run
+set test/input 43
+run
+set test/input 42
+run
+set test/input 41
+run
+set test/input 40
+run
+set test/input 39
+run
+set test/input 38
+run
+set test/input 37
+run
+set test/input 36
+run
+set test/input 35
+run
+set test/input 34
+run
+set test/input 33
+run
+set test/input 32
+run
+set test/input 31
+run
+set test/input 30
+run
+set test/input 29
+run
+set test/input 28
+run
+set test/input 27
+run
+set test/input 26
+run
+set test/input 25
+run
+set test/input 24
+run
+set test/input 23
+run
+set test/input 22
+run
+set test/input 21
+run
+set test/input 20
+run
+set test/input 19
+run
+set test/input 18
+run
+set test/input 17
+run
+set test/input 16
+run
+set test/input 15
+run
+set test/input 14
+run
+set test/input 13
+run
+set test/input 12
+run
+set test/input 11
+run
+set test/input 10
+run
+set test/input 9
+run
+set test/input 8
+run
+set test/input 7
+run
+set test/input 6
+run
+set test/input 5
+run
+set test/input 4
+run
+set test/input 3
+run
+set test/input 2
+run
+set test/input 1
+run
+set test/input 0
+run
+set test/input 359
+run
+set test/input 358
+run
+set test/input 357
+run
+set test/input 356
+run
+set test/input 355
+run
+set test/input 354
+run
+set test/input 353
+run
+set test/input 352
+run
+set test/input 351
+run
+set test/input 350
+run
+set test/input 349
+run
+set test/input 348
+run
+set test/input 347
+run
+set test/input 346
+run
+set test/input 345
+run
+set test/input 344
+run
+set test/input 343
+run
+set test/input 342
+run
+set test/input 341
+run
+set test/input 340
+run
+set test/input 339
+run
+set test/input 338
+run
+set test/input 337
+run
+set test/input 336
+run
+set test/input 335
+run
+set test/input 334
+run
+set test/input 333
+run
+set test/input 332
+run
+set test/input 331
+run
+set test/input 330
+run
+set test/input 329
+run
+set test/input 328
+run
+set test/input 327
+run
+set test/input 326
+run
+set test/input 325
+run
+set test/input 324
+run
+set test/input 323
+run
+set test/input 322
+run
+set test/input 321
+run
+set test/input 320
+run
+set test/input 319
+run
+set test/input 318
+run
+set test/input 317
+run
+set test/input 316
+run
+set test/input 315
+run
+set test/input 314
+run
+set test/input 313
+run
+set test/input 312
+run
+set test/input 311
+run
+set test/input 310
+run
+set test/input 309
+run
+set test/input 308
+run
+set test/input 307
+run
+set test/input 306
+run
+set test/input 305
+run
+set test/input 304
+run
+set test/input 303
+run
+set test/input 302
+run
+set test/input 301
+run
+set test/input 300
+run
+set test/input 299
+run
+set test/input 298
+run
+set test/input 297
+run
+set test/input 296
+run
+set test/input 295
+run
+set test/input 294
+run
+set test/input 293
+run
+set test/input 292
+run
+set test/input 291
+run
+set test/input 290
+run
+set test/input 289
+run
+set test/input 288
+run
+set test/input 287
+run
+set test/input 286
+run
+set test/input 285
+run
+set test/input 284
+run
+set test/input 283
+run
+set test/input 282
+run
+set test/input 281
+run
+set test/input 280
+run
+set test/input 279
+run
+set test/input 278
+run
+set test/input 277
+run
+set test/input 276
+run
+set test/input 275
+run
+set test/input 274
+run
+set test/input 273
+run
+set test/input 272
+run
+set test/input 271
+run
+set test/input 270
+run
+set test/input 269
+run
+set test/input 268
+run
+set test/input 267
+run
+set test/input 266
+run
+set test/input 265
+run
+set test/input 264
+run
+set test/input 263
+run
+set test/input 262
+run
+set test/input 261
+run
+set test/input 260
+run
+set test/input 259
+run
+set test/input 258
+run
+set test/input 257
+run
+set test/input 256
+run
+set test/input 255
+run
+set test/input 254
+run
+set test/input 253
+run
+set test/input 252
+run
+set test/input 251
+run
+set test/input 250
+run
+set test/input 249
+run
+set test/input 248
+run
+set test/input 247
+run
+set test/input 246
+run
+set test/input 245
+run
+set test/input 244
+run
+set test/input 243
+run
+set test/input 242
+run
+set test/input 241
+run
+set test/input 240
+run
+set test/input 239
+run
+set test/input 238
+run
+set test/input 237
+run
+set test/input 236
+run
+set test/input 235
+run
+set test/input 234
+run
+set test/input 233
+run
+set test/input 232
+run
+set test/input 231
+run
+set test/input 230
+run
+set test/input 229
+run
+set test/input 228
+run
+set test/input 227
+run
+set test/input 226
+run
+set test/input 225
+run
+set test/input 224
+run
+set test/input 223
+run
+set test/input 222
+run
+set test/input 221
+run
+set test/input 220
+run
+set test/input 219
+run
+set test/input 218
+run
+set test/input 217
+run
+set test/input 216
+run
+set test/input 215
+run
+set test/input 214
+run
+set test/input 213
+run
+set test/input 212
+run
+set test/input 211
+run
+set test/input 210
+run
+set test/input 209
+run
+set test/input 208
+run
+set test/input 207
+run
+set test/input 206
+run
+set test/input 205
+run
+set test/input 204
+run
+set test/input 203
+run
+set test/input 202
+run
+set test/input 201
+run
+set test/input 200
+run
+set test/input 199
+run
+set test/input 198
+run
+set test/input 197
+run
+set test/input 196
+run
+set test/input 195
+run
+set test/input 194
+run
+set test/input 193
+run
+set test/input 192
+run
+set test/input 191
+run
+set test/input 190
+run
+set test/input 189
+run
+set test/input 188
+run
+set test/input 187
+run
+set test/input 186
+run
+set test/input 185
+run
+set test/input 184
+run
+set test/input 183
+run
+set test/input 182
+run
+set test/input 181
+run
+set test/input 180
+run
+set test/input 179
+run
+set test/input 178
+run
+set test/input 177
+run
+set test/input 176
+run
+set test/input 175
+run
+set test/input 174
+run
+set test/input 173
+run
+set test/input 172
+run
+set test/input 171
+run
+set test/input 170
+run
+set test/input 169
+run
+set test/input 168
+run
+set test/input 167
+run
+set test/input 166
+run
+set test/input 165
+run
+set test/input 164
+run
+set test/input 163
+run
+set test/input 162
+run
+set test/input 161
+run
+set test/input 160
+run
+set test/input 159
+run
+set test/input 158
+run
+set test/input 157
+run
+set test/input 156
+run
+set test/input 155
+run
+set test/input 154
+run
+set test/input 153
+run
+set test/input 152
+run
+set test/input 151
+run
+set test/input 150
+run
+set test/input 149
+run
+set test/input 148
+run
+set test/input 147
+run
+set test/input 146
+run
+set test/input 145
+run
+set test/input 144
+run
+set test/input 143
+run
+set test/input 142
+run
+set test/input 141
+run
+set test/input 140
+run
+set test/input 139
+run
+set test/input 138
+run
+set test/input 137
+run
+set test/input 136
+run
+set test/input 135
+run
+set test/input 134
+run
+set test/input 133
+run
+set test/input 132
+run
+set test/input 131
+run
+set test/input 130
+run
+set test/input 129
+run
+set test/input 128
+run
+set test/input 127
+run
+set test/input 126
+run
+set test/input 125
+run
+set test/input 124
+run
+set test/input 123
+run
+set test/input 122
+run
+set test/input 121
+run
+set test/input 120
+run
+set test/input 119
+run
+set test/input 118
+run
+set test/input 117
+run
+set test/input 116
+run
+set test/input 115
+run
+set test/input 114
+run
+set test/input 113
+run
+set test/input 112
+run
+set test/input 111
+run
+set test/input 110
+run
+set test/input 109
+run
+set test/input 108
+run
+set test/input 107
+run
+set test/input 106
+run
+set test/input 105
+run
+set test/input 104
+run
+set test/input 103
+run
+set test/input 102
+run
+set test/input 101
+run
+set test/input 100
+run
+set test/input 99
+run
+set test/input 98
+run
+set test/input 97
+run
+set test/input 96
+run
+set test/input 95
+run
+set test/input 94
+run
+set test/input 93
+run
+set test/input 92
+run
+set test/input 91
+run
+set test/input 90
+run
+set test/input 89
+run
+set test/input 88
+run
+set test/input 87
+run
+set test/input 86
+run
+set test/input 85
+run
+set test/input 84
+run
+set test/input 83
+run
+set test/input 82
+run
+set test/input 81
+run
+set test/input 80
+run
+set test/input 79
+run
+set test/input 78
+run
+set test/input 77
+run
+set test/input 76
+run
+set test/input 75
+run
+set test/input 74
+run
+set test/input 73
+run
+set test/input 72
+run
+set test/input 71
+run
+set test/input 70
+run
+set test/input 69
+run
+set test/input 68
+run
+set test/input 67
+run
+set test/input 66
+run
+set test/input 65
+run
+set test/input 64
+run
+set test/input 63
+run
+set test/input 62
+run
+set test/input 61
+run
+set test/input 60
+run
+set test/input 59
+run
+set test/input 58
+run
+set test/input 57
+run
+set test/input 56
+run
+set test/input 55
+run
+set test/input 54
+run
+set test/input 53
+run
+set test/input 52
+run
+set test/input 51
+run
+set test/input 50
+run
+set test/input 49
+run
+set test/input 48
+run
+set test/input 47
+run
+set test/input 46
+run
+set test/input 45
+run
+set test/input 44
+run
+set test/input 43
+run
+set test/input 42
+run
+set test/input 41
+run
+set test/input 40
+run
+set test/input 39
+run
+set test/input 38
+run
+set test/input 37
+run
+set test/input 36
+run
+set test/input 35
+run
+set test/input 34
+run
+set test/input 33
+run
+set test/input 32
+run
+set test/input 31
+run
+set test/input 30
+run
+set test/input 29
+run
+set test/input 28
+run
+set test/input 27
+run
+set test/input 26
+run
+set test/input 25
+run
+set test/input 24
+run
+set test/input 23
+run
+set test/input 22
+run
+set test/input 21
+run
+set test/input 20
+run
+set test/input 19
+run
+set test/input 18
+run
+set test/input 17
+run
+set test/input 16
+run
+set test/input 15
+run
+set test/input 14
+run
+set test/input 13
+run
+set test/input 12
+run
+set test/input 11
+run
+set test/input 10
+run
+set test/input 9
+run
+set test/input 8
+run
+set test/input 7
+run
+set test/input 6
+run
+set test/input 5
+run
+set test/input 4
+run
+set test/input 3
+run
+set test/input 2
+run
+set test/input 1
+run
+set test/input 0
+run
+set test/input 359
+run
+set test/input 358
+run
+set test/input 357
+run
+set test/input 356
+run
+set test/input 355
+run
+set test/input 354
+run
+set test/input 353
+run
+set test/input 352
+run
+set test/input 351
+run
+set test/input 350
+run
+set test/input 349
+run
+set test/input 348
+run
+set test/input 347
+run
+set test/input 346
+run
+set test/input 345
+run
+set test/input 344
+run
+set test/input 343
+run
+set test/input 342
+run
+set test/input 341
+run
+set test/input 340
+run
+set test/input 339
+run
+set test/input 338
+run
+set test/input 337
+run
+set test/input 336
+run
+set test/input 335
+run
+set test/input 334
+run
+set test/input 333
+run
+set test/input 332
+run
+set test/input 331
+run
+set test/input 330
+run
+set test/input 329
+run
+set test/input 328
+run
+set test/input 327
+run
+set test/input 326
+run
+set test/input 325
+run
+set test/input 324
+run
+set test/input 323
+run
+set test/input 322
+run
+set test/input 321
+run
+set test/input 320
+run
+set test/input 319
+run
+set test/input 318
+run
+set test/input 317
+run
+set test/input 316
+run
+set test/input 315
+run
+set test/input 314
+run
+set test/input 313
+run
+set test/input 312
+run
+set test/input 311
+run
+set test/input 310
+run
+set test/input 309
+run
+set test/input 308
+run
+set test/input 307
+run
+set test/input 306
+run
+set test/input 305
+run
+set test/input 304
+run
+set test/input 303
+run
+set test/input 302
+run
+set test/input 301
+run
+set test/input 300
+run
+set test/input 299
+run
+set test/input 298
+run
+set test/input 297
+run
+set test/input 296
+run
+set test/input 295
+run
+set test/input 294
+run
+set test/input 293
+run
+set test/input 292
+run
+set test/input 291
+run
+set test/input 290
+run
+set test/input 289
+run
+set test/input 288
+run
+set test/input 287
+run
+set test/input 286
+run
+set test/input 285
+run
+set test/input 284
+run
+set test/input 283
+run
+set test/input 282
+run
+set test/input 281
+run
+set test/input 280
+run
+set test/input 279
+run
+set test/input 278
+run
+set test/input 277
+run
+set test/input 276
+run
+set test/input 275
+run
+set test/input 274
+run
+set test/input 273
+run
+set test/input 272
+run
+set test/input 271
+run
+set test/input 270
+run
+set test/input 269
+run
+set test/input 268
+run
+set test/input 267
+run
+set test/input 266
+run
+set test/input 265
+run
+set test/input 264
+run
+set test/input 263
+run
+set test/input 262
+run
+set test/input 261
+run
+set test/input 260
+run
+set test/input 259
+run
+set test/input 258
+run
+set test/input 257
+run
+set test/input 256
+run
+set test/input 255
+run
+set test/input 254
+run
+set test/input 253
+run
+set test/input 252
+run
+set test/input 251
+run
+set test/input 250
+run
+set test/input 249
+run
+set test/input 248
+run
+set test/input 247
+run
+set test/input 246
+run
+set test/input 245
+run
+set test/input 244
+run
+set test/input 243
+run
+set test/input 242
+run
+set test/input 241
+run
+set test/input 240
+run
+set test/input 239
+run
+set test/input 238
+run
+set test/input 237
+run
+set test/input 236
+run
+set test/input 235
+run
+set test/input 234
+run
+set test/input 233
+run
+set test/input 232
+run
+set test/input 231
+run
+set test/input 230
+run
+set test/input 229
+run
+set test/input 228
+run
+set test/input 227
+run
+set test/input 226
+run
+set test/input 225
+run
+set test/input 224
+run
+set test/input 223
+run
+set test/input 222
+run
+set test/input 221
+run
+set test/input 220
+run
+set test/input 219
+run
+set test/input 218
+run
+set test/input 217
+run
+set test/input 216
+run
+set test/input 215
+run
+set test/input 214
+run
+set test/input 213
+run
+set test/input 212
+run
+set test/input 211
+run
+set test/input 210
+run
+set test/input 209
+run
+set test/input 208
+run
+set test/input 207
+run
+set test/input 206
+run
+set test/input 205
+run
+set test/input 204
+run
+set test/input 203
+run
+set test/input 202
+run
+set test/input 201
+run
+set test/input 200
+run
+set test/input 199
+run
+set test/input 198
+run
+set test/input 197
+run
+set test/input 196
+run
+set test/input 195
+run
+set test/input 194
+run
+set test/input 193
+run
+set test/input 192
+run
+set test/input 191
+run
+set test/input 190
+run
+set test/input 189
+run
+set test/input 188
+run
+set test/input 187
+run
+set test/input 186
+run
+set test/input 185
+run
+set test/input 184
+run
+set test/input 183
+run
+set test/input 182
+run
+set test/input 181
+run
+set test/input 180
+run
+set test/input 179
+run
+set test/input 178
+run
+set test/input 177
+run
+set test/input 176
+run
+set test/input 175
+run
+set test/input 174
+run
+set test/input 173
+run
+set test/input 172
+run
+set test/input 171
+run
+set test/input 170
+run
+set test/input 169
+run
+set test/input 168
+run
+set test/input 167
+run
+set test/input 166
+run
+set test/input 165
+run
+set test/input 164
+run
+set test/input 163
+run
+set test/input 162
+run
+set test/input 161
+run
+set test/input 160
+run
+set test/input 159
+run
+set test/input 158
+run
+set test/input 157
+run
+set test/input 156
+run
+set test/input 155
+run
+set test/input 154
+run
+set test/input 153
+run
+set test/input 152
+run
+set test/input 151
+run
+set test/input 150
+run
+set test/input 149
+run
+set test/input 148
+run
+set test/input 147
+run
+set test/input 146
+run
+set test/input 145
+run
+set test/input 144
+run
+set test/input 143
+run
+set test/input 142
+run
+set test/input 141
+run
+set test/input 140
+run
+set test/input 139
+run
+set test/input 138
+run
+set test/input 137
+run
+set test/input 136
+run
+set test/input 135
+run
+set test/input 134
+run
+set test/input 133
+run
+set test/input 132
+run
+set test/input 131
+run
+set test/input 130
+run
+set test/input 129
+run
+set test/input 128
+run
+set test/input 127
+run
+set test/input 126
+run
+set test/input 125
+run
+set test/input 124
+run
+set test/input 123
+run
+set test/input 122
+run
+set test/input 121
+run
+set test/input 120
+run
+set test/input 119
+run
+set test/input 118
+run
+set test/input 117
+run
+set test/input 116
+run
+set test/input 115
+run
+set test/input 114
+run
+set test/input 113
+run
+set test/input 112
+run
+set test/input 111
+run
+set test/input 110
+run
+set test/input 109
+run
+set test/input 108
+run
+set test/input 107
+run
+set test/input 106
+run
+set test/input 105
+run
+set test/input 104
+run
+set test/input 103
+run
+set test/input 102
+run
+set test/input 101
+run
+set test/input 100
+run
+set test/input 99
+run
+set test/input 98
+run
+set test/input 97
+run
+set test/input 96
+run
+set test/input 95
+run
+set test/input 94
+run
+set test/input 93
+run
+set test/input 92
+run
+set test/input 91
+run
+set test/input 90
+run
+set test/input 89
+run
+set test/input 88
+run
+set test/input 87
+run
+set test/input 86
+run
+set test/input 85
+run
+set test/input 84
+run
+set test/input 83
+run
+set test/input 82
+run
+set test/input 81
+run
+set test/input 80
+run
+set test/input 79
+run
+set test/input 78
+run
+set test/input 77
+run
+set test/input 76
+run
+set test/input 75
+run
+set test/input 74
+run
+set test/input 73
+run
+set test/input 72
+run
+set test/input 71
+run
+set test/input 70
+run
+set test/input 69
+run
+set test/input 68
+run
+set test/input 67
+run
+set test/input 66
+run
+set test/input 65
+run
+set test/input 64
+run
+set test/input 63
+run
+set test/input 62
+run
+set test/input 61
+run
+set test/input 60
+run
+set test/input 59
+run
+set test/input 58
+run
+set test/input 57
+run
+set test/input 56
+run
+set test/input 55
+run
+set test/input 54
+run
+set test/input 53
+run
+set test/input 52
+run
+set test/input 51
+run
+set test/input 50
+run
+set test/input 49
+run
+set test/input 48
+run
+set test/input 47
+run
+set test/input 46
+run
+set test/input 45
+run
+set test/input 44
+run
+set test/input 43
+run
+set test/input 42
+run
+set test/input 41
+run
+set test/input 40
+run
+set test/input 39
+run
+set test/input 38
+run
+set test/input 37
+run
+set test/input 36
+run
+set test/input 35
+run
+set test/input 34
+run
+set test/input 33
+run
+set test/input 32
+run
+set test/input 31
+run
+set test/input 30
+run
+set test/input 29
+run
+set test/input 28
+run
+set test/input 27
+run
+set test/input 26
+run
+set test/input 25
+run
+set test/input 24
+run
+set test/input 23
+run
+set test/input 22
+run
+set test/input 21
+run
+set test/input 20
+run
+set test/input 19
+run
+set test/input 18
+run
+set test/input 17
+run
+set test/input 16
+run
+set test/input 15
+run
+set test/input 14
+run
+set test/input 13
+run
+set test/input 12
+run
+set test/input 11
+run
+set test/input 10
+run
+set test/input 9
+run
+set test/input 8
+run
+set test/input 7
+run
+set test/input 6
+run
+set test/input 5
+run
+set test/input 4
+run
+set test/input 3
+run
+set test/input 2
+run
+set test/input 1
+run
+set test/input 0
+run
+set test/input 359
+run
+set test/input 358
+run
+set test/input 357
+run
+set test/input 356
+run
+set test/input 355
+run
+set test/input 354
+run
+set test/input 353
+run
+set test/input 352
+run
+set test/input 351
+run
+set test/input 350
+run
+set test/input 349
+run
+set test/input 348
+run
+set test/input 347
+run
+set test/input 346
+run
+set test/input 345
+run
+set test/input 344
+run
+set test/input 343
+run
+set test/input 342
+run
+set test/input 341
+run
+set test/input 340
+run
+set test/input 339
+run
+set test/input 338
+run
+set test/input 337
+run
+set test/input 336
+run
+set test/input 335
+run
+set test/input 334
+run
+set test/input 333
+run
+set test/input 332
+run
+set test/input 331
+run
+set test/input 330
+run
+set test/input 329
+run
+set test/input 328
+run
+set test/input 327
+run
+set test/input 326
+run
+set test/input 325
+run
+set test/input 324
+run
+set test/input 323
+run
+set test/input 322
+run
+set test/input 321
+run
+set test/input 320
+run
+set test/input 319
+run
+set test/input 318
+run
+set test/input 317
+run
+set test/input 316
+run
+set test/input 315
+run
+set test/input 314
+run
+set test/input 313
+run
+set test/input 312
+run
+set test/input 311
+run
+set test/input 310
+run
+set test/input 309
+run
+set test/input 308
+run
+set test/input 307
+run
+set test/input 306
+run
+set test/input 305
+run
+set test/input 304
+run
+set test/input 303
+run
+set test/input 302
+run
+set test/input 301
+run
+set test/input 300
+run
+set test/input 299
+run
+set test/input 298
+run
+set test/input 297
+run
+set test/input 296
+run
+set test/input 295
+run
+set test/input 294
+run
+set test/input 293
+run
+set test/input 292
+run
+set test/input 291
+run
+set test/input 290
+run
+set test/input 289
+run
+set test/input 288
+run
+set test/input 287
+run
+set test/input 286
+run
+set test/input 285
+run
+set test/input 284
+run
+set test/input 283
+run
+set test/input 282
+run
+set test/input 281
+run
+set test/input 280
+run
+set test/input 279
+run
+set test/input 278
+run
+set test/input 277
+run
+set test/input 276
+run
+set test/input 275
+run
+set test/input 274
+run
+set test/input 273
+run
+set test/input 272
+run
+set test/input 271
+run
+set test/input 270
+run
+set test/input 269
+run
+set test/input 268
+run
+set test/input 267
+run
+set test/input 266
+run
+set test/input 265
+run
+set test/input 264
+run
+set test/input 263
+run
+set test/input 262
+run
+set test/input 261
+run
+set test/input 260
+run
+set test/input 259
+run
+set test/input 258
+run
+set test/input 257
+run
+set test/input 256
+run
+set test/input 255
+run
+set test/input 254
+run
+set test/input 253
+run
+set test/input 252
+run
+set test/input 251
+run
+set test/input 250
+run
+set test/input 249
+run
+set test/input 248
+run
+set test/input 247
+run
+set test/input 246
+run
+set test/input 245
+run
+set test/input 244
+run
+set test/input 243
+run
+set test/input 242
+run
+set test/input 241
+run
+set test/input 240
+run
+set test/input 239
+run
+set test/input 238
+run
+set test/input 237
+run
+set test/input 236
+run
+set test/input 235
+run
+set test/input 234
+run
+set test/input 233
+run
+set test/input 232
+run
+set test/input 231
+run
+set test/input 230
+run
+set test/input 229
+run
+set test/input 228
+run
+set test/input 227
+run
+set test/input 226
+run
+set test/input 225
+run
+set test/input 224
+run
+set test/input 223
+run
+set test/input 222
+run
+set test/input 221
+run
+set test/input 220
+run
+set test/input 219
+run
+set test/input 218
+run
+set test/input 217
+run
+set test/input 216
+run
+set test/input 215
+run
+set test/input 214
+run
+set test/input 213
+run
+set test/input 212
+run
+set test/input 211
+run
+set test/input 210
+run
+set test/input 209
+run
+set test/input 208
+run
+set test/input 207
+run
+set test/input 206
+run
+set test/input 205
+run
+set test/input 204
+run
+set test/input 203
+run
+set test/input 202
+run
+set test/input 201
+run
+set test/input 200
+run
+set test/input 199
+run
+set test/input 198
+run
+set test/input 197
+run
+set test/input 196
+run
+set test/input 195
+run
+set test/input 194
+run
+set test/input 193
+run
+set test/input 192
+run
+set test/input 191
+run
+set test/input 190
+run
+set test/input 189
+run
+set test/input 188
+run
+set test/input 187
+run
+set test/input 186
+run
+set test/input 185
+run
+set test/input 184
+run
+set test/input 183
+run
+set test/input 182
+run
+set test/input 181
+run
+set test/input 180
+run
+set test/input 179
+run
+set test/input 178
+run
+set test/input 177
+run
+set test/input 176
+run
+set test/input 175
+run
+set test/input 174
+run
+set test/input 173
+run
+set test/input 172
+run
+set test/input 171
+run
+set test/input 170
+run
+set test/input 169
+run
+set test/input 168
+run
+set test/input 167
+run
+set test/input 166
+run
+set test/input 165
+run
+set test/input 164
+run
+set test/input 163
+run
+set test/input 162
+run
+set test/input 161
+run
+set test/input 160
+run
+set test/input 159
+run
+set test/input 158
+run
+set test/input 157
+run
+set test/input 156
+run
+set test/input 155
+run
+set test/input 154
+run
+set test/input 153
+run
+set test/input 152
+run
+set test/input 151
+run
+set test/input 150
+run
+set test/input 149
+run
+set test/input 148
+run
+set test/input 147
+run
+set test/input 146
+run
+set test/input 145
+run
+set test/input 144
+run
+set test/input 143
+run
+set test/input 142
+run
+set test/input 141
+run
+set test/input 140
+run
+set test/input 139
+run
+set test/input 138
+run
+set test/input 137
+run
+set test/input 136
+run
+set test/input 135
+run
+set test/input 134
+run
+set test/input 133
+run
+set test/input 132
+run
+set test/input 131
+run
+set test/input 130
+run
+set test/input 129
+run
+set test/input 128
+run
+set test/input 127
+run
+set test/input 126
+run
+set test/input 125
+run
+set test/input 124
+run
+set test/input 123
+run
+set test/input 122
+run
+set test/input 121
+run
+set test/input 120
+run
+set test/input 119
+run
+set test/input 118
+run
+set test/input 117
+run
+set test/input 116
+run
+set test/input 115
+run
+set test/input 114
+run
+set test/input 113
+run
+set test/input 112
+run
+set test/input 111
+run
+set test/input 110
+run
+set test/input 109
+run
+set test/input 108
+run
+set test/input 107
+run
+set test/input 106
+run
+set test/input 105
+run
+set test/input 104
+run
+set test/input 103
+run
+set test/input 102
+run
+set test/input 101
+run
+set test/input 100
+run
+set test/input 99
+run
+set test/input 98
+run
+set test/input 97
+run
+set test/input 96
+run
+set test/input 95
+run
+set test/input 94
+run
+set test/input 93
+run
+set test/input 92
+run
+set test/input 91
+run
+set test/input 90
+run
+set test/input 89
+run
+set test/input 88
+run
+set test/input 87
+run
+set test/input 86
+run
+set test/input 85
+run
+set test/input 84
+run
+set test/input 83
+run
+set test/input 82
+run
+set test/input 81
+run
+set test/input 80
+run
+set test/input 79
+run
+set test/input 78
+run
+set test/input 77
+run
+set test/input 76
+run
+set test/input 75
+run
+set test/input 74
+run
+set test/input 73
+run
+set test/input 72
+run
+set test/input 71
+run
+set test/input 70
+run
+set test/input 69
+run
+set test/input 68
+run
+set test/input 67
+run
+set test/input 66
+run
+set test/input 65
+run
+set test/input 64
+run
+set test/input 63
+run
+set test/input 62
+run
+set test/input 61
+run
+set test/input 60
+run
+set test/input 59
+run
+set test/input 58
+run
+set test/input 57
+run
+set test/input 56
+run
+set test/input 55
+run
+set test/input 54
+run
+set test/input 53
+run
+set test/input 52
+run
+set test/input 51
+run
+set test/input 50
+run
+set test/input 49
+run
+set test/input 48
+run
+set test/input 47
+run
+set test/input 46
+run
+set test/input 45
+run
+set test/input 44
+run
+set test/input 43
+run
+set test/input 42
+run
+set test/input 41
+run
+set test/input 40
+run
+set test/input 39
+run
+set test/input 38
+run
+set test/input 37
+run
+set test/input 36
+run
+set test/input 35
+run
+set test/input 34
+run
+set test/input 33
+run
+set test/input 32
+run
+set test/input 31
+run
+set test/input 30
+run
+set test/input 29
+run
+set test/input 28
+run
+set test/input 27
+run
+set test/input 26
+run
+set test/input 25
+run
+set test/input 24
+run
+set test/input 23
+run
+set test/input 22
+run
+set test/input 21
+run
+set test/input 20
+run
+set test/input 19
+run
+set test/input 18
+run
+set test/input 17
+run
+set test/input 16
+run
+set test/input 15
+run
+set test/input 14
+run
+set test/input 13
+run
+set test/input 12
+run
+set test/input 11
+run
+set test/input 10
+run
+set test/input 9
+run
+set test/input 8
+run
+set test/input 7
+run
+set test/input 6
+run
+set test/input 5
+run
+set test/input 4
+run
+set test/input 3
+run
+set test/input 2
+run
+set test/input 1
+run
+set test/input 0
+run
+set test/input 359
+run
+set test/input 358
+run
+set test/input 357
+run
+set test/input 356
+run
+set test/input 355
+run
+set test/input 354
+run
+set test/input 353
+run
+set test/input 352
+run
+set test/input 351
+run
+set test/input 350
+run
+set test/input 349
+run
+set test/input 348
+run
+set test/input 347
+run
+set test/input 346
+run
+set test/input 345
+run
+set test/input 344
+run
+set test/input 343
+run
+set test/input 342
+run
+set test/input 341
+run
+set test/input 340
+run
+set test/input 339
+run
+set test/input 338
+run
+set test/input 337
+run
+set test/input 336
+run
+set test/input 335
+run
+set test/input 334
+run
+set test/input 333
+run
+set test/input 332
+run
+set test/input 331
+run
+set test/input 330
+run
+set test/input 329
+run
+set test/input 328
+run
+set test/input 327
+run
+set test/input 326
+run
+set test/input 325
+run
+set test/input 324
+run
+set test/input 323
+run
+set test/input 322
+run
+set test/input 321
+run
+set test/input 320
+run
+set test/input 319
+run
+set test/input 318
+run
+set test/input 317
+run
+set test/input 316
+run
+set test/input 315
+run
+set test/input 314
+run
+set test/input 313
+run
+set test/input 312
+run
+set test/input 311
+run
+set test/input 310
+run
+set test/input 309
+run
+set test/input 308
+run
+set test/input 307
+run
+set test/input 306
+run
+set test/input 305
+run
+set test/input 304
+run
+set test/input 303
+run
+set test/input 302
+run
+set test/input 301
+run
+set test/input 300
+run
+set test/input 299
+run
+set test/input 298
+run
+set test/input 297
+run
+set test/input 296
+run
+set test/input 295
+run
+set test/input 294
+run
+set test/input 293
+run
+set test/input 292
+run
+set test/input 291
+run
+set test/input 290
+run
+set test/input 289
+run
+set test/input 288
+run
+set test/input 287
+run
+set test/input 286
+run
+set test/input 285
+run
+set test/input 284
+run
+set test/input 283
+run
+set test/input 282
+run
+set test/input 281
+run
+set test/input 280
+run
+set test/input 279
+run
+set test/input 278
+run
+set test/input 277
+run
+set test/input 276
+run
+set test/input 275
+run
+set test/input 274
+run
+set test/input 273
+run
+set test/input 272
+run
+set test/input 271
+run
+set test/input 270
+run
+set test/input 269
+run
+set test/input 268
+run
+set test/input 267
+run
+set test/input 266
+run
+set test/input 265
+run
+set test/input 264
+run
+set test/input 263
+run
+set test/input 262
+run
+set test/input 261
+run
+set test/input 260
+run
+set test/input 259
+run
+set test/input 258
+run
+set test/input 257
+run
+set test/input 256
+run
+set test/input 255
+run
+set test/input 254
+run
+set test/input 253
+run
+set test/input 252
+run
+set test/input 251
+run
+set test/input 250
+run
+set test/input 249
+run
+set test/input 248
+run
+set test/input 247
+run
+set test/input 246
+run
+set test/input 245
+run
+set test/input 244
+run
+set test/input 243
+run
+set test/input 242
+run
+set test/input 241
+run
+set test/input 240
+run
+set test/input 239
+run
+set test/input 238
+run
+set test/input 237
+run
+set test/input 236
+run
+set test/input 235
+run
+set test/input 234
+run
+set test/input 233
+run
+set test/input 232
+run
+set test/input 231
+run
+set test/input 230
+run
+set test/input 229
+run
+set test/input 228
+run
+set test/input 227
+run
+set test/input 226
+run
+set test/input 225
+run
+set test/input 224
+run
+set test/input 223
+run
+set test/input 222
+run
+set test/input 221
+run
+set test/input 220
+run
+set test/input 219
+run
+set test/input 218
+run
+set test/input 217
+run
+set test/input 216
+run
+set test/input 215
+run
+set test/input 214
+run
+set test/input 213
+run
+set test/input 212
+run
+set test/input 211
+run
+set test/input 210
+run
+set test/input 209
+run
+set test/input 208
+run
+set test/input 207
+run
+set test/input 206
+run
+set test/input 205
+run
+set test/input 204
+run
+set test/input 203
+run
+set test/input 202
+run
+set test/input 201
+run
+set test/input 200
+run
+set test/input 199
+run
+set test/input 198
+run
+set test/input 197
+run
+set test/input 196
+run
+set test/input 195
+run
+set test/input 194
+run
+set test/input 193
+run
+set test/input 192
+run
+set test/input 191
+run
+set test/input 190
+run
+set test/input 189
+run
+set test/input 188
+run
+set test/input 187
+run
+set test/input 186
+run
+set test/input 185
+run
+set test/input 184
+run
+set test/input 183
+run
+set test/input 182
+run
+set test/input 181
+run
