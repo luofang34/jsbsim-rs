@@ -5099,3 +5099,17 @@ property = "*"
 abs = 0.0
 rel = 0.0
 reason = "Linear actuators with set/reset, versus (truncated to an int), bias, gain, lag, hysteresis, rate and forced values use IEEE basic operations in JSBSim's order, so they must be bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-distributor"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Distributors only compare values and copy them, signed, into properties in case order, so they must be bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-distributor-forms"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Inclusive and exclusive distributors reading what earlier cases wrote only compare values and copy them, signed, into plain and tied properties, so they must be bit-identical; observed max |diff| 0."

@@ -1,0 +1,37 @@
+# oracle/scenarios/systems/fcs_distributor.xml on tripod_fcs_distributor:
+# cases reading earlier cases' writes, exclusive and untested cases, signed
+# values and targets, and an output never written.
+# The tripod starts at 10000 ft so that its contacts stay clear of the
+# ground.
+paths ../.. derived/aircraft scenarios/systems
+new
+load tripod_fcs_distributor
+watch test/input test/a test/b test/c test/d test/f test/g fcs/elevator-cmd-norm test/chain test/first test/never
+set ic/h-sl-ft 10000
+runic
+set test/never 5
+set test/input 0.25
+run
+run
+set test/input 0.75
+run
+run
+set test/input -2
+run
+run
+set test/input -0.5
+run
+run
+set test/input 1.5
+run
+run
+set test/input 0
+run
+run
+set test/input -3
+run
+run
+set fcs/elevator-cmd-norm -2.75
+set test/a 0
+print
+run

@@ -1,0 +1,14 @@
+paths ../.. derived/aircraft inputs/tests => ok
+new => ok
+load tripod_distributor => ok
+watch test/input test/result1 test/default test/result2 test/reference test/sign_inclusive test/sign_exclusive => ok
+set ic/h-sl-ft 10000 => ok
+runic => test/input 0 test/result1 1 test/default 1 test/result2 0 test/reference 0 test/sign_inclusive 0 test/sign_exclusive 0
+set test/input -1.5 => ok
+run => test/input -1.5 test/result1 0 test/default 0 test/result2 -1 test/reference 1.5 test/sign_inclusive 0 test/sign_exclusive 0
+set test/input 0.0 => ok
+run => test/input 0 test/result1 1 test/default 1 test/result2 0 test/reference 1.5 test/sign_inclusive 0 test/sign_exclusive 0
+set test/input 1.0 => ok
+run => test/input 1 test/result1 1 test/default 1 test/result2 1 test/reference 1.5 test/sign_inclusive 0 test/sign_exclusive 0
+set test/input -0.808 => ok
+run => test/input -0.80800000000000005 test/result1 0 test/default 0 test/result2 -1 test/reference 0.80800000000000005 test/sign_inclusive 0 test/sign_exclusive 0

@@ -61,6 +61,8 @@ pub const SYSTEMS: &[System] = &[
     scenario("fcs_kinematic", "fcs_kinematic.xml"),
     upstream("linear_actuator", "linear_actuator.xml"),
     scenario("fcs_linear_actuator", "fcs_linear_actuator.xml"),
+    upstream("distributor", "distributor.xml"),
+    scenario("fcs_distributor", "fcs_distributor.xml"),
 ];
 
 /// A tripod including a system of `oracle/derived/systems`

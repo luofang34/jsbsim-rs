@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  FGDistributor beyond upstream tests/distributor.xml: cases reading what
+  earlier cases wrote in the same run (through a plain and a tied
+  property), an OR test, a case without properties, an exclusive
+  distributor whose untested case sets after a passing tested one and
+  whose later tested case only sets when none has, values from negated
+  properties and from the component's own (never written) property, a
+  negated target (whose sign JSBSim's release build ignores), and an
+  <output> that is never written. The fcs-distributor-forms golden
+  drives it.
+-->
+<system name="fcs-distributor">
+  <property>test/input</property>
+  <property>test/a</property>
+  <property>test/b</property>
+  <property>test/c</property>
+  <property>test/d</property>
+  <property>test/f</property>
+  <property>test/g</property>
+  <property value="2.5">test/gain</property>
+  <channel name="distributors">
+    <distributor name="test/chain" type="inclusive">
+      <case>
+        <test> test/input gt 0 </test>
+        <property value="test/input"> test/a </property>
+        <property value="-test/gain"> fcs/elevator-cmd-norm </property>
+      </case>
+      <case>
+        <test logic="OR">
+          test/a gt 0.5
+          fcs/elevator-cmd-norm lt -2
+        </test>
+        <property value="test/a"> test/b </property>
+      </case>
+      <case>
+        <test> test/b ge 1 </test>
+      </case>
+      <case>
+        <property value="fcs/elevator-cmd-norm"> test/c </property>
+      </case>
+    </distributor>
+    <distributor name="test/first" type="exclusive">
+      <case>
+        <test> test/input lt -1 </test>
+        <property value="1"> test/d </property>
+      </case>
+      <case>
+        <property value="7"> test/d </property>
+        <property value="test/first"> test/f </property>
+      </case>
+      <case>
+        <test> test/input lt 0 </test>
+        <property value="2"> test/d </property>
+        <property value="-test/input"> -test/g </property>
+      </case>
+      <output>test/never</output>
+    </distributor>
+  </channel>
+</system>

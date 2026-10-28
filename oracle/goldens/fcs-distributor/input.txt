@@ -1,0 +1,19 @@
+# Upstream tests/distributor.xml (vendored in oracle/inputs) driven as
+# TestDistributor.test_conditions drives it, on tripod_distributor
+# (tests/tripod.xml with the system appended, as the test includes it).
+# The tripod starts at 10000 ft so that its contacts stay clear of the
+# ground; nothing else differs from the upstream test.
+paths ../.. derived/aircraft inputs/tests
+new
+load tripod_distributor
+watch test/input test/result1 test/default test/result2 test/reference test/sign_inclusive test/sign_exclusive
+set ic/h-sl-ft 10000
+runic
+set test/input -1.5
+run
+set test/input 0.0
+run
+set test/input 1.0
+run
+set test/input -0.808
+run

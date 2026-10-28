@@ -139,6 +139,7 @@ impl Fdm {
             index: 0,
         };
         while families::run(&mut self.env, &mut self.models, at)? {
+            self.run_distributor(at)?;
             // `SetOutput`. A setter may reach any model, and its request may
             // reset the executive, so each output node is looked up afresh
             // instead of being borrowed across the write.

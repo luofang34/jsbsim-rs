@@ -6,6 +6,7 @@
 //! tree and the functions, and steps them in JSBSim's order.
 
 mod bindings;
+mod distribute;
 mod env;
 pub(crate) use env::Env;
 mod exec_bind;

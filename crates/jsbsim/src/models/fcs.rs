@@ -14,6 +14,7 @@ pub mod actuator;
 mod bind;
 pub mod component;
 pub mod deadband;
+pub mod distributor;
 pub mod families;
 pub mod filter;
 pub mod function;
