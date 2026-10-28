@@ -155,8 +155,9 @@ impl Inertial {
     /// configured elevation above the ellipsoid.
     #[must_use]
     pub fn contact(&self, location: &Location) -> Contact {
-        let mut l = location.clone();
+        let mut l = *location;
         l.set_ellipse(self.a, self.b);
+        l.cache_derived();
         let latitude = l.geod_latitude_rad();
         let cos_lat = libm::cos(latitude);
         let longitude = l.longitude();
@@ -187,6 +188,7 @@ impl Inertial {
     /// terrain along its geodetic vertical.
     pub fn set_altitude_agl(&self, location: &mut Location, altitude_agl: f64) {
         let ground = self.contact(location).point.geod_altitude();
+        location.cache_derived();
         let longitude = location.longitude();
         let geod_lat = location.geod_latitude_rad();
         location.set_position_geodetic(longitude, geod_lat, ground + altitude_agl);

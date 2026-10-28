@@ -173,7 +173,7 @@ impl Default for Propagate {
                 dq_pqridot: [zero; 5],
                 dq_uvwidot: [zero; 5],
                 dq_inertial_velocity: [zero; 5],
-                dq_qtrndot: std::array::from_fn(|_| identity.clone()),
+                dq_qtrndot: [identity; 5],
             },
             frames: Frames::default(),
             q_ec2b: Quaternion::default(),
@@ -229,6 +229,7 @@ impl Propagate {
         self.state.inertial_position = self.frames.tec2i * self.state.location.ecef();
         self.update_location_matrices();
         self.state.q_attitude_local = orientation;
+        self.state.q_attitude_local.cache_derived();
         self.state.q_attitude_eci = &self.frames.ti2l.quaternion() * &self.state.q_attitude_local;
         self.update_body_matrices();
         self.state.uvw = uvw;
@@ -246,7 +247,7 @@ impl Propagate {
         self.state.dq_pqridot = [self.input.pqridot; 5];
         self.state.dq_uvwidot = [self.input.uvwidot; 5];
         self.state.dq_inertial_velocity = [self.state.inertial_velocity; 5];
-        self.state.dq_qtrndot = std::array::from_fn(|_| self.state.qtrndot.clone());
+        self.state.dq_qtrndot = [self.state.qtrndot; 5];
     }
 
     /// `Run`.
@@ -270,7 +271,7 @@ impl Propagate {
         self.recompute_local_terrain_velocity(inertial);
         self.state.pqr = self.state.pqri - self.frames.ti2b * self.input.omega_planet;
         self.calculate_quatdot();
-        self.state.q_attitude_local = self.frames.tl2b.quaternion();
+        self.update_local_attitude();
         self.vel = self.frames.tb2l * self.state.uvw;
         self.compute_orbital_parameters();
     }
@@ -281,6 +282,7 @@ impl Propagate {
         self.state
             .location
             .sub_assign(&Location::from_ecef(self.frames.tb2ec * delta));
+        self.state.location.cache_derived();
     }
 
     /// `SetHoldDown`.
@@ -311,6 +313,7 @@ impl Propagate {
     }
 
     fn update_location_matrices(&mut self) {
+        self.state.location.cache_derived();
         let f = &mut self.frames;
         f.tl2ec = self.state.location.tl2ec();
         f.tec2l = f.tl2ec.transposed();
@@ -319,6 +322,7 @@ impl Propagate {
     }
 
     fn update_body_matrices(&mut self) {
+        self.state.q_attitude_eci.cache_derived();
         let f = &mut self.frames;
         f.ti2b = self.state.q_attitude_eci.t();
         f.tb2i = f.ti2b.transposed();
@@ -327,6 +331,11 @@ impl Propagate {
         f.tec2b = f.ti2b * f.tec2i;
         f.tb2ec = f.tec2b.transposed();
         self.q_ec2b = f.tec2b.quaternion();
+    }
+
+    fn update_local_attitude(&mut self) {
+        self.state.q_attitude_local = self.frames.tl2b.quaternion();
+        self.state.q_attitude_local.cache_derived();
     }
 
     fn recompute_local_terrain_velocity(&mut self, inertial: &Inertial) {
@@ -342,7 +351,7 @@ impl Propagate {
         self.update_location_matrices();
         self.update_body_matrices();
         self.vel = self.frames.tb2l * self.state.uvw;
-        self.state.q_attitude_local = self.frames.tl2b.quaternion();
+        self.update_local_attitude();
     }
 
     /// `SetLocation`.
@@ -432,7 +441,7 @@ impl Propagate {
         self.state.q_attitude_eci = qi;
         self.state.q_attitude_eci.normalize();
         self.update_body_matrices();
-        self.state.q_attitude_local = self.frames.tl2b.quaternion();
+        self.update_local_attitude();
         self.calculate_quatdot();
     }
 

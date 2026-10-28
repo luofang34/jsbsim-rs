@@ -2,12 +2,10 @@
 // Copyright (C) 1999 Jon S. Berndt (jon@jsbsim.org)
 // Derived from JSBSim src/math/FGLocation.{h,cpp}.
 //
-//! Earth-centred, Earth-fixed position with lazily derived longitude,
+//! Earth-centred, Earth-fixed position with cached longitude,
 //! latitude, radius, geodetic latitude and altitude, and local-frame
 //! transformations, plus geodesic distance and heading on the ellipse
 //! (GeographicLib's inverse problem, as JSBSim uses it).
-
-use std::cell::OnceCell;
 
 use super::{Axis, ColumnVector3, E_X, E_Y, E_Z, Matrix33};
 use crate::units::{DEGTORAD, RADTODEG, sign};
@@ -50,11 +48,17 @@ impl Ellipse {
 }
 
 /// `FGLocation`.
-#[derive(Debug, Clone)]
+///
+/// The derived coordinates and matrices are a pure function of the ECEF
+/// coordinates and the ellipse. [`cache_derived`](Self::cache_derived)
+/// stores them until the next mutation, as JSBSim's `mCacheValid` does; a
+/// read without a cached value computes them on the spot, with the same
+/// operations.
+#[derive(Debug, Clone, Copy)]
 pub struct Location {
     ec_loc: ColumnVector3,
     ellipse: Option<Ellipse>,
-    derived: OnceCell<Derived>,
+    derived: Option<Derived>,
 }
 
 impl PartialEq for Location {
@@ -78,7 +82,7 @@ impl Location {
         Self {
             ec_loc: v,
             ellipse: None,
-            derived: OnceCell::new(),
+            derived: None,
         }
     }
 
@@ -91,7 +95,16 @@ impl Location {
     }
 
     fn invalidate(&mut self) {
-        self.derived = OnceCell::new();
+        self.derived = None;
+    }
+
+    /// Computes and stores the derived values unless already stored;
+    /// owners of a long-lived location call it after each change so that
+    /// later reads through `&self` find them.
+    pub fn cache_derived(&mut self) {
+        if self.derived.is_none() {
+            self.derived = Some(compute_derived(self.ec_loc, self.ellipse));
+        }
     }
 
     /// The ECEF coordinates.
@@ -108,8 +121,8 @@ impl Location {
 
     /// Sets component `idx` of the ECEF coordinates.
     pub fn set_entry(&mut self, idx: Axis, value: f64) {
-        self.invalidate();
         self.ec_loc[idx] = value;
+        self.invalidate();
     }
 
     /// `operator=(FGColumnVector3)`: new coordinates, ellipse kept.
@@ -127,14 +140,13 @@ impl Location {
         if rtmp == 0.0 {
             return;
         }
-        self.invalidate();
         self.ec_loc[E_X] = rtmp * libm::cos(longitude);
         self.ec_loc[E_Y] = rtmp * libm::sin(longitude);
+        self.invalidate();
     }
 
     /// `SetLatitude`.
     pub fn set_latitude(&mut self, latitude: f64) {
-        self.invalidate();
         let mut r = self.ec_loc.magnitude();
         if r == 0.0 {
             self.ec_loc[E_X] = 1.0;
@@ -150,22 +162,22 @@ impl Location {
             self.ec_loc[E_Y] = 0.0;
         }
         self.ec_loc[E_Z] = r * libm::sin(latitude);
+        self.invalidate();
     }
 
     /// `SetRadius`.
     pub fn set_radius(&mut self, radius: f64) {
-        self.invalidate();
         let rold = self.ec_loc.magnitude();
         if rold == 0.0 {
             self.ec_loc[E_X] = radius;
         } else {
             self.ec_loc *= radius / rold;
         }
+        self.invalidate();
     }
 
     /// `SetPosition(lon, lat, radius)`: geocentric coordinates.
     pub fn set_position(&mut self, lon: f64, lat: f64, radius: f64) {
-        self.invalidate();
         let (sin_lat, cos_lat) = (libm::sin(lat), libm::cos(lat));
         let (sin_lon, cos_lon) = (libm::sin(lon), libm::cos(lon));
         self.ec_loc = ColumnVector3::new(
@@ -173,6 +185,7 @@ impl Location {
             radius * cos_lat * sin_lon,
             radius * sin_lat,
         );
+        self.invalidate();
     }
 
     /// `SetPositionGeodetic(lon, lat, height)`; requires an ellipse, as
@@ -182,77 +195,79 @@ impl Location {
             tracing::error!("FGLocation::SetPositionGeodetic called before SetEllipse");
             return;
         };
-        self.invalidate();
         let (slat, clat) = (libm::sin(lat), libm::cos(lat));
         let rn = e.a / (1.0 - e.e2 * slat * slat).sqrt();
         self.ec_loc[E_X] = (rn + height) * clat * libm::cos(lon);
         self.ec_loc[E_Y] = (rn + height) * clat * libm::sin(lon);
         self.ec_loc[E_Z] = ((1.0 - e.e2) * rn + height) * slat;
+        self.invalidate();
     }
 
     /// `SetEllipse(semimajor, semiminor)`.
     pub fn set_ellipse(&mut self, semimajor: f64, semiminor: f64) {
-        self.invalidate();
         self.ellipse = Some(Ellipse::new(semimajor, semiminor));
+        self.invalidate();
     }
 
-    fn derived(&self) -> &Derived {
-        self.derived
-            .get_or_init(|| compute_derived(self.ec_loc, self.ellipse))
+    fn read<R>(&self, f: impl FnOnce(&Derived) -> R) -> R {
+        match &self.derived {
+            Some(d) => f(d),
+            None => f(&compute_derived(self.ec_loc, self.ellipse)),
+        }
     }
 
     /// `GetLongitude()`, in (-pi, pi].
     #[must_use]
     pub fn longitude(&self) -> f64 {
-        self.derived().lon
+        self.read(|d| d.lon)
     }
 
     /// `GetLongitudeDeg()`.
     #[must_use]
     pub fn longitude_deg(&self) -> f64 {
-        RADTODEG * self.derived().lon
+        RADTODEG * self.read(|d| d.lon)
     }
 
     /// `GetSinLongitude()`.
     #[must_use]
     pub fn sin_longitude(&self) -> f64 {
-        -self.derived().tec2l[(Axis::Y, Axis::X)]
+        -self.read(|d| d.tec2l[(Axis::Y, Axis::X)])
     }
 
     /// `GetCosLongitude()`.
     #[must_use]
     pub fn cos_longitude(&self) -> f64 {
-        self.derived().tec2l[(Axis::Y, Axis::Y)]
+        self.read(|d| d.tec2l[(Axis::Y, Axis::Y)])
     }
 
     /// `GetLatitude()`: geocentric latitude.
     #[must_use]
     pub fn latitude(&self) -> f64 {
-        self.derived().lat
+        self.read(|d| d.lat)
     }
 
     /// `GetLatitudeDeg()`.
     #[must_use]
     pub fn latitude_deg(&self) -> f64 {
-        RADTODEG * self.derived().lat
+        RADTODEG * self.read(|d| d.lat)
     }
 
     /// `GetGeodLatitudeRad()`; 0 without an ellipse.
     #[must_use]
     pub fn geod_latitude_rad(&self) -> f64 {
-        self.derived().geod_lat
+        self.read(|d| d.geod_lat)
     }
 
     /// `GetGeodLatitudeDeg()`.
     #[must_use]
     pub fn geod_latitude_deg(&self) -> f64 {
-        RADTODEG * self.derived().geod_lat
+        RADTODEG * self.read(|d| d.geod_lat)
     }
 
     /// `GetGeodAltitude()`; 0 without an ellipse.
     #[must_use]
     pub fn geod_altitude(&self) -> f64 {
-        self.derived().geod_alt
+        self.read(|d| d.geod_alt)
     }
 
     /// `GetSeaLevelRadius()`. Without an ellipse JSBSim's defaults
@@ -260,26 +275,26 @@ impl Location {
     #[must_use]
     pub fn sea_level_radius(&self) -> f64 {
         let e = self.ellipse.unwrap_or(Ellipse::new(1.0, 1.0));
-        let cos_lat = libm::cos(self.derived().lat);
+        let cos_lat = libm::cos(self.read(|d| d.lat));
         e.a * e.ec / (1.0 - e.e2 * cos_lat * cos_lat).sqrt()
     }
 
     /// `GetRadius()`.
     #[must_use]
     pub fn radius(&self) -> f64 {
-        self.derived().radius
+        self.read(|d| d.radius)
     }
 
     /// `GetTl2ec()`: local (NED) to ECEF.
     #[must_use]
     pub fn tl2ec(&self) -> Matrix33 {
-        self.derived().tl2ec
+        self.read(|d| d.tl2ec)
     }
 
     /// `GetTec2l()`: ECEF to local (NED).
     #[must_use]
     pub fn tec2l(&self) -> Matrix33 {
-        self.derived().tec2l
+        self.read(|d| d.tec2l)
     }
 
     /// `LocalToLocation(lvec)`. Like JSBSim, the result has no ellipse.
@@ -324,20 +339,20 @@ impl Location {
 
     /// `operator+=`.
     pub fn add_assign(&mut self, l: &Self) {
-        self.invalidate();
         self.ec_loc += l.ec_loc;
+        self.invalidate();
     }
 
     /// `operator-=`.
     pub fn sub_assign(&mut self, l: &Self) {
-        self.invalidate();
         self.ec_loc -= l.ec_loc;
+        self.invalidate();
     }
 
     /// `operator*=`.
     pub fn scale_assign(&mut self, scalar: f64) {
-        self.invalidate();
         self.ec_loc *= scalar;
+        self.invalidate();
     }
 
     /// `operator/=`: scaling by `1/scalar`.
@@ -357,10 +372,10 @@ impl Location {
     /// longitude and geodetic latitude (radians).
     #[must_use]
     pub fn distance_to(&self, target_longitude: f64, target_latitude: f64) -> f64 {
-        let d = self.derived();
+        let (geod_lat, lon) = self.read(|d| (d.geod_lat, d.lon));
         self.geodesic().inverse(
-            d.geod_lat * RADTODEG,
-            d.lon * RADTODEG,
+            geod_lat * RADTODEG,
+            lon * RADTODEG,
             target_latitude * RADTODEG,
             target_longitude * RADTODEG,
         )
@@ -370,10 +385,10 @@ impl Location {
     /// [-pi, pi], to the target longitude and geodetic latitude (radians).
     #[must_use]
     pub fn heading_to(&self, target_longitude: f64, target_latitude: f64) -> f64 {
-        let d = self.derived();
+        let (geod_lat, lon) = self.read(|d| (d.geod_lat, d.lon));
         let (azi1, _azi2, _a12): (f64, f64, f64) = self.geodesic().inverse(
-            d.geod_lat * RADTODEG,
-            d.lon * RADTODEG,
+            geod_lat * RADTODEG,
+            lon * RADTODEG,
             target_latitude * RADTODEG,
             target_longitude * RADTODEG,
         );

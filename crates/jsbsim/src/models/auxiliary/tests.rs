@@ -180,7 +180,7 @@ fn distances_from_start_vanish_at_the_start_and_grow_with_offset() {
     let mut here = Location::default();
     here.set_ellipse(A_WGS84, B_WGS84);
     here.set_position_geodetic(0.1, 0.5, 1000.0);
-    x.input.location = here.clone();
+    x.input.location = here;
     x.set_initial_state(&here, A_WGS84, B_WGS84);
     let (lon, lat) = (here.longitude(), here.geod_latitude_rad());
     assert_eq!(x.distance_relative_position(lon, lat), 0.0);

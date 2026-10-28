@@ -257,9 +257,9 @@ impl InitialCondition {
     #[must_use]
     pub fn initial_state(&self) -> InitialState {
         InitialState {
-            position: self.position.clone(),
+            position: self.position,
             epa: self.epa,
-            orientation: self.orientation.clone(),
+            orientation: self.orientation,
             uvw: self.uvw_fps(),
             pqr: self.pqr_body,
             wind_ned: self.wind_ned_fps(),

@@ -136,3 +136,46 @@ fn axes_outside_one_to_three_are_unrepresentable() {
         }
     }
 }
+
+#[test]
+fn cached_and_uncached_reads_are_bit_identical() {
+    const AXES: [Axis; 3] = [Axis::X, Axis::Y, Axis::Z];
+    let flat = |m: Matrix33| AXES.into_iter().flat_map(move |r| AXES.map(|c| m[(r, c)]));
+    let mut l = Location::from_ecef(ColumnVector3::new(1.2e7, -3.4e6, 1.5e7));
+    l.set_ellipse(WGS84_A, WGS84_B);
+    let read = |l: &Location| {
+        let mut v = vec![
+            l.longitude(),
+            l.latitude(),
+            l.radius(),
+            l.geod_latitude_rad(),
+            l.geod_altitude(),
+            l.sea_level_radius(),
+            l.sin_longitude(),
+            l.cos_longitude(),
+        ];
+        v.extend(flat(l.tec2l()));
+        v.extend(flat(l.tl2ec()));
+        v.into_iter().map(f64::to_bits).collect::<Vec<_>>()
+    };
+    let uncached = read(&l);
+    l.cache_derived();
+    assert_eq!(read(&l), uncached);
+
+    let mut q = Quaternion::from_euler(0.3, -1.1, 2.9);
+    let read = |q: &Quaternion| {
+        let mut v = Vec::new();
+        v.extend(flat(q.t()));
+        v.extend(flat(q.t_inv()));
+        v.extend(q.euler().to_array());
+        for i in AXES {
+            v.extend([q.sin_euler(i), q.cos_euler(i)]);
+        }
+        v.into_iter().map(f64::to_bits).collect::<Vec<_>>()
+    };
+    let uncached = read(&q);
+    q.cache_derived();
+    assert_eq!(read(&q), uncached);
+    q *= 0.5;
+    assert_eq!(read(&q), read(&(&q * 1.0)), "a mutation drops the cache");
+}

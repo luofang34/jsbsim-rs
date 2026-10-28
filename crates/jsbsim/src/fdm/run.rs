@@ -54,7 +54,7 @@ impl Models {
                 p.uvwidot = self.accelerations.uvwidot;
                 p.delta_t = self.exec.dt;
             }
-            Model::Inertial => self.inertial.position = self.propagate.state.location.clone(),
+            Model::Inertial => self.inertial.position = self.propagate.state.location,
             Model::Atmosphere => {
                 let a = &mut self.atmosphere.input;
                 a.altitude_asl = self.propagate.altitude_asl();
@@ -160,7 +160,7 @@ impl Models {
         a.vrp_body = self.mass_balance.structural_to_body(self.aircraft.xyz_vrp);
         a.rp_body = self.mass_balance.structural_to_body(self.aircraft.xyz_rp);
         a.fw = self.aerodynamics.state.fw;
-        a.location.clone_from(&p.state.location);
+        a.location = p.state.location;
         let q = &p.state.q_attitude_local;
         a.cos_tht = q.cos_euler(E_THT);
         a.sin_tht = q.sin_euler(E_THT);
@@ -347,7 +347,7 @@ impl Fdm {
         let m = &mut self.models;
         m.propagate.set_initial_state(
             &m.inertial,
-            ic.position.clone(),
+            ic.position,
             ic.epa,
             ic.orientation,
             ic.uvw,

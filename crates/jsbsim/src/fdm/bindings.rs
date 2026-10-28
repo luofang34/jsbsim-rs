@@ -16,9 +16,9 @@ use crate::functions::GetterSource;
 use crate::properties::{NodeId, NodeMap, PropertyTree, Value};
 
 /// A getter: the property's value given the models.
-pub type Getter = Box<dyn Fn(&Models) -> f64>;
+pub type Getter = Box<dyn Fn(&Models) -> f64 + Send>;
 /// A setter: applies a written value to the models.
-pub type Setter = Box<dyn Fn(&mut Models, f64)>;
+pub type Setter = Box<dyn Fn(&mut Models, f64) + Send>;
 
 /// C type of a tied value, which decides how writes and string reads
 /// convert.
@@ -87,7 +87,7 @@ impl Binder<'_> {
     pub fn getter(
         &mut self,
         path: &str,
-        get: impl Fn(&Models) -> f64 + 'static,
+        get: impl Fn(&Models) -> f64 + Send + 'static,
     ) -> Result<NodeId, Error> {
         self.tie(path, Kind::Double, Box::new(get), None)
     }
@@ -97,8 +97,8 @@ impl Binder<'_> {
         &mut self,
         path: &str,
         kind: Kind,
-        get: impl Fn(&Models) -> f64 + 'static,
-        set: impl Fn(&mut Models, f64) + 'static,
+        get: impl Fn(&Models) -> f64 + Send + 'static,
+        set: impl Fn(&mut Models, f64) + Send + 'static,
     ) -> Result<NodeId, Error> {
         self.tie(path, kind, Box::new(get), Some(Box::new(set)))
     }
@@ -108,7 +108,7 @@ impl Binder<'_> {
         &mut self,
         path: &str,
         kind: Kind,
-        set: impl Fn(&mut Models, f64) + 'static,
+        set: impl Fn(&mut Models, f64) + Send + 'static,
     ) -> Result<NodeId, Error> {
         let node = self.tie(path, kind, Box::new(|_| 0.0), Some(Box::new(set)))?;
         self.tree
@@ -121,7 +121,7 @@ impl Binder<'_> {
         &mut self,
         path: &str,
         kind: Kind,
-        get: impl Fn(&Models) -> f64 + 'static,
+        get: impl Fn(&Models) -> f64 + Send + 'static,
     ) -> Result<NodeId, Error> {
         self.tie(path, kind, Box::new(get), None)
     }

@@ -2,10 +2,9 @@
 // Copyright (C) 1999 Jon S. Berndt (jon@jsbsim.org)
 // Derived from JSBSim src/math/FGQuaternion.{h,cpp}.
 //
-//! Unit quaternion for orientations, with lazily computed transformation
-//! matrices and Euler angles.
+//! Unit quaternion for orientations, with cached transformation matrices
+//! and Euler angles.
 
-use std::cell::OnceCell;
 use std::ops::{Add, AddAssign, Mul, MulAssign, Sub, SubAssign};
 
 use super::{Axis, ColumnVector3, E_P, E_PHI, E_PSI, E_Q, E_R, E_THT, Matrix33};
@@ -22,10 +21,15 @@ struct Derived {
 
 /// `FGQuaternion`; components are read as an array with
 /// [`to_array`](Self::to_array).
-#[derive(Debug, Clone)]
+///
+/// The matrices and Euler angles are a pure function of the components.
+/// [`cache_derived`](Self::cache_derived) stores them until the next
+/// mutation, as JSBSim's `mCacheValid` does; a read without a cached value
+/// computes them on the spot, with the same operations.
+#[derive(Debug, Clone, Copy)]
 pub struct Quaternion {
     data: [f64; 4],
-    derived: OnceCell<Derived>,
+    derived: Option<Derived>,
 }
 
 impl PartialEq for Quaternion {
@@ -47,7 +51,7 @@ impl Quaternion {
     pub fn from_components(q1: f64, q2: f64, q3: f64, q4: f64) -> Self {
         Self {
             data: [q1, q2, q3, q4],
-            derived: OnceCell::new(),
+            derived: None,
         }
     }
 
@@ -170,7 +174,7 @@ impl Quaternion {
     pub fn inverse(&self) -> Self {
         let norm = self.sqr_magnitude();
         if norm == 0.0 {
-            return self.clone();
+            return *self;
         }
         let r = 1.0 / norm;
         let d = &self.data;
@@ -197,44 +201,56 @@ impl Quaternion {
         Self::from_components(libm::cos(angle), x * sina_a, y * sina_a, z * sina_a)
     }
 
-    fn derived(&self) -> &Derived {
-        self.derived.get_or_init(|| compute_derived(&self.data))
+    /// Computes and stores the matrices and Euler angles unless already
+    /// stored; owners of a long-lived attitude call it after each change so
+    /// that later reads through `&self` find them.
+    pub fn cache_derived(&mut self) {
+        if self.derived.is_none() {
+            self.derived = Some(compute_derived(&self.data));
+        }
+    }
+
+    fn read<R>(&self, f: impl FnOnce(&Derived) -> R) -> R {
+        match &self.derived {
+            Some(d) => f(d),
+            None => f(&compute_derived(&self.data)),
+        }
     }
 
     /// `GetT()`: the transformation matrix (local to body for an attitude).
     #[must_use]
     pub fn t(&self) -> Matrix33 {
-        self.derived().t
+        self.read(|d| d.t)
     }
 
     /// `GetTInv()`: the transpose of [`t`](Self::t).
     #[must_use]
     pub fn t_inv(&self) -> Matrix33 {
-        self.derived().t_inv
+        self.read(|d| d.t_inv)
     }
 
     /// `GetEuler()`: (phi, theta, psi) in radians.
     #[must_use]
     pub fn euler(&self) -> ColumnVector3 {
-        self.derived().euler
+        self.read(|d| d.euler)
     }
 
     /// `GetEulerDeg()`.
     #[must_use]
     pub fn euler_deg(&self) -> ColumnVector3 {
-        RADTODEG * self.derived().euler
+        RADTODEG * self.read(|d| d.euler)
     }
 
     /// `GetSinEuler(i)`.
     #[must_use]
     pub fn sin_euler(&self, i: Axis) -> f64 {
-        self.derived().sines[i]
+        self.read(|d| d.sines[i])
     }
 
     /// `GetCosEuler(i)`.
     #[must_use]
     pub fn cos_euler(&self, i: Axis) -> f64 {
-        self.derived().cosines[i]
+        self.read(|d| d.cosines[i])
     }
 }
 
@@ -340,6 +356,6 @@ impl MulAssign<f64> for Quaternion {
         for x in &mut self.data {
             *x *= scalar;
         }
-        self.derived = OnceCell::new();
+        self.derived = None;
     }
 }

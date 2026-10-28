@@ -107,7 +107,7 @@ impl Propagate {
     /// except for the Buss schemes, whose exponential is already unit.
     fn integrate_attitude(&mut self, dt: f64) {
         let s = &mut self.state;
-        shift(&mut s.dq_qtrndot, s.qtrndot.clone());
+        shift(&mut s.dq_qtrndot, s.qtrndot);
         let d = &s.dq_qtrndot;
         let k = self.integrator_rotational_position;
         let step = |q: Quaternion| -> Quaternion { q };

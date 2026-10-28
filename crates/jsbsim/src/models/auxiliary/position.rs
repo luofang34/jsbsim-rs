@@ -15,11 +15,13 @@ impl Auxiliary {
     /// carries the planet's ellipse, which `semimajor` and `semiminor`
     /// give.
     pub fn set_initial_state(&mut self, ic_position: &Location, semimajor: f64, semiminor: f64) {
-        let mut start = ic_position.clone();
+        let mut start = *ic_position;
         start.set_ellipse(semimajor, semiminor);
+        start.cache_derived();
         let (lon, lat) = (start.longitude(), start.geod_latitude_rad());
         start.set_position_geodetic(lon, lat, 0.0);
         self.start.neu_location = start;
+        self.start.neu_location.cache_derived();
     }
 
     /// `GetLongitudeRelativePosition`: distance, m, along the current

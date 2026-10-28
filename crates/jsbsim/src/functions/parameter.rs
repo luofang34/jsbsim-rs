@@ -19,6 +19,11 @@ use crate::xml::{Location, atof_locale_c};
 pub struct PropertyValue {
     name: String,
     sign: f64,
+    /// Bound at first read when the property did not exist at load, as
+    /// `FGPropertyValue::GetNode` does: a property created after load
+    /// still binds, and a missing one fails at that first evaluation, not
+    /// at load. The evaluator holds operands through a shared borrow of the
+    /// function set, hence `Cell`, which is `Send`.
     node: Cell<Option<NodeId>>,
     at: Location,
 }

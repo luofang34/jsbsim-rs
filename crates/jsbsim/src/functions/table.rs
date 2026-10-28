@@ -40,7 +40,10 @@ pub struct Table {
     internal: bool,
     name: String,
     /// One slot per dimension, where a nested lookup gathers its keys
-    /// before interpolating, so the lookup needs no buffer of its own.
+    /// before interpolating, so the lookup needs no buffer of its own. The
+    /// evaluator reaches tables through a shared borrow of the function
+    /// set, hence `Cell`; it is `Send`, so an FDM still moves between
+    /// threads, and only `Sync` sharing is ruled out.
     keys: Box<[Cell<f64>]>,
 }
 

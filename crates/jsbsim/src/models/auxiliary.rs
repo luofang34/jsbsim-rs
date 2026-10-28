@@ -308,6 +308,7 @@ impl Auxiliary {
     fn update_reference_points(&mut self) {
         let i = &self.input;
         self.location_vrp = i.location.local_to_location(i.tb2l * i.vrp_body);
+        self.location_vrp.cache_derived();
         let span = i.constants.wingspan;
         self.hoverbcg = i.distance_agl / span;
         let mac = i.tb2l * i.rp_body;
