@@ -10,7 +10,7 @@ use super::Surface;
 use crate::Error;
 use crate::fdm::LoadContext;
 use crate::functions::{FnId, TableId};
-use crate::math::{ColumnVector3, Matrix33, Quaternion};
+use crate::math::{ColumnVector3, E_X, E_Y, Matrix33, Quaternion};
 use crate::units::{DEGTORAD, RADTODEG};
 use crate::xml::Element;
 
@@ -422,7 +422,7 @@ impl Contact {
     #[must_use]
     pub fn wheel_roll_vel(&self) -> f64 {
         let (v, a) = (&self.state.wheel_vel, self.steering.angle);
-        v[1] * libm::cos(a) + v[2] * libm::sin(a)
+        v[E_X] * libm::cos(a) + v[E_Y] * libm::sin(a)
     }
 }
 

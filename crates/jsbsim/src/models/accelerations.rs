@@ -10,7 +10,7 @@ use super::base::ModelBase;
 use crate::Error;
 use crate::fdm::{Binder, Kind};
 use crate::math::{
-    ColumnVector3, E_L, E_M, E_N, E_P, E_Q, E_R, E_U, E_V, E_W, E_X, E_Y, E_Z, Matrix33,
+    Axis, ColumnVector3, E_L, E_M, E_N, E_P, E_Q, E_R, E_U, E_V, E_W, E_X, E_Y, E_Z, Matrix33,
     dot_product,
 };
 use crate::units::constrain;
@@ -194,20 +194,8 @@ impl Accelerations {
             return;
         }
         let i = &mut self.input;
-        let mut a = vec![0.0; n * n];
+        let mut a = friction_matrix(i, n);
         let mut rhs = vec![0.0; n];
-        for r in 0..n {
-            let (u, arm) = (i.multipliers[r].force_jacobian, i.multipliers[r].lever_arm);
-            let v1 = u / i.mass;
-            let v2 = i.jinv * arm.cross(u);
-            for c in 0..r {
-                a[r * n + c] = a[c * n + r];
-            }
-            for c in r..n {
-                let (u, arm) = (i.multipliers[c].force_jacobian, i.multipliers[c].lever_arm);
-                a[r * n + c] = dot_product(u, v1 + v2.cross(arm));
-            }
-        }
         let mut vdot = self.uvwdot;
         if dt > 0. {
             vdot += (i.uvw - i.tec2b * i.terrain_velocity) / dt;
@@ -216,23 +204,28 @@ impl Accelerations {
         if dt > 0. {
             wdot += (i.pqr - i.tec2b * i.terrain_angular_vel) / dt;
         }
-        for r in 0..n {
-            let d = a[r * n + r];
-            let (u, arm) = (i.multipliers[r].force_jacobian, i.multipliers[r].lever_arm);
-            rhs[r] = -dot_product(u, vdot + wdot.cross(arm)) / d;
-            for c in 0..n {
-                a[r * n + c] /= d;
+        let rows = a.chunks_exact_mut(n).zip(&mut rhs).zip(&i.multipliers);
+        for (r, ((row, rhs_r), m)) in rows.enumerate() {
+            let Some(&d) = row.get(r) else {
+                continue;
+            };
+            let (u, arm) = (m.force_jacobian, m.lever_arm);
+            *rhs_r = -dot_product(u, vdot + wdot.cross(arm)) / d;
+            for x in row.iter_mut() {
+                *x /= d;
             }
         }
         for _ in 0..50 {
             let mut norm = 0.;
-            for r in 0..n {
-                let lambda0 = i.multipliers[r].value;
-                let mut dlambda = rhs[r];
-                for c in 0..n {
-                    dlambda -= a[r * n + c] * i.multipliers[c].value;
+            for (r, (row, &rhs_r)) in a.chunks_exact(n).zip(&rhs).enumerate() {
+                let mut dlambda = rhs_r;
+                for (&arc, mc) in row.iter().zip(&i.multipliers) {
+                    dlambda -= arc * mc.value;
                 }
-                let m = &mut i.multipliers[r];
+                let Some(m) = i.multipliers.get_mut(r) else {
+                    break;
+                };
+                let lambda0 = m.value;
                 m.value = constrain(m.min, lambda0 + dlambda, m.max);
                 norm += (m.value - lambda0).abs();
             }
@@ -256,9 +249,34 @@ impl Accelerations {
 
     /// `GetWeight(idx)`.
     #[must_use]
-    pub fn weight(&self, idx: usize) -> f64 {
+    pub fn weight(&self, idx: Axis) -> f64 {
         self.input.mass * (self.input.tec2b * self.input.grav_accel)[idx]
     }
+}
+
+/// The symmetric `n` x `n` (row-major) matrix of the friction
+/// multipliers' couplings: the upper triangle computed row by row as
+/// JSBSim does, the lower one copied from it.
+fn friction_matrix(i: &Inputs, n: usize) -> Vec<f64> {
+    let mut a = vec![0.0; n * n];
+    for (r, (row, mr)) in a.chunks_exact_mut(n).zip(&i.multipliers).enumerate() {
+        let (u, arm) = (mr.force_jacobian, mr.lever_arm);
+        let v1 = u / i.mass;
+        let v2 = i.jinv * arm.cross(u);
+        for (x, mc) in row.iter_mut().zip(&i.multipliers).skip(r) {
+            *x = dot_product(mc.force_jacobian, v1 + v2.cross(mc.lever_arm));
+        }
+    }
+    for r in 1..n {
+        for c in 0..r {
+            if let Some(upper) = a.get(c * n + r).copied()
+                && let Some(lower) = a.get_mut(r * n + c)
+            {
+                *lower = upper;
+            }
+        }
+    }
+    a
 }
 
 /// `FGAccelerations::bind`.

@@ -9,7 +9,7 @@
 
 use std::cell::OnceCell;
 
-use super::{ColumnVector3, E_X, E_Y, E_Z, Matrix33};
+use super::{Axis, ColumnVector3, E_X, E_Y, E_Z, Matrix33};
 use crate::units::{DEGTORAD, RADTODEG, sign};
 use geographiclib_rs::{Geodesic, InverseGeodesic};
 
@@ -100,14 +100,14 @@ impl Location {
         self.ec_loc
     }
 
-    /// Component `idx` (1-based) of the ECEF coordinates.
+    /// Component `idx` of the ECEF coordinates.
     #[must_use]
-    pub fn entry(&self, idx: usize) -> f64 {
+    pub fn entry(&self, idx: Axis) -> f64 {
         self.ec_loc[idx]
     }
 
-    /// Sets component `idx` (1-based) of the ECEF coordinates.
-    pub fn set_entry(&mut self, idx: usize, value: f64) {
+    /// Sets component `idx` of the ECEF coordinates.
+    pub fn set_entry(&mut self, idx: Axis, value: f64) {
         self.invalidate();
         self.ec_loc[idx] = value;
     }
@@ -216,13 +216,13 @@ impl Location {
     /// `GetSinLongitude()`.
     #[must_use]
     pub fn sin_longitude(&self) -> f64 {
-        -self.derived().tec2l[(2, 1)]
+        -self.derived().tec2l[(Axis::Y, Axis::X)]
     }
 
     /// `GetCosLongitude()`.
     #[must_use]
     pub fn cos_longitude(&self) -> f64 {
-        self.derived().tec2l[(2, 2)]
+        self.derived().tec2l[(Axis::Y, Axis::Y)]
     }
 
     /// `GetLatitude()`: geocentric latitude.

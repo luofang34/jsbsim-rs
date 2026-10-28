@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 use super::*;
 use crate::fdm::Fdm;
+use crate::math::Axis;
 use crate::xml::parse_document;
 
 fn loaded(xml: &str) -> Fdm {
@@ -51,14 +52,14 @@ fn jinv_inverts_j() {
     run_mass_balance(&mut fdm);
     let mb = &fdm.models.mass_balance;
     let product = mb.j() * mb.jinv();
-    for r in 1..=3 {
-        for c in 1..=3 {
+    for r in Axis::ALL {
+        for c in Axis::ALL {
             let expected = if r == c { 1.0 } else { 0.0 };
             assert!((product[(r, c)] - expected).abs() < 1e-12);
         }
     }
     // The cross product property keeps the tensor's sign, unlike ixy/iyz.
-    let j13 = mb.j[(1, 3)];
+    let j13 = mb.j[(E_X, E_Z)];
     assert_eq!(fdm.get_property("inertia/ixz-slugs_ft2").unwrap(), j13);
 }
 
@@ -70,12 +71,15 @@ fn point_mass_properties_are_writable_and_weight_updates_shape_inertia() {
             .unwrap()
     );
     let tube = &fdm.models.mass_balance.point_masses()[1];
-    assert_eq!(tube.inertia[(1, 1)], (200.0 / SLUGTOLB) * 1.0 * 1.0);
+    assert_eq!(tube.inertia[(E_X, E_X)], (200.0 / SLUGTOLB) * 1.0 * 1.0);
     assert!(
         fdm.set_property("inertia/pointmass-location-X-inches[0]", 50.0)
             .unwrap()
     );
-    assert_eq!(fdm.models.mass_balance.point_masses()[0].location[1], 50.0);
+    assert_eq!(
+        fdm.models.mass_balance.point_masses()[0].location[E_X],
+        50.0
+    );
     assert_eq!(
         fdm.get_property("inertia/pointmass-weight-lbs").unwrap(),
         200.0
@@ -94,7 +98,7 @@ fn delta_cg_tracks_moves_after_the_first_run() {
     fdm.set_property("inertia/pointmass-location-X-inches[0]", 53.0)
         .unwrap();
     run_mass_balance(&mut fdm);
-    let dx = fdm.models.mass_balance.delta_xyz_cg()[1];
+    let dx = fdm.models.mass_balance.delta_xyz_cg()[E_X];
     assert!((dx - 200.0 * 13.0 / 1300.0).abs() < 1e-12, "{dx}");
 }
 
@@ -112,8 +116,8 @@ fn hold_down_nudges_the_vehicle_by_the_cg_shift() {
     run_mass_balance(&mut fdm);
     // The tracked location is the CG: it moves aft (body -x) with the
     // point mass while the structure stays where it is.
-    let shift = fdm.models.mass_balance.delta_xyz_cg()[1] * INCHTOFT;
-    let moved = fdm.models.propagate.state.inertial_position[1] - before[1];
+    let shift = fdm.models.mass_balance.delta_xyz_cg()[E_X] * INCHTOFT;
+    let moved = fdm.models.propagate.state.inertial_position[E_X] - before[E_X];
     assert!((moved + shift).abs() < 1e-12, "{moved} vs {shift}");
 }
 
@@ -142,8 +146,8 @@ fn inertia_sign_convention_follows_the_attribute() {
     };
     let negated = loaded(&xml(""));
     let plain = loaded(&xml("negated_crossproduct_inertia=\"false\""));
-    assert_eq!(negated.models.mass_balance.base_j[(1, 2)], -2.0);
-    assert_eq!(negated.models.mass_balance.base_j[(1, 3)], 3.0);
-    assert_eq!(plain.models.mass_balance.base_j[(1, 2)], 2.0);
-    assert_eq!(plain.models.mass_balance.base_j[(1, 3)], -3.0);
+    assert_eq!(negated.models.mass_balance.base_j[(E_X, E_Y)], -2.0);
+    assert_eq!(negated.models.mass_balance.base_j[(E_X, E_Z)], 3.0);
+    assert_eq!(plain.models.mass_balance.base_j[(E_X, E_Y)], 2.0);
+    assert_eq!(plain.models.mass_balance.base_j[(E_X, E_Z)], -3.0);
 }

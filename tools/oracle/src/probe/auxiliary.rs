@@ -3,7 +3,7 @@
 
 use jsbsim::c_numeric::format_g;
 use jsbsim::fdm::Fdm;
-use jsbsim::math::{ColumnVector3, Location, Matrix33};
+use jsbsim::math::{Axis, ColumnVector3, Location, Matrix33};
 use jsbsim::models::auxiliary::{Inputs, mach_from_impact_pressure, pitot_total_pressure};
 
 const PROPERTIES: [&str; 60] = [
@@ -81,15 +81,16 @@ impl Out {
     }
 
     fn vec(&mut self, tag: &str, v: ColumnVector3) {
-        for i in 1..=3 {
-            self.num(&format!("{tag}{i}"), v[i]);
+        for i in Axis::ALL {
+            self.num(&format!("{tag}{}", i.index1()), v[i]);
         }
     }
 
     fn mat(&mut self, tag: &str, m: &Matrix33) {
-        for r in 1..=3 {
-            for c in 1..=3 {
-                self.num(&format!("{tag}{r}{c}"), m[(r, c)]);
+        for r in Axis::ALL {
+            for c in Axis::ALL {
+                let (i, j) = (r.index1(), c.index1());
+                self.num(&format!("{tag}{i}{j}"), m[(r, c)]);
             }
         }
     }
@@ -190,9 +191,9 @@ fn set_input(fdm: &mut Fdm, op: &str, args: &[&str]) -> Option<&'static str> {
             .is_some(),
         "m" => matrix(input, name)
             .map(|m| {
-                for r in 1..=3 {
-                    for c in 1..=3 {
-                        m[(r, c)] = num(args, 3 * (r - 1) + c);
+                for r in Axis::ALL {
+                    for c in Axis::ALL {
+                        m[(r, c)] = num(args, 3 * (r.index1() - 1) + c.index1());
                     }
                 }
             })

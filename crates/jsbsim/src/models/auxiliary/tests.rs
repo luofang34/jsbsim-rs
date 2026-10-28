@@ -185,8 +185,8 @@ fn distances_from_start_vanish_at_the_start_and_grow_with_offset() {
     let (lon, lat) = (here.longitude(), here.geod_latitude_rad());
     assert_eq!(x.distance_relative_position(lon, lat), 0.0);
     let neu = x.neu_position_from_start();
-    assert!(neu[1].abs() < 1e-6 && neu[2].abs() < 1e-6);
-    assert!((neu[3] - 1000.0).abs() < 1e-6);
+    assert!(neu[E_X].abs() < 1e-6 && neu[E_Y].abs() < 1e-6);
+    assert!((neu[E_Z] - 1000.0).abs() < 1e-6);
 
     let north = x.latitude_relative_position(lat + 1e-4);
     assert!((north - 1e-4 * 6.36e6).abs() < 0.01 * 6.36e2, "{north}");

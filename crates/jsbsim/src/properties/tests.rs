@@ -222,3 +222,25 @@ fn node_maps_index_by_node_and_iterate_in_node_order() {
     assert_eq!(map.remove(ids[1]), None);
     assert_eq!(map.iter().count(), 1);
 }
+
+#[test]
+fn ids_from_another_tree_read_as_an_unreadable_detached_node() {
+    let (big, id) = tree_with("a/b/c");
+    let mut small = PropertyTree::new();
+    assert!(big.nodes.len() > small.nodes.len());
+    assert_eq!(small.get_double(id), 0.0);
+    assert!(!small.get_bool(id));
+    assert!(!small.set_double(id, 1.0));
+    assert!(!small.tie(id, Value::Double(1.0), true));
+    let root = small.root();
+    assert!(!small.alias(id, root));
+    assert!(small.children(id).is_empty());
+    assert_eq!(small.parent(id), None);
+    assert!(small.find(id, "x").unwrap().is_none());
+    assert!(!small.attribute(id, Attribute::READ));
+    assert!(small.get_or_create(id, "x").is_err());
+    let before = small.nodes.len();
+    let child = small.get_or_create(root, "x").unwrap();
+    assert_eq!(small.nodes.len(), before + 1);
+    assert_eq!(small.parent(child), Some(root));
+}

@@ -3,6 +3,7 @@
 
 use jsbsim::c_numeric::format_g;
 use jsbsim::fdm::Fdm;
+use jsbsim::math::Axis;
 use jsbsim::xml::parse_document;
 
 use super::ProbeContext;
@@ -55,13 +56,13 @@ fn print(fdm: &mut Fdm) -> Result<String, jsbsim::Error> {
     let mb = &fdm.models.mass_balance;
     out.push_str(" dcg");
     let dcg = mb.delta_xyz_cg();
-    for i in 1..=3 {
+    for i in Axis::ALL {
         out.push_str(&format!(" {}", number(dcg[i])));
     }
     for (label, m) in [(" J", mb.j()), (" Jinv", mb.jinv())] {
         out.push_str(label);
-        for r in 1..=3 {
-            for c in 1..=3 {
+        for r in Axis::ALL {
+            for c in Axis::ALL {
                 out.push_str(&format!(" {}", number(m[(r, c)])));
             }
         }

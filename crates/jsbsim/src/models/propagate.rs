@@ -14,7 +14,7 @@ pub use integrate::Integrator;
 
 use super::base::ModelBase;
 use super::inertial::Inertial;
-use crate::math::{ColumnVector3, E_DOWN, Location, Matrix33, Quaternion};
+use crate::math::{Axis, ColumnVector3, E_DOWN, E_Z, Location, Matrix33, Quaternion};
 use crate::units::RADTODEG;
 
 /// The integrated state (`VehicleState`).
@@ -258,7 +258,7 @@ impl Propagate {
         if !integration_suspended {
             self.integrate_all(dt);
         }
-        self.epa += self.input.omega_planet[3] * dt;
+        self.epa += self.input.omega_planet[E_Z] * dt;
         self.frames.ti2ec = rotation_z(self.epa);
         self.frames.tec2i = self.frames.ti2ec.transposed();
         self.state
@@ -405,7 +405,7 @@ impl Propagate {
 
     /// `GetEulerDeg(axis)`.
     #[must_use]
-    pub fn euler_deg(&self, axis: usize) -> f64 {
+    pub fn euler_deg(&self, axis: Axis) -> f64 {
         self.state.q_attitude_local.euler()[axis] * RADTODEG
     }
 
@@ -451,13 +451,13 @@ impl Propagate {
     }
 
     /// `SetPQR(i, v)`.
-    pub fn set_pqr(&mut self, i: usize, v: f64) {
+    pub fn set_pqr(&mut self, i: Axis, v: f64) {
         self.state.pqr[i] = v;
         self.state.pqri = self.state.pqr + self.frames.ti2b * self.input.omega_planet;
     }
 
     /// `SetUVW(i, v)`.
-    pub fn set_uvw(&mut self, i: usize, v: f64) {
+    pub fn set_uvw(&mut self, i: Axis, v: f64) {
         self.state.uvw[i] = v;
         self.calculate_inertial_velocity();
     }

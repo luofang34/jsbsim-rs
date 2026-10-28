@@ -80,7 +80,7 @@ impl Fdm {
                     node
                 }
             };
-            self.model_functions[slot as usize]
+            self.model_functions[slot]
                 .local_properties
                 .insert(node, value);
             if p.attribute("persistent") == "true" {
@@ -106,7 +106,7 @@ impl Fdm {
                         .env
                         .functions
                         .load_function(&mut self.env.tree, f, prefix)?;
-                    self.model_functions[slot as usize].pre.push(id);
+                    self.model_functions[slot].pre.push(id);
                 }
                 "template" => {
                     let name = f.attribute("name").to_owned();
@@ -135,7 +135,7 @@ impl Fdm {
                 .env
                 .functions
                 .load_function(&mut self.env.tree, f, prefix)?;
-            self.model_functions[slot as usize].post.push(id);
+            self.model_functions[slot].post.push(id);
         }
         Ok(())
     }

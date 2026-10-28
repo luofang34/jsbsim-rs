@@ -6,9 +6,9 @@
 //! matrices and Euler angles.
 
 use std::cell::OnceCell;
-use std::ops::{Add, AddAssign, Index, Mul, MulAssign, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Mul, MulAssign, Sub, SubAssign};
 
-use super::{ColumnVector3, E_P, E_PHI, E_PSI, E_Q, E_R, E_THT, Matrix33};
+use super::{Axis, ColumnVector3, E_P, E_PHI, E_PSI, E_Q, E_R, E_THT, Matrix33};
 use crate::units::RADTODEG;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -20,7 +20,8 @@ struct Derived {
     cosines: ColumnVector3,
 }
 
-/// `FGQuaternion`; components are indexed 1 to 4.
+/// `FGQuaternion`; components are read as an array with
+/// [`to_array`](Self::to_array).
 #[derive(Debug, Clone)]
 pub struct Quaternion {
     data: [f64; 4],
@@ -84,13 +85,13 @@ impl Quaternion {
 
     /// A rotation of `angle` about axis `idx` (`ePhi`, `eTht` or `ePsi`).
     #[must_use]
-    pub fn from_axis_index(idx: usize, angle: f64) -> Self {
+    pub fn from_axis_index(idx: Axis, angle: f64) -> Self {
         let angle2 = 0.5 * angle;
         let (s, c) = (libm::sin(angle2), libm::cos(angle2));
         match idx {
-            E_PHI => Self::from_components(c, s, 0.0, 0.0),
-            E_THT => Self::from_components(c, 0.0, s, 0.0),
-            _ => Self::from_components(c, 0.0, 0.0, s),
+            Axis::X => Self::from_components(c, s, 0.0, 0.0),
+            Axis::Y => Self::from_components(c, 0.0, s, 0.0),
+            Axis::Z => Self::from_components(c, 0.0, 0.0, s),
         }
     }
 
@@ -101,19 +102,21 @@ impl Quaternion {
         let length = axis.magnitude();
         let s = libm::sin(angle2) / length;
         let c = libm::cos(angle2);
-        Self::from_components(c, s * axis[1], s * axis[2], s * axis[3])
+        let [x, y, z] = axis.to_array();
+        Self::from_components(c, s * x, s * y, s * z)
     }
 
     /// From a transformation matrix, normalized (`FGQuaternion(m)`).
     #[must_use]
     pub fn from_matrix(m: &Matrix33) -> Self {
-        let q0 = 0.50 * (1.0 + m[(1, 1)] + m[(2, 2)] + m[(3, 3)]).sqrt();
+        use Axis::{X, Y, Z};
+        let q0 = 0.50 * (1.0 + m[(X, X)] + m[(Y, Y)] + m[(Z, Z)]).sqrt();
         let t = 0.25 / q0;
         let mut q = Self::from_components(
             q0,
-            t * (m[(2, 3)] - m[(3, 2)]),
-            t * (m[(3, 1)] - m[(1, 3)]),
-            t * (m[(1, 2)] - m[(2, 1)]),
+            t * (m[(Y, Z)] - m[(Z, Y)]),
+            t * (m[(Z, X)] - m[(X, Z)]),
+            t * (m[(X, Y)] - m[(Y, X)]),
         );
         q.normalize();
         q
@@ -123,12 +126,6 @@ impl Quaternion {
     #[must_use]
     pub fn to_array(&self) -> [f64; 4] {
         self.data
-    }
-
-    /// Sets component `idx` (1-based), invalidating derived values.
-    pub fn set(&mut self, idx: usize, value: f64) {
-        self.data[idx - 1] = value;
-        self.derived = OnceCell::new();
     }
 
     /// `GetQDot(PQR)`: the time derivative for body rates `pqr`.
@@ -196,12 +193,8 @@ impl Quaternion {
         } else {
             1.0
         };
-        Self::from_components(
-            libm::cos(angle),
-            omega[1] * sina_a,
-            omega[2] * sina_a,
-            omega[3] * sina_a,
-        )
+        let [x, y, z] = omega.to_array();
+        Self::from_components(libm::cos(angle), x * sina_a, y * sina_a, z * sina_a)
     }
 
     fn derived(&self) -> &Derived {
@@ -234,13 +227,13 @@ impl Quaternion {
 
     /// `GetSinEuler(i)`.
     #[must_use]
-    pub fn sin_euler(&self, i: usize) -> f64 {
+    pub fn sin_euler(&self, i: Axis) -> f64 {
         self.derived().sines[i]
     }
 
     /// `GetCosEuler(i)`.
     #[must_use]
-    pub fn cos_euler(&self, i: usize) -> f64 {
+    pub fn cos_euler(&self, i: Axis) -> f64 {
         self.derived().cosines[i]
     }
 }
@@ -265,20 +258,17 @@ fn compute_derived(d: &[f64; 4]) -> Derived {
     Derived {
         t,
         t_inv: t.transposed(),
-        sines: ColumnVector3::new(libm::sin(euler[E_PHI]), -t[(1, 3)], libm::sin(euler[E_PSI])),
+        sines: ColumnVector3::new(
+            libm::sin(euler[E_PHI]),
+            -t[(Axis::X, Axis::Z)],
+            libm::sin(euler[E_PSI]),
+        ),
         cosines: ColumnVector3::new(
             libm::cos(euler[E_PHI]),
             libm::cos(euler[E_THT]),
             libm::cos(euler[E_PSI]),
         ),
         euler,
-    }
-}
-
-impl Index<usize> for Quaternion {
-    type Output = f64;
-    fn index(&self, idx: usize) -> &f64 {
-        &self.data[idx - 1]
     }
 }
 

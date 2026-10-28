@@ -7,7 +7,7 @@
 //! airspeed, alpha and beta.
 
 use super::InitialCondition;
-use crate::math::{ColumnVector3, E_PSI, E_U, E_V, E_W, dot_product};
+use crate::math::{Axis, ColumnVector3, E_PSI, E_U, E_V, E_W, dot_product};
 use crate::units::{DEGTORAD, KTSTOFPS, RADTODEG};
 
 impl InitialCondition {
@@ -116,9 +116,9 @@ impl InitialCondition {
         }
     }
 
-    /// `GetWindUFpsIC`, `GetWindVFpsIC`, `GetWindWFpsIC` by axis (1-3).
+    /// `GetWindUFpsIC`, `GetWindVFpsIC`, `GetWindWFpsIC` by axis.
     #[must_use]
-    pub fn body_wind_fps(&self, idx: usize) -> f64 {
+    pub fn body_wind_fps(&self, idx: Axis) -> f64 {
         let vt_body = self.tw2b * ColumnVector3::new(self.vt, 0., 0.);
         let uvw_body = self.orientation.t() * self.uvw_ned;
         (vt_body - uvw_body)[idx]

@@ -25,15 +25,15 @@ fn vector_basics() {
 }
 
 #[test]
-fn matrix_indexing_is_row_column_from_one() {
+fn matrix_indexing_is_row_column() {
     let m = Matrix33::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 10.0);
-    assert_eq!(m[(1, 2)], 2.0);
-    assert_eq!(m[(3, 1)], 7.0);
-    assert_eq!(m.transposed()[(1, 2)], 4.0);
+    assert_eq!(m[(E_X, E_Y)], 2.0);
+    assert_eq!(m[(E_Z, E_X)], 7.0);
+    assert_eq!(m.transposed()[(E_X, E_Y)], 4.0);
     assert_eq!(m.determinant(), -3.0);
     let id = m * m.inverse();
-    for r in 1..=3 {
-        for c in 1..=3 {
+    for r in Axis::ALL {
+        for c in Axis::ALL {
             assert!(close(id[(r, c)], f64::from(u8::from(r == c)), 1e-12));
         }
     }
@@ -48,12 +48,12 @@ fn euler_round_trip_and_orthonormal_transform() {
     assert!(close(e[E_THT], -0.4, 1e-14));
     assert!(close(e[E_PSI], 2.5, 1e-14));
     let should_be_identity = q.t() * q.t_inv();
-    assert!(close(should_be_identity[(2, 2)], 1.0, 1e-15));
+    assert!(close(should_be_identity[(E_Y, E_Y)], 1.0, 1e-15));
     assert!(close(q.sin_euler(E_THT), libm::sin(-0.4), 1e-15));
     // Different pivots and normalisation: equal only to rounding.
     let (a, b) = (Quaternion::from_matrix(&q.t()), q.t().quaternion());
-    for i in 1..=4 {
-        assert!(close(a[i], b[i], 1e-15));
+    for (a, b) in a.to_array().into_iter().zip(b.to_array()) {
+        assert!(close(a, b, 1e-15));
     }
 }
 
@@ -72,7 +72,7 @@ fn gimbal_lock_sets_heading_to_zero() {
     let q = Quaternion::from_euler(0.2, std::f64::consts::FRAC_PI_2, 0.7);
     let m = q.t();
     let mut locked = m;
-    locked[(1, 3)] = -1.0;
+    locked[(E_X, E_Z)] = -1.0;
     let e = locked.euler();
     assert_eq!(e[E_THT], std::f64::consts::FRAC_PI_2);
     assert_eq!(e[E_PSI], 0.0);
@@ -82,7 +82,7 @@ fn gimbal_lock_sets_heading_to_zero() {
 fn mutation_invalidates_cached_derivatives() {
     let mut q = Quaternion::from_euler(0.1, 0.2, 0.3);
     let before = q.euler();
-    q.set(1, -q[1]);
+    q *= 2.0;
     assert_ne!(q.euler(), before);
 }
 
@@ -102,7 +102,7 @@ fn local_frame_round_trip() {
     let v = ColumnVector3::new(10.0, -20.0, 30.0);
     let moved = l.local_to_location(v);
     let back = l.location_to_local(moved.ecef());
-    for i in 1..=3 {
+    for i in Axis::ALL {
         assert!(close(back[i], v[i], 1e-7));
     }
 }
@@ -115,4 +115,24 @@ fn degenerate_locations() {
     origin.set_ellipse(WGS84_A, WGS84_B);
     assert_eq!(origin.geod_altitude(), -WGS84_A);
     assert_eq!(Location::default().sea_level_radius(), 1.0);
+}
+
+#[test]
+fn axes_outside_one_to_three_are_unrepresentable() {
+    for i in [0, 4, usize::MAX] {
+        assert_eq!(Axis::from_index1(i), None);
+    }
+    for (i, axis) in Axis::ALL.into_iter().enumerate() {
+        assert_eq!(axis.index1(), i + 1);
+        assert_eq!(Axis::from_index1(i + 1), Some(axis));
+    }
+    let v = ColumnVector3::new(1.0, 2.0, 3.0);
+    assert_eq!(Axis::ALL.map(|a| v[a]), v.to_array());
+    let m = Matrix33::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
+    for r in Axis::ALL {
+        for c in Axis::ALL {
+            let entry = 3 * (r.index1() - 1) + c.index1();
+            assert_eq!(m[(r, c)], entry as f64);
+        }
+    }
 }

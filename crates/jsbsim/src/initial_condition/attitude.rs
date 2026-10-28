@@ -12,7 +12,7 @@
 
 use super::{InitialCondition, SpeedSet, wind_to_body};
 use crate::math::{
-    ColumnVector3, E_PHI, E_PSI, E_THT, E_U, E_V, E_W, E_X, E_Y, E_Z, Matrix33, Quaternion,
+    Axis, ColumnVector3, E_PHI, E_PSI, E_THT, E_U, E_V, E_W, E_X, E_Y, E_Z, Matrix33, Quaternion,
     dot_product,
 };
 use crate::units::DEGTORAD;
@@ -166,7 +166,7 @@ impl InitialCondition {
     /// `SetEulerAngleRadIC(idx, angle)` (`E_PHI`, `E_THT` or `E_PSI`). The
     /// body velocity is kept unless the local or ground velocity was set
     /// last, in which case those are kept.
-    pub fn set_euler_angle_rad(&mut self, idx: usize, angle: f64) {
+    pub fn set_euler_angle_rad(&mut self, idx: Axis, angle: f64) {
         let mut vt_ned = self.vt_ned();
         let wind_ned = vt_ned - self.uvw_ned;
         let uvw_body = self.orientation.t() * self.uvw_ned;
@@ -182,7 +182,7 @@ impl InitialCondition {
     }
 
     /// `SetPhiRadIC`, `SetThetaRadIC`, `SetPsiRadIC` in degrees.
-    pub fn set_euler_angle_deg(&mut self, idx: usize, angle: f64) {
+    pub fn set_euler_angle_deg(&mut self, idx: Axis, angle: f64) {
         self.set_euler_angle_rad(idx, angle * DEGTORAD);
     }
 }

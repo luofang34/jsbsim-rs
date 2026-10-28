@@ -13,7 +13,7 @@ use super::Fdm;
 use super::order::Model;
 use crate::Error;
 use crate::functions::Evaluator;
-use crate::math::ColumnVector3;
+use crate::math::{Axis, ColumnVector3};
 use crate::models::aerodynamics::Values;
 use crate::models::external_reactions::{Magnitude, Transforms};
 use crate::models::fcs::{Fcs, FcsFunction};
@@ -25,7 +25,7 @@ impl Fdm {
     /// `RunPreFunctions` / `RunPostFunctions` of `model`: caches each
     /// function's value for the frame.
     pub(super) fn run_model_functions(&mut self, model: Model, pre: bool) -> Result<(), Error> {
-        let mf = &self.model_functions[model as usize];
+        let mf = &self.model_functions[model];
         let ids = if pre { &mf.pre } else { &mf.post };
         for &id in ids {
             self.env.cache_value(&self.models, id)?;
@@ -38,11 +38,9 @@ impl Fdm {
     pub(super) fn reset_local_properties(&mut self, model: Model) -> Result<(), Error> {
         // A write may reach a setter, so each entry is copied out by slot
         // rather than borrowed across it.
-        let slots = self.model_functions[model as usize]
-            .local_properties
-            .slot_count();
+        let slots = self.model_functions[model].local_properties.slot_count();
         for slot in 0..slots {
-            let props = &self.model_functions[model as usize].local_properties;
+            let props = &self.model_functions[model].local_properties;
             let Some((node, &value)) = props.entry(slot) else {
                 continue;
             };
@@ -111,7 +109,9 @@ impl Fdm {
     }
 
     fn run_channel(&mut self, c: usize) -> Result<(), Error> {
-        let channel = &self.models.fcs.channels[c];
+        let Some(channel) = self.models.fcs.channels.get(c) else {
+            return Ok(());
+        };
         self.models.fcs.channel_rate = channel.exec_rate;
         if let Some(node) = channel.on_off {
             let on = self.env.eval(&self.models, |ev| ev.read_node(node))? != 0.0;
@@ -121,15 +121,24 @@ impl Fdm {
         }
         let m = &self.models;
         let (dt, trim) = (m.fcs.dt(m.exec.dt), m.exec.trim_status);
-        if !self.models.fcs.channels[c].due(dt, trim) {
+        if !self
+            .models
+            .fcs
+            .channels
+            .get_mut(c)
+            .is_some_and(|ch| ch.due(dt, trim))
+        {
             return Ok(());
         }
-        for i in 0..self.models.fcs.channels[c].components.len() {
-            let component = &self.models.fcs.channels[c].components[i];
+        // Looked up by position each time: the writes below need `&mut self`.
+        let mut i = 0;
+        while let Some(component) = fcs_component(&self.models.fcs, c, i) {
             let output = self
                 .env
                 .eval(&self.models, |ev| evaluate_fcs_function(ev, component))?;
-            self.models.fcs.channels[c].components[i].output = output;
+            if let Some(component) = fcs_component_mut(&mut self.models.fcs, c, i) {
+                component.output = output;
+            }
             // A setter may reach any model, and its request may reset the
             // executive, so each output node is looked up afresh instead of
             // being borrowed across the write.
@@ -138,6 +147,7 @@ impl Fdm {
                 self.write_node(node, output)?;
                 k += 1;
             }
+            i += 1;
         }
         Ok(())
     }
@@ -153,20 +163,22 @@ impl Fdm {
         let (env, models) = (&mut self.env, &self.models);
         let aero = &models.aerodynamics;
         let mut values = Values::default();
-        for axis in 0..3 {
-            for &id in &aero.functions[axis] {
-                values.native[axis + 1] += env.cached_value(models, id)?;
+        let [fx, fy, fz, mx, my, mz] = &aero.functions;
+        let (forces, moments) = ([fx, fy, fz], [mx, my, mz]);
+        for ((ids, at_cg), axis) in forces.into_iter().zip(&aero.functions_at_cg).zip(Axis::ALL) {
+            for &id in ids {
+                values.native[axis] += env.cached_value(models, id)?;
             }
-            for &id in &aero.functions_at_cg[axis] {
-                values.native_at_cg[axis + 1] += env.cached_value(models, id)?;
+            for &id in at_cg {
+                values.native_at_cg[axis] += env.cached_value(models, id)?;
             }
         }
         if let Some(id) = aero.rp_shift {
             values.rp_shift = Some(env.eval(models, |ev| ev.function(id))?);
         }
-        for axis in 0..3 {
-            for &id in &aero.functions[axis + 3] {
-                values.moments_mrc[axis + 1] += env.cached_value(models, id)?;
+        for (ids, axis) in moments.into_iter().zip(Axis::ALL) {
+            for &id in ids {
+                values.moments_mrc[axis] += env.cached_value(models, id)?;
             }
         }
         self.models.aerodynamics.finish(&values)?;
@@ -194,27 +206,30 @@ impl Fdm {
         er.total_moments = ColumnVector3::zero();
         // Each force reads its inputs and is summed before the next one
         // reads, as `GetBodyForces` does inside JSBSim's loop.
-        for i in 0..self.models.external_reactions.forces.len() {
-            let f = &self.models.external_reactions.forces[i];
+        let mut i = 0;
+        while let Some(f) = self.models.external_reactions.forces.get(i) {
             let (magnitude, direction) = self.env.eval(&self.models, |ev| {
                 let magnitude = match f.magnitude {
                     Magnitude::Function(id) => ev.function(id)?,
                     Magnitude::Property(node) => ev.read_node(node)?,
                 };
                 let mut direction = ColumnVector3::zero();
-                for (axis, node) in f.direction.iter().enumerate() {
-                    direction[axis + 1] = ev.read_node(*node)?;
+                for (&node, axis) in f.direction.iter().zip(Axis::ALL) {
+                    direction[axis] = ev.read_node(node)?;
                 }
                 Ok((magnitude, direction))
             })?;
             let m = &mut self.models;
             let er = &mut m.external_reactions;
-            let f = &mut er.forces[i];
+            let Some(f) = er.forces.get_mut(i) else {
+                break;
+            };
             f.update(magnitude, direction, &t, |r| {
                 m.mass_balance.structural_to_body(r)
             });
             er.total_forces += f.body_force;
             er.total_moments += f.moment;
+            i += 1;
         }
         self.run_model_functions(Model::ExternalReactions, false)
     }
@@ -240,6 +255,15 @@ impl Fdm {
         m.ground_reactions.check_contacts(&m.inertial, trim, time)?;
         self.run_model_functions(Model::GroundReactions, false)
     }
+}
+
+/// Component `i` of channel `c`.
+fn fcs_component(fcs: &Fcs, c: usize, i: usize) -> Option<&FcsFunction> {
+    fcs.channels.get(c)?.components.get(i)
+}
+
+fn fcs_component_mut(fcs: &mut Fcs, c: usize, i: usize) -> Option<&mut FcsFunction> {
+    fcs.channels.get_mut(c)?.components.get_mut(i)
 }
 
 /// Output node `k` of component `i` of channel `c`.

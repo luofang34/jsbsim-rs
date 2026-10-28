@@ -32,7 +32,7 @@ pub use bind::bind;
 pub use load::LoadOutcome;
 
 use crate::fdm::InitialState;
-use crate::math::{ColumnVector3, E_P, E_Q, E_R, E_U, E_V, E_W, Location, Matrix33, Quaternion};
+use crate::math::{Axis, ColumnVector3, E_U, E_V, E_W, Location, Matrix33, Quaternion};
 use crate::models::atmosphere::Atmosphere;
 use crate::models::inertial::Inertial;
 use crate::units::{FPSTOKTS, RADTODEG};
@@ -331,15 +331,15 @@ impl InitialCondition {
         self.orientation.t() * self.uvw_ned
     }
 
-    /// `GetUBodyFpsIC`, `GetVBodyFpsIC`, `GetWBodyFpsIC` by axis (1-3).
+    /// `GetUBodyFpsIC`, `GetVBodyFpsIC`, `GetWBodyFpsIC` by axis.
     #[must_use]
-    pub fn body_vel_fps(&self, idx: usize) -> f64 {
+    pub fn body_vel_fps(&self, idx: Axis) -> f64 {
         self.uvw_fps()[idx]
     }
 
-    /// `GetVNorthFpsIC`, `GetVEastFpsIC`, `GetVDownFpsIC` by axis (1-3).
+    /// `GetVNorthFpsIC`, `GetVEastFpsIC`, `GetVDownFpsIC` by axis.
     #[must_use]
-    pub fn ned_vel_fps(&self, idx: usize) -> f64 {
+    pub fn ned_vel_fps(&self, idx: Axis) -> f64 {
         self.uvw_ned[idx]
     }
 
@@ -351,10 +351,8 @@ impl InitialCondition {
 
     /// `SetPRadpsIC`, `SetQRadpsIC`, `SetRRadpsIC` by axis (`E_P`, `E_Q`,
     /// `E_R`).
-    pub fn set_pqr_radps(&mut self, idx: usize, rate: f64) {
-        if matches!(idx, E_P | E_Q | E_R) {
-            self.pqr_body[idx] = rate;
-        }
+    pub fn set_pqr_radps(&mut self, idx: Axis, rate: f64) {
+        self.pqr_body[idx] = rate;
     }
 
     /// `GetAlphaRadIC`.
@@ -384,13 +382,13 @@ impl InitialCondition {
     /// `GetPhiRadIC`, `GetThetaRadIC`, `GetPsiRadIC` by angle (`E_PHI`,
     /// `E_THT`, `E_PSI`).
     #[must_use]
-    pub fn euler_rad(&self, idx: usize) -> f64 {
+    pub fn euler_rad(&self, idx: Axis) -> f64 {
         self.orientation.euler()[idx]
     }
 
     /// `GetPhiDegIC`, `GetThetaDegIC`, `GetPsiDegIC` by angle.
     #[must_use]
-    pub fn euler_deg(&self, idx: usize) -> f64 {
+    pub fn euler_deg(&self, idx: Axis) -> f64 {
         self.orientation.euler_deg()[idx]
     }
 

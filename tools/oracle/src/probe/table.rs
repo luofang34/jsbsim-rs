@@ -20,7 +20,7 @@ fn load(prefix: &str, path: &str, context: &ProbeContext) -> Result<Option<Table
     let mut tree = PropertyTree::new();
     let prefix = if prefix == "-" { "" } else { prefix };
     let id = set.load_table(&mut tree, el, prefix)?;
-    Ok(Some(set.table(id).clone()))
+    Ok(Some(set.table(id)?.clone()))
 }
 
 /// Executes the operations in `input`, one per line.
@@ -49,7 +49,11 @@ pub fn run(input: &str, context: &ProbeContext) -> String {
                 }
             },
             "lookup" => {
-                let keys: Vec<f64> = words[1..].iter().filter_map(|w| w.parse().ok()).collect();
+                let keys: Vec<f64> = words
+                    .iter()
+                    .skip(1)
+                    .filter_map(|w| w.parse().ok())
+                    .collect();
                 match &table {
                     Some(t) => t
                         .value(&keys)

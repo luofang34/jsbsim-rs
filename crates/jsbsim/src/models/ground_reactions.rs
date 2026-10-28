@@ -25,7 +25,7 @@ use super::base::ModelBase;
 use super::inertial::Inertial;
 use crate::Error;
 use crate::fdm::{Binder, Kind, LoadContext};
-use crate::math::{ColumnVector3, Location, Matrix33};
+use crate::math::{ColumnVector3, E_X, Location, Matrix33};
 use crate::units::INCHTOFT;
 use crate::xml::Element;
 
@@ -218,9 +218,9 @@ impl Contact {
         }
         let s = &mut self.state;
         if !s.wow {
-            s.wheel_vel[1] -= 13.0 * input.total_delta_t;
-            if s.wheel_vel[1] < 0.0 {
-                s.wheel_vel[1] = 0.0;
+            s.wheel_vel[E_X] -= 13.0 * input.total_delta_t;
+            if s.wheel_vel[E_X] < 0.0 {
+                s.wheel_vel[E_X] = 0.0;
             }
         }
         if !trim_status {

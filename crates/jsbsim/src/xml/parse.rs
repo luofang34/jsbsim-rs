@@ -61,7 +61,7 @@ fn decode(bytes: &[u8], file: &str) -> Result<String, XmlError> {
 fn declared_encoding(bytes: &[u8]) -> Option<String> {
     let head = bytes.strip_prefix(b"<?xml")?;
     let end = head.windows(2).position(|w| w == b"?>")?;
-    let decl = std::str::from_utf8(&head[..end]).ok()?;
+    let decl = std::str::from_utf8(head.get(..end)?).ok()?;
     let at = decl.find("encoding")?;
     let rest = decl[at + "encoding".len()..]
         .trim_start()

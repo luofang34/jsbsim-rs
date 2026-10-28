@@ -26,7 +26,8 @@ pub fn atof_locale_c(input: &str) -> Result<f64, String> {
 }
 
 fn matches_number_format(s: &[u8]) -> bool {
-    let digits = |from: usize| s[from..].iter().take_while(|b| b.is_ascii_digit()).count();
+    let tail = |from: usize| s.get(from..).unwrap_or_default();
+    let digits = |from: usize| tail(from).iter().take_while(|b| b.is_ascii_digit()).count();
     let mut i = s.iter().take_while(|&&b| is_c_space(b)).count();
     if matches!(s.get(i), Some(b'+' | b'-')) {
         i += 1;
@@ -53,5 +54,5 @@ fn matches_number_format(s: &[u8]) -> bool {
         }
         i = j + exp_digits;
     }
-    s[i..].iter().all(|&b| is_c_space(b))
+    tail(i).iter().all(|&b| is_c_space(b))
 }

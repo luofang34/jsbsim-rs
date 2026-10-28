@@ -53,7 +53,7 @@ impl Env {
     /// `cacheValue(true)` followed by `GetValue()`.
     pub(crate) fn cached_value(&mut self, models: &Models, id: FnId) -> Result<f64, Error> {
         self.cache_value(models, id)?;
-        Ok(self.functions.function(id).cached().unwrap_or(f64::NAN))
+        Ok(self.functions.function(id)?.cached().unwrap_or(f64::NAN))
     }
 
     /// Ties properties to model getters and setters.

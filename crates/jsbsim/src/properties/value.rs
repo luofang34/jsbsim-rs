@@ -211,7 +211,10 @@ impl PropertyTree {
     }
 
     fn store_typed<T: Written>(&mut self, target: NodeId, value: T) {
-        let slot = &mut self.node_mut(target).value;
+        let Some(node) = self.node_mut(target) else {
+            return;
+        };
+        let slot = &mut node.value;
         *slot = match &*slot {
             Value::None | Value::Unspecified(_) | Value::Alias(_) => value.into_value(),
             Value::Bool(_) => Value::Bool(value.to_bool()),
@@ -274,7 +277,10 @@ impl PropertyTree {
         let Some(target) = self.write_target(id) else {
             return false;
         };
-        let slot = &mut self.node_mut(target).value;
+        let Some(node) = self.node_mut(target) else {
+            return false;
+        };
+        let slot = &mut node.value;
         *slot = match &*slot {
             Value::None if unspecified => Value::Unspecified(text.to_owned()),
             Value::None => Value::String(text.to_owned()),
@@ -302,7 +308,10 @@ impl PropertyTree {
             }
             probe = self.alias_target(node);
         }
-        self.node_mut(id).value = Value::Alias(target);
+        let Some(node) = self.node_mut(id) else {
+            return false;
+        };
+        node.value = Value::Alias(target);
         true
     }
 
@@ -311,7 +320,10 @@ impl PropertyTree {
         if self.alias_target(id).is_none() {
             return false;
         }
-        self.node_mut(id).value = Value::None;
+        let Some(node) = self.node_mut(id) else {
+            return false;
+        };
+        node.value = Value::None;
         true
     }
 
@@ -327,7 +339,9 @@ impl PropertyTree {
             self.attribute(id, Attribute::READ),
             self.attribute(id, Attribute::WRITE),
         );
-        let node = self.node_mut(id);
+        let Some(node) = self.node_mut(id) else {
+            return false;
+        };
         node.value = match initial {
             Value::Alias(_) | Value::Unspecified(_) => Value::None,
             other => other,
@@ -347,7 +361,9 @@ impl PropertyTree {
         };
         self.set_attribute(id, Attribute::READ, read);
         self.set_attribute(id, Attribute::WRITE, write);
-        let node = self.node_mut(id);
+        let Some(node) = self.node_mut(id) else {
+            return false;
+        };
         node.tied = None;
         // SimGear re-reads the value through the getter, which yields the
         // type's default when READ is off.

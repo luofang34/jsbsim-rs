@@ -4,7 +4,7 @@
 //
 //! A point mass: weight, location and the inertia of its own shape.
 
-use crate::math::{ColumnVector3, Matrix33};
+use crate::math::{Axis, ColumnVector3, E_X, E_Y, E_Z, Matrix33};
 use crate::units::SLUGTOLB;
 
 /// `PointMass::esShape`. A cylinder and a ball are solid, a tube and a
@@ -62,24 +62,24 @@ impl PointMass {
         let m = &mut self.inertia;
         match self.shape {
             Shape::Tube => {
-                m[(1, 1)] = (w / SLUGTOLB) * r * r;
-                m[(2, 2)] = (w / (SLUGTOLB * 12.0)) * (6.0 * r * r + l * l);
-                m[(3, 3)] = m[(2, 2)];
+                m[(E_X, E_X)] = (w / SLUGTOLB) * r * r;
+                m[(E_Y, E_Y)] = (w / (SLUGTOLB * 12.0)) * (6.0 * r * r + l * l);
+                m[(E_Z, E_Z)] = m[(E_Y, E_Y)];
             }
             Shape::Cylinder => {
-                m[(1, 1)] = (w / (SLUGTOLB * 2.0)) * r * r;
-                m[(2, 2)] = (w / (SLUGTOLB * 12.0)) * (3.0 * r * r + l * l);
-                m[(3, 3)] = m[(2, 2)];
+                m[(E_X, E_X)] = (w / (SLUGTOLB * 2.0)) * r * r;
+                m[(E_Y, E_Y)] = (w / (SLUGTOLB * 12.0)) * (3.0 * r * r + l * l);
+                m[(E_Z, E_Z)] = m[(E_Y, E_Y)];
             }
             Shape::Sphere => {
-                m[(1, 1)] = (w / (SLUGTOLB * 3.0)) * r * r * 2.0;
-                m[(2, 2)] = m[(1, 1)];
-                m[(3, 3)] = m[(1, 1)];
+                m[(E_X, E_X)] = (w / (SLUGTOLB * 3.0)) * r * r * 2.0;
+                m[(E_Y, E_Y)] = m[(E_X, E_X)];
+                m[(E_Z, E_Z)] = m[(E_X, E_X)];
             }
             Shape::Ball => {
-                m[(1, 1)] = (w / (SLUGTOLB * 5.0)) * r * r * 2.0;
-                m[(2, 2)] = m[(1, 1)];
-                m[(3, 3)] = m[(1, 1)];
+                m[(E_X, E_X)] = (w / (SLUGTOLB * 5.0)) * r * r * 2.0;
+                m[(E_Y, E_Y)] = m[(E_X, E_X)];
+                m[(E_Z, E_Z)] = m[(E_X, E_X)];
             }
             Shape::Unspecified => {}
         }
@@ -91,8 +91,8 @@ impl PointMass {
         self.calculate_shape_inertia();
     }
 
-    /// `SetPointMassLocation(axis, value)`, `axis` one-based.
-    pub fn set_location(&mut self, axis: usize, value: f64) {
+    /// `SetPointMassLocation(axis, value)`.
+    pub fn set_location(&mut self, axis: Axis, value: f64) {
         self.location[axis] = value;
     }
 }

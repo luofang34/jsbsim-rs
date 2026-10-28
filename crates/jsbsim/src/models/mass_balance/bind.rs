@@ -21,12 +21,12 @@ pub fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
             m.mass_balance.xyz_cg[i]
         })?;
     }
-    b.getter("inertia/ixx-slugs_ft2", |m| m.mass_balance.j[(1, 1)])?;
-    b.getter("inertia/iyy-slugs_ft2", |m| m.mass_balance.j[(2, 2)])?;
-    b.getter("inertia/izz-slugs_ft2", |m| m.mass_balance.j[(3, 3)])?;
-    b.getter("inertia/ixy-slugs_ft2", |m| -m.mass_balance.j[(1, 2)])?;
-    b.getter("inertia/ixz-slugs_ft2", |m| m.mass_balance.j[(1, 3)])?;
-    b.getter("inertia/iyz-slugs_ft2", |m| -m.mass_balance.j[(2, 3)])?;
+    b.getter("inertia/ixx-slugs_ft2", |m| m.mass_balance.j[(E_X, E_X)])?;
+    b.getter("inertia/iyy-slugs_ft2", |m| m.mass_balance.j[(E_Y, E_Y)])?;
+    b.getter("inertia/izz-slugs_ft2", |m| m.mass_balance.j[(E_Z, E_Z)])?;
+    b.getter("inertia/ixy-slugs_ft2", |m| -m.mass_balance.j[(E_X, E_Y)])?;
+    b.getter("inertia/ixz-slugs_ft2", |m| m.mass_balance.j[(E_X, E_Z)])?;
+    b.getter("inertia/iyz-slugs_ft2", |m| -m.mass_balance.j[(E_Y, E_Z)])?;
     b.setter_only("inertia/print-mass-properties", Kind::Int, |m, _| {
         m.mass_balance.mass_properties_report();
     })?;
@@ -81,12 +81,12 @@ impl MassBalance {
                 l[0],
                 l[1],
                 l[2],
-                j[(1, 1)],
-                j[(2, 2)],
-                j[(3, 3)],
-                j[(1, 2)],
-                j[(1, 3)],
-                j[(2, 3)]
+                j[(E_X, E_X)],
+                j[(E_Y, E_Y)],
+                j[(E_Z, E_Z)],
+                j[(E_X, E_Y)],
+                j[(E_X, E_Z)],
+                j[(E_Y, E_Z)]
             )
         };
         let v = |c: crate::math::ColumnVector3| [c[E_X], c[E_Y], c[E_Z]];

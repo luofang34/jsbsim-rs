@@ -104,13 +104,15 @@ impl Table {
         &self.lookup
     }
 
-    /// `GetElement(r, c)`.
+    /// `GetElement(r, c)`; NaN outside the data, where JSBSim reads past
+    /// the end of its array.
     #[must_use]
     pub fn element(&self, r: usize, c: usize) -> f64 {
-        match self.kind {
-            TableKind::Nested => self.data[r],
-            _ => self.data[r * (self.n_cols + 1) + c],
-        }
+        let i = match self.kind {
+            TableKind::Nested => r,
+            _ => r * (self.n_cols + 1) + c,
+        };
+        self.data.get(i).copied().unwrap_or(f64::NAN)
     }
 
     /// `GetValue(keys)`: interpolates at `keys`, ordered row, column,
@@ -120,7 +122,7 @@ impl Table {
         if keys.len() < self.n_dims {
             return None;
         }
-        Some(self.value_by(&|i| keys[i]))
+        Some(self.value_by(&|i| keys.get(i).copied().unwrap_or(f64::NAN)))
     }
 
     /// Stores key `axis` for [`value_of_keys`](Self::value_of_keys).
@@ -143,83 +145,125 @@ impl Table {
         }
     }
 
-    /// `GetValue(key)` of a 1D table.
+    /// The `(key, value)` rows of a 1D table.
+    fn rows_1d(&self) -> &[[f64; 2]] {
+        let pairs = self.data.get(2..).unwrap_or_default().as_chunks().0;
+        pairs.get(..self.n_rows).unwrap_or(pairs)
+    }
+
+    /// `GetValue(key)` of a 1D table. NaN where JSBSim would read past its
+    /// data: a NaN key, which no breakpoint bounds, in a one-row table.
     #[must_use]
     pub fn value_1d(&self, key: f64) -> f64 {
-        let d = &self.data;
-        let n = self.n_rows;
-        if key <= d[2] {
-            return d[3];
-        } else if key >= d[2 * n] {
-            return d[2 * n + 1];
+        let rows = self.rows_1d();
+        let (Some(&[k1, v1]), Some(&[kn, vn])) = (rows.first(), rows.last()) else {
+            return f64::NAN;
+        };
+        if key <= k1 {
+            return v1;
+        } else if key >= kn {
+            return vn;
         }
-        let mut r = 2;
-        while d[2 * r] < key {
-            r += 1;
-        }
-        let x0 = d[2 * r - 2];
-        let span = d[2 * r] - x0;
+        // JSBSim's linear search from the second row: `i + 1` is the first
+        // row whose key is not below `key`.
+        let below = |&[k, _]: &[f64; 2]| k < key;
+        let i = rows
+            .get(1..)
+            .map_or(0, |r| r.iter().take_while(|row| below(row)).count());
+        let Some(&[[x0, y0], [x1, y1]]) = rows.get(i..=i + 1) else {
+            return f64::NAN;
+        };
+        let span = x1 - x0;
         let factor = (key - x0) / span;
-        let y0 = d[2 * r - 1];
-        factor * (d[2 * r + 1] - y0) + y0
+        factor * (y1 - y0) + y0
     }
 
     /// `GetValue(rowKey, colKey)` of a 2D table.
     #[must_use]
     pub fn value_2d(&self, row_key: f64, col_key: f64) -> f64 {
-        let d = &self.data;
-        let w = self.n_cols + 1;
         if self.n_cols == 1 {
             return self.value_1d(row_key);
         }
-        let mut c = 2;
-        while d[c] < col_key && c < self.n_cols {
-            c += 1;
-        }
-        let x0 = d[c - 1];
-        let span = d[c] - x0;
-        let c_factor = crate::units::constrain(0.0, (col_key - x0) / span, 1.0);
-        if self.n_rows == 1 {
-            let y0 = d[w + c - 1];
-            return c_factor * (d[w + c] - y0) + y0;
-        }
-        let mut r = 2;
-        while d[r * w] < row_key && r < self.n_rows {
-            r += 1;
-        }
-        let x0 = d[(r - 1) * w];
-        let span = d[r * w] - x0;
-        let r_factor = crate::units::constrain(0.0, (row_key - x0) / span, 1.0);
-        let col1 = r_factor * d[r * w + c - 1] + (1.0 - r_factor) * d[(r - 1) * w + c - 1];
-        let col2 = r_factor * d[r * w + c] + (1.0 - r_factor) * d[(r - 1) * w + c];
-        c_factor * (col2 - col1) + col1
+        self.lookup_2d(row_key, col_key).unwrap_or(f64::NAN)
     }
 
+    /// [`value_2d`](Self::value_2d) past the 1-column case; `None` only
+    /// for data shorter than its shape, which the loader rejects.
+    fn lookup_2d(&self, row_key: f64, col_key: f64) -> Option<f64> {
+        let (n_rows, n_cols) = (self.n_rows, self.n_cols);
+        let w = n_cols + 1;
+        let row = |r: usize| self.data.get(r * w..(r + 1) * w);
+        // JSBSim's searches start at 2 and stop at the last row or column.
+        let c = 2 + row(0)?
+            .get(2..n_cols)
+            .map_or(0, |keys| keys.iter().take_while(|&&k| k < col_key).count());
+        let &[x0, x1] = row(0)?.get(c - 1..=c)? else {
+            return None;
+        };
+        let span = x1 - x0;
+        let c_factor = crate::units::constrain(0.0, (col_key - x0) / span, 1.0);
+        if n_rows == 1 {
+            let (_, y0, y1) = row_at(row(1)?, c)?;
+            return Some(c_factor * (y1 - y0) + y0);
+        }
+        let r = 2 + self
+            .data
+            .chunks_exact(w)
+            .take(n_rows)
+            .skip(2)
+            .take_while(|row| row.first().is_some_and(|&k| k < row_key))
+            .count();
+        let (x0, lo0, lo1) = row_at(row(r - 1)?, c)?;
+        let (x1, hi0, hi1) = row_at(row(r)?, c)?;
+        let span = x1 - x0;
+        let r_factor = crate::units::constrain(0.0, (row_key - x0) / span, 1.0);
+        let col1 = r_factor * hi0 + (1.0 - r_factor) * lo0;
+        let col2 = r_factor * hi1 + (1.0 - r_factor) * lo1;
+        Some(c_factor * (col2 - col1) + col1)
+    }
+
+    /// `GetValue(keys)` of a nested table. NaN where JSBSim would read past
+    /// its data: a NaN outer key with a single breakpoint.
     fn value_nd(&self, key: &impl Fn(usize) -> f64) -> f64 {
-        let d = &self.data;
-        let n = self.n_rows;
-        let outer = key(self.n_dims - 1);
-        let sub = |i: usize| self.tables[i].value_by(key);
-        if outer <= d[1] {
+        let outer = self.n_dims.checked_sub(1).map_or(f64::NAN, key);
+        let sub = |i: usize| self.tables.get(i).map_or(f64::NAN, |t| t.value_by(key));
+        let breaks = self.data.get(1..=self.n_rows).unwrap_or_default();
+        let (Some(&first), Some(&last)) = (breaks.first(), breaks.last()) else {
+            return f64::NAN;
+        };
+        if outer <= first {
             return sub(0);
-        } else if outer >= d[n] {
-            return sub(n - 1);
+        } else if outer >= last {
+            return sub(breaks.len() - 1);
         }
-        let mut r = 2;
-        while d[r] < outer {
-            r += 1;
-        }
-        let x0 = d[r - 1];
-        let span = d[r] - x0;
+        // JSBSim's linear search from the second breakpoint: `p + 1` is the
+        // first breakpoint not below `outer`, `p` the sub-table below it.
+        let p = breaks
+            .get(1..)
+            .map_or(0, |b| b.iter().take_while(|&&b| b < outer).count());
+        let Some(&[x0, x1]) = breaks.get(p..=p + 1) else {
+            return f64::NAN;
+        };
+        let span = x1 - x0;
         let factor = (outer - x0) / span;
-        let y0 = sub(r - 2);
-        factor * (sub(r - 1) - y0) + y0
+        let y0 = sub(p);
+        factor * (sub(p + 1) - y0) + y0
     }
 
     /// `GetMinValue()` of a 1D table.
     #[must_use]
     pub fn min_value(&self) -> f64 {
-        (1..=self.n_rows).fold(f64::INFINITY, |m, i| m.min(self.data[2 * i + 1]))
+        self.rows_1d()
+            .iter()
+            .fold(f64::INFINITY, |m, &[_, v]| m.min(v))
+    }
+}
+
+/// The key of a 2D table row and its values in columns `c - 1` and `c`.
+fn row_at(row: &[f64], c: usize) -> Option<(f64, f64, f64)> {
+    match (row.first(), row.get(c - 1..=c)) {
+        (Some(&key), Some(&[a, b])) => Some((key, a, b)),
+        _ => None,
     }
 }
 

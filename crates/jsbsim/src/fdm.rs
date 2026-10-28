@@ -138,7 +138,7 @@ pub struct Fdm {
     /// The models.
     pub models: Models,
     /// Declarations and pre/post functions of each model, by `Model`.
-    model_functions: Vec<ModelFunctions>,
+    model_functions: order::PerModel<ModelFunctions>,
     options: crate::LoadOptions,
     script: Option<crate::script::Script>,
     aircraft_path: String,
@@ -163,7 +163,7 @@ impl Fdm {
                 fcs: crate::models::fcs::Fcs::new(),
                 ..Models::default()
             },
-            model_functions: vec![ModelFunctions::default(); order::ORDER.len()],
+            model_functions: order::PerModel::default(),
             options: crate::LoadOptions::default(),
             script: None,
             aircraft_path: "aircraft".to_owned(),

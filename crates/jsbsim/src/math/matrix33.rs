@@ -9,12 +9,13 @@
 use std::f64::consts::PI;
 use std::ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Sub, SubAssign};
 
-use super::{ColumnVector3, Quaternion};
+use super::{Axis, ColumnVector3, Quaternion};
 
-/// `FGMatrix33`; entries are indexed `(row, col)` from 1.
+/// `FGMatrix33`; entries are indexed `(row, col)` by [`Axis`].
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub struct Matrix33 {
-    /// Column-major: `data[(col-1)*3 + row-1]`.
+    /// Column-major: entry `(row, col)` is `data[3 * col + row]`, counting
+    /// axes from 0.
     data: [f64; 9],
 }
 
@@ -106,10 +107,12 @@ impl Matrix33 {
             1.0 - d[0] + d[4] - d[8],
             1.0 - d[0] - d[4] + d[8],
         ];
+        // The first of equal maxima wins, as in JSBSim's strict `>` scan.
         let mut idx = 0;
-        for i in 1..4 {
-            if temp[i] > temp[idx] {
-                idx = i;
+        let mut max = temp[0];
+        for (i, &t) in temp.iter().enumerate().skip(1) {
+            if t > max {
+                (idx, max) = (i, t);
             }
         }
         let mut q = [0.0; 4];
@@ -149,25 +152,25 @@ impl Matrix33 {
         let d = &self.data;
         let mut euler = ColumnVector3::zero();
         let gimbal_lock = if d[6] <= -1.0 {
-            euler[2] = 0.5 * PI;
+            euler[Axis::Y] = 0.5 * PI;
             true
         } else if 1.0 <= d[6] {
-            euler[2] = -0.5 * PI;
+            euler[Axis::Y] = -0.5 * PI;
             true
         } else {
-            euler[2] = libm::asin(-d[6]);
+            euler[Axis::Y] = libm::asin(-d[6]);
             false
         };
         if gimbal_lock {
-            euler[1] = libm::atan2(-d[5], d[4]);
-            euler[3] = 0.0;
+            euler[Axis::X] = libm::atan2(-d[5], d[4]);
+            euler[Axis::Z] = 0.0;
         } else {
-            euler[1] = libm::atan2(d[7], d[8]);
+            euler[Axis::X] = libm::atan2(d[7], d[8]);
             let mut psi = libm::atan2(d[3], d[0]);
             if psi < 0.0 {
                 psi += 2.0 * PI;
             }
-            euler[3] = psi;
+            euler[Axis::Z] = psi;
         }
         euler
     }
@@ -192,16 +195,38 @@ impl DivAssign<f64> for Matrix33 {
     }
 }
 
-impl Index<(usize, usize)> for Matrix33 {
+impl Index<(Axis, Axis)> for Matrix33 {
     type Output = f64;
-    fn index(&self, (row, col): (usize, usize)) -> &f64 {
-        &self.data[(col - 1) * 3 + row - 1]
+    fn index(&self, (row, col): (Axis, Axis)) -> &f64 {
+        let [m11, m21, m31, m12, m22, m32, m13, m23, m33] = &self.data;
+        match (row, col) {
+            (Axis::X, Axis::X) => m11,
+            (Axis::Y, Axis::X) => m21,
+            (Axis::Z, Axis::X) => m31,
+            (Axis::X, Axis::Y) => m12,
+            (Axis::Y, Axis::Y) => m22,
+            (Axis::Z, Axis::Y) => m32,
+            (Axis::X, Axis::Z) => m13,
+            (Axis::Y, Axis::Z) => m23,
+            (Axis::Z, Axis::Z) => m33,
+        }
     }
 }
 
-impl IndexMut<(usize, usize)> for Matrix33 {
-    fn index_mut(&mut self, (row, col): (usize, usize)) -> &mut f64 {
-        &mut self.data[(col - 1) * 3 + row - 1]
+impl IndexMut<(Axis, Axis)> for Matrix33 {
+    fn index_mut(&mut self, (row, col): (Axis, Axis)) -> &mut f64 {
+        let [m11, m21, m31, m12, m22, m32, m13, m23, m33] = &mut self.data;
+        match (row, col) {
+            (Axis::X, Axis::X) => m11,
+            (Axis::Y, Axis::X) => m21,
+            (Axis::Z, Axis::X) => m31,
+            (Axis::X, Axis::Y) => m12,
+            (Axis::Y, Axis::Y) => m22,
+            (Axis::Z, Axis::Y) => m32,
+            (Axis::X, Axis::Z) => m13,
+            (Axis::Y, Axis::Z) => m23,
+            (Axis::Z, Axis::Z) => m33,
+        }
     }
 }
 
@@ -209,7 +234,7 @@ impl Mul<ColumnVector3> for Matrix33 {
     type Output = ColumnVector3;
     fn mul(self, v: ColumnVector3) -> ColumnVector3 {
         let d = &self.data;
-        let (v1, v2, v3) = (v[1], v[2], v[3]);
+        let [v1, v2, v3] = v.to_array();
         let mut tmp1 = v1 * d[0];
         let mut tmp2 = v1 * d[1];
         let mut tmp3 = v1 * d[2];
@@ -226,15 +251,23 @@ impl Mul<ColumnVector3> for Matrix33 {
 impl Mul for Matrix33 {
     type Output = Self;
     fn mul(self, m: Self) -> Self {
-        let (a, b) = (&self.data, &m.data);
-        let mut p = [0.0; 9];
-        for row in 0..3 {
-            for col in 0..3 {
-                p[col * 3 + row] =
-                    a[row] * b[col * 3] + a[3 + row] * b[col * 3 + 1] + a[6 + row] * b[col * 3 + 2];
-            }
+        let a = &self.data;
+        // One column of the product from that column of `m`, summed in
+        // JSBSim's order.
+        let column = |[b1, b2, b3]: [f64; 3]| {
+            [
+                a[0] * b1 + a[3] * b2 + a[6] * b3,
+                a[1] * b1 + a[4] * b2 + a[7] * b3,
+                a[2] * b1 + a[5] * b2 + a[8] * b3,
+            ]
+        };
+        let [b11, b21, b31, b12, b22, b32, b13, b23, b33] = m.data;
+        let [p11, p21, p31] = column([b11, b21, b31]);
+        let [p12, p22, p32] = column([b12, b22, b32]);
+        let [p13, p23, p33] = column([b13, b23, b33]);
+        Self {
+            data: [p11, p21, p31, p12, p22, p32, p13, p23, p33],
         }
-        Self { data: p }
     }
 }
 

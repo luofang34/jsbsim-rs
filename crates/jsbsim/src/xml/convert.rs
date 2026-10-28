@@ -13,7 +13,7 @@ use std::f64::consts::PI;
 use std::sync::OnceLock;
 
 use super::{Element, XmlError};
-use crate::math::ColumnVector3;
+use crate::math::{Axis, ColumnVector3};
 use crate::units::UnitTable;
 
 fn table() -> &'static UnitTable {
@@ -83,13 +83,14 @@ impl Element {
         let supplied = self.attribute("unit");
         let factor = self.conversion(supplied, target)?;
         let mut triplet = ColumnVector3::zero();
-        for (i, (name, alias)) in [("x", "roll"), ("y", "pitch"), ("z", "yaw")]
-            .into_iter()
-            .enumerate()
+        for (i, (name, alias)) in
+            Axis::ALL
+                .into_iter()
+                .zip([("x", "roll"), ("y", "pitch"), ("z", "yaw")])
         {
             if let Some(item) = self.find_element(name).or_else(|| self.find_element(alias)) {
                 let value = item.data_as_number()?;
-                triplet[i + 1] = factor.map_or(value, |f| value * f);
+                triplet[i] = factor.map_or(value, |f| value * f);
             }
         }
         Ok(triplet)

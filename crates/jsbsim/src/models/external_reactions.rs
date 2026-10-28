@@ -155,11 +155,18 @@ impl ExternalReactions {
             ctx.binder.property(
                 &format!("{base_name}/location-{axis}-in"),
                 Kind::Double,
-                move |m| m.external_reactions.forces[index].location[i],
+                // Forces are never removed, so `index` always names this one.
+                move |m| {
+                    m.external_reactions
+                        .forces
+                        .get(index)
+                        .map_or(0.0, |f| f.location[i])
+                },
                 move |m, v| {
-                    let f = &mut m.external_reactions.forces[index];
-                    f.location[i] = v;
-                    f.acting_location[i] = v;
+                    if let Some(f) = m.external_reactions.forces.get_mut(index) {
+                        f.location[i] = v;
+                        f.acting_location[i] = v;
+                    }
                 },
             )?;
         }
@@ -212,8 +219,9 @@ impl ExternalReactions {
                 let mut v = d.find_element_triplet_convert_to("IN")?;
                 v.normalize();
                 // FGPropertyVector3::operator= writes y, then x, then z.
-                for i in [2usize, 1, 3] {
-                    ctx.tree().set_double(direction[i - 1], v[i]);
+                let [dx, dy, dz] = direction;
+                for (node, axis) in [(dy, E_Y), (dx, E_X), (dz, E_Z)] {
+                    ctx.tree().set_double(node, v[axis]);
                 }
             }
         }

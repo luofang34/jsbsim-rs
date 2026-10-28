@@ -6,9 +6,9 @@
 
 use crate::Error;
 use crate::fdm::{Binder, Kind};
-use crate::math::{E_DOWN, E_EAST, E_NORTH, E_P, E_Q, E_R, E_X, E_Y, E_Z};
+use crate::math::{Axis, E_DOWN, E_EAST, E_NORTH, E_P, E_Q, E_R, E_X, E_Y, E_Z};
 
-const NED: [(&str, usize); 3] = [("north", E_NORTH), ("east", E_EAST), ("down", E_DOWN)];
+const NED: [(&str, Axis); 3] = [("north", E_NORTH), ("east", E_EAST), ("down", E_DOWN)];
 
 /// `FGWinds::bind`.
 pub fn bind(b: &mut Binder<'_>) -> Result<(), Error> {

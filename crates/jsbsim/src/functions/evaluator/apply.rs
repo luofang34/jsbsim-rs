@@ -11,7 +11,7 @@ use std::f64::consts::PI;
 use super::Evaluator;
 use crate::Error;
 use crate::functions::{Function, FunctionError, Op, Parameter};
-use crate::math::{ColumnVector3, E_X, E_Y, E_Z, Quaternion};
+use crate::math::{Axis, ColumnVector3, E_X, E_Y, E_Z, Quaternion};
 use crate::units::{DEGTORAD, RADTODEG};
 use crate::xml::Location;
 
@@ -226,16 +226,17 @@ impl Evaluator<'_> {
             }
             .into());
         }
-        let n = f.params.len() - 1;
+        let values = f.params.split_first().map_or(&[][..], |(_, values)| values);
         let i = (temp + 0.5) as usize;
-        if i < n {
-            return self.p(f, i + 1);
+        if let Some(value) = values.get(i) {
+            return self.parameter(value);
         }
+        // Load-time arity gives at least one value, so the bound is exact.
         Err(FunctionError::Index {
             at: f.at.clone(),
             message: format!(
                 "The switch function index ({temp}) selected a value above the range of supplied values[0:{}] - not enough values were supplied.",
-                n - 1
+                values.len().saturating_sub(1)
             ),
         }
         .into())
@@ -251,12 +252,17 @@ impl Evaluator<'_> {
         if x <= xmin {
             return Ok(ymin);
         }
-        let mut xmax = self.p(f, n - 2)?;
-        let mut ymax = self.p(f, n - 1)?;
+        // Load-time arity makes `n` odd and at least 5; anything shorter has
+        // no last breakpoint and reads as NaN, like a missing operand.
+        let Some(segments) = n.checked_sub(3) else {
+            return Ok(f64::NAN);
+        };
+        let mut xmax = self.p(f, segments + 1)?;
+        let mut ymax = self.p(f, segments + 2)?;
         if x >= xmax {
             return Ok(ymax);
         }
-        let (mut nmin, mut nmax) = (0, (n - 3) / 2);
+        let (mut nmin, mut nmax) = (0, segments / 2);
         while nmax - nmin > 1 {
             let m = (nmax - nmin) / 2 + nmin;
             let xm = self.p(f, 2 * m + 1)?;
@@ -306,13 +312,14 @@ impl Evaluator<'_> {
         let beta = self.p(f, 4)? * DEGTORAD;
         let gamma = self.p(f, 5)? * DEGTORAD;
         let idx = self.p(f, 6)? as i32;
-        if !(1..=3).contains(&idx) {
+        let axis = usize::try_from(idx).ok().and_then(Axis::from_index1);
+        let Some(axis) = axis else {
             return Err(FunctionError::Index {
                 at: f.at.clone(),
                 message: "The index must be one of the integer value 1, 2 or 3.".to_owned(),
             }
             .into());
-        }
+        };
         let qa = Quaternion::from_axis_index(E_Y, -alpha);
         let qb = Quaternion::from_axis_index(E_Z, beta);
         let qc = Quaternion::from_axis_index(E_X, -gamma);
@@ -320,7 +327,7 @@ impl Evaluator<'_> {
         if f.op == Op::RotationWfToBf {
             t.transpose();
         }
-        Ok((t * ColumnVector3::new(rx, ry, rz))[idx as usize])
+        Ok((t * ColumnVector3::new(rx, ry, rz))[axis])
     }
 }
 

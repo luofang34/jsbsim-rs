@@ -145,13 +145,16 @@ impl PropertyTree {
         NodeId(0)
     }
 
+    /// The node `id`. A tree never removes nodes, so only an id from
+    /// another tree can miss; it reads as [`DETACHED`].
     fn node(&self, id: NodeId) -> &Node {
-        // NodeIds are only minted by this tree, which never removes nodes.
-        &self.nodes[id.0 as usize]
+        self.nodes.get(id.slot()).unwrap_or(&DETACHED)
     }
 
-    fn node_mut(&mut self, id: NodeId) -> &mut Node {
-        &mut self.nodes[id.0 as usize]
+    /// The node `id`; `None` only for an id from another tree, whose
+    /// writes are dropped as [`DETACHED`] refuses them.
+    fn node_mut(&mut self, id: NodeId) -> Option<&mut Node> {
+        self.nodes.get_mut(id.slot())
     }
 
     /// Finds the node at `path` relative to `from` (`getNode(path)`).
@@ -190,13 +193,19 @@ impl PropertyTree {
     }
 
     /// Like [`get_or_create`](Self::get_or_create) with the index of the
-    /// last component replaced by `index`.
+    /// last component replaced by `index`. Fails for a `from` that another
+    /// tree created, which has nowhere to attach new nodes.
     pub fn get_or_create_indexed(
         &mut self,
         from: NodeId,
         path: &str,
         index: Option<i32>,
     ) -> Result<NodeId, PathError> {
+        if self.nodes.get(from.slot()).is_none() {
+            return Err(PathError {
+                message: format!("node {} is not in this property tree", from.slot()),
+            });
+        }
         let components = components_with_index(path, index)?;
         let mut current = from;
         for component in components {
@@ -231,8 +240,10 @@ impl PropertyTree {
 
     fn add_child(&mut self, parent: NodeId, name: String, index: i32) -> NodeId {
         let id = NodeId(u32::try_from(self.nodes.len()).unwrap_or(u32::MAX));
+        if let Some(parent) = self.node_mut(parent) {
+            parent.children.push(id);
+        }
         self.nodes.push(Node::new(name, index, Some(parent)));
-        self.node_mut(parent).children.push(id);
         self.generation = self.generation.wrapping_add(1);
         id
     }
@@ -290,7 +301,9 @@ impl PropertyTree {
 
     /// Replaces all attribute bits of `id`.
     pub fn set_attributes(&mut self, id: NodeId, bits: u8) {
-        let node = self.node_mut(id);
+        let Some(node) = self.node_mut(id) else {
+            return;
+        };
         let removed_changed = (node.attributes ^ bits) & Attribute::REMOVED.0 != 0;
         node.attributes = bits;
         if removed_changed {
@@ -304,6 +317,20 @@ impl PropertyTree {
         self.node(id).tied.is_some()
     }
 }
+
+/// What an id this tree did not create reads as: a removed, childless node
+/// with neither READ nor WRITE, so reads give the type's default (0, false,
+/// "") as SimGear's getters do for an unreadable node, writes are refused,
+/// and path lookups through it find nothing.
+static DETACHED: Node = Node {
+    name: String::new(),
+    index: 0,
+    parent: None,
+    children: Vec::new(),
+    value: Value::None,
+    attributes: Attribute::REMOVED.0,
+    tied: None,
+};
 
 impl Node {
     fn new(name: String, index: i32, parent: Option<NodeId>) -> Self {

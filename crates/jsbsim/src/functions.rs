@@ -129,16 +129,29 @@ impl FunctionSet {
         Ok(())
     }
 
-    /// The function `id`.
-    #[must_use]
-    pub fn function(&self, id: FnId) -> &Function {
-        &self.functions[id.0]
+    /// The function `id`; an error only for an id another set created.
+    pub fn function(&self, id: FnId) -> Result<&Function, FunctionError> {
+        self.functions.get(id.0).ok_or(FunctionError::UnknownId {
+            what: "function",
+            id: id.0,
+        })
     }
 
-    /// The table `id`.
-    #[must_use]
-    pub fn table(&self, id: TableId) -> &Table {
-        &self.tables[id.0]
+    fn function_mut(&mut self, id: FnId) -> Result<&mut Function, FunctionError> {
+        self.functions
+            .get_mut(id.0)
+            .ok_or(FunctionError::UnknownId {
+                what: "function",
+                id: id.0,
+            })
+    }
+
+    /// The table `id`; an error only for an id another set created.
+    pub fn table(&self, id: TableId) -> Result<&Table, FunctionError> {
+        self.tables.get(id.0).ok_or(FunctionError::UnknownId {
+            what: "table",
+            id: id.0,
+        })
     }
 
     /// The template registered as `name` (`GetTemplateFunc`).
@@ -166,10 +179,10 @@ impl FunctionSet {
         tree: &mut PropertyTree,
         getters: &dyn GetterSource,
     ) -> Result<(), crate::Error> {
-        self.functions[id.0].cached = None;
+        self.function_mut(id)?.cached = None;
         if cache {
             let value = Evaluator::with_getters(self, tree, getters).function(id)?;
-            self.functions[id.0].cached = Some(value);
+            self.function_mut(id)?.cached = Some(value);
         }
         Ok(())
     }

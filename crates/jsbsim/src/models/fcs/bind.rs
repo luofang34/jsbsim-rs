@@ -42,7 +42,7 @@ fn surface(
         b.property(
             &format!("fcs/{name}-pos-{suffix}"),
             Kind::Double,
-            move |m| get(m).0[form],
+            move |m| get(m).0.get(form).copied().unwrap_or(0.0),
             move |m, v| set(m).set(form, v),
         )?;
     }
@@ -79,8 +79,12 @@ pub fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
         b.property(
             &format!("fcs/{name}-brake-cmd-norm"),
             d,
-            move |m| m.fcs.brake_pos[group],
-            move |m, v| m.fcs.brake_pos[group] = v,
+            move |m| m.fcs.brake_pos.get(group).copied().unwrap_or(0.0),
+            move |m, v| {
+                if let Some(pos) = m.fcs.brake_pos.get_mut(group) {
+                    *pos = v;
+                }
+            },
         )?;
     }
     b.property(

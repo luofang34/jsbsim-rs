@@ -35,14 +35,14 @@ pub fn strtod_prefix(s: &str) -> (f64, usize) {
         _ => false,
     };
     let signed = |v: f64| if negative { -v } else { v };
-    let rest = &bytes[i..];
+    let rest = tail(bytes, i);
     if let Some(len) = special_len(rest, b"infinity").or_else(|| special_len(rest, b"inf")) {
         return (signed(f64::INFINITY), i + len);
     }
     if special_len(rest, b"nan").is_some() {
         let mut end = i + 3;
         if bytes.get(end) == Some(&b'(') {
-            let inner = bytes[end + 1..]
+            let inner = tail(bytes, end + 1)
                 .iter()
                 .take_while(|b| b.is_ascii_alphanumeric() || **b == b'_')
                 .count();
@@ -52,10 +52,9 @@ pub fn strtod_prefix(s: &str) -> (f64, usize) {
         }
         return (signed(f64::NAN), end);
     }
-    if rest.len() > 2
-        && rest[0] == b'0'
-        && (rest[1] | 0x20) == b'x'
-        && let Some((value, len)) = parse_hex(&rest[2..])
+    if let Some((&[b'0', x], hex)) = rest.split_first_chunk::<2>()
+        && (x | 0x20) == b'x'
+        && let Some((value, len)) = parse_hex(hex)
     {
         return (signed(value), i + 2 + len);
     }
@@ -64,10 +63,15 @@ pub fn strtod_prefix(s: &str) -> (f64, usize) {
         len => {
             // The slice holds only ASCII digits, '.', 'e' and signs, which
             // Rust parses with the same correct rounding as strtod.
-            let text = std::str::from_utf8(&rest[..len]).unwrap_or("0");
+            let text = std::str::from_utf8(rest.get(..len).unwrap_or_default()).unwrap_or("0");
             (signed(text.parse::<f64>().unwrap_or(0.0)), i + len)
         }
     }
+}
+
+/// The bytes of `s` from `i`; empty past its end.
+fn tail(s: &[u8], i: usize) -> &[u8] {
+    s.get(i..).unwrap_or_default()
 }
 
 /// `strtod(s, 0)` / `atof(s)`.
@@ -77,7 +81,9 @@ pub fn strtod(s: &str) -> f64 {
 }
 
 fn special_len(s: &[u8], word: &[u8]) -> Option<usize> {
-    (s.len() >= word.len() && s[..word.len()].eq_ignore_ascii_case(word)).then_some(word.len())
+    s.get(..word.len())
+        .is_some_and(|prefix| prefix.eq_ignore_ascii_case(word))
+        .then_some(word.len())
 }
 
 /// Length of the longest decimal floating-point prefix of `s` (no sign).
@@ -86,7 +92,7 @@ fn decimal_len(s: &[u8]) -> usize {
     let mut len = int_digits;
     let mut frac_digits = 0;
     if s.get(len) == Some(&b'.') {
-        frac_digits = s[len + 1..]
+        frac_digits = tail(s, len + 1)
             .iter()
             .take_while(|b| b.is_ascii_digit())
             .count();
@@ -102,10 +108,7 @@ fn decimal_len(s: &[u8]) -> usize {
         if matches!(s.get(j), Some(b'+' | b'-')) {
             j += 1;
         }
-        let exp_digits = s[j.min(s.len())..]
-            .iter()
-            .take_while(|b| b.is_ascii_digit())
-            .count();
+        let exp_digits = tail(s, j).iter().take_while(|b| b.is_ascii_digit()).count();
         if exp_digits > 0 {
             len = j + exp_digits;
         }
@@ -152,13 +155,10 @@ fn parse_hex(s: &[u8]) -> Option<(f64, usize)> {
         if matches!(s.get(j), Some(b'+' | b'-')) {
             j += 1;
         }
-        let exp_digits = s[j.min(s.len())..]
-            .iter()
-            .take_while(|b| b.is_ascii_digit())
-            .count();
+        let exp_digits = tail(s, j).iter().take_while(|b| b.is_ascii_digit()).count();
         if exp_digits > 0 {
             let mut e: i64 = 0;
-            for &b in &s[j..j + exp_digits] {
+            for &b in s.get(j..j + exp_digits).unwrap_or_default() {
                 e = (e * 10 + i64::from(b - b'0')).min(100_000);
             }
             exponent += if negative { -e } else { e };

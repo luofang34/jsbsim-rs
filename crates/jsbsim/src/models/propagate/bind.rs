@@ -7,7 +7,7 @@
 use crate::Error;
 use crate::fdm::{Binder, Kind, Models};
 use crate::math::{
-    E_DOWN, E_EAST, E_NORTH, E_P, E_PHI, E_PSI, E_Q, E_R, E_THT, E_U, E_V, E_W, E_X, E_Y, E_Z,
+    Axis, E_DOWN, E_EAST, E_NORTH, E_P, E_PHI, E_PSI, E_Q, E_R, E_THT, E_U, E_V, E_W, E_X, E_Y, E_Z,
 };
 use crate::units::{DEGTORAD, FTTOM};
 
@@ -154,7 +154,7 @@ fn position_geodetic(b: &mut Binder<'_>) -> Result<(), Error> {
 }
 
 fn attitude_and_orbit(b: &mut Binder<'_>) -> Result<(), Error> {
-    let euler = |m: &Models, i: usize| m.propagate.state.q_attitude_local.euler()[i];
+    let euler = |m: &Models, i: Axis| m.propagate.state.q_attitude_local.euler()[i];
     for (name, i) in [("phi", E_PHI), ("theta", E_THT), ("psi", E_PSI)] {
         b.getter(&format!("attitude/{name}-rad"), move |m| euler(m, i))?;
     }

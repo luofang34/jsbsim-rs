@@ -139,7 +139,7 @@ impl<'a> Evaluator<'a> {
     /// `GetValue()` of function `id`.
     pub fn function(&mut self, id: FnId) -> Result<f64, Error> {
         let set = self.set;
-        let function = set.function(id);
+        let function = set.function(id)?;
         if let Some(cached) = function.cached {
             return Ok(cached);
         }
@@ -155,7 +155,7 @@ impl<'a> Evaluator<'a> {
     /// the table interpolates.
     pub fn table(&mut self, id: TableId) -> Result<f64, Error> {
         let set = self.set;
-        let table = set.table(id);
+        let table = set.table(id)?;
         match table.kind() {
             TableKind::OneD => Ok(table.value_1d(self.table_key(table, 0)?)),
             TableKind::TwoD => {

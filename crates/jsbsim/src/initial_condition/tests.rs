@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 use super::*;
 use crate::fdm::Fdm;
-use crate::math::{E_PHI, E_PSI, E_THT};
+use crate::math::{E_PHI, E_PSI, E_THT, E_X, E_Y, E_Z};
 use crate::models::auxiliary::{mach_from_vcalibrated, vcalibrated_from_mach};
 use crate::units::DEGTORAD;
 use crate::{Error, MemoryResolver};
@@ -118,17 +118,21 @@ const KTS: f64 = crate::units::KTSTOFPS;
 #[test]
 fn euler_angles_keep_the_body_velocity() {
     let mut ic = InitialCondition::new(&Inertial::default());
-    ic.set_body_vel_fps(1, 100.0);
+    ic.set_body_vel_fps(E_X, 100.0);
     ic.set_euler_angle_deg(E_THT, 10.0);
-    assert!(close(ic.body_vel_fps(1), 100.0, 1e-12));
+    assert!(close(ic.body_vel_fps(E_X), 100.0, 1e-12));
     assert!(close(
         ic.climb_rate_fps(),
         100.0 * libm::sin(10.0 * DEGTORAD),
         1e-12
     ));
-    ic.set_ned_vel_fps(1, 50.0);
+    ic.set_ned_vel_fps(E_X, 50.0);
     ic.set_euler_angle_deg(E_PSI, 90.0);
-    assert_eq!(ic.ned_vel_fps(1), 50.0, "a local velocity set last is kept");
+    assert_eq!(
+        ic.ned_vel_fps(E_X),
+        50.0,
+        "a local velocity set last is kept"
+    );
     assert!(close(ic.euler_deg(E_PHI), 0.0, 1e-12));
 }
 
@@ -198,7 +202,7 @@ fn version_2_files_load_frames() {
         23869.9,
         1e-12
     ));
-    let omega = fdm.models.inertial.omega_planet[3];
+    let omega = fdm.models.inertial.omega_planet[E_Z];
     // At rest in ECI, the body turns against the planet's rotation.
     assert!(close(fdm.models.ic.pqr_radps().magnitude(), omega, 1e-9));
     assert_eq!(fdm.models.ic.speed_set(), SpeedSet::Uvw);
@@ -353,7 +357,7 @@ fn reset_ic_sets_body_state_then_the_flight_path() {
 #[test]
 fn wind_components_add_to_the_ground_velocity() {
     let mut ic = InitialCondition::new(&Inertial::default());
-    ic.set_ned_vel_fps(1, 100.0);
+    ic.set_ned_vel_fps(E_X, 100.0);
     ic.set_wind_ned_fps(10.0, -20.0, 0.0);
     assert!(close(
         ic.vtrue_fps(),
@@ -361,8 +365,8 @@ fn wind_components_add_to_the_ground_velocity() {
         1e-12
     ));
     let w = ic.wind_ned_fps();
-    assert!(close(w[1], 10.0, 1e-12) && close(w[2], -20.0, 1e-12));
+    assert!(close(w[E_X], 10.0, 1e-12) && close(w[E_Y], -20.0, 1e-12));
     ic.set_wind_down_kts(5.0);
-    assert!(close(ic.wind_ned_fps()[3], 5.0 * KTS, 1e-12));
-    assert_eq!(ic.ned_vel_fps(1), 100.0, "the ground velocity is kept");
+    assert!(close(ic.wind_ned_fps()[E_Z], 5.0 * KTS, 1e-12));
+    assert_eq!(ic.ned_vel_fps(E_X), 100.0, "the ground velocity is kept");
 }

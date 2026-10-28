@@ -383,10 +383,79 @@ fn strict_mode_refuses_internal_tables_with_lookup_properties() {
     let text = "<table type=\"internal\"><independentVar>x</independentVar><tableData>0 0\n1 1</tableData></table>";
     let mut f = Fixture::new(&[("x", 1.0)]);
     let id = f.set.load_table(&mut f.tree, &xml(text), "").unwrap();
-    assert!(!f.set.table(id).is_internal(), "JSBSim drops 'internal'");
+    assert!(
+        !f.set.table(id).unwrap().is_internal(),
+        "JSBSim drops 'internal'"
+    );
     f.set = FunctionSet::with_options(crate::LoadOptions { strict: true });
     assert!(matches!(
         f.set.load_table(&mut f.tree, &xml(text), ""),
         Err(Error::Function(FunctionError::Strict { .. }))
     ));
+}
+
+#[test]
+fn ids_from_another_set_are_typed_errors() {
+    let mut f = Fixture::new(&[("x", 1.0)]);
+    let id = f
+        .load("<function><sum><property>x</property></sum></function>")
+        .unwrap();
+    let text = "<table><independentVar>x</independentVar><tableData>0 0\n1 1</tableData></table>";
+    let table = f.set.load_table(&mut f.tree, &xml(text), "").unwrap();
+    let other = FunctionSet::new();
+    assert!(matches!(
+        other.function(id),
+        Err(FunctionError::UnknownId {
+            what: "function",
+            ..
+        })
+    ));
+    assert!(matches!(
+        other.table(table),
+        Err(FunctionError::UnknownId { what: "table", .. })
+    ));
+    let mut tree = PropertyTree::new();
+    assert!(matches!(
+        Evaluator::new(&other, &mut tree).function(id),
+        Err(Error::Function(FunctionError::UnknownId { .. }))
+    ));
+}
+
+#[test]
+fn rotation_index_outside_one_to_three_is_an_error() {
+    let mut f = Fixture::new(&[("i", 0.0)]);
+    let id = f
+        .load("<function><rotation_bf_to_wf><value>1</value><value>2</value><value>3</value><value>10</value><value>20</value><value>30</value><property>i</property></rotation_bf_to_wf></function>")
+        .unwrap();
+    for bad in [0.0, 4.0, -1.0] {
+        f.set("i", bad);
+        assert!(matches!(
+            f.eval(id),
+            Err(Error::Function(FunctionError::Index { .. }))
+        ));
+    }
+    f.set("i", 3.0);
+    assert!(f.eval(id).unwrap().is_finite());
+}
+
+#[test]
+fn lookups_past_the_data_read_as_nan() {
+    // A NaN key passes both end checks, so the search for its row would
+    // run past a single row.
+    assert!(Table::one_d(&[(0.0, 1.0)]).value_1d(f64::NAN).is_nan());
+    assert_eq!(Table::one_d(&[(0.0, 1.0)]).value_1d(5.0), 1.0);
+    assert!(Table::one_d(&[]).value_1d(0.0).is_nan());
+    assert!(Table::one_d(&[]).min_value().is_infinite());
+    assert!(Table::one_d(&[(0.0, 1.0)]).element(9, 9).is_nan());
+    let two = Table::one_d(&[(0.0, 1.0), (2.0, 3.0)]);
+    assert_eq!(two.value_1d(1.0), 2.0);
+    assert!(two.value_1d(f64::NAN).is_nan());
+    // The loader accepts a one-row table, so a NaN property reaches it.
+    let mut f = Fixture::new(&[("x", f64::NAN)]);
+    let id = f
+        .load("<function><table><independentVar>x</independentVar><tableData>0 1</tableData></table></function>")
+        .unwrap();
+    assert!(f.eval(id).unwrap().is_nan());
+    f.set("x", 3.0);
+    assert_eq!(f.eval(id).unwrap(), 1.0);
 }

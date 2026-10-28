@@ -13,7 +13,7 @@ use super::base::ModelBase;
 use crate::Error;
 use crate::fdm::LoadContext;
 use crate::functions::FnId;
-use crate::math::{ColumnVector3, E_DRAG, E_LIFT, E_X, E_Z, Matrix33};
+use crate::math::{ColumnVector3, E_DRAG, E_LIFT, E_X, E_Y, E_Z, Matrix33};
 use crate::xml::Element;
 
 /// `eAxisType`.
@@ -300,9 +300,14 @@ impl Aerodynamics {
                     ca.push(id);
                 }
             }
-            if let Some(i) = axis_index(axis_el.attribute("name")) {
-                self.functions[i] = ca;
-                self.functions_at_cg[i] = at_cg;
+            let slots = axis_index(axis_el.attribute("name")).and_then(|i| {
+                self.functions
+                    .get_mut(i)
+                    .zip(self.functions_at_cg.get_mut(i))
+            });
+            if let Some((ca_slot, at_cg_slot)) = slots {
+                *ca_slot = ca;
+                *at_cg_slot = at_cg;
             }
         }
         Ok(())
@@ -384,7 +389,7 @@ impl Aerodynamics {
             self.state.delta_rp[E_X] = shift * self.input.wing_chord;
         }
         let (rp, d) = (self.input.rp_body, self.state.delta_rp);
-        let dxyz_cg = ColumnVector3::new(rp[1] - d[1], rp[2] + d[2], rp[3] - d[3]);
+        let dxyz_cg = ColumnVector3::new(rp[E_X] - d[E_X], rp[E_Y] + d[E_Y], rp[E_Z] - d[E_Z]);
         self.state.moments_mrc = values.moments_mrc;
         let mrc_body = match self.moment_axis {
             AxisType::BodyXyz => values.moments_mrc,

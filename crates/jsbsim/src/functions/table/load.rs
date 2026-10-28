@@ -66,14 +66,14 @@ fn leaf_dimension(data: &Element) -> Result<usize, Error> {
         }
         Ok(())
     };
-    if lines.len() == 1 {
+    let Some(second) = lines.get(1) else {
         return if first_cols == 2 {
             Ok(1)
         } else {
             Err(table_error(data, "Too many columns for a 1D table"))
         };
-    }
-    let second_cols = num_columns(&lines[1]);
+    };
+    let second_cols = num_columns(second);
     if second_cols == first_cols + 1 {
         check_all(second_cols)?;
         return Ok(2);
@@ -212,11 +212,13 @@ impl Table {
             if self.lookup.len() <= axis {
                 self.lookup.resize(axis + 1, None);
             }
-            self.lookup[axis] = Some(value);
+            if let Some(slot) = self.lookup.get_mut(axis) {
+                *slot = Some(value);
+            }
             declared = declared.max(axis + 1);
         }
         for axis in 0..declared {
-            if self.lookup[axis].is_none() {
+            if self.lookup.get(axis).is_none_or(Option::is_none) {
                 return Err(table_error(
                     el,
                     format!("missing lookup axis \"{}\"", lookup_axis_name(axis)),
@@ -321,16 +323,20 @@ impl Table {
         match self.kind {
             TableKind::Nested => {
                 for b in 2..=self.tables.len() {
-                    if d[b] <= d[b - 1] {
-                        return Err(named("breakpoint", b, d[b], d[b - 1]));
+                    if let (Some(&x), Some(&y)) = (d.get(b), d.get(b - 1))
+                        && x <= y
+                    {
+                        return Err(named("breakpoint", b, x, y));
                     }
                 }
                 return Ok(());
             }
             TableKind::TwoD => {
                 for c in 2..=self.n_cols {
-                    if d.get(c).zip(d.get(c - 1)).is_some_and(|(x, y)| x <= y) {
-                        return Err(named("column", c, d[c], d[c - 1]));
+                    if let (Some(&x), Some(&y)) = (d.get(c), d.get(c - 1))
+                        && x <= y
+                    {
+                        return Err(named("column", c, x, y));
                     }
                 }
             }

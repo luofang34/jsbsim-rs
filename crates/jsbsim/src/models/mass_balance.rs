@@ -17,7 +17,7 @@ pub use point_mass::{PointMass, Shape};
 
 use super::base::ModelBase;
 use super::propagate::Propagate;
-use crate::math::{ColumnVector3, E_X, Matrix33};
+use crate::math::{ColumnVector3, E_X, E_Y, E_Z, Matrix33};
 use crate::units::{INCHTOFT, LBTOSLUG, SLUGTOLB};
 
 /// What other models give the mass balance (`FGMassBalance::Inputs`).
@@ -233,12 +233,12 @@ impl MassBalance {
     pub fn pointmass_inertia(&self, mass_sl: f64, r: ColumnVector3) -> Matrix33 {
         let v = self.structural_to_body(r);
         let sv = mass_sl * v;
-        let xx = sv[1] * v[1];
-        let yy = sv[2] * v[2];
-        let zz = sv[3] * v[3];
-        let xy = -sv[1] * v[2];
-        let xz = -sv[1] * v[3];
-        let yz = -sv[2] * v[3];
+        let xx = sv[E_X] * v[E_X];
+        let yy = sv[E_Y] * v[E_Y];
+        let zz = sv[E_Z] * v[E_Z];
+        let xy = -sv[E_X] * v[E_Y];
+        let xz = -sv[E_X] * v[E_Z];
+        let yz = -sv[E_Y] * v[E_Z];
         Matrix33::new(yy + zz, xy, xz, xy, xx + zz, yz, xz, yz, xx + yy)
     }
 
@@ -248,19 +248,23 @@ impl MassBalance {
     pub fn structural_to_body(&self, r: ColumnVector3) -> ColumnVector3 {
         let x = &self.xyz_cg;
         let k = INCHTOFT;
-        ColumnVector3::new(k * (x[1] - r[1]), k * (r[2] - x[2]), k * (x[3] - r[3]))
+        ColumnVector3::new(
+            k * (x[E_X] - r[E_X]),
+            k * (r[E_Y] - x[E_Y]),
+            k * (x[E_Z] - r[E_Z]),
+        )
     }
 }
 
 /// The inverse of a symmetric inertia tensor by cofactors (Stevens and
 /// Lewis), as JSBSim computes it rather than by a general inverse.
 fn inverse_inertia(j: &Matrix33) -> Matrix33 {
-    let ixx = j[(1, 1)];
-    let iyy = j[(2, 2)];
-    let izz = j[(3, 3)];
-    let ixy = -j[(1, 2)];
-    let ixz = -j[(1, 3)];
-    let iyz = -j[(2, 3)];
+    let ixx = j[(E_X, E_X)];
+    let iyy = j[(E_Y, E_Y)];
+    let izz = j[(E_Z, E_Z)];
+    let ixy = -j[(E_X, E_Y)];
+    let ixz = -j[(E_X, E_Z)];
+    let iyz = -j[(E_Y, E_Z)];
 
     let mut k1 = iyy * izz - iyz * iyz;
     let mut k2 = iyz * ixz + ixy * izz;

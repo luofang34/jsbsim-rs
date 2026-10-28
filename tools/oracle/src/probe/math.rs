@@ -2,7 +2,9 @@
 //! Math probe; twin of `tools/oracle/cpp/probe_math.cpp`.
 
 use jsbsim::c_numeric::format_g;
-use jsbsim::math::{ColumnVector3, Location, Matrix33, Quaternion, dot_product};
+use jsbsim::math::{
+    Axis, ColumnVector3, E_X, E_Y, E_Z, Location, Matrix33, Quaternion, dot_product,
+};
 
 #[derive(Default)]
 struct Out(String);
@@ -28,8 +30,8 @@ impl Out {
     }
     fn mat(&mut self, t: &str, m: &Matrix33) {
         self.tag(t);
-        for r in 1..=3 {
-            for c in 1..=3 {
+        for r in Axis::ALL {
+            for c in Axis::ALL {
                 self.num(m[(r, c)]);
             }
         }
@@ -42,7 +44,7 @@ impl Out {
     }
 }
 
-fn vector(o: &mut Out, a: &[f64]) {
+fn vector(o: &mut Out, a: &Args) {
     let u = ColumnVector3::new(a[0], a[1], a[2]);
     let v = ColumnVector3::new(a[3], a[4], a[5]);
     o.vec("sum", u + v);
@@ -50,19 +52,19 @@ fn vector(o: &mut Out, a: &[f64]) {
     o.vec("cross", u.cross(v));
     o.tagged("dot", dot_product(u, v));
     o.tagged("mag", u.magnitude());
-    o.tagged("mag12", u.magnitude2(1, 2));
-    o.tagged("mag23", u.magnitude2(2, 3));
+    o.tagged("mag12", u.magnitude2(E_X, E_Y));
+    o.tagged("mag23", u.magnitude2(E_Y, E_Z));
     let mut n = u;
     o.vec("norm", *n.normalize());
     o.vec("scaled", 2.5 * u);
     o.vec("div3", u / 3.0);
     o.vec("div0", u / 0.0);
     let mut w = u;
-    w /= v[1];
+    w /= v[E_X];
     o.vec("divassign", w);
 }
 
-fn matrix(o: &mut Out, a: &[f64]) {
+fn matrix(o: &mut Out, a: &Args) {
     let m = Matrix33::new(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8]);
     let v = ColumnVector3::new(1.25, -2.5, 3.75);
     o.tagged("det", m.determinant());
@@ -89,11 +91,11 @@ fn quaternion(o: &mut Out, q: &Quaternion) {
     o.vec("euler", q.euler());
     o.vec("eulerdeg", q.euler_deg());
     o.tag("sin");
-    for i in 1..=3 {
+    for i in Axis::ALL {
         o.num(q.sin_euler(i));
     }
     o.tag("cos");
-    for i in 1..=3 {
+    for i in Axis::ALL {
         o.num(q.cos_euler(i));
     }
     o.quat("qdot", &q.q_dot(pqr));
@@ -139,12 +141,25 @@ fn location(o: &mut Out, l: &Location, ellipse: bool) {
     }
 }
 
-fn run_op(o: &mut Out, op: &str, a: &[f64]) {
+/// The operands of one operation; missing ones read as NaN.
+type Args = [f64; 9];
+
+fn run_op(o: &mut Out, op: &str, args: &[f64]) {
+    let mut a: Args = [f64::NAN; 9];
+    for (slot, &v) in a.iter_mut().zip(args) {
+        *slot = v;
+    }
+    let a = &a;
     match op {
         "vec" => vector(o, a),
         "mat" => matrix(o, a),
         "quat" => quaternion(o, &Quaternion::from_euler(a[0], a[1], a[2])),
-        "qaxis" => quaternion(o, &Quaternion::from_axis_index(a[0] as usize, a[1])),
+        "qaxis" => {
+            // `FGQuaternion(idx, angle)` treats any index but ePhi or eTht as
+            // ePsi.
+            let axis = Axis::from_index1(a[0] as usize).unwrap_or(Axis::Z);
+            quaternion(o, &Quaternion::from_axis_index(axis, a[1]));
+        }
         "qangleaxis" => quaternion(
             o,
             &Quaternion::from_angle_axis(a[0], ColumnVector3::new(a[1], a[2], a[3])),
@@ -152,10 +167,10 @@ fn run_op(o: &mut Out, op: &str, a: &[f64]) {
         "qexp" => quaternion(o, &Quaternion::exp(ColumnVector3::new(a[0], a[1], a[2]))),
         "loc" => {
             let mut l = Location::from_ecef(ColumnVector3::new(a[0], a[1], a[2]));
-            if a.len() == 5 {
+            if args.len() == 5 {
                 l.set_ellipse(a[3], a[4]);
             }
-            location(o, &l, a.len() == 5);
+            location(o, &l, args.len() == 5);
         }
         "geod" => {
             let mut l = Location::default();

@@ -25,7 +25,7 @@ use std::f64::consts::PI;
 
 use super::base::ModelBase;
 use crate::Error;
-use crate::math::{ColumnVector3, E_DOWN, E_EAST, E_NORTH, E_X, E_Y, Matrix33};
+use crate::math::{Axis, ColumnVector3, E_DOWN, E_EAST, E_NORTH, E_X, E_Y, Matrix33};
 
 /// Inputs loaded by the executive (`FGWinds::Inputs`). JSBSim's latitude,
 /// longitude and planet radius serve only the up/downburst distance, which
@@ -156,7 +156,7 @@ impl Winds {
     }
 
     /// `SetWindNED(idx, wind)`, which leaves `psiw` alone.
-    pub fn set_wind_ned_component(&mut self, idx: usize, wind: f64) {
+    pub fn set_wind_ned_component(&mut self, idx: Axis, wind: f64) {
         self.wind_ned[idx] = wind;
     }
 

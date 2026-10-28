@@ -115,7 +115,8 @@ impl Atmosphere {
             }
         } else {
             // The first lapse rate already includes the gradient.
-            t = p.temperature_table.value_1d(0.0) + geo_pot_alt * p.lapse_rates[0];
+            t = p.temperature_table.value_1d(0.0)
+                + geo_pot_alt * p.lapse_rates.first().copied().unwrap_or(f64::NAN);
         }
         t += p.temperature_bias;
         if geo_pot_alt <= p.gradient_fadeout_altitude {
@@ -133,7 +134,8 @@ impl Atmosphere {
         if geo_pot_alt >= 0.0 {
             p.temperature_table.value_1d(geo_pot_alt)
         } else {
-            p.temperature_table.value_1d(0.0) + geo_pot_alt * p.lapse_rates[0]
+            p.temperature_table.value_1d(0.0)
+                + geo_pot_alt * p.lapse_rates.first().copied().unwrap_or(f64::NAN)
         }
     }
 

@@ -46,17 +46,17 @@ impl FunctionSet {
         } else {
             let message = format!(
                 "Illegal use of the special character '#'. The 'copyto' argument in function {} is ignored.",
-                self.function(id).name
+                self.function(id)?.name
             );
             self.lenient(&el.location(), message)?;
             return Ok(id);
         };
         match tree.get(&copy_to)? {
-            Some(node) => self.functions[id.0].copy_to = Some(node),
+            Some(node) => self.function_mut(id)?.copy_to = Some(node),
             None => {
                 let message = format!(
                     "Property \"{copy_to}\" must be previously defined in function {}. The 'copyto' argument is ignored.",
-                    self.function(id).name
+                    self.function(id)?.name
                 );
                 self.lenient(&el.location(), message)?;
             }
@@ -156,14 +156,14 @@ impl FunctionSet {
         });
         if let Some(property) = output {
             let node = self.bind(tree, &property, Bound::Function(id), &el.location())?;
-            self.functions[id.0].node = Some(node);
+            self.function_mut(id)?.node = Some(node);
         }
         self.check_arity(id, el)?;
         Ok(id)
     }
 
     fn check_arity(&self, id: FnId, el: &Element) -> Result<(), Error> {
-        let function = self.function(id);
+        let function = self.function(id)?;
         let (min, max, parity) = function.op.arity();
         let n = function.params.len();
         let message = if n < min {
@@ -261,8 +261,11 @@ impl FunctionSet {
         let collapsible = self
             .functions
             .last()
-            .filter(|f| f.op == op && f.params.len() == 1);
-        let (Some(function), true, true, false) = (
+            .and_then(|f| match f.params.as_slice() {
+                [param] if f.op == op => Some((f.node, param.clone())),
+                _ => None,
+            });
+        let (Some((node, param)), true, true, false) = (
             collapsible,
             own_count_error,
             op.collapses_single_argument(),
@@ -276,7 +279,6 @@ impl FunctionSet {
             op.name(),
             op.name()
         );
-        let (node, param) = (function.node, function.params[0].clone());
         if let Some(node) = node {
             // JSBSim's destructor unties the node, which keeps the value its
             // getter returns at that moment.
@@ -338,7 +340,7 @@ impl FunctionSet {
             return Ok(());
         }
         let value = Evaluator::new(self, tree).function(id)?;
-        if let Some(node) = self.function(id).node {
+        if let Some(node) = self.function(id)?.node {
             self.unbind_as_constant(tree, node, value);
         }
         if let Some(last) = params.last_mut() {
@@ -348,7 +350,9 @@ impl FunctionSet {
     }
 
     fn is_constant_function(&self, id: FnId, tree: &PropertyTree) -> bool {
-        let function = self.function(id);
+        let Ok(function) = self.function(id) else {
+            return false;
+        };
         !UNSUPPORTED.contains(&function.op)
             && function.params.iter().all(|p| match p {
                 Parameter::Real(_) => true,

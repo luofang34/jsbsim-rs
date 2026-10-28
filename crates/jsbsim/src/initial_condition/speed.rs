@@ -9,7 +9,7 @@
 //! the ground velocity and keep the wind.
 
 use super::{Environment, InitialCondition, SpeedSet};
-use crate::math::{ColumnVector3, E_PSI};
+use crate::math::{Axis, ColumnVector3, E_PSI, E_X, E_Y, E_Z};
 use crate::models::atmosphere::STD_DAY_SL_DENSITY;
 use crate::models::auxiliary::{mach_from_vcalibrated, vcalibrated_from_mach};
 use crate::units::{FPSTOKTS, KTSTOFPS};
@@ -50,9 +50,9 @@ impl InitialCondition {
     pub fn set_vground_fps(&mut self, vg: f64) {
         let vt_ned = self.vt_ned();
         let wind_ned = vt_ned - self.uvw_ned;
-        self.uvw_ned[1] = vg * self.orientation.cos_euler(E_PSI);
-        self.uvw_ned[2] = vg * self.orientation.sin_euler(E_PSI);
-        self.uvw_ned[3] = 0.;
+        self.uvw_ned[E_X] = vg * self.orientation.cos_euler(E_PSI);
+        self.uvw_ned[E_Y] = vg * self.orientation.sin_euler(E_PSI);
+        self.uvw_ned[E_Z] = 0.;
         let vt_ned = self.uvw_ned + wind_ned;
         self.vt = vt_ned.magnitude();
         self.calc_aero_angles(vt_ned);
@@ -88,7 +88,7 @@ impl InitialCondition {
 
     /// `SetBodyVelFpsIC(idx, vel)`: one body component of the ground
     /// velocity (`E_U`, `E_V` or `E_W`); the wind is kept.
-    pub fn set_body_vel_fps(&mut self, idx: usize, vel: f64) {
+    pub fn set_body_vel_fps(&mut self, idx: Axis, vel: f64) {
         let tb2l = self.orientation.t_inv();
         let vt_ned = self.vt_ned();
         let mut uvw_body = self.orientation.t() * self.uvw_ned;
@@ -104,7 +104,7 @@ impl InitialCondition {
     /// `SetNEDVelFpsIC(idx, vel)`: one local component of the ground
     /// velocity (`E_U`, `E_V` or `E_W` for north, east, down); the wind is
     /// kept.
-    pub fn set_ned_vel_fps(&mut self, idx: usize, vel: f64) {
+    pub fn set_ned_vel_fps(&mut self, idx: Axis, vel: f64) {
         let vt_ned = self.vt_ned();
         let wind_ned = vt_ned - self.uvw_ned;
         self.uvw_ned[idx] = vel;

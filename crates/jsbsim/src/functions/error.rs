@@ -81,6 +81,15 @@ pub enum FunctionError {
         /// JSBSim's message.
         message: String,
     },
+    /// A function or table id that this set did not create, such as one
+    /// from another [`FunctionSet`](crate::functions::FunctionSet).
+    #[error("no {what} with id {id} in this function set")]
+    UnknownId {
+        /// `"function"` or `"table"`.
+        what: &'static str,
+        /// The id.
+        id: usize,
+    },
     /// `<mod>` with a divisor that truncates to 0, which crashes JSBSim.
     #[error("{at}: <mod> divisor truncates to zero")]
     ModByZero {

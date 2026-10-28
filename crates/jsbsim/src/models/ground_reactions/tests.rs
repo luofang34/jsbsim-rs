@@ -124,7 +124,7 @@ fn setters_behave_as_in_jsbsim() {
     let mut fdm = load();
     assert!(fdm.set_property("contact/unit/x-position", 12.0).unwrap());
     let c = &fdm.models.ground_reactions.contacts[0];
-    assert_eq!((c.location[1], c.acting_location[1]), (12.0, 12.0));
+    assert_eq!((c.location[E_X], c.acting_location[E_X]), (12.0, 12.0));
 
     fdm.set_property("gear/unit[1]/static_friction_coeff", 0.6)
         .unwrap();

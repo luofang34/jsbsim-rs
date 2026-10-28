@@ -9,7 +9,9 @@ use std::ops::{
     Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign,
 };
 
-/// `FGColumnVector3`; entries are indexed 1 to 3.
+use super::Axis;
+
+/// `FGColumnVector3`; entries are indexed by [`Axis`].
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub struct ColumnVector3 {
     data: [f64; 3],
@@ -46,9 +48,9 @@ impl ColumnVector3 {
         (x * x + y * y + z * z).sqrt()
     }
 
-    /// `Magnitude(idx1, idx2)`: the norm projected on two axes (1-based).
+    /// `Magnitude(idx1, idx2)`: the norm projected on two axes.
     #[must_use]
-    pub fn magnitude2(&self, idx1: usize, idx2: usize) -> f64 {
+    pub fn magnitude2(&self, idx1: Axis, idx2: Axis) -> f64 {
         let (a, b) = (self[idx1], self[idx2]);
         (a * a + b * b).sqrt()
     }
@@ -74,19 +76,30 @@ impl ColumnVector3 {
 /// `DotProduct(v1, v2)`.
 #[must_use]
 pub fn dot_product(v1: ColumnVector3, v2: ColumnVector3) -> f64 {
-    v1[1] * v2[1] + v1[2] * v2[2] + v1[3] * v2[3]
+    let ([a1, a2, a3], [b1, b2, b3]) = (v1.data, v2.data);
+    a1 * b1 + a2 * b2 + a3 * b3
 }
 
-impl Index<usize> for ColumnVector3 {
+impl Index<Axis> for ColumnVector3 {
     type Output = f64;
-    fn index(&self, idx: usize) -> &f64 {
-        &self.data[idx - 1]
+    fn index(&self, axis: Axis) -> &f64 {
+        let [x, y, z] = &self.data;
+        match axis {
+            Axis::X => x,
+            Axis::Y => y,
+            Axis::Z => z,
+        }
     }
 }
 
-impl IndexMut<usize> for ColumnVector3 {
-    fn index_mut(&mut self, idx: usize) -> &mut f64 {
-        &mut self.data[idx - 1]
+impl IndexMut<Axis> for ColumnVector3 {
+    fn index_mut(&mut self, axis: Axis) -> &mut f64 {
+        let [x, y, z] = &mut self.data;
+        match axis {
+            Axis::X => x,
+            Axis::Y => y,
+            Axis::Z => z,
+        }
     }
 }
 
