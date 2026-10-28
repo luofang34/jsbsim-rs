@@ -280,7 +280,7 @@ impl FunctionSet {
         if let Some(node) = node {
             // JSBSim's destructor unties the node, which keeps the value its
             // getter returns at that moment.
-            self.bound.remove(&node);
+            self.bound.remove(node);
             tree.untie(node);
             if let Ok(value) = Evaluator::new(self, tree).parameter(&param) {
                 tree.store(node, value);

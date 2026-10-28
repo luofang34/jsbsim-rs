@@ -10,12 +10,10 @@
 //! which asks [`ModelGetters`] for the getter's value, and writes go through
 //! [`Fdm::set_property`](super::Fdm::set_property), which calls the setter.
 
-use std::collections::BTreeMap;
-
 use super::Models;
 use crate::Error;
 use crate::functions::GetterSource;
-use crate::properties::{NodeId, PropertyTree, Value};
+use crate::properties::{NodeId, NodeMap, PropertyTree, Value};
 
 /// A getter: the property's value given the models.
 pub type Getter = Box<dyn Fn(&Models) -> f64>;
@@ -37,20 +35,20 @@ pub enum Kind {
 /// Getters and setters of tied properties.
 #[derive(Default)]
 pub struct Bindings {
-    getters: BTreeMap<NodeId, Getter>,
-    setters: BTreeMap<NodeId, (Kind, Setter)>,
+    getters: NodeMap<Getter>,
+    setters: NodeMap<(Kind, Setter)>,
 }
 
 impl Bindings {
     /// The setter of `node`, if it has one.
     pub(crate) fn setter(&self, node: NodeId) -> Option<&(Kind, Setter)> {
-        self.setters.get(&node)
+        self.setters.get(node)
     }
 
     /// Whether `node` has a getter.
     #[must_use]
     pub fn is_bound(&self, node: NodeId) -> bool {
-        self.getters.contains_key(&node)
+        self.getters.contains(node)
     }
 }
 
@@ -137,7 +135,7 @@ pub struct ModelGetters<'a> {
 
 impl GetterSource for ModelGetters<'_> {
     fn get(&self, node: NodeId) -> Option<f64> {
-        self.bindings.getters.get(&node).map(|g| g(self.models))
+        self.bindings.getters.get(node).map(|g| g(self.models))
     }
 }
 

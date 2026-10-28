@@ -5,10 +5,8 @@
 //! Scripts: a run time span and events that set properties when their
 //! condition becomes true.
 
-use std::collections::BTreeMap;
-
 use crate::functions::{Condition, FnId, Parameter};
-use crate::properties::NodeId;
+use crate::properties::{NodeId, NodeMap};
 
 /// `FG_VALUE`, `FG_DELTA`, `FG_BOOL`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -110,5 +108,5 @@ pub struct Script {
     /// Events in file order.
     pub events: Vec<Event>,
     /// `<property>` declarations of `<run>` and their initial values.
-    pub local_properties: BTreeMap<NodeId, f64>,
+    pub local_properties: NodeMap<f64>,
 }

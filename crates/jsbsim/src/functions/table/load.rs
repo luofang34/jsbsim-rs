@@ -131,6 +131,7 @@ impl Table {
             lookup: Vec::new(),
             internal: false,
             name: el.attribute("name").to_owned(),
+            keys: Box::default(),
         };
         match el.attribute("type") {
             "internal" => table.internal = true,
@@ -158,6 +159,7 @@ impl Table {
         table
             .lookup
             .resize(table.n_dims.max(table.lookup.len()), None);
+        table.keys = super::key_slots(table.n_dims);
         Ok(table)
     }
 

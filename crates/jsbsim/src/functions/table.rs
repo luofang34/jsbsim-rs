@@ -12,6 +12,8 @@
 
 mod load;
 
+use std::cell::Cell;
+
 use super::PropertyValue;
 
 /// Shape of a table.
@@ -37,6 +39,9 @@ pub struct Table {
     lookup: Vec<Option<PropertyValue>>,
     internal: bool,
     name: String,
+    /// One slot per dimension, where a nested lookup gathers its keys
+    /// before interpolating, so the lookup needs no buffer of its own.
+    keys: Box<[Cell<f64>]>,
 }
 
 impl Table {
@@ -59,6 +64,7 @@ impl Table {
             lookup: vec![None],
             internal: false,
             name: String::new(),
+            keys: key_slots(1),
         }
     }
 
@@ -114,11 +120,27 @@ impl Table {
         if keys.len() < self.n_dims {
             return None;
         }
-        Some(match self.kind {
-            TableKind::OneD => self.value_1d(keys[0]),
-            TableKind::TwoD => self.value_2d(keys[0], keys[1]),
-            TableKind::Nested => self.value_nd(keys),
-        })
+        Some(self.value_by(&|i| keys[i]))
+    }
+
+    /// Stores key `axis` for [`value_of_keys`](Self::value_of_keys).
+    pub(crate) fn set_key(&self, axis: usize, key: f64) {
+        if let Some(slot) = self.keys.get(axis) {
+            slot.set(key);
+        }
+    }
+
+    /// `GetValue()` at the keys last stored with `set_key`.
+    pub(crate) fn value_of_keys(&self) -> f64 {
+        self.value_by(&|i| self.keys.get(i).map_or(f64::NAN, Cell::get))
+    }
+
+    fn value_by(&self, key: &impl Fn(usize) -> f64) -> f64 {
+        match self.kind {
+            TableKind::OneD => self.value_1d(key(0)),
+            TableKind::TwoD => self.value_2d(key(0), key(1)),
+            TableKind::Nested => self.value_nd(key),
+        }
     }
 
     /// `GetValue(key)` of a 1D table.
@@ -142,7 +164,9 @@ impl Table {
         factor * (d[2 * r + 1] - y0) + y0
     }
 
-    fn value_2d(&self, row_key: f64, col_key: f64) -> f64 {
+    /// `GetValue(rowKey, colKey)` of a 2D table.
+    #[must_use]
+    pub fn value_2d(&self, row_key: f64, col_key: f64) -> f64 {
         let d = &self.data;
         let w = self.n_cols + 1;
         if self.n_cols == 1 {
@@ -171,11 +195,11 @@ impl Table {
         c_factor * (col2 - col1) + col1
     }
 
-    fn value_nd(&self, keys: &[f64]) -> f64 {
+    fn value_nd(&self, key: &impl Fn(usize) -> f64) -> f64 {
         let d = &self.data;
         let n = self.n_rows;
-        let outer = keys[self.n_dims - 1];
-        let sub = |i: usize| self.tables[i].value(keys).unwrap_or(f64::NAN);
+        let outer = key(self.n_dims - 1);
+        let sub = |i: usize| self.tables[i].value_by(key);
         if outer <= d[1] {
             return sub(0);
         } else if outer >= d[n] {
@@ -197,4 +221,9 @@ impl Table {
     pub fn min_value(&self) -> f64 {
         (1..=self.n_rows).fold(f64::INFINITY, |m, i| m.min(self.data[2 * i + 1]))
     }
+}
+
+/// Key slots for a table of `n_dims` dimensions.
+fn key_slots(n_dims: usize) -> Box<[Cell<f64>]> {
+    (0..n_dims).map(|_| Cell::new(f64::NAN)).collect()
 }

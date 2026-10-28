@@ -14,12 +14,14 @@
 
 mod bind;
 mod humidity;
+mod override_nodes;
 mod pressure;
 mod standard;
 #[cfg(test)]
 mod tests;
 
 pub use bind::bind;
+pub use override_nodes::OverrideNodes;
 
 use super::base::ModelBase;
 use crate::c_numeric::format_g;
@@ -173,6 +175,8 @@ pub struct Atmosphere {
     pub saturated_vapor_pressure: f64,
     /// The standard temperature profile and its offsets.
     pub profile: StandardProfile,
+    /// The `atmosphere/override/*` nodes found so far.
+    pub override_nodes: OverrideNodes,
 }
 
 impl Default for Atmosphere {
@@ -198,6 +202,7 @@ impl Default for Atmosphere {
             vapor_mass_fraction: 0.0,
             saturated_vapor_pressure: STD_DAY_SL_PRESSURE,
             profile: StandardProfile::new(),
+            override_nodes: OverrideNodes::default(),
         };
         atmosphere.construct_profile();
         atmosphere

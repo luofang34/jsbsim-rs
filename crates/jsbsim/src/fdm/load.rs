@@ -8,12 +8,10 @@
 //
 //! Loading an aircraft configuration into the models.
 
-use std::collections::BTreeMap;
-
 use super::order::Model;
 use super::{Binder, Fdm};
 use crate::functions::{FnId, FunctionSet};
-use crate::properties::{Attribute, NodeId, PropertyTree};
+use crate::properties::{Attribute, NodeMap, PropertyTree};
 use crate::xml::{DocumentLoader, Element, IncludeKind};
 use crate::{Error, LoadOptions, Resolver};
 
@@ -44,7 +42,7 @@ pub struct ModelFunctions {
     /// Functions run (and cached) after the model.
     pub post: Vec<FnId>,
     /// Declared properties and the value `InitModel` restores.
-    pub local_properties: BTreeMap<NodeId, f64>,
+    pub local_properties: NodeMap<f64>,
 }
 
 impl Fdm {

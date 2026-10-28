@@ -202,8 +202,8 @@ impl Fdm {
     fn declare_script_properties(
         &mut self,
         run: &Element,
-    ) -> Result<std::collections::BTreeMap<crate::properties::NodeId, f64>, Error> {
-        let mut declared = std::collections::BTreeMap::new();
+    ) -> Result<crate::properties::NodeMap<f64>, Error> {
+        let mut declared = crate::properties::NodeMap::new();
         for p in run.find_elements("property") {
             let value = if p.attribute("value").is_empty() {
                 0.0
@@ -236,7 +236,7 @@ impl Fdm {
         let Some(mut script) = self.script.take() else {
             return Ok(());
         };
-        for (&node, &value) in &script.local_properties {
+        for (node, &value) in script.local_properties.iter() {
             if !self
                 .env
                 .tree

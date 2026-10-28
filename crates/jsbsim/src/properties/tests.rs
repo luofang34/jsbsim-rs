@@ -184,3 +184,41 @@ fn naming_helpers() {
     assert_eq!(tree.relative_name(id, "/fcs/"), "elevator-cmd-norm");
     assert_eq!(tree.relative_name(id, "/aero/"), "/fcs/elevator-cmd-norm");
 }
+
+#[test]
+fn the_lookup_generation_moves_only_when_a_lookup_could_change() {
+    let (mut tree, id) = tree_with("a/b");
+    let created = tree.generation();
+    tree.get_or_create(tree.root(), "a/b").unwrap();
+    tree.set_double(id, 2.0);
+    tree.set_attribute(id, Attribute::PRESERVE, true);
+    assert_eq!(tree.get("a/c").unwrap(), None);
+    assert_eq!(tree.generation(), created);
+    let c = tree.get_or_create(tree.root(), "a/c").unwrap();
+    assert_ne!(tree.generation(), created);
+    let after_create = tree.generation();
+    tree.set_attribute(c, Attribute::REMOVED, true);
+    assert_eq!(tree.get("a/c").unwrap(), None);
+    assert_ne!(tree.generation(), after_create);
+}
+
+#[test]
+fn node_maps_index_by_node_and_iterate_in_node_order() {
+    let mut tree = PropertyTree::new();
+    let ids: Vec<NodeId> = ["x", "y", "z"]
+        .iter()
+        .map(|p| tree.get_or_create(tree.root(), p).unwrap())
+        .collect();
+    let mut map = NodeMap::new();
+    assert!(map.is_empty());
+    map.insert(ids[2], 3.0);
+    map.insert(ids[0], 1.0);
+    assert_eq!(map.insert(ids[0], 10.0), Some(1.0));
+    assert!(map.contains(ids[2]) && !map.contains(ids[1]));
+    assert_eq!(map.get(ids[1]), None);
+    let entries: Vec<_> = map.iter().map(|(n, v)| (n, *v)).collect();
+    assert_eq!(entries, [(ids[0], 10.0), (ids[2], 3.0)]);
+    assert_eq!(map.remove(ids[2]), Some(3.0));
+    assert_eq!(map.remove(ids[1]), None);
+    assert_eq!(map.iter().count(), 1);
+}

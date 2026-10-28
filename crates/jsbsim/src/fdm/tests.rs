@@ -68,3 +68,24 @@ fn unloaded_aerodynamics_refuse_to_run() {
     let mut fdm = Fdm::new().unwrap();
     assert!(matches!(fdm.run(), Err(Error::Model { .. })));
 }
+
+/// `FGAtmosphere::Calculate` looks an override node up on every call
+/// until it exists, so one created between frames rules the next frame.
+#[test]
+fn an_override_created_between_frames_takes_effect_in_the_next_frame() {
+    let mut fdm = Fdm::new().unwrap();
+    fdm.set_property("simulation/models/FGAerodynamics/enabled", 0.0)
+        .unwrap();
+    fdm.run().unwrap();
+    let modeled = fdm.get_property("atmosphere/T-R").unwrap();
+    assert_ne!(modeled, 400.0);
+    fdm.set_property("atmosphere/override/temperature", 400.0)
+        .unwrap();
+    assert_eq!(fdm.get_property("atmosphere/T-R").unwrap(), modeled);
+    fdm.run().unwrap();
+    assert_eq!(fdm.get_property("atmosphere/T-R").unwrap(), 400.0);
+    fdm.set_property("atmosphere/override/temperature", 450.0)
+        .unwrap();
+    fdm.run().unwrap();
+    assert_eq!(fdm.get_property("atmosphere/T-R").unwrap(), 450.0);
+}

@@ -15,6 +15,7 @@
 
 mod conversion;
 mod naming;
+mod node_map;
 mod path;
 mod value;
 
@@ -22,6 +23,7 @@ mod value;
 mod tests;
 
 pub use naming::{mk_property_name, printable_name};
+pub use node_map::NodeMap;
 pub use path::PathError;
 pub use value::Value;
 
@@ -30,6 +32,17 @@ use path::{Component, parse_path};
 /// Handle to a node of a [`PropertyTree`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct NodeId(u32);
+
+impl NodeId {
+    /// Index of the node in the tree's arena.
+    pub(crate) fn slot(self) -> usize {
+        self.0 as usize
+    }
+
+    fn from_slot(slot: usize) -> Option<Self> {
+        u32::try_from(slot).ok().map(Self)
+    }
+}
 
 /// SimGear node attribute bits.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -98,6 +111,9 @@ struct Node {
 #[derive(Debug, Clone)]
 pub struct PropertyTree {
     nodes: Vec<Node>,
+    /// Changes whenever a path lookup could start resolving differently:
+    /// a node is created, or one's REMOVED bit flips.
+    generation: u32,
 }
 
 impl Default for PropertyTree {
@@ -112,7 +128,15 @@ impl PropertyTree {
     pub fn new() -> Self {
         Self {
             nodes: vec![Node::new(String::new(), 0, None)],
+            generation: 0,
         }
+    }
+
+    /// The lookup generation: while it is unchanged, a path that resolved
+    /// to no node still resolves to none, so a cached miss stays valid.
+    #[must_use]
+    pub fn generation(&self) -> u32 {
+        self.generation
     }
 
     /// The root node.
@@ -209,6 +233,7 @@ impl PropertyTree {
         let id = NodeId(u32::try_from(self.nodes.len()).unwrap_or(u32::MAX));
         self.nodes.push(Node::new(name, index, Some(parent)));
         self.node_mut(parent).children.push(id);
+        self.generation = self.generation.wrapping_add(1);
         id
     }
 
@@ -253,12 +278,8 @@ impl PropertyTree {
 
     /// Sets or clears attribute `attr` on `id`.
     pub fn set_attribute(&mut self, id: NodeId, attr: Attribute, on: bool) {
-        let node = self.node_mut(id);
-        if on {
-            node.attributes |= attr.0;
-        } else {
-            node.attributes &= !attr.0;
-        }
+        let bits = self.node(id).attributes;
+        self.set_attributes(id, if on { bits | attr.0 } else { bits & !attr.0 });
     }
 
     /// All attribute bits of `id`.
@@ -269,7 +290,12 @@ impl PropertyTree {
 
     /// Replaces all attribute bits of `id`.
     pub fn set_attributes(&mut self, id: NodeId, bits: u8) {
-        self.node_mut(id).attributes = bits;
+        let node = self.node_mut(id);
+        let removed_changed = (node.attributes ^ bits) & Attribute::REMOVED.0 != 0;
+        node.attributes = bits;
+        if removed_changed {
+            self.generation = self.generation.wrapping_add(1);
+        }
     }
 
     /// Whether `id` is tied to a model.

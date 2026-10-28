@@ -36,12 +36,16 @@ impl Fdm {
     /// `FGModelFunctions::InitModel`: declared properties back to their
     /// initial values unless persistent.
     pub(super) fn reset_local_properties(&mut self, model: Model) -> Result<(), Error> {
-        let props: Vec<_> = self.model_functions[model as usize]
+        // A write may reach a setter, so each entry is copied out by slot
+        // rather than borrowed across it.
+        let slots = self.model_functions[model as usize]
             .local_properties
-            .iter()
-            .map(|(n, v)| (*n, *v))
-            .collect();
-        for (node, value) in props {
+            .slot_count();
+        for slot in 0..slots {
+            let props = &self.model_functions[model as usize].local_properties;
+            let Some((node, &value)) = props.entry(slot) else {
+                continue;
+            };
             if !self.env.tree.attribute(node, Attribute::PRESERVE) {
                 self.write_node(node, value)?;
             }
@@ -179,20 +183,6 @@ impl Fdm {
             return Ok(());
         }
         self.run_model_functions(Model::ExternalReactions, true)?;
-        let mut read = Vec::with_capacity(self.models.external_reactions.forces.len());
-        for f in &self.models.external_reactions.forces {
-            read.push(self.env.eval(&self.models, |ev| {
-                let magnitude = match f.magnitude {
-                    Magnitude::Function(id) => ev.function(id)?,
-                    Magnitude::Property(node) => ev.read_node(node)?,
-                };
-                let mut direction = ColumnVector3::zero();
-                for (i, node) in f.direction.iter().enumerate() {
-                    direction[i + 1] = ev.read_node(*node)?;
-                }
-                Ok((magnitude, direction))
-            })?);
-        }
         let m = &mut self.models;
         let t = Transforms {
             tw2b: m.auxiliary.tw2b,
@@ -202,7 +192,24 @@ impl Fdm {
         let er = &mut m.external_reactions;
         er.total_forces = ColumnVector3::zero();
         er.total_moments = ColumnVector3::zero();
-        for (f, (magnitude, direction)) in er.forces.iter_mut().zip(read) {
+        // Each force reads its inputs and is summed before the next one
+        // reads, as `GetBodyForces` does inside JSBSim's loop.
+        for i in 0..self.models.external_reactions.forces.len() {
+            let f = &self.models.external_reactions.forces[i];
+            let (magnitude, direction) = self.env.eval(&self.models, |ev| {
+                let magnitude = match f.magnitude {
+                    Magnitude::Function(id) => ev.function(id)?,
+                    Magnitude::Property(node) => ev.read_node(node)?,
+                };
+                let mut direction = ColumnVector3::zero();
+                for (axis, node) in f.direction.iter().enumerate() {
+                    direction[axis + 1] = ev.read_node(*node)?;
+                }
+                Ok((magnitude, direction))
+            })?;
+            let m = &mut self.models;
+            let er = &mut m.external_reactions;
+            let f = &mut er.forces[i];
             f.update(magnitude, direction, &t, |r| {
                 m.mass_balance.structural_to_body(r)
             });

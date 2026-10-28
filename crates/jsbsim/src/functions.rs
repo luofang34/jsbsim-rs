@@ -34,7 +34,7 @@ pub use parameter::{Parameter, PropertyValue};
 pub use table::{Table, TableKind};
 
 use crate::LoadOptions;
-use crate::properties::{Attribute, NodeId, PropertyTree, Value, mk_property_name};
+use crate::properties::{Attribute, NodeId, NodeMap, PropertyTree, Value, mk_property_name};
 use crate::xml::{Location, atof_locale_c};
 
 /// Index of a function in a [`FunctionSet`].
@@ -95,7 +95,7 @@ impl Function {
 pub struct FunctionSet {
     functions: Vec<Function>,
     tables: Vec<Table>,
-    bound: BTreeMap<NodeId, Bound>,
+    bound: NodeMap<Bound>,
     templates: BTreeMap<String, FnId>,
     options: LoadOptions,
 }
@@ -216,7 +216,7 @@ impl FunctionSet {
     /// Replaces a constant function's binding by its value: the node is
     /// untied, holds `value` and becomes read-only.
     fn unbind_as_constant(&mut self, tree: &mut PropertyTree, node: NodeId, value: f64) {
-        if self.bound.remove(&node).is_some() {
+        if self.bound.remove(node).is_some() {
             tree.untie(node);
         }
         tree.set_double(node, value);

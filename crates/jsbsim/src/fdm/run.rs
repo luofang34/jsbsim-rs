@@ -13,6 +13,7 @@ use crate::Error;
 use crate::math::{ColumnVector3, E_PHI, E_THT, Location, Matrix33, Quaternion};
 use crate::models::aircraft;
 use crate::models::atmosphere::Overrides;
+use crate::properties::NodeId;
 
 /// What the initial conditions give the models: the `FGInitialCondition`
 /// getters that `FGFDMExec::Initialize` hands to `SetInitialState`.
@@ -255,18 +256,16 @@ impl Fdm {
         Ok(())
     }
 
-    /// The `atmosphere/override/*` properties that exist.
+    /// The `atmosphere/override/*` properties found so far.
     fn atmosphere_overrides(&mut self) -> Result<Overrides, Error> {
-        let mut read = |name: &str| -> Result<Option<f64>, Error> {
-            match self.env.tree.get(&format!("atmosphere/override/{name}"))? {
-                Some(node) => Ok(Some(self.read_node(node)?)),
-                None => Ok(None),
-            }
-        };
+        let nodes = &mut self.models.atmosphere.override_nodes;
+        nodes.resolve(&self.env.tree);
+        let nodes = *nodes;
+        let mut read = |node: Option<NodeId>| node.map(|n| self.read_node(n)).transpose();
         Ok(Overrides {
-            temperature: read("temperature")?,
-            pressure: read("pressure")?,
-            density: read("density")?,
+            temperature: read(nodes.temperature)?,
+            pressure: read(nodes.pressure)?,
+            density: read(nodes.density)?,
         })
     }
 

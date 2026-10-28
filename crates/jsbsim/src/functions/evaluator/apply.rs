@@ -36,32 +36,42 @@ impl Evaluator<'_> {
         }
     }
 
-    fn all(&mut self, params: &[Parameter]) -> Result<Vec<f64>, Error> {
-        params.iter().map(|p| self.parameter(p)).collect()
+    /// Folds the operands' values with `step`, evaluating them in order and
+    /// stopping at the first error.
+    fn fold(
+        &mut self,
+        params: &[Parameter],
+        init: f64,
+        step: impl Fn(f64, f64) -> f64,
+    ) -> Result<f64, Error> {
+        params
+            .iter()
+            .try_fold(init, |acc, p| Ok(step(acc, self.parameter(p)?)))
     }
 
     pub(super) fn apply(&mut self, f: &Function) -> Result<f64, Error> {
         let at = &f.at;
         Ok(match f.op {
             Op::Identity => self.p(f, 0)?,
-            Op::Product => self.all(&f.params)?.into_iter().fold(1.0, |t, v| t * v),
-            Op::Sum => self.all(&f.params)?.into_iter().fold(0.0, |t, v| t + v),
+            Op::Product => self.fold(&f.params, 1.0, |t, v| t * v)?,
+            Op::Sum => self.fold(&f.params, 0.0, |t, v| t + v)?,
             Op::Avg => {
-                let sum = self.all(&f.params)?.into_iter().fold(0.0, |t, v| t + v);
+                let sum = self.fold(&f.params, 0.0, |t, v| t + v)?;
                 sum / f.params.len() as f64
             }
             Op::Difference => {
-                let values = self.all(&f.params)?;
-                values.iter().skip(1).fold(values[0], |t, v| t - v)
+                let first = self.p(f, 0)?;
+                let rest = f.params.get(1..).unwrap_or_default();
+                self.fold(rest, first, |t, v| t - v)?
             }
-            Op::Min => self
-                .all(&f.params)?
-                .into_iter()
-                .fold(f64::INFINITY, |m, x| if x < m { x } else { m }),
-            Op::Max => self
-                .all(&f.params)?
-                .into_iter()
-                .fold(f64::NEG_INFINITY, |m, x| if x > m { x } else { m }),
+            Op::Min => self.fold(&f.params, f64::INFINITY, |m, x| if x < m { x } else { m })?,
+            Op::Max => self.fold(
+                &f.params,
+                f64::NEG_INFINITY,
+                |m, x| {
+                    if x > m { x } else { m }
+                },
+            )?,
             Op::And | Op::Or => self.logical(f)?,
             Op::Not => f64::from(u8::from(!binary(self.p(f, 0)?, at)?)),
             Op::IfThen => {

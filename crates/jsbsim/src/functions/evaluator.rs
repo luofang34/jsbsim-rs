@@ -9,7 +9,9 @@
 
 mod apply;
 
-use super::{Bound, FnId, FunctionError, FunctionSet, Parameter, PropertyValue, TableId};
+use super::{
+    Bound, FnId, FunctionError, FunctionSet, Parameter, PropertyValue, Table, TableId, TableKind,
+};
 use crate::Error;
 use crate::properties::{NodeId, PropertyTree};
 
@@ -74,7 +76,7 @@ impl<'a> Evaluator<'a> {
         let Some(target) = self.tree.read_target(node) else {
             return Ok(0.0);
         };
-        let Some(bound) = self.set.bound.get(&target).copied() else {
+        let Some(bound) = self.set.bound.get(target).copied() else {
             if let Some(value) = self.getters.get(target) {
                 return Ok(value);
             }
@@ -149,16 +151,33 @@ impl<'a> Evaluator<'a> {
     }
 
     /// `GetValue()` of table `id`: looks up the values of its properties.
+    /// The keys are read in axis order (row, column, table, ...) before
+    /// the table interpolates.
     pub fn table(&mut self, id: TableId) -> Result<f64, Error> {
         let set = self.set;
         let table = set.table(id);
-        let mut keys = Vec::with_capacity(table.dimensions());
-        for lookup in table.lookup_properties().iter().take(table.dimensions()) {
-            match lookup {
-                Some(p) => keys.push(self.property(p)?),
-                None => keys.push(f64::NAN),
+        match table.kind() {
+            TableKind::OneD => Ok(table.value_1d(self.table_key(table, 0)?)),
+            TableKind::TwoD => {
+                let row = self.table_key(table, 0)?;
+                let column = self.table_key(table, 1)?;
+                Ok(table.value_2d(row, column))
+            }
+            TableKind::Nested => {
+                for axis in 0..table.dimensions() {
+                    let key = self.table_key(table, axis)?;
+                    table.set_key(axis, key);
+                }
+                Ok(table.value_of_keys())
             }
         }
-        Ok(table.value(&keys).unwrap_or(f64::NAN))
+    }
+
+    /// The value of lookup property `axis` of `table`; NaN without one.
+    fn table_key(&mut self, table: &Table, axis: usize) -> Result<f64, Error> {
+        match table.lookup_properties().get(axis) {
+            Some(Some(p)) => self.property(p),
+            _ => Ok(f64::NAN),
+        }
     }
 }
