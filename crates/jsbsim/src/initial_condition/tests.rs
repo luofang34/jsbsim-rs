@@ -2,6 +2,7 @@
 use super::*;
 use crate::fdm::Fdm;
 use crate::math::{E_PHI, E_PSI, E_THT};
+use crate::models::auxiliary::{mach_from_vcalibrated, vcalibrated_from_mach};
 use crate::units::DEGTORAD;
 use crate::{Error, MemoryResolver};
 
@@ -285,6 +286,26 @@ fn terrain_elevation_keeps_a_height_above_ground() {
     ));
     assert!(close(fdm.get_property("ic/h-agl-ft").unwrap(), 500.0, 1e-9));
     assert!(close(fdm.get_property("ic/h-sl-ft").unwrap(), 1500.0, 1e-9));
+}
+
+/// JSBSim's initial conditions convert calibrated airspeed through
+/// `FGAuxiliary`, whose speed of sound is the atmosphere's; the port's
+/// initial conditions pass the atmosphere's directly, so the two must
+/// agree.
+#[test]
+fn initial_conditions_convert_with_the_auxiliary_speed_of_sound() {
+    let fdm = fdm();
+    let m = &fdm.models;
+    assert_eq!(
+        m.atmosphere.std_day_sl_soundspeed.to_bits(),
+        m.auxiliary.input.constants.std_day_sl_soundspeed.to_bits()
+    );
+    let (mach, p) = (0.8, 700.0);
+    let sl = m.atmosphere.std_day_sl_soundspeed;
+    assert_eq!(
+        vcalibrated_from_mach(mach, p, sl).to_bits(),
+        m.auxiliary.vcalibrated_from_mach(mach, p).to_bits()
+    );
 }
 
 #[test]

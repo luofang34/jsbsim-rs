@@ -8,10 +8,10 @@
 //! the ground velocity may turn. Body and local velocity components change
 //! the ground velocity and keep the wind.
 
-use super::airspeed::{mach_from_vcalibrated, vcalibrated_from_mach};
 use super::{Environment, InitialCondition, SpeedSet};
 use crate::math::{ColumnVector3, E_PSI};
 use crate::models::atmosphere::STD_DAY_SL_DENSITY;
+use crate::models::auxiliary::{mach_from_vcalibrated, vcalibrated_from_mach};
 use crate::units::{FPSTOKTS, KTSTOFPS};
 
 impl InitialCondition {

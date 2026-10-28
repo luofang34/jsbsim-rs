@@ -17,7 +17,6 @@
 //! because the initial conditions live next to those models in
 //! [`Models`](crate::fdm::Models).
 
-mod airspeed;
 mod attitude;
 mod bind;
 mod load;
@@ -29,9 +28,6 @@ mod wind;
 #[cfg(test)]
 mod tests;
 
-pub use airspeed::{
-    mach_from_impact_pressure, mach_from_vcalibrated, pitot_total_pressure, vcalibrated_from_mach,
-};
 pub use bind::bind;
 pub use load::LoadOutcome;
 

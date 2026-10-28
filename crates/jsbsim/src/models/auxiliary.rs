@@ -277,7 +277,7 @@ impl Auxiliary {
         s.pt = pitot_total_pressure(s.mach, air.pressure);
 
         if s.mach.abs() > 0.0 {
-            s.vcas = vcalibrated_from_mach(&i.constants, s.mach, air.pressure);
+            s.vcas = vcalibrated_from_mach(s.mach, air.pressure, i.constants.std_day_sl_soundspeed);
             s.veas = (2.0 * self.qbar / STD_DAY_SL_DENSITY).sqrt();
         } else {
             s.vcas = 0.0;

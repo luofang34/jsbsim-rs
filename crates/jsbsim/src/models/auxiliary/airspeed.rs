@@ -6,8 +6,14 @@
 //! Pitot-static relations between Mach number, impact pressure and
 //! calibrated airspeed, after the USAF Aircraft Performance Flight Testing
 //! Manual (AFFTC-TIH-99-01), sections 4.6 to 4.8.
+//!
+//! JSBSim defines them on `FGAuxiliary` only; `FGInitialCondition` calls
+//! the auxiliary's, so both models call these. The calibrated-airspeed
+//! relations read the auxiliary's `in.StdDaySLsoundspeed`, which
+//! `FGFDMExec::LoadPlanetConstants` copies from the constant
+//! `FGAtmosphere::StdDaySLsoundspeed`; callers pass that speed.
 
-use super::{Auxiliary, Constants};
+use super::Auxiliary;
 use crate::models::atmosphere::{SH_RATIO, STD_DAY_SL_PRESSURE};
 
 /// `PitotTotalPressure(mach, pressure)`, psf: isentropic below Mach 1,
@@ -56,32 +62,34 @@ pub fn mach_from_impact_pressure(qc: f64, pressure: f64) -> f64 {
 }
 
 /// `VcalibratedFromMach(mach, pressure)`: calibrated airspeed, ft/s, at
-/// static pressure `pressure`, psf.
+/// static pressure `pressure`, psf, for the standard-day sea-level speed
+/// of sound `std_day_sl_soundspeed`, ft/s.
 #[must_use]
-pub fn vcalibrated_from_mach(constants: &Constants, mach: f64, pressure: f64) -> f64 {
+pub fn vcalibrated_from_mach(mach: f64, pressure: f64, std_day_sl_soundspeed: f64) -> f64 {
     let qc = pitot_total_pressure(mach, pressure) - pressure;
-    constants.std_day_sl_soundspeed * mach_from_impact_pressure(qc, STD_DAY_SL_PRESSURE)
+    std_day_sl_soundspeed * mach_from_impact_pressure(qc, STD_DAY_SL_PRESSURE)
 }
 
 /// `MachFromVcalibrated(vcas, pressure)`: the Mach number at static
-/// pressure `pressure`, psf, for calibrated airspeed `vcas`, ft/s.
+/// pressure `pressure`, psf, for calibrated airspeed `vcas`, ft/s, and the
+/// standard-day sea-level speed of sound `std_day_sl_soundspeed`, ft/s.
 #[must_use]
-pub fn mach_from_vcalibrated(constants: &Constants, vcas: f64, pressure: f64) -> f64 {
-    let qc = pitot_total_pressure(vcas / constants.std_day_sl_soundspeed, STD_DAY_SL_PRESSURE)
+pub fn mach_from_vcalibrated(vcas: f64, pressure: f64, std_day_sl_soundspeed: f64) -> f64 {
+    let qc = pitot_total_pressure(vcas / std_day_sl_soundspeed, STD_DAY_SL_PRESSURE)
         - STD_DAY_SL_PRESSURE;
     mach_from_impact_pressure(qc, pressure)
 }
 
 impl Auxiliary {
-    /// [`vcalibrated_from_mach`] with this model's constants.
+    /// [`vcalibrated_from_mach`] with this model's speed of sound.
     #[must_use]
     pub fn vcalibrated_from_mach(&self, mach: f64, pressure: f64) -> f64 {
-        vcalibrated_from_mach(&self.input.constants, mach, pressure)
+        vcalibrated_from_mach(mach, pressure, self.input.constants.std_day_sl_soundspeed)
     }
 
-    /// [`mach_from_vcalibrated`] with this model's constants.
+    /// [`mach_from_vcalibrated`] with this model's speed of sound.
     #[must_use]
     pub fn mach_from_vcalibrated(&self, vcas: f64, pressure: f64) -> f64 {
-        mach_from_vcalibrated(&self.input.constants, vcas, pressure)
+        mach_from_vcalibrated(vcas, pressure, self.input.constants.std_day_sl_soundspeed)
     }
 }

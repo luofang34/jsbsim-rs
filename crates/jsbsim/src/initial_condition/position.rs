@@ -8,9 +8,9 @@
 //! last (above sea level or ground). A speed set as calibrated, equivalent
 //! or Mach is kept when the altitude changes.
 
-use super::airspeed::{mach_from_vcalibrated, vcalibrated_from_mach};
 use super::{AltitudeSet, Environment, InitialCondition, LatitudeSet, SpeedSet};
 use crate::models::atmosphere::STD_DAY_SL_DENSITY;
+use crate::models::auxiliary::{mach_from_vcalibrated, vcalibrated_from_mach};
 use crate::models::inertial::Inertial;
 use crate::units::{DEGTORAD, sign};
 
