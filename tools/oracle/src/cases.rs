@@ -37,7 +37,8 @@ pub fn run_fresh_blocking(
     let dir = manifest::case_dir(&paths.goldens_dir(), case);
     match &manifest.case {
         CaseSpec::Script(spec) => {
-            let run = upstream::run_script_blocking(paths, spec, &run_dir(paths, case))?;
+            let root = spec.cpp_root(&paths.repo_root, &paths.jsbsim_root);
+            let run = upstream::run_script_in_blocking(paths, &root, spec, &run_dir(paths, case))?;
             Ok((Fresh::Series(run.series), run.provenance))
         }
         CaseSpec::Transcript(spec) => {
@@ -178,8 +179,7 @@ pub fn port_script_blocking(
     spec: &crate::manifest::ScriptSpec,
 ) -> Result<ExitCode, OracleError> {
     let dir = repo_root.join("oracle").join("goldens").join(case);
-    let inputs = repo_root.join("oracle").join("inputs");
-    let (candidate, error) = crate::port_script::run_script(&inputs, spec);
+    let (candidate, error) = crate::port_script::run_script(&spec.rust_root(repo_root), spec);
     let mut reference = Series::read_blocking(&dir.join(REFERENCE_FILE))?;
     if let Some(e) = &error {
         let cut = candidate

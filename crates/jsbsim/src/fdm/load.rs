@@ -333,9 +333,10 @@ fn unsupported_if_present(document: &Element, name: &str) -> Result<(), Error> {
     }
 }
 
-/// A model that is not ported yet may only be present empty.
+/// A model that is not ported yet may only be present empty, or hold
+/// nothing but `<documentation>`, which JSBSim ignores.
 pub(super) fn refuse_children(el: &Element) -> Result<(), Error> {
-    match el.children().first() {
+    match el.children().iter().find(|c| c.name() != "documentation") {
         Some(child) => Err(Error::Unsupported {
             construct: format!("<{}> in <{}>", child.name(), el.name()),
             path: child.location().to_string(),

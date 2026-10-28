@@ -205,6 +205,7 @@ fn spec(case: &Case) -> ScriptSpec {
         end_time: None,
         properties,
         aircraft_path: Some(case.aircraft_path.clone()),
+        inputs: None,
     }
 }
 

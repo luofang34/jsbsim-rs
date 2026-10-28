@@ -5,7 +5,8 @@
 # the committed reference (beyond oracle/tolerances.toml for series, at all
 # for transcripts) or was made from another commit or with other compiler
 # flags; then parses every XML file of the JSBSim tree in C++ and Rust and
-# fails if the element trees differ.
+# fails if the element trees differ; then loads every corpus aircraft in
+# C++ and Rust (see tools/oracle/src/corpus/models.rs).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -13,3 +14,4 @@ export JSBSIM_ROOT="${JSBSIM_ROOT:-$HOME/jsbsim}"
 export NO_COLOR=1
 cargo run --release -q -p oracle -- check-drift "$@"
 cargo run --release -q -p oracle -- check-xml
+cargo run --release -q -p oracle -- check-models

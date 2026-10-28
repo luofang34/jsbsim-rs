@@ -10,7 +10,7 @@ use super::exec_bind::ExecRequest;
 use super::order::{Model, ORDER};
 use super::{Fdm, Models};
 use crate::Error;
-use crate::math::{ColumnVector3, Location, Matrix33, Quaternion};
+use crate::math::{ColumnVector3, E_PHI, E_THT, Location, Matrix33, Quaternion};
 use crate::models::aircraft;
 use crate::models::atmosphere::Overrides;
 
@@ -82,6 +82,7 @@ impl Models {
             }
             Model::MassBalance => self.load_mass_balance_inputs(),
             Model::Accelerations => self.load_accelerations_inputs(),
+            Model::Auxiliary => self.load_auxiliary_inputs(),
             _ => {}
         }
     }
@@ -124,6 +125,41 @@ impl Models {
         a.terrain_angular_vel = self.propagate.local_terrain_angular_velocity;
     }
 
+    fn load_auxiliary_inputs(&mut self) {
+        let (p, at, ac) = (&self.propagate, &self.atmosphere, &self.accelerations);
+        let a = &mut self.auxiliary.input;
+        a.air = crate::models::auxiliary::Air {
+            pressure: at.pressure,
+            density: at.density,
+            temperature: at.temperature,
+            sound_speed: at.sound_speed,
+            kinematic_viscosity: at.kinematic_viscosity,
+        };
+        a.distance_agl = p.distance_agl(&self.inertial);
+        a.mass = self.mass_balance.mass;
+        a.tl2b = p.frames.tl2b;
+        a.tb2l = p.frames.tb2l;
+        a.pqr = p.state.pqr;
+        a.pqri = p.state.pqri;
+        a.pqridot = ac.pqridot;
+        a.uvw = p.state.uvw;
+        a.uvwdot = ac.uvwdot;
+        a.vel = p.vel;
+        a.body_accel = ac.body_accel;
+        a.to_eye_pt = self.mass_balance.structural_to_body(self.aircraft.xyz_ep);
+        a.vrp_body = self.mass_balance.structural_to_body(self.aircraft.xyz_vrp);
+        a.rp_body = self.mass_balance.structural_to_body(self.aircraft.xyz_rp);
+        a.fw = self.aerodynamics.state.fw;
+        a.location.clone_from(&p.state.location);
+        let q = &p.state.q_attitude_local;
+        a.cos_tht = q.cos_euler(E_THT);
+        a.sin_tht = q.sin_euler(E_THT);
+        a.cos_phi = q.cos_euler(E_PHI);
+        a.sin_phi = q.sin_euler(E_PHI);
+        a.total_wind_ned = self.winds.total_wind_ned;
+        a.turb_pqr = self.winds.turb_pqr;
+    }
+
     fn aircraft_inputs(&self) -> aircraft::Inputs {
         let fm = |m: &crate::models::forces::ForceModel| (m.forces, m.moments);
         aircraft::Inputs {
@@ -150,7 +186,7 @@ impl Models {
             Model::Accelerations => self.accelerations.init_model(),
             Model::Winds => self.winds.init_model(),
             Model::MassBalance => self.mass_balance.init_model(),
-            Model::Auxiliary => self.auxiliary.base.init(),
+            Model::Auxiliary => self.auxiliary.init_model(),
             Model::Systems => self.fcs.init_model(),
             Model::Aerodynamics => self.aerodynamics.init_model(),
             Model::ExternalReactions => self.external_reactions.init_model(),
@@ -169,6 +205,9 @@ impl Fdm {
         m.propagate.input.semi_major = m.inertial.a;
         m.propagate.input.semi_minor = m.inertial.b;
         m.propagate.input.gm = m.inertial.gm;
+        let c = &mut m.auxiliary.input.constants;
+        c.standard_gravity = crate::models::inertial::STANDARD_GRAVITY;
+        c.std_day_sl_soundspeed = m.atmosphere.std_day_sl_soundspeed;
     }
 
     /// `InitializeModels`: every model but input and output.
@@ -288,6 +327,7 @@ impl Fdm {
                 let (hd, ts) = (m.exec.hold_down, m.exec.trim_status);
                 m.accelerations.run(holding, hd, ts);
             }
+            Model::Auxiliary => m.auxiliary.run(holding),
             _ => {}
         }
         Ok(())
@@ -299,13 +339,15 @@ impl Fdm {
         let m = &mut self.models;
         m.propagate.set_initial_state(
             &m.inertial,
-            ic.position,
+            ic.position.clone(),
             ic.epa,
             ic.orientation,
             ic.uvw,
             ic.pqr,
         );
         m.winds.set_wind_ned(ic.wind_ned);
+        let (a, b) = (m.inertial.a, m.inertial.b);
+        m.auxiliary.set_initial_state(&ic.position, a, b);
         self.run()?;
         Ok(())
     }
@@ -326,6 +368,9 @@ impl Fdm {
 
     /// Sets the initial conditions `run_ic` applies.
     pub fn set_initial_state(&mut self, state: InitialState) {
+        let m = &mut self.models;
+        let (a, b) = (m.inertial.a, m.inertial.b);
+        m.auxiliary.set_ic_reference(&state.position, a, b);
         self.initial = state;
     }
 

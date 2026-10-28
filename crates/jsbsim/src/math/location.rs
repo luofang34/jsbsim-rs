@@ -4,15 +4,14 @@
 //
 //! Earth-centred, Earth-fixed position with lazily derived longitude,
 //! latitude, radius, geodetic latitude and altitude, and local-frame
-//! transformations.
-//!
-//! JSBSim's geodesic distance and heading (`GetDistanceTo`,
-//! `GetHeadingTo`) use GeographicLib and are not part of this type yet.
+//! transformations, plus geodesic distance and heading on the ellipse
+//! (GeographicLib's inverse problem, as JSBSim uses it).
 
 use std::cell::OnceCell;
 
 use super::{ColumnVector3, E_X, E_Y, E_Z, Matrix33};
-use crate::units::{RADTODEG, sign};
+use crate::units::{DEGTORAD, RADTODEG, sign};
+use geographiclib_rs::{Geodesic, InverseGeodesic};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 struct Derived {
@@ -344,6 +343,41 @@ impl Location {
     /// `operator/=`: scaling by `1/scalar`.
     pub fn div_assign(&mut self, scalar: f64) {
         self.scale_assign(1.0 / scalar);
+    }
+
+    /// The geodesic on this location's ellipse. JSBSim asserts that an
+    /// ellipse is set; without one its defaults (`a = ec = 1`) describe
+    /// the unit sphere, which is used here too.
+    fn geodesic(&self) -> Geodesic {
+        let e = self.ellipse.unwrap_or(Ellipse::new(1.0, 1.0));
+        Geodesic::new(e.a, 1.0 - e.ec)
+    }
+
+    /// `GetDistanceTo(lon, lat)`: geodesic distance, ft, to the target
+    /// longitude and geodetic latitude (radians).
+    #[must_use]
+    pub fn distance_to(&self, target_longitude: f64, target_latitude: f64) -> f64 {
+        let d = self.derived();
+        self.geodesic().inverse(
+            d.geod_lat * RADTODEG,
+            d.lon * RADTODEG,
+            target_latitude * RADTODEG,
+            target_longitude * RADTODEG,
+        )
+    }
+
+    /// `GetHeadingTo(lon, lat)`: initial geodesic azimuth, rad, in
+    /// [-pi, pi], to the target longitude and geodetic latitude (radians).
+    #[must_use]
+    pub fn heading_to(&self, target_longitude: f64, target_latitude: f64) -> f64 {
+        let d = self.derived();
+        let (azi1, _azi2, _a12): (f64, f64, f64) = self.geodesic().inverse(
+            d.geod_lat * RADTODEG,
+            d.lon * RADTODEG,
+            target_latitude * RADTODEG,
+            target_longitude * RADTODEG,
+        );
+        azi1 * DEGTORAD
     }
 }
 

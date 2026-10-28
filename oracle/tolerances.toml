@@ -427,3 +427,171 @@ property = "*/atmosphere/total-wind-down-fps"
 abs = 0.0
 rel = 1e-15
 reason = "Includes the one-minus-cosine gust profile (libm last-ulp differences in cos); observed max rel 8.3e-16."
+
+[[tolerance]]
+case = "auxiliary"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "True and ground speeds, EAS, dynamic pressures, Mach, total temperature, angle and Euler rates, load factors, pilot accelerations, heights over span and every value not listed below use only IEEE basic operations and sqrt in JSBSim's order, so they must be bit-identical; the GeographicLib distances and the NEU position matched bit for bit too."
+
+[[tolerance]]
+case = "auxiliary"
+property = "*/aero/alpha-rad"
+abs = 0.0
+rel = 1e-15
+reason = "atan2 of the aero-relative w and u (libm last-ulp differences); observed max rel 1.4e-16."
+
+[[tolerance]]
+case = "auxiliary"
+property = "*/aero/alpha-deg"
+abs = 0.0
+rel = 1e-15
+reason = "Converts the atan2 alpha; observed max rel 1.6e-16."
+
+[[tolerance]]
+case = "auxiliary"
+property = "*/aero/beta-rad"
+abs = 0.0
+rel = 1e-15
+reason = "atan2 of v and the u-w magnitude (libm last-ulp differences); observed max rel 1.8e-16."
+
+[[tolerance]]
+case = "auxiliary"
+property = "*/aero/beta-deg"
+abs = 0.0
+rel = 1e-15
+reason = "Converts the atan2 beta; observed max rel 2.0e-16."
+
+[[tolerance]]
+case = "auxiliary"
+property = "*/aero/mag-beta-rad"
+abs = 0.0
+rel = 1e-15
+reason = "|beta| of the atan2 beta; observed max rel 1.8e-16."
+
+[[tolerance]]
+case = "auxiliary"
+property = "*/aero/mag-beta-deg"
+abs = 0.0
+rel = 1e-15
+reason = "Converts |beta| of the atan2 beta; observed max rel 2.0e-16."
+
+[[tolerance]]
+case = "auxiliary"
+property = "*/propulsion/pt-lbs_sqft"
+abs = 0.0
+rel = 1e-15
+reason = "Total pressure comes from pow of the isentropic or Rayleigh pitot relation; observed max rel 1.6e-16."
+
+[[tolerance]]
+case = "auxiliary"
+property = "*/velocities/vc-fps"
+abs = 0.0
+rel = 1e-15
+reason = "CAS inverts the pow-based pitot relation through more pow calls; observed max rel 1.3e-16."
+
+[[tolerance]]
+case = "auxiliary"
+property = "*/velocities/vc-kts"
+abs = 0.0
+rel = 1e-15
+reason = "Converts the pow-based CAS; observed max rel 2.2e-16."
+
+[[tolerance]]
+case = "auxiliary"
+property = "*/position/vrp-longitude_deg"
+abs = 0.0
+rel = 1e-15
+reason = "The VRP longitude is the atan2 of its ECEF y and x; observed max rel 1.6e-16."
+
+[[tolerance]]
+case = "auxiliary"
+property = "machqc/M"
+abs = 0.0
+rel = 1e-15
+reason = "MachFromImpactPressure is pow and sqrt, iterated ten times above Mach 1; observed max rel 1.6e-16."
+
+[[tolerance]]
+case = "auxiliary"
+property = "machvc/M"
+abs = 0.0
+rel = 1e-15
+reason = "MachFromVcalibrated chains two pow-based pitot relations; observed max rel 1.7e-16."
+
+[[tolerance]]
+case = "auxiliary"
+property = "heading/psi"
+abs = 1e-15
+rel = 1e-15
+reason = "GetHeadingTo is the GeographicLib inverse azimuth (its atan2/sincos calls and libm); due north the reference is round-off around zero (1.3e-16 against 0), so an absolute floor joins the relative bound; observed max abs 2.2e-16."
+
+[[tolerance]]
+case = "auxiliary"
+property = "*/tw2b12"
+abs = 0.0
+rel = 1e-15
+reason = "Wind-axis matrix entry 1,2 is built from sin and cos of the atan2 alpha and beta; observed max rel 2.2e-16."
+
+[[tolerance]]
+case = "auxiliary"
+property = "*/tw2b13"
+abs = 0.0
+rel = 1e-15
+reason = "Wind-axis matrix entry 1,3 is built from sin and cos of the atan2 alpha and beta; observed max rel 2.2e-16."
+
+[[tolerance]]
+case = "auxiliary"
+property = "*/tw2b21"
+abs = 0.0
+rel = 1e-15
+reason = "Wind-axis matrix entry 2,1 is built from sin and cos of the atan2 alpha and beta; observed max rel 2.2e-16."
+
+[[tolerance]]
+case = "auxiliary"
+property = "*/tw2b31"
+abs = 0.0
+rel = 1e-15
+reason = "Wind-axis matrix entry 3,1 is built from sin and cos of the atan2 alpha and beta; observed max rel 2.2e-16."
+
+[[tolerance]]
+case = "auxiliary"
+property = "*/tw2b32"
+abs = 0.0
+rel = 1e-15
+reason = "Wind-axis matrix entry 3,2 is built from sin and cos of the atan2 alpha and beta; observed max rel 2.2e-16."
+
+[[tolerance]]
+case = "auxiliary"
+property = "*/tb2w12"
+abs = 0.0
+rel = 1e-15
+reason = "Wind-axis matrix entry 1,2 is built from sin and cos of the atan2 alpha and beta; observed max rel 2.2e-16."
+
+[[tolerance]]
+case = "auxiliary"
+property = "*/tb2w13"
+abs = 0.0
+rel = 1e-15
+reason = "Wind-axis matrix entry 1,3 is built from sin and cos of the atan2 alpha and beta; observed max rel 2.2e-16."
+
+[[tolerance]]
+case = "auxiliary"
+property = "*/tb2w21"
+abs = 0.0
+rel = 1e-15
+reason = "Wind-axis matrix entry 2,1 is built from sin and cos of the atan2 alpha and beta; observed max rel 2.2e-16."
+
+[[tolerance]]
+case = "auxiliary"
+property = "*/tb2w23"
+abs = 0.0
+rel = 1e-15
+reason = "Wind-axis matrix entry 2,3 is built from sin and cos of the atan2 alpha and beta; observed max rel 2.2e-16."
+
+[[tolerance]]
+case = "auxiliary"
+property = "*/tb2w31"
+abs = 0.0
+rel = 1e-15
+reason = "Wind-axis matrix entry 3,1 is built from sin and cos of the atan2 alpha and beta; observed max rel 2.2e-16."

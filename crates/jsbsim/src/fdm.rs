@@ -201,6 +201,7 @@ impl Fdm {
         enable!("FGMassBalance", mass_balance);
         crate::models::mass_balance::bind(b)?;
         enable!("FGAuxiliary", auxiliary);
+        crate::models::auxiliary::bind(b)?;
         enable!("FGPropulsion", propulsion);
         enable!("FGAerodynamics", aerodynamics);
         crate::models::aerodynamics::bind(b)?;
@@ -214,6 +215,10 @@ impl Fdm {
         enable!("FGAccelerations", accelerations);
         accelerations::bind(b)?;
         enable!("FGOutput", output);
+        // `FGOutput::ForceOutput(idx)` prints output type `idx`; the port
+        // keeps no output types (`<output>` is an I/O directive), so a
+        // write has nothing to print.
+        b.setter_only("simulation/force-output", Kind::Int, |_, _| {})?;
         exec_bind::bind_exec(b)
     }
 

@@ -1,0 +1,120 @@
+# Standard-day sea-level inputs, level attitude, at rest.
+zero
+loc 0.1 0.5 1000
+s pressure 2116.228
+s density 0.0023769117527742576
+s temperature 518.67
+s soundspeed 1116.4485575897318
+s nu 0.00015723
+s span 35.8
+s chord 4.9
+s agl 1000
+s mass 70
+s costht 1
+s cosphi 1
+m tl2b 1 0 0 0 1 0 0 0 1
+m tb2l 1 0 0 0 1 0 0 0 1
+run
+# Alpha, beta and their rates.
+v uvw 200 5 20
+v uvwdot 1.5 -0.3 2.25
+run
+v uvw -150 -12 -40
+run
+# Pure sideslip: u = w = 0, so alpha and the rates stay 0.
+v uvw 0 10 0
+run
+# u^2 + w^2 below 1e-6 with vt above 0.001: beta only.
+v uvw 0.0005 0.01 0
+run
+# vt at or below 0.001: no angles at all.
+v uvw 0.0005 0 0
+run
+v uvw 0 0 0.001
+run
+# Transonic and supersonic (Rayleigh pitot and the Mach iteration).
+v uvw 1100 0 30
+run
+v uvw 1116.4485575897318 0 0
+run
+v uvw 1500 10 40
+run
+v uvw 3500 -20 150
+run
+# Altitude: lower pressure, density and temperature.
+s pressure 1040.9
+s density 0.0014962
+s temperature 465.23
+s soundspeed 1057.4
+s nu 0.000243
+v uvw 700 3 35
+run
+# Wind and turbulence with an attitude (psi 30 deg, theta 10 deg, phi 5 deg).
+m tl2b 0.85286853195244328 0.49240387650610401 -0.17364817766693033 -0.47596155868436064 0.86767497541893237 0.14335665236209516 0.22125906213451047 -0.068308801448474893 0.97282397021052564
+m tb2l 0.85286853195244328 -0.47596155868436064 0.22125906213451047 0.49240387650610401 0.86767497541893237 -0.068308801448474893 -0.17364817766693033 0.14335665236209516 0.97282397021052564
+s costht 0.98480775301220802
+s sintht 0.17364817766693033
+s cosphi 0.99619469809174555
+s sinphi 0.087155742747658166
+v wind 15 -25 3
+v turb 0.01 -0.02 0.005
+v pqr 0.05 0.1 -0.03
+v vel 520 310 -40
+run
+# Ground track west of north and climbing.
+v vel 300 -200 -60
+run
+v vel 0 0 0
+run
+# Pilot accelerations: eye point ahead of the CG, rotating.
+v accel 3.2 -1.1 -35.0
+v eye 8.5 -0.4 -2.1
+v pqri 0.2 -0.15 0.3
+v pqridot 0.05 0.4 -0.1
+v fw -150 12 3800
+run
+s mass 0
+run
+# Reference points for the VRP and h/b.
+v vrp 3.5 0.2 -1.3
+v rp 1.25 0 0.35
+run
+# theta = 90 deg: psi and phi rates keep the last values.
+s costht 0
+s sintht 1
+v pqr 0.4 0.5 0.6
+run
+hold
+init
+# Distances and NEU position from the start.
+ic
+run
+loc 0.1002 0.5003 2500
+run
+loc -1.2 -0.7 35000
+run
+loc 0 0 0
+run
+heading 0.2 0.6
+heading 0 0
+loc 0.1 0.5 1000
+heading 0.1 0.6
+heading -0.5 -0.2
+heading 2.5 0.1
+heading 3.2 -0.49
+# Pitot-static relations.
+pitot -0.5 2116.228
+pitot 0 2116.228
+pitot 0.3 2116.228
+pitot 0.9999999 2116.228
+pitot 1 2116.228
+pitot 2.5 500
+machqc 0 2116.228
+machqc 300 2116.228
+machqc 8000 2116.228
+machqc 20000 700
+vcas 0.5 1040.9
+vcas 1.8 400
+machvc 300 1040.9
+machvc 1500 2116.228
+machvc 2500 300

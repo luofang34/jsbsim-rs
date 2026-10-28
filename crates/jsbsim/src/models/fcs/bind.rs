@@ -4,7 +4,7 @@
 //
 //! Properties of `FGFCS`, in JSBSim's binding order.
 
-use super::{Fcs, Surface};
+use super::Surface;
 use crate::Error;
 use crate::fdm::{Binder, Kind, Models};
 
@@ -36,6 +36,7 @@ fn surface(
     name: &str,
     get: fn(&Models) -> &Surface,
     set: fn(&mut Models) -> &mut Surface,
+    magnitude: bool,
 ) -> Result<(), Error> {
     for (suffix, form) in [("rad", 0), ("deg", 1), ("norm", 2)] {
         b.property(
@@ -45,20 +46,22 @@ fn surface(
             move |m, v| set(m).set(form, v),
         )?;
     }
-    b.getter(&format!("fcs/mag-{name}-pos-rad"), move |m| get(m).0[3])?;
+    if magnitude {
+        b.getter(&format!("fcs/mag-{name}-pos-rad"), move |m| get(m).0[3])?;
+    }
     Ok(())
 }
 
 /// `FGFCS::bind`.
 pub fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
     commands(b)?;
-    surface(b, "left-aileron", |m| &m.fcs.dal, |m| &mut m.fcs.dal)?;
-    surface(b, "right-aileron", |m| &m.fcs.dar, |m| &mut m.fcs.dar)?;
-    surface(b, "elevator", |m| &m.fcs.de, |m| &mut m.fcs.de)?;
-    surface(b, "rudder", |m| &m.fcs.dr, |m| &mut m.fcs.dr)?;
-    surface(b, "flap", |m| &m.fcs.df, |m| &mut m.fcs.df)?;
-    surface(b, "speedbrake", |m| &m.fcs.dsb, |m| &mut m.fcs.dsb)?;
-    surface(b, "spoiler", |m| &m.fcs.dsp, |m| &mut m.fcs.dsp)?;
+    surface(b, "left-aileron", |m| &m.fcs.dal, |m| &mut m.fcs.dal, true)?;
+    surface(b, "right-aileron", |m| &m.fcs.dar, |m| &mut m.fcs.dar, true)?;
+    surface(b, "elevator", |m| &m.fcs.de, |m| &mut m.fcs.de, true)?;
+    surface(b, "rudder", |m| &m.fcs.dr, |m| &mut m.fcs.dr, true)?;
+    surface(b, "flap", |m| &m.fcs.df, |m| &mut m.fcs.df, false)?;
+    surface(b, "speedbrake", |m| &m.fcs.dsb, |m| &mut m.fcs.dsb, true)?;
+    surface(b, "spoiler", |m| &m.fcs.dsp, |m| &mut m.fcs.dsp, true)?;
     let d = Kind::Double;
     b.property(
         "gear/gear-pos-norm",
@@ -92,6 +95,8 @@ pub fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
         |m| m.fcs.wing_fold_pos,
         |m, v| m.fcs.wing_fold_pos = v,
     )?;
-    b.getter("simulation/channel-dt", |m| Fcs::channel_delta_t(&m.fcs))?;
+    b.getter("simulation/channel-dt", |m| {
+        m.fcs.channel_delta_t(m.exec.dt)
+    })?;
     Ok(())
 }

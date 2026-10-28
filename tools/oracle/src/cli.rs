@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 //! Command-line interface: `build`, `generate`, `check-drift`, `check-xml`,
-//! `port`, `compare` and `nasa`.
+//! `check-models`, `derive`, `port`, `compare` and `nasa`.
 
 use std::ffi::OsString;
 use std::path::{Path, PathBuf};
@@ -62,7 +62,27 @@ pub fn command() -> Command {
                 .arg(jsbsim_root.clone()),
         )
         .subcommand(
-            Command::new("nasa")
+            Command::new("derive")
+                .about("Regenerate the aircraft in oracle/derived from their upstream sources"),
+        )
+        .subcommand(
+            Command::new("check-models")
+                .about(
+                    "Load every corpus aircraft in C++ and Rust and compare the covered properties",
+                )
+                .arg(jsbsim_root.clone()),
+        )
+        .subcommand(nasa_command(jsbsim_root))
+        .subcommand(
+            Command::new("port")
+                .about("Run the Rust port on a transcript case and compare it with the reference")
+                .arg(Arg::new("case").required(true)),
+        )
+        .subcommand(compare_command())
+}
+
+fn nasa_command(jsbsim_root: Arg) -> Command {
+    Command::new("nasa")
                 .about("Optional comparison with the NASA TM-2015-218675 check-case data")
                 .subcommand_required(true)
                 .subcommand(
@@ -78,25 +98,20 @@ pub fn command() -> Command {
                                 .action(ArgAction::Append)
                                 .help("Check-case names; all when omitted"),
                         ),
-                ),
-        )
-        .subcommand(
-            Command::new("port")
-                .about("Run the Rust port on a transcript case and compare it with the reference")
-                .arg(Arg::new("case").required(true)),
-        )
-        .subcommand(
-            Command::new("compare")
-                .about("Compare a candidate CSV against a reference CSV")
-                .arg(Arg::new("case").long("case").required(true))
-                .arg(path_arg("reference"))
-                .arg(path_arg("candidate"))
-                .arg(
-                    Arg::new("tolerances")
-                        .long("tolerances")
-                        .value_parser(value_parser!(PathBuf))
-                        .help("Tolerance table; oracle/tolerances.toml by default"),
-                ),
+                )
+}
+
+fn compare_command() -> Command {
+    Command::new("compare")
+        .about("Compare a candidate CSV against a reference CSV")
+        .arg(Arg::new("case").long("case").required(true))
+        .arg(path_arg("reference"))
+        .arg(path_arg("candidate"))
+        .arg(
+            Arg::new("tolerances")
+                .long("tolerances")
+                .value_parser(value_parser!(PathBuf))
+                .help("Tolerance table; oracle/tolerances.toml by default"),
         )
 }
 
@@ -142,6 +157,9 @@ where
             &tolerances,
         );
     }
+    if name == "derive" {
+        return crate::derived::write_blocking(&repo_root).map(|()| ExitCode::SUCCESS);
+    }
     if name == "nasa" {
         return run_nasa(repo_root, sub);
     }
@@ -153,6 +171,7 @@ where
     match name {
         "build" => return Ok(ExitCode::SUCCESS),
         "check-xml" => return corpus::check_xml_blocking(&paths),
+        "check-models" => return corpus::models::check_models_blocking(&paths),
         _ => {}
     }
     let cases = selected_cases(&paths, sub)?;

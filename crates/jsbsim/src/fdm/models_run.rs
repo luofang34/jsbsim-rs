@@ -98,6 +98,9 @@ impl Fdm {
         a.wing_chord = m.aircraft.cbar;
         a.wing_incidence = m.aircraft.wing_incidence;
         a.wing_span = m.aircraft.wing_span;
+        let c = &mut m.auxiliary.input.constants;
+        c.wingspan = m.aircraft.wing_span;
+        c.wingchord = m.aircraft.cbar;
     }
 
     /// `FGFCS::Run`.
@@ -105,7 +108,6 @@ impl Fdm {
         if self.models.fcs.base.skip() || self.models.exec.holding {
             return Ok(());
         }
-        self.models.fcs.delta_t = self.models.exec.dt;
         self.run_model_functions(Model::Systems, true)?;
         for c in 0..self.models.fcs.channels.len() {
             self.run_channel(c)?;
@@ -129,7 +131,8 @@ impl Fdm {
                 return Ok(());
             }
         }
-        let (dt, trim) = (self.models.fcs.dt(), self.models.exec.trim_status);
+        let m = &self.models;
+        let (dt, trim) = (m.fcs.dt(m.exec.dt), m.exec.trim_status);
         if !self.models.fcs.channels[c].due(dt, trim) {
             return Ok(());
         }

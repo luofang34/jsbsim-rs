@@ -174,8 +174,6 @@ pub struct Fcs {
     pub wing_fold_pos: f64,
     /// Rate of the channel being executed (`ChannelRate`).
     pub channel_rate: i32,
-    /// Executive time step, for `simulation/channel-dt`.
-    pub delta_t: f64,
     /// Channels in load order.
     pub channels: Vec<Channel>,
 }
@@ -222,15 +220,15 @@ impl Fcs {
         }
     }
 
-    /// `GetDt`: the executive step times this model's rate.
+    /// `GetDt`: the executive step `exec_dt` times this model's rate.
     #[must_use]
-    pub fn dt(&self) -> f64 {
-        self.delta_t * f64::from(self.base.rate)
+    pub fn dt(&self, exec_dt: f64) -> f64 {
+        exec_dt * f64::from(self.base.rate)
     }
 
     /// `GetChannelDeltaT`.
     #[must_use]
-    pub fn channel_delta_t(&self) -> f64 {
-        self.dt() * f64::from(self.channel_rate)
+    pub fn channel_delta_t(&self, exec_dt: f64) -> f64 {
+        self.dt(exec_dt) * f64::from(self.channel_rate)
     }
 }

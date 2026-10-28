@@ -3,6 +3,8 @@
 //! the same element tree in C++ and Rust, and every aircraft's `file`
 //! includes must resolve or fail with a typed error.
 
+pub mod models;
+
 use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;

@@ -4,9 +4,11 @@
 //! the same transcript.
 
 mod atmosphere;
+mod auxiliary;
 mod functions;
 mod mass_balance;
 mod math;
+pub mod models;
 mod properties;
 mod table;
 mod units;
@@ -36,6 +38,11 @@ pub fn run(name: &str, input: &str, context: &ProbeContext) -> Result<String, Or
         "table" => Ok(table::run(input, context)),
         "xml" => Ok(xml::run(input, context)),
         "mass-balance" => Ok(mass_balance::run(input, context)),
+        "models" => Ok(models::run(input, context)),
+        "auxiliary" => auxiliary::run(input).map_err(|source| OracleError::Probe {
+            probe: "auxiliary",
+            source,
+        }),
         "atmosphere" => atmosphere::run(input).map_err(|source| OracleError::Probe {
             probe: "atmosphere",
             source,

@@ -51,6 +51,30 @@ pub struct ScriptSpec {
     /// absent.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub aircraft_path: Option<String>,
+    /// Directory, relative to this repository, holding the script and
+    /// aircraft for both C++ and Rust; when absent C++ reads the JSBSim
+    /// checkout and Rust its vendored subset in `oracle/inputs`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub inputs: Option<String>,
+}
+
+impl ScriptSpec {
+    /// Where C++ finds the script: `inputs`, else the JSBSim checkout.
+    #[must_use]
+    pub fn cpp_root(&self, repo_root: &Path, jsbsim_root: &Path) -> PathBuf {
+        self.inputs
+            .as_ref()
+            .map_or_else(|| jsbsim_root.to_path_buf(), |dir| repo_root.join(dir))
+    }
+
+    /// Where Rust finds the script: `inputs`, else `oracle/inputs`.
+    #[must_use]
+    pub fn rust_root(&self, repo_root: &Path) -> PathBuf {
+        self.inputs.as_ref().map_or_else(
+            || repo_root.join("oracle").join("inputs"),
+            |dir| repo_root.join(dir),
+        )
+    }
 }
 
 /// A driver probe fed with `input.txt` from the case directory.
