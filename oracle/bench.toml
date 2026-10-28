@@ -1,8 +1,11 @@
 # Cases of `oracle bench` (scripts/oracle-bench.sh), in report order.
 # Paths are relative to the JSBSim root for C++ and to oracle/inputs for
-# Rust. Warm-up plus timed frames must end before the script stops: mk82
+# Rust. A case runs a script, or an aircraft flown from
+# oracle::bench::AIRBORNE_IC at the default dt of 1/120 s. Warm-up plus
+# timed frames must end before the run stops or touches down: mk82
 # touches down at frame 2172 (dt 0.02), cannonball at about frame 4438
-# (dt 0.00833333), and Atmos_02 ends at 30 s, frame 3000 (dt 0.01).
+# (dt 0.00833333), Atmos_02 ends at 30 s, frame 3000 (dt 0.01), and the
+# Shuttle touches down at 30.2 s, frame 3622.
 
 [[case]]
 name = "ball"
@@ -38,4 +41,13 @@ script = "check_cases/NASA_EOM_2015/scripts/Atmos_02.xml"
 aircraft_path = "check_cases/NASA_EOM_2015/aircraft"
 warm_up = 100
 frames = 2500
+repeats = 15
+
+# The aircraft that loads with the most frame work: 19 FCS components, 22
+# aero functions and 12 tables.
+[[case]]
+name = "shuttle"
+aircraft = "Shuttle"
+warm_up = 100
+frames = 2000
 repeats = 15

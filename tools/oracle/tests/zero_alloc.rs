@@ -3,9 +3,10 @@
 //!
 //! Every aircraft that `oracle/model-loading.txt` records as loading `ok`
 //! must be vendored under `oracle/inputs/aircraft/<name>/`; each is flown
-//! from an airborne initial condition, and each vendored script that stays
-//! airborne long enough runs through its events, while dhat counts heap
-//! blocks across the measured frames. dhat allows one profiler per
+//! from the airborne initial condition `oracle::bench::AIRBORNE_IC` (which
+//! the bench's aircraft cases fly from too), and each vendored script that
+//! stays airborne long enough runs through its events, while dhat counts
+//! heap blocks across the measured frames. dhat allows one profiler per
 //! process, so everything runs in one test of its own binary.
 
 use std::path::{Path, PathBuf};
@@ -77,8 +78,9 @@ fn steady_state_frames_allocate_nothing() {
         );
         let mut fdm = Fdm::new().unwrap();
         fdm.load_model(&resolver, "aircraft", name).unwrap();
-        fdm.set_property("ic/h-sl-ft", 10000.0).unwrap();
-        fdm.set_property("ic/u-fps", 500.0).unwrap();
+        for (property, value) in oracle::bench::AIRBORNE_IC {
+            fdm.set_property(property, value).unwrap();
+        }
         fdm.run_ic().unwrap();
         report.push((
             format!("aircraft {name}"),

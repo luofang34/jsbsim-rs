@@ -95,9 +95,18 @@ fn committed_cases_parse_and_name_existing_inputs() {
     for case in &file.cases {
         assert!(names.insert(&case.name), "duplicate case {}", case.name);
         assert!(case.frames > 0 && case.repeats > 0, "{}", case.name);
-        assert!(root.join(&case.script).is_file(), "{}", case.script);
-        let aircraft = case.aircraft_path.as_deref().unwrap_or("aircraft");
-        assert!(root.join(aircraft).is_dir(), "{aircraft}");
+        let aircraft_path = case.aircraft_path.as_deref().unwrap_or("aircraft");
+        assert!(root.join(aircraft_path).is_dir(), "{aircraft_path}");
+        match case.workload().unwrap() {
+            Workload::Script(script) => assert!(root.join(script).is_file(), "{script}"),
+            Workload::Aircraft(name) => {
+                let file = root
+                    .join(aircraft_path)
+                    .join(name)
+                    .join(format!("{name}.xml"));
+                assert!(file.is_file(), "{}", file.display());
+            }
+        }
     }
 }
 
@@ -106,6 +115,32 @@ fn unknown_fields_are_refused() {
     let text = "[[case]]\nname = \"a\"\nscript = \"s\"\nwarm_up = 1\n\
                 frames = 1\nrepeats = 1\nframe = 2\n";
     assert!(BenchFile::parse(text, Path::new("bench.toml")).is_err());
+}
+
+#[test]
+fn a_case_names_exactly_one_workload() {
+    let parse = |fields: &str| {
+        let text =
+            format!("[[case]]\nname = \"a\"\n{fields}warm_up = 1\nframes = 1\nrepeats = 1\n");
+        BenchFile::parse(&text, Path::new("bench.toml"))
+            .unwrap()
+            .cases[0]
+            .clone()
+    };
+    assert_eq!(
+        parse("script = \"s\"\n").workload().unwrap(),
+        Workload::Script("s")
+    );
+    assert_eq!(
+        parse("aircraft = \"x\"\n").workload().unwrap(),
+        Workload::Aircraft("x")
+    );
+    for fields in ["", "script = \"s\"\naircraft = \"x\"\n"] {
+        assert!(matches!(
+            parse(fields).workload(),
+            Err(OracleError::Bench { .. })
+        ));
+    }
 }
 
 /// The frame budget of every case stays clear of its script's end and of

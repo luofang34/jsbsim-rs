@@ -7,7 +7,7 @@ use std::process::Command;
 use crate::OracleError;
 use crate::upstream::{Paths, run_blocking};
 
-use super::BenchCase;
+use super::{AIRBORNE_IC, BenchCase, Workload};
 
 /// Times one repeat of `case` in the compiled driver, run in `run_dir`;
 /// returns the elapsed ns of each window it reports.
@@ -17,22 +17,24 @@ pub(super) fn time_blocking(
     run_dir: &Path,
 ) -> Result<Vec<u64>, OracleError> {
     let root = &paths.jsbsim_root;
-    let output = run_blocking(
-        Command::new(paths.driver_exe())
-            .current_dir(run_dir)
-            .env("JSBSIM_DEBUG", "0")
-            .env(
-                "ORACLE_AIRCRAFT_PATH",
-                case.aircraft_path.as_deref().unwrap_or("aircraft"),
-            )
-            .arg("bench")
-            .arg(root)
-            .arg(root.join(&case.script))
-            .arg(case.warm_up.to_string())
-            .arg(case.frames.to_string())
-            .arg("1"),
-    )
-    .map_err(|e| OracleError::Bench {
+    let mut command = Command::new(paths.driver_exe());
+    command.current_dir(run_dir).env("JSBSIM_DEBUG", "0").env(
+        "ORACLE_AIRCRAFT_PATH",
+        case.aircraft_path.as_deref().unwrap_or("aircraft"),
+    );
+    let workload = case.workload()?;
+    match workload {
+        Workload::Script(script) => command.arg("bench").arg(root).arg(root.join(script)),
+        Workload::Aircraft(name) => command.arg("bench-aircraft").arg(root).arg(name),
+    };
+    command
+        .arg(case.warm_up.to_string())
+        .arg(case.frames.to_string())
+        .arg("1");
+    if let Workload::Aircraft(_) = workload {
+        command.args(AIRBORNE_IC.map(|(property, value)| format!("{property}={value:?}")));
+    }
+    let output = run_blocking(&mut command).map_err(|e| OracleError::Bench {
         case: case.name.clone(),
         message: format!("C++ driver: {e}"),
     })?;

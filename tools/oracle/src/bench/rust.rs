@@ -10,7 +10,7 @@ use tracing::subscriber::NoSubscriber;
 
 use crate::OracleError;
 
-use super::BenchCase;
+use super::{AIRBORNE_IC, BenchCase, Workload};
 
 /// Times one repeat of `case` with files from `root`; returns the elapsed
 /// ns of the timed frames. Log records, such as load warnings and event
@@ -21,12 +21,23 @@ pub(super) fn time(root: &Path, case: &BenchCase) -> Result<u64, OracleError> {
         case: case.name.clone(),
         source,
     };
+    let workload = case.workload()?;
     let ran = tracing::subscriber::with_default(NoSubscriber::default(), || {
         let mut fdm = Fdm::new()?;
         if let Some(path) = &case.aircraft_path {
             fdm.set_aircraft_path(path);
         }
-        fdm.load_script(&FileResolver::new(root), &case.script)?;
+        let resolver = FileResolver::new(root);
+        match workload {
+            Workload::Script(script) => fdm.load_script(&resolver, script)?,
+            Workload::Aircraft(name) => {
+                let path = case.aircraft_path.as_deref().unwrap_or("aircraft");
+                fdm.load_model(&resolver, path, name)?;
+                for (property, value) in AIRBORNE_IC {
+                    fdm.set_property(property, value)?;
+                }
+            }
+        }
         fdm.run_ic()?;
         let mut ok = true;
         for _ in 0..case.warm_up {

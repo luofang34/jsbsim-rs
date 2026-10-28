@@ -10,10 +10,12 @@
 // Usage: oracle_driver script <root> <script> <rate_hz> <end_time|-> <out.csv>
 //                             <property>...
 //        oracle_driver bench <root> <script> <warm_up> <frames> <repeats>
+//        oracle_driver bench-aircraft <root> <aircraft> <warm_up> <frames>
+//                      <repeats> [<property>=<value>...]
 //        oracle_driver properties|units|xml|math|functions|table|mass-balance|initial-condition
 //                      <input.txt> <out.txt>
 //
-// The script mode is implemented here, the bench mode in bench.cpp and the
+// The script mode is implemented here, the bench modes in bench.cpp and the
 // probe modes in probe_*.cpp.
 //
 // Rows are written after RunIC (and trim, if requested) and then after every
@@ -139,6 +141,7 @@ int main(int argc, char** argv)
   const std::string mode = argc > 1 ? argv[1] : "";
   if (mode == "script") return RunScript(argc - 1, argv + 1);
   if (mode == "bench") return RunBench(argc - 1, argv + 1);
+  if (mode == "bench-aircraft") return RunBenchAircraft(argc - 1, argv + 1);
   if (argc == 4) {
     if (mode == "properties") return RunPropertiesProbe(argv[2], argv[3]);
     if (mode == "units") return RunUnitsProbe(argv[2], argv[3]);
@@ -155,6 +158,6 @@ int main(int argc, char** argv)
     if (mode == "winds") return RunWindsProbe(argv[2], argv[3]);
     if (mode == "fcs") return RunFcsProbe(argv[2], argv[3]);
   }
-  std::fprintf(stderr, "usage: %s script|bench|properties|units|xml|math|functions|table|mass-balance|atmosphere|winds|models|auxiliary|geodesic|initial-condition ...\n", argv[0]);
+  std::fprintf(stderr, "usage: %s script|bench|bench-aircraft|properties|units|xml|math|functions|table|mass-balance|atmosphere|winds|models|auxiliary|geodesic|initial-condition ...\n", argv[0]);
   return 2;
 }

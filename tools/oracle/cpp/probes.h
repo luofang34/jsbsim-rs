@@ -5,6 +5,7 @@
 
 int RunScript(int argc, char** argv);
 int RunBench(int argc, char** argv);
+int RunBenchAircraft(int argc, char** argv);
 int RunPropertiesProbe(const char* ops_file, const char* out_file);
 int RunFunctionsProbe(const char* ops_file, const char* out_file);
 int RunMassBalanceProbe(const char* ops_file, const char* out_file);

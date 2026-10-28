@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 //! `oracle bench`: frames per second of the Rust port against the C++
-//! driver on the scripts listed in `oracle/bench.toml`.
+//! driver on the scripts and aircraft listed in `oracle/bench.toml`.
 //!
-//! Both sides follow one procedure per repeat: load the script into a fresh
+//! Both sides follow one procedure per repeat: load the script, or the
+//! aircraft with the [`AIRBORNE_IC`] properties set, into a fresh
 //! simulation, `RunIC`, run the warm-up frames, then time the measured
 //! frames with a monotonic clock. C++ reads the JSBSim checkout and Rust the
 //! byte-identical vendored copies in `oracle/inputs`. Repeats alternate
@@ -32,14 +33,25 @@ pub use summary::{Summary, fps, ratio};
 /// The committed case list, relative to the repository root.
 pub const CASES_FILE: &str = "oracle/bench.toml";
 
-/// One benchmarked script.
+/// The initial condition an aircraft case flies from, set before `RunIC`:
+/// airborne, so that every frame runs the aerodynamics and no contact
+/// ends the run. `tests/zero_alloc.rs` flies its aircraft from it too.
+pub const AIRBORNE_IC: [(&str, f64); 2] = [("ic/h-sl-ft", 10000.0), ("ic/u-fps", 500.0)];
+
+/// One benchmarked script or aircraft.
 #[derive(Debug, Clone, PartialEq, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct BenchCase {
     /// Name used on the command line and in the report.
     pub name: String,
     /// Script path relative to the JSBSim root, e.g. `scripts/ball.xml`.
-    pub script: String,
+    /// A case names a script or an aircraft.
+    #[serde(default)]
+    pub script: Option<String>,
+    /// Aircraft directory name, loaded with `LoadModel` and flown from
+    /// [`AIRBORNE_IC`].
+    #[serde(default)]
+    pub aircraft: Option<String>,
     /// Aircraft directory relative to the JSBSim root; `aircraft` when
     /// absent.
     #[serde(default)]
@@ -50,6 +62,29 @@ pub struct BenchCase {
     pub frames: u32,
     /// Fresh simulations timed on each side.
     pub repeats: u32,
+}
+
+/// What a case runs.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Workload<'a> {
+    /// A script path.
+    Script(&'a str),
+    /// An aircraft name.
+    Aircraft(&'a str),
+}
+
+impl BenchCase {
+    /// The script or aircraft; an error unless exactly one is given.
+    pub fn workload(&self) -> Result<Workload<'_>, OracleError> {
+        match (&self.script, &self.aircraft) {
+            (Some(script), None) => Ok(Workload::Script(script)),
+            (None, Some(aircraft)) => Ok(Workload::Aircraft(aircraft)),
+            _ => Err(OracleError::Bench {
+                case: self.name.clone(),
+                message: "a case names exactly one of script and aircraft".to_owned(),
+            }),
+        }
+    }
 }
 
 /// Contents of [`CASES_FILE`].
