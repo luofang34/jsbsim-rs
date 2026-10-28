@@ -6,6 +6,7 @@
 //! CSVs with a provenance manifest, and compares candidate output against a
 //! golden using a per-property tolerance table.
 
+pub mod bench;
 pub mod cases;
 pub mod cli;
 pub mod compare;

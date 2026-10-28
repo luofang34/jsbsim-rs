@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 //! Command-line interface: `build`, `generate`, `check-drift`, `check-xml`,
-//! `check-models`, `derive`, `port`, `compare` and `nasa`.
+//! `check-models`, `derive`, `port`, `compare`, `nasa` and `bench`.
 
 use std::ffi::OsString;
 use std::path::{Path, PathBuf};
@@ -72,6 +72,7 @@ pub fn command() -> Command {
                 )
                 .arg(jsbsim_root.clone()),
         )
+        .subcommand(bench_command(jsbsim_root.clone()))
         .subcommand(nasa_command(jsbsim_root))
         .subcommand(
             Command::new("port")
@@ -93,6 +94,17 @@ pub fn command() -> Command {
                         .value_parser(value_parser!(f64))
                         .help("Compare rows up to this time, s"),
                 ),
+        )
+}
+
+fn bench_command(jsbsim_root: Arg) -> Command {
+    Command::new("bench")
+        .about("Time frames of the Rust port and the C++ driver on the oracle/bench.toml cases")
+        .arg(jsbsim_root)
+        .arg(
+            Arg::new("case")
+                .action(ArgAction::Append)
+                .help("Bench case names; all cases when omitted"),
         )
 }
 
@@ -161,12 +173,7 @@ where
         return crate::stats::port_stats_blocking(&repo_root, &case, until);
     }
     if name == "port" {
-        let mut names: Vec<String> = sub
-            .try_get_many::<String>("case")
-            .ok()
-            .flatten()
-            .map(|values| values.cloned().collect())
-            .unwrap_or_default();
+        let mut names = case_names(sub);
         if names.is_empty() {
             names = manifest::list_cases_blocking(&repo_root.join("oracle").join("goldens"))?;
         }
@@ -206,6 +213,7 @@ where
         "build" => return Ok(ExitCode::SUCCESS),
         "check-xml" => return corpus::check_xml_blocking(&paths),
         "check-models" => return corpus::models::check_models_blocking(&paths),
+        "bench" => return crate::bench::run_blocking(&paths, &case_names(sub)),
         _ => {}
     }
     let cases = selected_cases(&paths, sub)?;
@@ -234,22 +242,21 @@ fn run_nasa(repo_root: PathBuf, sub: &ArgMatches) -> Result<ExitCode, OracleErro
         return nasa::fetch_blocking(&paths).map(|()| ExitCode::SUCCESS);
     }
     upstream::build_blocking(&paths)?;
-    let names: Vec<String> = sub
-        .try_get_many::<String>("case")
+    nasa::compare_blocking(&paths, &case_names(sub))
+}
+
+/// The positional case names of `sub`; empty when it has none or takes
+/// none.
+fn case_names(sub: &ArgMatches) -> Vec<String> {
+    sub.try_get_many::<String>("case")
         .ok()
         .flatten()
         .map(|values| values.cloned().collect())
-        .unwrap_or_default();
-    nasa::compare_blocking(&paths, &names)
+        .unwrap_or_default()
 }
 
 fn selected_cases(paths: &Paths, sub: &ArgMatches) -> Result<Vec<String>, OracleError> {
-    let named: Vec<String> = sub
-        .try_get_many::<String>("case")
-        .ok()
-        .flatten()
-        .map(|values| values.cloned().collect())
-        .unwrap_or_default();
+    let named = case_names(sub);
     if named.is_empty() {
         manifest::list_cases_blocking(&paths.goldens_dir())
     } else {

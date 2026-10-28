@@ -1,0 +1,41 @@
+# Cases of `oracle bench` (scripts/oracle-bench.sh), in report order.
+# Paths are relative to the JSBSim root for C++ and to oracle/inputs for
+# Rust. Warm-up plus timed frames must end before the script stops: mk82
+# touches down at frame 2172 (dt 0.02), cannonball at about frame 4438
+# (dt 0.00833333), and Atmos_02 ends at 30 s, frame 3000 (dt 0.01).
+
+[[case]]
+name = "ball"
+script = "scripts/ball.xml"
+warm_up = 100
+frames = 20000
+repeats = 9
+
+[[case]]
+name = "ball_orbit_phase"
+script = "scripts/ball_orbit_phase.xml"
+warm_up = 100
+frames = 20000
+repeats = 9
+
+[[case]]
+name = "mk82_script"
+script = "scripts/mk82_script.xml"
+warm_up = 100
+frames = 2000
+repeats = 15
+
+[[case]]
+name = "cannonball"
+script = "scripts/cannonball.xml"
+warm_up = 100
+frames = 4000
+repeats = 15
+
+[[case]]
+name = "atmos_02"
+script = "check_cases/NASA_EOM_2015/scripts/Atmos_02.xml"
+aircraft_path = "check_cases/NASA_EOM_2015/aircraft"
+warm_up = 100
+frames = 2500
+repeats = 15

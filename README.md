@@ -65,6 +65,7 @@ cargo run -p oracle -- check-drift         # regenerate all cases and compare wi
 cargo run -p oracle -- check-xml           # parse every JSBSim XML file and load its functions in C++ and Rust
 cargo run -p oracle -- port function-ops   # run the Rust side of a transcript case and report differences
 scripts/oracle-ci.sh                       # check-drift and check-xml, as run by CI
+scripts/oracle-bench.sh                    # ns/frame of Rust vs C++ on the oracle/bench.toml cases
 cargo run -p oracle -- compare --case ball oracle/goldens/ball/reference.csv candidate.csv
 ```
 

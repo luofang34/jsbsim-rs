@@ -20,6 +20,23 @@ fn compare_requires_a_case() {
 }
 
 #[test]
+fn bench_takes_case_names() {
+    let matches = command()
+        .try_get_matches_from([
+            "oracle",
+            "bench",
+            "--jsbsim-root",
+            "/j",
+            "ball",
+            "mk82_script",
+        ])
+        .unwrap();
+    let (name, sub) = matches.subcommand().unwrap();
+    assert_eq!(name, "bench");
+    assert_eq!(case_names(sub), ["ball", "mk82_script"]);
+}
+
+#[test]
 fn every_subcommand_parses_without_a_case_argument() {
     for sub in ["build", "generate", "check-drift", "check-xml"] {
         let matches = command()

@@ -108,6 +108,23 @@ pub enum OracleError {
         /// What is wrong.
         message: String,
     },
+    /// The Rust port failed while a benchmark case ran.
+    #[error("bench case {case}: Rust port: {source}")]
+    BenchPort {
+        /// Case name from `oracle/bench.toml`.
+        case: String,
+        /// What failed.
+        #[source]
+        source: jsbsim::Error,
+    },
+    /// A benchmark case could not be run as specified.
+    #[error("bench case {case}: {message}")]
+    Bench {
+        /// Case name from `oracle/bench.toml`.
+        case: String,
+        /// What is wrong.
+        message: String,
+    },
     /// Invalid command-line usage.
     #[error(transparent)]
     Usage(#[from] clap::Error),
