@@ -41,3 +41,9 @@ let_underscore_future = "deny"
 await_holding_lock = "deny"
 disallowed_types = "deny"
 disallowed_macros = "deny"
+
+# One codegen unit gives LLVM each crate whole to inline across, which
+# makes frames faster (scripts/oracle-bench.sh). Rust codegen neither
+# reorders nor fuses floating-point operations, so results do not change.
+[profile.release]
+codegen-units = 1
