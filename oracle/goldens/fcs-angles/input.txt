@@ -1,0 +1,52 @@
+# oracle/scenarios/systems/fcs_angles.xml on tripod_fcs_angles: equal,
+# opposite and wrapped angles in radians and degrees, a tied source (the
+# tripod's heading, 0 at the initial condition) and clipping.
+# The tripod starts at 10000 ft so that its contacts stay clear of the
+# ground.
+paths ../.. derived/aircraft scenarios/systems
+new
+load tripod_fcs_angles
+watch test/source test/target test/source-deg test/target-deg attitude/psi-rad test/rad-rad test/deg-deg test/rad-deg test/deg-rad-clipped test/to-heading test/to-heading-out
+set ic/h-sl-ft 10000
+set ic/psi-true-deg 0
+runic
+set test/source 0
+set test/target 0
+set test/source-deg 0
+set test/target-deg 0
+run
+set test/source 0.5
+set test/target 2.0
+set test/source-deg 30
+set test/target-deg 120
+run
+set test/source 2.0
+set test/target 0.5
+set test/source-deg 170
+set test/target-deg -170
+run
+set test/source 3.0
+set test/target -3.0
+set test/source-deg 359
+set test/target-deg 1
+run
+set test/source 1
+set test/target 4.141592653589793
+set test/source-deg 90
+set test/target-deg 270
+run
+set test/source -2.5
+set test/target 2.5
+set test/source-deg -45
+set test/target-deg 400
+run
+set test/source 10
+set test/target -10
+set test/source-deg 180
+set test/target-deg 0
+run
+set test/source 0.25
+set test/target 0.25000000000000006
+set test/source-deg 12.5
+set test/target-deg -347.5
+run

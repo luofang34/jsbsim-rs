@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  FGAngles, which no upstream test covers: radian and degree source and
+  target angles in each combination, output in radians (by default and
+  by name) and degrees, a tied source (the tripod's heading), clipping,
+  and an <input> the component ignores. The fcs-angles golden drives it
+  through equal, opposite and wrapped angles.
+-->
+<system name="fcs-angles">
+  <property>test/source</property>
+  <property>test/target</property>
+  <property>test/source-deg</property>
+  <property>test/target-deg</property>
+  <channel name="angles">
+    <angle name="test/rad-rad">
+      <source_angle>test/source</source_angle>
+      <target_angle>test/target</target_angle>
+    </angle>
+    <angle name="test/deg-deg" unit="DEG">
+      <source_angle unit="DEG">test/source-deg</source_angle>
+      <target_angle unit="DEG">test/target-deg</target_angle>
+    </angle>
+    <angle name="test/rad-deg" unit="RAD">
+      <input>test/source</input>
+      <source_angle unit="RAD">test/source</source_angle>
+      <target_angle unit="DEG">test/target-deg</target_angle>
+    </angle>
+    <angle name="test/deg-rad-clipped" unit="DEG">
+      <source_angle unit="DEG">test/source-deg</source_angle>
+      <target_angle>test/target</target_angle>
+      <clipto>
+        <min>-90</min>
+        <max>45</max>
+      </clipto>
+    </angle>
+    <angle name="test/to-heading">
+      <source_angle>attitude/psi-rad</source_angle>
+      <target_angle>test/target</target_angle>
+      <output>test/to-heading-out</output>
+    </angle>
+  </channel>
+</system>

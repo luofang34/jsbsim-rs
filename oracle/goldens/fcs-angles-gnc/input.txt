@@ -1,0 +1,35 @@
+# Upstream systems/GNCUtilities.xml (vendored in oracle/inputs) on
+# tripod_gnc_utilities: its waypoint heading, through the heading selector
+# switch, into the <angle> from the actual heading, and the specified
+# heading selected instead. The tripod starts at 10000 ft so that its
+# contacts stay clear of the ground.
+paths ../.. derived/aircraft inputs/systems
+new
+load tripod_gnc_utilities
+watch guidance/target_wp_latitude_rad guidance/target_wp_longitude_rad navigation/actual-heading-rad guidance/specified-heading-rad guidance/heading-selector-switch guidance/wp-heading-rad guidance/selected_target_heading guidance/angle-to-heading-rad
+set ic/h-sl-ft 10000
+set ic/lat-geod-deg 37.5
+set ic/long-gc-deg -122.25
+runic
+set guidance/target_wp_latitude_rad 0.66
+set guidance/target_wp_longitude_rad -2.13
+set navigation/actual-heading-rad 0
+run
+run
+set navigation/actual-heading-rad 1.5
+run
+run
+set navigation/actual-heading-rad -2.8
+run
+run
+set navigation/actual-heading-rad 3.1
+run
+run
+set guidance/specified-heading-rad -1.25
+set guidance/heading-selector-switch 1
+set navigation/actual-heading-rad 0
+run
+set navigation/actual-heading-rad 2.9
+run
+set navigation/actual-heading-rad -0.4
+run

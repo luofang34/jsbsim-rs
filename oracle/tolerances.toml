@@ -5113,3 +5113,45 @@ property = "*"
 abs = 0.0
 rel = 0.0
 reason = "Inclusive and exclusive distributors reading what earlier cases wrote only compare values and copy them, signed, into plain and tied properties, so they must be bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-angles"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Included angles between radian and degree angles, the sign test, the unit factors and clipping use IEEE basic operations and sin, cos and acos in JSBSim's order; they are bit-identical outside the row below; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-angles"
+property = "run/test/deg-deg"
+abs = 4e-13
+rel = 0.0
+reason = "Degree angles go through libm's sin, cos and acos, which may differ from the platform libm used by C++ in the last ulp, and the result is scaled by 180/pi; observed max |diff| 3.6e-14 (rel 1.8e-15) at 170 to -170 deg; bound 10x that."
+
+[[tolerance]]
+case = "fcs-angles-gnc"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "GNCUtilities' heading selector switch and pure gain only copy and multiply, so everything outside the rows below is bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-angles-gnc"
+property = "run/guidance/wp-heading-rad"
+abs = 7e-13
+rel = 0.0
+reason = "The waypoint heading goes through the geodesic inverse, whose accepted libm ulps (see fcs-waypoint) show in the heading; observed max |diff| 6.4e-14 (rel 1.3e-13); bound 10x that."
+
+[[tolerance]]
+case = "fcs-angles-gnc"
+property = "run/guidance/selected_target_heading"
+abs = 6e-13
+rel = 0.0
+reason = "The switch selects the waypoint heading, carrying its geodesic ulps; observed max |diff| 5.2e-14 (rel 1.1e-13); bound 10x that."
+
+[[tolerance]]
+case = "fcs-angles-gnc"
+property = "run/guidance/angle-to-heading-rad"
+abs = 6e-13
+rel = 0.0
+reason = "The included angle to the selected waypoint heading carries its geodesic ulps through libm's sin, cos and acos; observed max |diff| 5.2e-14 (rel 1.1e-13); bound 10x that."

@@ -210,4 +210,6 @@ families! {
     LinearActuator(super::linear_actuator::LinearActuator) = "linear_actuator";
     /// `<distributor>` (`FGDistributor`).
     Distributor(super::distributor::Distributor) = "distributor";
+    /// `<angle>` (`FGAngles`).
+    Angles(super::angles::Angles) = "angle";
 }

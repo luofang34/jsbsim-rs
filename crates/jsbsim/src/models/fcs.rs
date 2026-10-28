@@ -11,6 +11,7 @@
 
 pub mod accelerometer;
 pub mod actuator;
+pub mod angles;
 mod bind;
 pub mod component;
 pub mod deadband;
