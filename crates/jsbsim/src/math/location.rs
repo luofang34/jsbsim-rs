@@ -7,9 +7,9 @@
 //! transformations, plus geodesic distance and heading on the ellipse
 //! (GeographicLib's inverse problem, as JSBSim uses it).
 
+use super::geodesic::Geodesic;
 use super::{Axis, ColumnVector3, E_X, E_Y, E_Z, Matrix33};
 use crate::units::{DEGTORAD, RADTODEG, sign};
-use geographiclib_rs::{Geodesic, InverseGeodesic};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 struct Derived {
@@ -376,7 +376,7 @@ impl Location {
     #[must_use]
     pub fn distance_to(&self, target_longitude: f64, target_latitude: f64) -> f64 {
         let (geod_lat, lon) = self.read(|d| (d.geod_lat, d.lon));
-        self.geodesic().inverse(
+        self.geodesic().inverse_distance(
             geod_lat * RADTODEG,
             lon * RADTODEG,
             target_latitude * RADTODEG,
@@ -389,7 +389,7 @@ impl Location {
     #[must_use]
     pub fn heading_to(&self, target_longitude: f64, target_latitude: f64) -> f64 {
         let (geod_lat, lon) = self.read(|d| (d.geod_lat, d.lon));
-        let (azi1, _azi2, _a12): (f64, f64, f64) = self.geodesic().inverse(
+        let (azi1, _azi2) = self.geodesic().inverse_azimuths(
             geod_lat * RADTODEG,
             lon * RADTODEG,
             target_latitude * RADTODEG,

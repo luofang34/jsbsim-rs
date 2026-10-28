@@ -335,7 +335,7 @@ case = "auxiliary"
 property = "*"
 abs = 0.0
 rel = 0.0
-reason = "True and ground speeds, EAS, dynamic pressures, Mach, total temperature, angle and Euler rates, load factors, pilot accelerations, heights over span and every value not listed below use only IEEE basic operations and sqrt in JSBSim's order, so they must be bit-identical; the GeographicLib distances and the NEU position matched bit for bit too."
+reason = "True and ground speeds, EAS, dynamic pressures, Mach, total temperature, angle and Euler rates, load factors, pilot accelerations, heights over span and every value not listed below use only IEEE basic operations and sqrt in JSBSim's order, so they must be bit-identical; the NEU position and the distance-from-start magnitude matched bit for bit too."
 
 [[tolerance]]
 case = "auxiliary"
@@ -406,6 +406,20 @@ property = "*/position/vrp-longitude_deg"
 abs = 0.0
 rel = 1e-15
 reason = "The VRP longitude is the atan2 of its ECEF y and x; observed max rel 1.6e-16."
+
+[[tolerance]]
+case = "auxiliary"
+property = "*/position/distance-from-start-lon-mt"
+abs = 0.0
+rel = 2.1e-15
+reason = "GetDistanceTo the start longitude at the current latitude is the ported GeographicLib inverse, bit-identical to C++ on the platform maths library but computed with libm, whose hypot, atan2, sin and cos differ in the last ulp; observed max 1 ulp, rel 2.1e-16."
+
+[[tolerance]]
+case = "auxiliary"
+property = "*/position/distance-from-start-lat-mt"
+abs = 0.0
+rel = 2.9e-15
+reason = "GetDistanceTo the start latitude at the current longitude is the ported GeographicLib inverse, bit-identical to C++ on the platform maths library but computed with libm, whose hypot, atan2, sin and cos differ in the last ulp; observed max 2 ulp, rel 2.9e-16."
 
 [[tolerance]]
 case = "auxiliary"
@@ -4623,7 +4637,7 @@ case = "geodesic"
 property = "*"
 abs = 0.0
 rel = 0.0
-reason = "The ellipse axes, the coincident-point distances and headings, and every distance from a start point whose derived longitude and latitude match C++ must be bit-identical."
+reason = "The ellipse axes and the distances and headings between coincident points must be bit-identical."
 
 [[tolerance]]
 case = "geodesic"
@@ -4643,54 +4657,54 @@ reason = "FGLocation's derived geodetic latitude comes from the ECEF position th
 case = "geodesic"
 property = "pair/s"
 abs = 0.0
-rel = 1.7e-14
-reason = "The distance follows the start point's derived longitude and latitude where those differ by their libm ulps; observed max 10 ulp, rel 1.7e-15."
+rel = 1.5e-14
+reason = "The ported GeographicLib inverse is bit-identical to C++ when built on the platform maths library; with libm, its hypot, atan2, sin and cos differ in the last ulp (observed max 4 ulp, rel 6.0e-16, from identical start points), and the start point's derived longitude and latitude add their own libm ulps; observed max rel 1.5e-15."
 
 [[tolerance]]
 case = "geodesic"
 property = "pair/psi"
 abs = 1.2e-14
 rel = 0.0
-reason = "The geographiclib-rs heading differs from the bundled C++ GeographicLib by up to 2 ulp (rel 3.9e-16) from identical inputs, and follows the start point's libm-ulp differences elsewhere; observed max |diff| 1.1e-15, at a heading of 0 from a pole-adjacent start."
+reason = "The ported GeographicLib inverse is bit-identical to C++ when built on the platform maths library; with libm, its hypot, atan2, sin and cos differ in the last ulp (observed max 5 ulp, |diff| 4.4e-16, from identical start points), and the start point's libm ulps add theirs; observed max |diff| 1.1e-15, at a heading of 0 from a pole-adjacent start."
 
 [[tolerance]]
 case = "geodesic"
 property = "anti/s"
 abs = 0.0
 rel = 2.2e-15
-reason = "The distance of a nearly antipodal pair follows the start point's derived longitude and latitude where those differ by their libm ulps; observed max 1 ulp, rel 2.2e-16."
+reason = "The distance of a nearly antipodal pair follows the last-ulp differences of libm's hypot, atan2, sin and cos in the ported inverse and of the start point's derived longitude and latitude; observed max 1 ulp, rel 2.2e-16."
 
 [[tolerance]]
 case = "geodesic"
 property = "anti/psi"
 abs = 2.4e-13
 rel = 0.0
-reason = "The heading of a nearly antipodal pair is ill-conditioned in the start point, whose derived longitude and latitude differ by their libm ulps; the geographiclib-rs heading also differs by up to 2 ulp from identical inputs; observed max |diff| 2.4e-14."
+reason = "The heading of a nearly antipodal pair is ill-conditioned: libm's hypot, atan2, sin and cos in the ported inverse give up to 75 ulp (|diff| 3.3e-15) from identical start points, and the start point's derived longitude and latitude, which differ by their libm ulps, give more; observed max |diff| 2.4e-14."
 
 [[tolerance]]
 case = "geodesic"
 property = "meridian/s"
 abs = 0.0
 rel = 1.2e-14
-reason = "The distance follows the start point's derived latitude where it differs by its libm ulps; observed max 6 ulp, rel 1.2e-15."
+reason = "The meridional distance follows the last-ulp differences of libm's sin, cos and atan2 in the ported inverse (observed max 2 ulp from identical start points) and of the start point's derived latitude; observed max 6 ulp, rel 1.2e-15."
 
 [[tolerance]]
 case = "geodesic"
 property = "meridian/psi"
 abs = 0.0
-rel = 3.2e-15
-reason = "A meridional heading is 0 or pi up to rounding of the start point's derived latitude, which differs by its libm ulps; observed max 2 ulp, rel 3.2e-16."
+rel = 7e-15
+reason = "A meridional heading is 0 or pi up to the round-off of libm's sin, cos and hypot in the ported inverse and of the start point's derived latitude; observed max 4 ulp, rel 7.0e-16."
 
 [[tolerance]]
 case = "geodesic"
 property = "tiny/s"
 abs = 0.0
-rel = 1.1e-5
-reason = "A start point's derived longitude and latitude differ by up to 3 libm ulps (about 1e-16 rad), which is up to 1e-6 of a separation of 1e-10 rad; observed max rel 1.1e-6."
+rel = 7.2e-6
+reason = "Over a separation of 1e-10 to 1e-6 rad, a last-ulp difference (about 1e-16) of libm's sin and cos of either latitude, of hypot and atan2 in the ported inverse, or of the start point's derived longitude and latitude, is up to 1e-6 of the separation; observed max rel 7.2e-7 (2.2e-7 from identical start points)."
 
 [[tolerance]]
 case = "geodesic"
 property = "tiny/psi"
-abs = 9e-6
+abs = 8e-6
 rel = 0.0
-reason = "The heading over a separation of 1e-10 to 1e-6 rad follows the start point's derived longitude and latitude, which differ by up to 3 libm ulps (about 1e-16 rad); observed max |diff| 9.0e-7."
+reason = "Over a separation of 1e-10 to 1e-6 rad, a last-ulp difference (about 1e-16) of libm's sin and cos of either latitude, of hypot and atan2 in the ported inverse, or of the start point's derived longitude and latitude, turns the heading by up to 1e-6 rad; observed max |diff| 8.0e-7 (5.0e-7 from identical start points)."

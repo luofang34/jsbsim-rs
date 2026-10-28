@@ -10,6 +10,7 @@
 //! JSBSim's axis enums), so no index can fall outside a vector or matrix.
 
 mod axis;
+mod geodesic;
 mod location;
 mod matrix33;
 mod quaternion;
