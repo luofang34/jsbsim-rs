@@ -198,6 +198,8 @@ families! {
     Accelerometer(super::accelerometer::Accelerometer) = "accelerometer";
     /// `<gyro>` (`FGGyro`).
     Gyro(super::gyro::Gyro) = "gyro";
+    /// `<magnetometer>` (`FGMagnetometer`).
+    Magnetometer(super::magnetometer::Magnetometer) = "magnetometer";
     /// `<waypoint_heading>` and `<waypoint_distance>` (`FGWaypoint`).
     Waypoint(super::waypoint::Waypoint) = "waypoint_heading" | "waypoint_distance";
 }

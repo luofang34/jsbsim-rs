@@ -19,6 +19,7 @@ pub mod function;
 pub mod gain;
 pub mod gyro;
 mod load;
+pub mod magnetometer;
 pub mod pid;
 pub mod sensor;
 pub mod summer;

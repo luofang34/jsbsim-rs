@@ -49,6 +49,8 @@ pub const SYSTEMS: &[System] = &[
         )
     },
     scenario("fcs_gyro", "fcs_gyro.xml"),
+    upstream("magnetometer", "magnetometer.xml"),
+    scenario("fcs_magnetometer", "fcs_magnetometer.xml"),
     derived("waypoint", "gnc_waypoint.xml"),
     scenario("fcs_waypoint", "fcs_waypoint.xml"),
 ];

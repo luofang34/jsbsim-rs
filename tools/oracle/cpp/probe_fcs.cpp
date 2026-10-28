@@ -5,6 +5,8 @@
 // tools/oracle/src/probe/fcs.rs is the Rust counterpart.
 //
 // Input lines:
+//   clock <seconds>         pin the wall clock (time()) at <seconds> since
+//                           the Unix epoch, for FGMagnetometer's date
 //   paths <root> <aircraft> <systems>  root relative to this file's directory;
 //                                      aircraft and systems paths relative
 //                                      to the root, for the next new
@@ -22,6 +24,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <ctime>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -30,6 +33,32 @@
 #include "FGFDMExec.h"
 #include "input_output/FGPropertyManager.h"
 #include "probes.h"
+
+namespace {
+
+bool clock_pinned = false;
+std::time_t pinned_time = 0;
+
+}  // namespace
+
+// FGMagnetometer dates its field model by time(). The driver links
+// libJSBSim statically, so this definition is the one it calls: the
+// pinned time once a "clock" line sets it, the real time before.
+#if defined(__GLIBC__)
+extern "C" std::time_t time(std::time_t* t) noexcept
+#else
+extern "C" std::time_t time(std::time_t* t)
+#endif
+{
+  std::time_t now = pinned_time;
+  if (!clock_pinned) {
+    timespec ts{};
+    clock_gettime(CLOCK_REALTIME, &ts);
+    now = ts.tv_sec;
+  }
+  if (t) *t = now;
+  return now;
+}
 
 namespace {
 
@@ -64,6 +93,13 @@ private:
 
 std::string Probe::Run(const std::string& op, std::istringstream& args)
 {
+  if (op == "clock") {
+    long long seconds = 0;
+    args >> seconds;
+    pinned_time = static_cast<std::time_t>(seconds);
+    clock_pinned = true;
+    return " ok";
+  }
   if (op == "paths") {
     args >> root >> aircraft >> systems;
     return " ok";

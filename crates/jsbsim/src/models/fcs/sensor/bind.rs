@@ -21,6 +21,7 @@ fn signal(m: &Models, at: ComponentAt) -> Option<&Signal> {
         Kind::Sensor(s) => Some(&s.signal),
         Kind::Accelerometer(s) => Some(&s.signal),
         Kind::Gyro(s) => Some(&s.signal),
+        Kind::Magnetometer(s) => Some(&s.signal),
         _ => None,
     }
 }
@@ -31,6 +32,7 @@ fn signal_mut(m: &mut Models, at: ComponentAt) -> Option<&mut Signal> {
         Kind::Sensor(s) => Some(&mut s.signal),
         Kind::Accelerometer(s) => Some(&mut s.signal),
         Kind::Gyro(s) => Some(&mut s.signal),
+        Kind::Magnetometer(s) => Some(&mut s.signal),
         _ => None,
     }
 }

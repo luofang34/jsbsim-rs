@@ -60,6 +60,10 @@ pub struct ExecState {
     pub random_seed: i32,
     /// `simulation/jsbsim-debug`.
     pub debug_level: i32,
+    /// Seconds since the Unix epoch, UTC, standing for the wall clock
+    /// (`time()`) JSBSim reads; `FGMagnetometer` dates its field model by
+    /// it when it loads. The core reads no clock: set it before loading.
+    pub wall_clock: i64,
     /// Setter requests the executive still has to carry out.
     pub requests: Vec<exec_bind::ExecRequest>,
 }
@@ -78,6 +82,7 @@ impl Default for ExecState {
             trim_completed: 0,
             random_seed: 0,
             debug_level: 0,
+            wall_clock: 0,
             requests: Vec::new(),
         }
     }

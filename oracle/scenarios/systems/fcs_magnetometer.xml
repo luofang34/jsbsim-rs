@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  FGMagnetometer beyond the upstream test, on a tripod tumbling in free
+  fall: the field along every axis, a rotated sensor frame, and a
+  magnetometer degraded by bias, gain and quantization. The
+  fcs-magnetometer golden drives it past the first re-evaluation of the
+  field model (every 1000 runs) and through a reset, which re-evaluates
+  it on the next run.
+-->
+<system name="fcs-magnetometer">
+  <channel name="magnetometers">
+    <magnetometer name="test/mag-x">
+      <location unit="IN">
+        <x>10</x>
+        <y>0</y>
+        <z>-4</z>
+      </location>
+      <axis>X</axis>
+    </magnetometer>
+    <magnetometer name="test/mag-y">
+      <location unit="IN">
+        <x>10</x>
+        <y>0</y>
+        <z>-4</z>
+      </location>
+      <axis>Y</axis>
+    </magnetometer>
+    <magnetometer name="test/mag-z">
+      <location unit="IN">
+        <x>10</x>
+        <y>0</y>
+        <z>-4</z>
+      </location>
+      <axis>Z</axis>
+    </magnetometer>
+    <magnetometer name="test/mag-rotated">
+      <location unit="FT">
+        <x>0</x>
+        <y>1</y>
+        <z>0</z>
+      </location>
+      <orientation unit="DEG">
+        <roll>10</roll>
+        <pitch>20</pitch>
+        <yaw>-30</yaw>
+      </orientation>
+      <axis>Y</axis>
+    </magnetometer>
+    <magnetometer name="test/mag-degraded">
+      <location>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </location>
+      <axis>Z</axis>
+      <gain>0.001</gain>
+      <bias>-2.5</bias>
+      <quantization name="mag-degraded-steps">
+        <bits>12</bits>
+        <min>-100</min>
+        <max>100</max>
+      </quantization>
+    </magnetometer>
+  </channel>
+</system>

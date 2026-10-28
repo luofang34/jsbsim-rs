@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 //! FCS probe; twin of `tools/oracle/cpp/probe_fcs.cpp`. A load that needs a
 //! construct the port does not cover yet prints `unsupported <construct>
-//! (<where>)` instead of `ok`.
+//! (<where>)` instead of `ok`. The wall clock the core is given is the
+//! one a `clock` line pins, else the real time, as the C++ probe's.
 
 use std::path::PathBuf;
 
@@ -17,7 +18,15 @@ struct Probe {
     aircraft: String,
     systems: String,
     watched: Vec<String>,
+    clock: Option<i64>,
     fdm: Option<Fdm>,
+}
+
+/// Seconds since the Unix epoch now.
+fn now() -> i64 {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map_or(0, |d| i64::try_from(d.as_secs()).unwrap_or(i64::MAX))
 }
 
 impl Probe {
@@ -86,6 +95,17 @@ impl Probe {
 
     fn run(&mut self, op: &str, args: &[&str], context: &ProbeContext) -> String {
         match op {
+            "clock" => {
+                let seconds = args
+                    .first()
+                    .and_then(|s| s.parse::<i64>().ok())
+                    .unwrap_or(0);
+                self.clock = Some(seconds);
+                if let Some(fdm) = self.fdm.as_mut() {
+                    fdm.models.exec.wall_clock = seconds;
+                }
+                " ok".to_owned()
+            }
             "paths" => {
                 let arg = |i: usize| args.get(i).copied().unwrap_or_default().to_owned();
                 self.root = context.input_dir.join(arg(0));
@@ -95,6 +115,7 @@ impl Probe {
             }
             "new" => match Fdm::new() {
                 Ok(mut fdm) => {
+                    fdm.models.exec.wall_clock = self.clock.unwrap_or_else(now);
                     fdm.set_aircraft_path(&self.aircraft);
                     fdm.set_systems_path(&self.systems);
                     self.fdm = Some(fdm);

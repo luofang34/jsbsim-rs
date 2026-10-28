@@ -4966,3 +4966,45 @@ property = "*"
 abs = 0.0
 rel = 0.0
 reason = "FGGyro rotates the inertial body rates into its sensor frame (cos and sin of the orientation angles round alike in both libms) and degrades them with IEEE basic operations in JSBSim's order, and the torque-free tripod keeps its inertial rates exactly, so the readings must be bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-magnetometer-upstream"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "TestMagnetometer's held-down tripod sits at latitude and longitude 0, where every sine and cosine of the WMM2005 expansion rounds alike in both libms, and the date arithmetic is integer, so the field must be bit-identical, including its re-evaluations every 1000 runs; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-magnetometer"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Until the field model is re-evaluated (the load-time field at latitude and longitude 0, rotated by Tl2b into each sensor frame, and every value at the second date) the magnetometers use IEEE basic operations and sines and cosines that round alike in both libms, so they must be bit-identical; observed max |diff| 0 outside the rows below."
+
+[[tolerance]]
+case = "fcs-magnetometer"
+property = "*/test/mag-x"
+abs = 6.6e-10
+rel = 0.0
+reason = "From the 1000th run on, and after the reset, the WMM2005 expansion is evaluated at the tumbling tripod's geodetic position (47.5 N 122.3 W, then 33.9 S 151.2 E), through sin, cos, atan2 and sqrt of twelve orders and the geodetic conversion of the position, where Rust's libm and the platform libm differ in the last ulp; observed max 6.5e-11 nT (rel 2.7e-15); bound 10x that."
+
+[[tolerance]]
+case = "fcs-magnetometer"
+property = "*/test/mag-y"
+abs = 1.2e-10
+rel = 0.0
+reason = "From the 1000th run on, and after the reset, the WMM2005 expansion is evaluated at the tumbling tripod's geodetic position (47.5 N 122.3 W, then 33.9 S 151.2 E), through sin, cos, atan2 and sqrt of twelve orders and the geodetic conversion of the position, where Rust's libm and the platform libm differ in the last ulp; observed max 1.2e-11 nT (rel 2.2e-15); bound 10x that."
+
+[[tolerance]]
+case = "fcs-magnetometer"
+property = "*/test/mag-z"
+abs = 3e-10
+rel = 0.0
+reason = "From the 1000th run on, and after the reset, the WMM2005 expansion is evaluated at the tumbling tripod's geodetic position (47.5 N 122.3 W, then 33.9 S 151.2 E), through sin, cos, atan2 and sqrt of twelve orders and the geodetic conversion of the position, where Rust's libm and the platform libm differ in the last ulp; observed max 2.9e-11 nT (rel 5.7e-16); bound 10x that."
+
+[[tolerance]]
+case = "fcs-magnetometer"
+property = "*/test/mag-rotated"
+abs = 4.1e-10
+rel = 0.0
+reason = "From the 1000th run on, and after the reset, the WMM2005 expansion is evaluated at the tumbling tripod's geodetic position (47.5 N 122.3 W, then 33.9 S 151.2 E), through sin, cos, atan2 and sqrt of twelve orders and the geodetic conversion of the position, where Rust's libm and the platform libm differ in the last ulp; observed max 4.0e-11 nT (rel 4.4e-15); bound 10x that."

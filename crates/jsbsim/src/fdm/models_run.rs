@@ -79,6 +79,8 @@ impl Fdm {
         let exec_dt = self.models.exec.dt;
         ctx.ic_position = Some(*self.models.ic.position());
         self.models.fcs.load_channels(el, ctx, exec_dt)?;
+        let m = &mut self.models;
+        crate::models::fcs::magnetometer::construct(&mut m.fcs, &m.propagate, &m.exec);
         self.post_load(el, "", Model::Systems)
     }
 
