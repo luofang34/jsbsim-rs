@@ -137,3 +137,26 @@ fn display_names_time_property_values_and_bound() {
         "t=0 y: reference=2.0 candidate=3.0 |diff|=1.0 allowed=0.25 (abs=0.25 rel=0.0: test)"
     );
 }
+
+#[test]
+fn a_star_row_bounds_the_properties_a_case_does_not_list() {
+    let row = |property: &str, abs: f64| Tolerance {
+        case: "c".into(),
+        property: property.into(),
+        abs,
+        rel: 0.0,
+        period: None,
+        t_start: None,
+        t_end: None,
+        reason: "test".into(),
+    };
+    let t = ToleranceTable::new(vec![row("*", 0.0), row("y", 0.5)]).unwrap();
+    let reference = series(&[[0.0, 1.0, 2.0]]);
+    let within = series(&[[0.0, 1.0, 2.4]]);
+    assert_eq!(
+        compare("c", &reference, &within, &t).unwrap().divergence,
+        None
+    );
+    let outcome = compare("c", &reference, &series(&[[0.0, 1.1, 2.0]]), &t).unwrap();
+    assert_eq!(value_divergence(&outcome).1, "x");
+}

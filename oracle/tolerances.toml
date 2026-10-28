@@ -2,104 +2,6 @@
 # optionally within [t_start, t_end). Every row states its reason.
 
 [[tolerance]]
-case = "ball"
-property = "Time"
-abs = 0.0
-rel = 0.0
-reason = "Sample times are sums of dt in the same order on both sides, so they must match exactly."
-
-[[tolerance]]
-case = "ball"
-property = "position/h-sl-ft"
-abs = 0.0
-rel = 1e-12
-reason = "Allows last-digit libm and FMA differences between C++ toolchains when regenerating; the Rust propagator bound is set when it exists."
-
-[[tolerance]]
-case = "ball"
-property = "position/lat-gc-deg"
-abs = 1e-09
-rel = 1e-12
-reason = "Equatorial orbit: the reference is round-off noise around zero, so an absolute floor replaces the relative bound."
-
-[[tolerance]]
-case = "ball"
-property = "position/long-gc-deg"
-abs = 0.0
-rel = 1e-12
-reason = "Allows last-digit libm and FMA differences between C++ toolchains when regenerating; the Rust propagator bound is set when it exists."
-
-[[tolerance]]
-case = "ball"
-property = "position/eci-x-ft"
-abs = 0.0
-rel = 1e-12
-reason = "Allows last-digit libm and FMA differences between C++ toolchains when regenerating; the Rust propagator bound is set when it exists."
-
-[[tolerance]]
-case = "ball"
-property = "position/eci-y-ft"
-abs = 0.0
-rel = 1e-12
-reason = "Allows last-digit libm and FMA differences between C++ toolchains when regenerating; the Rust propagator bound is set when it exists."
-
-[[tolerance]]
-case = "ball"
-property = "position/eci-z-ft"
-abs = 1e-06
-rel = 1e-12
-reason = "Equatorial orbit: the reference is round-off noise around zero, so an absolute floor replaces the relative bound."
-
-[[tolerance]]
-case = "ball"
-property = "velocities/eci-x-fps"
-abs = 0.0
-rel = 1e-12
-reason = "Allows last-digit libm and FMA differences between C++ toolchains when regenerating; the Rust propagator bound is set when it exists."
-
-[[tolerance]]
-case = "ball"
-property = "velocities/eci-y-fps"
-abs = 0.0
-rel = 1e-12
-reason = "Allows last-digit libm and FMA differences between C++ toolchains when regenerating; the Rust propagator bound is set when it exists."
-
-[[tolerance]]
-case = "ball"
-property = "velocities/eci-z-fps"
-abs = 1e-09
-rel = 1e-12
-reason = "Equatorial orbit: the reference is round-off noise around zero, so an absolute floor replaces the relative bound."
-
-[[tolerance]]
-case = "ball"
-property = "velocities/u-fps"
-abs = 0.0
-rel = 1e-12
-reason = "Allows last-digit libm and FMA differences between C++ toolchains when regenerating; the Rust propagator bound is set when it exists."
-
-[[tolerance]]
-case = "ball"
-property = "attitude/phi-rad"
-abs = 1e-09
-rel = 1e-12
-period = 6.283185307179586
-reason = "Equatorial orbit: phi is round-off noise on the +-pi branch cut, so it flips by 2 pi between builds (seen with and without FMA contraction); compared modulo 2 pi with an absolute floor."
-
-[[tolerance]]
-case = "ball"
-property = "attitude/theta-rad"
-abs = 0.0
-rel = 1e-12
-reason = "Allows last-digit libm and FMA differences between C++ toolchains when regenerating; the Rust propagator bound is set when it exists."
-
-[[tolerance]]
-case = "ball"
-property = "attitude/psi-rad"
-abs = 0.0
-rel = 1e-12
-reason = "Allows last-digit libm and FMA differences between C++ toolchains when regenerating; the Rust propagator bound is set when it exists."
-[[tolerance]]
 case = "math"
 property = "*"
 abs = 1e-14
@@ -701,3 +603,1118 @@ abs = 180.0
 rel = 0.0
 period = 360.0
 reason = "The probe labels the wind direction so while the horizontal wind is below 1e-9 ft/s, i.e. round-off of airspeed minus ground velocity; its direction is then arbitrary (observed 123.7 vs -135 deg), and the components are bounded by the * row."
+
+[[tolerance]]
+case = "ball"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the same IEEE operations in JSBSim's order; properties listed with a window differ."
+
+[[tolerance]]
+case = "ball"
+property = "position/h-sl-ft"
+abs = 2e-06
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=3660 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.3e-07 (rel 1.6e-13) at t=10800 s; bound 10x that."
+
+[[tolerance]]
+case = "ball"
+property = "position/lat-gc-deg"
+abs = 2e-27
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=3660 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.1e-28 (rel 2.4e-12) at t=10800 s; bound 10x that."
+
+[[tolerance]]
+case = "ball"
+property = "position/long-gc-deg"
+abs = 5e-15
+rel = 0.0
+period = 360.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: the geodetic/geocentric conversion's atan2 and sqrt differ in the last digit between Rust libm and Apple libm; observed max 2.2e-16 (rel 1.8e-16) at t=20 s; bound 10x that."
+
+[[tolerance]]
+case = "ball"
+property = "position/long-gc-deg"
+abs = 1e-11
+rel = 0.0
+period = 360.0
+t_start = 60.5
+reason = "The integrated state first differs at t=3660 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 5.6e-13 (rel 1.5e-14) at t=10800 s; bound 10x that."
+
+[[tolerance]]
+case = "ball"
+property = "position/eci-x-ft"
+abs = 2e-06
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=3660 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.5e-07 (rel 3e-13) at t=10800 s; bound 10x that."
+
+[[tolerance]]
+case = "ball"
+property = "position/eci-y-ft"
+abs = 2e-06
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=3660 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.9e-07 (rel 9.7e-12) at t=10800 s; bound 10x that."
+
+[[tolerance]]
+case = "ball"
+property = "position/eci-z-ft"
+abs = 5e-22
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=3660 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.9e-23 (rel 2.4e-12) at t=10800 s; bound 10x that."
+
+[[tolerance]]
+case = "ball"
+property = "velocities/eci-x-fps"
+abs = 5e-09
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=3660 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.5e-10 (rel 8e-11) at t=10800 s; bound 10x that."
+
+[[tolerance]]
+case = "ball"
+property = "velocities/eci-y-fps"
+abs = 2e-09
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=3660 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.3e-10 (rel 3.9e-13) at t=10080 s; bound 10x that."
+
+[[tolerance]]
+case = "ball"
+property = "velocities/eci-z-fps"
+abs = 5e-25
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=3660 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.8e-26 (rel 1.3e-12) at t=10320 s; bound 10x that."
+
+[[tolerance]]
+case = "ball"
+property = "velocities/u-fps"
+abs = 5e-09
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=3660 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.7e-10 (rel 1.1e-12) at t=10770 s; bound 10x that."
+
+[[tolerance]]
+case = "ball"
+property = "attitude/phi-rad"
+abs = 2e-08
+rel = 0.0
+period = 6.283185307179586
+t_start = 60.5
+reason = "The integrated state first differs at t=3660 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1e-09 (rel 2) at t=10120 s; bound 10x that."
+
+[[tolerance]]
+case = "ball"
+property = "attitude/theta-rad"
+abs = 1e-12
+rel = 0.0
+period = 6.283185307179586
+t_start = 60.5
+reason = "The integrated state first differs at t=3660 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 5.6e-14 (rel 5.8e-13) at t=9970 s; bound 10x that."
+
+[[tolerance]]
+case = "ball"
+property = "attitude/psi-rad"
+abs = 5e-15
+rel = 0.0
+period = 6.283185307179586
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 2.2e-16 (rel 1.4e-16) at t=30 s; bound 10x that."
+
+[[tolerance]]
+case = "ball"
+property = "attitude/psi-rad"
+abs = 2e-08
+rel = 0.0
+period = 6.283185307179586
+t_start = 60.5
+reason = "The integrated state first differs at t=3660 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.2e-09 (rel 7.6e-10) at t=10120 s; bound 10x that."
+
+[[tolerance]]
+case = "ball-60s"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the same IEEE operations in JSBSim's order."
+
+[[tolerance]]
+case = "ball-60s"
+property = "position/long-gc-deg"
+abs = 1e-14
+rel = 0.0
+period = 360.0
+reason = "Output only, the state being bit-identical here: the geodetic/geocentric conversion's atan2 and sqrt differ in the last digit between Rust libm and Apple libm; observed max 8.9e-16 (rel 2.5e-16) at t=57 s; bound 10x that."
+
+[[tolerance]]
+case = "ball-60s"
+property = "attitude/theta-rad"
+abs = 1e-16
+rel = 0.0
+period = 6.283185307179586
+reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 6.9e-18 (rel 2e-16) at t=33 s; bound 10x that."
+
+[[tolerance]]
+case = "ball-60s"
+property = "attitude/psi-rad"
+abs = 5e-15
+rel = 0.0
+period = 6.283185307179586
+reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 2.2e-16 (rel 1.4e-16) at t=0 s; bound 10x that."
+
+[[tolerance]]
+case = "ball-60s"
+property = "orbital/period-sec"
+abs = 2e-11
+rel = 0.0
+reason = "Output only, the state being bit-identical here: the orbital-element conversion's acos/atan2 differ in the last digit between Rust libm and Apple libm; observed max 1.8e-12 (rel 3.4e-16) at t=0 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the same IEEE operations in JSBSim's order; properties listed with a window differ."
+
+[[tolerance]]
+case = "ball_orbit"
+property = "position/h-sl-ft"
+abs = 1e-07
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 7.5e-09 (rel 9.3e-15) at t=10540 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit"
+property = "position/lat-gc-deg"
+abs = 5e-29
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.7e-30 (rel 2.9e-14) at t=9180 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit"
+property = "position/long-gc-deg"
+abs = 5e-15
+rel = 0.0
+period = 360.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: the geodetic/geocentric conversion's atan2 and sqrt differ in the last digit between Rust libm and Apple libm; observed max 4.4e-16 (rel 1.8e-16) at t=60 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit"
+property = "position/long-gc-deg"
+abs = 5e-13
+rel = 0.0
+period = 360.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.8e-14 (rel 2.5e-16) at t=1860 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit"
+property = "position/lat-geod-deg"
+abs = 5e-29
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.7e-30 (rel 2.9e-14) at t=4060 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit"
+property = "position/eci-x-ft"
+abs = 5e-08
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.7e-09 (rel 1.7e-16) at t=10540 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit"
+property = "position/eci-y-ft"
+abs = 1e-08
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 9.3e-10 (rel 2.9e-15) at t=10540 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit"
+property = "position/eci-z-ft"
+abs = 1e-23
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8.3e-25 (rel 2.9e-14) at t=9120 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit"
+property = "position/ecef-x-ft"
+abs = 5e-08
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.7e-09 (rel 1.7e-15) at t=5120 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit"
+property = "position/ecef-y-ft"
+abs = 5e-08
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.7e-09 (rel 2.3e-16) at t=4060 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit"
+property = "position/ecef-z-ft"
+abs = 1e-23
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8.3e-25 (rel 2.9e-14) at t=9120 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit"
+property = "velocities/eci-x-fps"
+abs = 5e-11
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.6e-12 (rel 1.3e-12) at t=10800 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit"
+property = "velocities/eci-y-fps"
+abs = 5e-11
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.6e-12 (rel 1.3e-14) at t=9960 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit"
+property = "velocities/eci-z-fps"
+abs = 1e-26
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8.1e-28 (rel 2.2e-14) at t=9880 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit"
+property = "velocities/u-fps"
+abs = 1e-10
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 7.3e-12 (rel 1.4e-14) at t=10040 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit"
+property = "velocities/v-fps"
+abs = 2e-26
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.6e-27 (rel 9.7e-15) at t=9040 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit"
+property = "velocities/w-fps"
+abs = 5e-11
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.2e-12 (rel 1.8e-12) at t=10760 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit"
+property = "attitude/phi-rad"
+abs = 5e-14
+rel = 0.0
+period = 6.283185307179586
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.2e-15 (rel 3) at t=6620 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit"
+property = "attitude/theta-rad"
+abs = 5e-14
+rel = 0.0
+period = 6.283185307179586
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.2e-15 (rel 7e-15) at t=6620 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit"
+property = "attitude/psi-rad"
+abs = 5e-14
+rel = 0.0
+period = 6.283185307179586
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.2e-15 (rel 1.4e-15) at t=6620 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit"
+property = "accelerations/udot-ft_sec2"
+abs = 2e-13
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.1e-14 (rel 2e-14) at t=9180 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit"
+property = "accelerations/vdot-ft_sec2"
+abs = 1e-28
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 7.1e-30 (rel 4.6e-14) at t=10780 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit"
+property = "accelerations/wdot-ft_sec2"
+abs = 5e-13
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.8e-14 (rel 1e-15) at t=10580 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit"
+property = "orbital/eccentricity"
+abs = 5e-15
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.3e-16 (rel 4.2e-12) at t=9160 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit"
+property = "orbital/period-sec"
+abs = 1e-10
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 6.4e-12 (rel 1.2e-15) at t=10140 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit-60s"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the same IEEE operations in JSBSim's order."
+
+[[tolerance]]
+case = "ball_orbit-60s"
+property = "position/long-gc-deg"
+abs = 1e-14
+rel = 0.0
+period = 360.0
+reason = "Output only, the state being bit-identical here: the geodetic/geocentric conversion's atan2 and sqrt differ in the last digit between Rust libm and Apple libm; observed max 8.9e-16 (rel 2.5e-16) at t=57 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit-60s"
+property = "attitude/theta-rad"
+abs = 2e-16
+rel = 0.0
+period = 6.283185307179586
+reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 1.4e-17 (rel 2.1e-16) at t=55 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit-60s"
+property = "orbital/period-sec"
+abs = 2e-11
+rel = 0.0
+reason = "Output only, the state being bit-identical here: the orbital-element conversion's acos/atan2 differ in the last digit between Rust libm and Apple libm; observed max 1.8e-12 (rel 3.4e-16) at t=4 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the same IEEE operations in JSBSim's order; properties listed with a window differ."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "position/h-sl-ft"
+abs = 1e-07
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 7.5e-09 (rel 9.3e-15) at t=10540 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "position/lat-gc-deg"
+abs = 5e-29
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.7e-30 (rel 2.9e-14) at t=9180 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "position/long-gc-deg"
+abs = 5e-15
+rel = 0.0
+period = 360.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: the geodetic/geocentric conversion's atan2 and sqrt differ in the last digit between Rust libm and Apple libm; observed max 4.4e-16 (rel 1.8e-16) at t=60 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "position/long-gc-deg"
+abs = 5e-13
+rel = 0.0
+period = 360.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.8e-14 (rel 2.5e-16) at t=1860 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "position/lat-geod-deg"
+abs = 5e-29
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.7e-30 (rel 2.9e-14) at t=4060 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "position/eci-x-ft"
+abs = 5e-08
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.7e-09 (rel 1.7e-16) at t=10540 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "position/eci-y-ft"
+abs = 1e-08
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 9.3e-10 (rel 2.9e-15) at t=10540 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "position/eci-z-ft"
+abs = 1e-23
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8.3e-25 (rel 2.9e-14) at t=9120 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "position/ecef-x-ft"
+abs = 5e-08
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.7e-09 (rel 1.7e-15) at t=5120 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "position/ecef-y-ft"
+abs = 5e-08
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.7e-09 (rel 2.3e-16) at t=4060 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "position/ecef-z-ft"
+abs = 1e-23
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8.3e-25 (rel 2.9e-14) at t=9120 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "velocities/eci-x-fps"
+abs = 5e-11
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.6e-12 (rel 1.3e-12) at t=10800 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "velocities/eci-y-fps"
+abs = 5e-11
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.6e-12 (rel 1.3e-14) at t=9960 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "velocities/eci-z-fps"
+abs = 1e-26
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8.1e-28 (rel 2.2e-14) at t=9880 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "velocities/u-fps"
+abs = 2e-10
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.1e-11 (rel 4.6e-16) at t=10320 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "velocities/v-fps"
+abs = 2e-10
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.1e-11 (rel 21) at t=10640 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "velocities/w-fps"
+abs = 2e-10
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.9e-11 (rel 8.3e-14) at t=10420 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "velocities/p-rad_sec"
+abs = 5e-19
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.8e-20 (rel 1.2) at t=10640 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "velocities/q-rad_sec"
+abs = 2e-17
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.7e-18 (rel 8.7e-16) at t=10640 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "velocities/r-rad_sec"
+abs = 5e-18
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.2e-19 (rel 0.036) at t=10760 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "velocities/pi-rad_sec"
+abs = 1e-34
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 5.7e-36 (rel 3.9e+02) at t=10800 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "velocities/qi-rad_sec"
+abs = 2e-17
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.7e-18 (rel 8.4e-16) at t=10640 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "velocities/ri-rad_sec"
+abs = 5e-18
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.1e-19 (rel 0.031) at t=10800 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "attitude/phi-rad"
+abs = 2e-12
+rel = 0.0
+period = 6.283185307179586
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.6e-13 (rel 2.3) at t=10600 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "attitude/theta-rad"
+abs = 1e-14
+rel = 0.0
+period = 6.283185307179586
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8.8e-16 (rel 8.9e-14) at t=10480 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "attitude/psi-rad"
+abs = 2e-11
+rel = 0.0
+period = 6.283185307179586
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.8e-12 (rel 1.2e-12) at t=10600 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "accelerations/udot-ft_sec2"
+abs = 5e-13
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.6e-14 (rel 9.3e-14) at t=10460 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "accelerations/vdot-ft_sec2"
+abs = 1e-13
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 9.8e-15 (rel 0.48) at t=10760 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "accelerations/wdot-ft_sec2"
+abs = 1e-12
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 6e-14 (rel 2.1e-13) at t=10740 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "moments/l-total-lbsft"
+abs = 2e-33
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1e-34 (rel 2) at t=10300 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "moments/m-total-lbsft"
+abs = 5e-19
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 3.8e-20 (rel 7.5e-14) at t=10480 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "moments/n-total-lbsft"
+abs = 5e-20
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 4.3e-21 (rel 0.053) at t=10120 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "orbital/eccentricity"
+abs = 5e-15
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.3e-16 (rel 4.2e-12) at t=9160 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque"
+property = "orbital/period-sec"
+abs = 1e-10
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5300 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 6.4e-12 (rel 1.2e-15) at t=10140 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque-60s"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the same IEEE operations in JSBSim's order."
+
+[[tolerance]]
+case = "ball_orbit_g_torque-60s"
+property = "position/long-gc-deg"
+abs = 1e-14
+rel = 0.0
+period = 360.0
+reason = "Output only, the state being bit-identical here: the geodetic/geocentric conversion's atan2 and sqrt differ in the last digit between Rust libm and Apple libm; observed max 8.9e-16 (rel 2.5e-16) at t=57 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque-60s"
+property = "attitude/theta-rad"
+abs = 2e-16
+rel = 0.0
+period = 6.283185307179586
+reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 1.4e-17 (rel 2.1e-16) at t=55 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_g_torque-60s"
+property = "orbital/period-sec"
+abs = 2e-11
+rel = 0.0
+reason = "Output only, the state being bit-identical here: the orbital-element conversion's acos/atan2 differ in the last digit between Rust libm and Apple libm; observed max 1.8e-12 (rel 3.4e-16) at t=4 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the same IEEE operations in JSBSim's order; properties listed with a window differ."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "position/h-sl-ft"
+abs = 2e-07
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5760 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.9e-08 (rel 1.4e-14) at t=10940 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "position/lat-gc-deg"
+abs = 1e-17
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: the geodetic/geocentric conversion's atan2 and sqrt differ in the last digit between Rust libm and Apple libm; observed max 8.7e-19 (rel 1.8e-16) at t=0 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "position/lat-gc-deg"
+abs = 1e-12
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5760 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 5.3e-14 (rel 8.5e-15) at t=10840 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "position/long-gc-deg"
+abs = 1e-12
+rel = 0.0
+period = 360.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5760 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 5.7e-14 (rel 3.9e-14) at t=11000 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "position/lat-geod-deg"
+abs = 1e-12
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5760 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 5.5e-14 (rel 8.6e-15) at t=10940 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "position/eci-x-ft"
+abs = 2e-07
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5760 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.5e-08 (rel 1.5e-14) at t=10900 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "position/eci-z-ft"
+abs = 5e-07
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5760 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.2e-08 (rel 9.2e-15) at t=10900 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "position/ecef-x-ft"
+abs = 2e-07
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5760 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.5e-08 (rel 2.2e-14) at t=10980 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "position/ecef-y-ft"
+abs = 2e-07
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5760 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.1e-08 (rel 1.7e-12) at t=10920 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "position/ecef-z-ft"
+abs = 5e-07
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5760 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.2e-08 (rel 9.2e-15) at t=10900 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "velocities/eci-x-fps"
+abs = 5e-10
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5760 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.5e-11 (rel 2.6e-13) at t=10980 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "velocities/eci-y-fps"
+abs = 1e-10
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5760 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 7.3e-12 (rel 2.9e-14) at t=10900 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "velocities/eci-z-fps"
+abs = 2e-10
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5760 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.3e-11 (rel 5.5e-14) at t=10100 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "velocities/u-fps"
+abs = 2e-10
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5760 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.8e-11 (rel 2.1e-14) at t=10820 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "velocities/v-fps"
+abs = 2e-10
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5760 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.3e-11 (rel 5.4e-14) at t=10100 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "velocities/w-fps"
+abs = 5e-10
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5760 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.3e-11 (rel 9.1e-15) at t=10980 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "attitude/phi-rad"
+abs = 1e-14
+rel = 0.0
+period = 6.283185307179586
+t_start = 60.5
+reason = "The integrated state first differs at t=5760 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1e-15 (rel 9e-15) at t=10940 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "attitude/theta-rad"
+abs = 1e-14
+rel = 0.0
+period = 6.283185307179586
+t_start = 60.5
+reason = "The integrated state first differs at t=5760 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 6.1e-16 (rel 5.3e-15) at t=10960 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "attitude/psi-rad"
+abs = 5e-15
+rel = 0.0
+period = 6.283185307179586
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 2.2e-16 (rel 1.4e-16) at t=40 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "attitude/psi-rad"
+abs = 1e-14
+rel = 0.0
+period = 6.283185307179586
+t_start = 60.5
+reason = "The integrated state first differs at t=5760 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 8.9e-16 (rel 5.2e-16) at t=1940 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "accelerations/udot-ft_sec2"
+abs = 5e-13
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5760 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.8e-14 (rel 3.7e-15) at t=10060 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "accelerations/vdot-ft_sec2"
+abs = 5e-13
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5760 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 2.2e-14 (rel 7.1e-15) at t=11000 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "accelerations/wdot-ft_sec2"
+abs = 1e-12
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5760 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 5.7e-14 (rel 9.3e-14) at t=10940 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "orbital/eccentricity"
+abs = 1e-14
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5760 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 6.7e-16 (rel 5.3e-13) at t=10000 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "orbital/inclination-deg"
+abs = 1e-13
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: the orbital-element conversion's acos/atan2 differ in the last digit between Rust libm and Apple libm; observed max 7.1e-15 (rel 1.4e-16) at t=0 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "orbital/inclination-deg"
+abs = 5e-13
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5760 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 5e-14 (rel 9.6e-16) at t=10940 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "orbital/period-sec"
+abs = 1e-11
+rel = 0.0
+t_start = 0.0
+t_end = 60.5
+reason = "Output only, the state being bit-identical here: the orbital-element conversion's acos/atan2 differ in the last digit between Rust libm and Apple libm; observed max 9.1e-13 (rel 1.6e-16) at t=0 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase"
+property = "orbital/period-sec"
+abs = 1e-10
+rel = 0.0
+t_start = 60.5
+reason = "The integrated state first differs at t=5760 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 9.1e-12 (rel 1.6e-15) at t=9900 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase-60s"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the same IEEE operations in JSBSim's order."
+
+[[tolerance]]
+case = "ball_orbit_phase-60s"
+property = "position/lat-gc-deg"
+abs = 5e-15
+rel = 0.0
+reason = "Output only, the state being bit-identical here: the geodetic/geocentric conversion's atan2 and sqrt differ in the last digit between Rust libm and Apple libm; observed max 4.4e-16 (rel 2.4e-16) at t=36 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase-60s"
+property = "position/long-gc-deg"
+abs = 5e-13
+rel = 0.0
+period = 360.0
+reason = "Output only, the state being bit-identical here: the geodetic/geocentric conversion's atan2 and sqrt differ in the last digit between Rust libm and Apple libm; observed max 2.8e-14 (rel 2.3e-16) at t=3 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase-60s"
+property = "position/lat-geod-deg"
+abs = 2e-15
+rel = 0.0
+reason = "Output only, the state being bit-identical here: the geodetic/geocentric conversion's atan2 and sqrt differ in the last digit between Rust libm and Apple libm; observed max 1.1e-16 (rel 1.8e-16) at t=12 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase-60s"
+property = "attitude/phi-rad"
+abs = 1e-16
+rel = 0.0
+period = 6.283185307179586
+reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 6.9e-18 (rel 2.2e-16) at t=35 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase-60s"
+property = "attitude/theta-rad"
+abs = 1e-16
+rel = 0.0
+period = 6.283185307179586
+reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 6.9e-18 (rel 2.2e-16) at t=45 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase-60s"
+property = "attitude/psi-rad"
+abs = 5e-15
+rel = 0.0
+period = 6.283185307179586
+reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 2.2e-16 (rel 1.4e-16) at t=0 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase-60s"
+property = "orbital/inclination-deg"
+abs = 1e-13
+rel = 0.0
+reason = "Output only, the state being bit-identical here: the orbital-element conversion's acos/atan2 differ in the last digit between Rust libm and Apple libm; observed max 7.1e-15 (rel 1.4e-16) at t=0 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_orbit_phase-60s"
+property = "orbital/period-sec"
+abs = 2e-11
+rel = 0.0
+reason = "Output only, the state being bit-identical here: the orbital-element conversion's acos/atan2 differ in the last digit between Rust libm and Apple libm; observed max 1.8e-12 (rel 3.3e-16) at t=1 s; bound 10x that."
+
+[[tolerance]]
+case = "nasa-atmos-02"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the same IEEE operations in JSBSim's order."
+
+[[tolerance]]
+case = "nasa-atmos-02"
+property = "position/long-gc-deg"
+abs = 1e-19
+rel = 0.0
+period = 360.0
+reason = "Output only, the state being bit-identical here: the geodetic/geocentric conversion's atan2 and sqrt differ in the last digit between Rust libm and Apple libm; observed max 6.8e-21 (rel 2.5e-16) at t=25 s; bound 10x that."
+
+[[tolerance]]
+case = "nasa-atmos-02"
+property = "attitude/phi-rad"
+abs = 5e-15
+rel = 0.0
+period = 6.283185307179586
+reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 2.2e-16 (rel 2.2e-16) at t=11 s; bound 10x that."
+
+[[tolerance]]
+case = "nasa-atmos-02"
+property = "attitude/theta-rad"
+abs = 2e-15
+rel = 0.0
+period = 6.283185307179586
+reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 1.1e-16 (rel 2.1e-16) at t=2 s; bound 10x that."
+
+[[tolerance]]
+case = "nasa-atmos-02"
+property = "attitude/psi-rad"
+abs = 1e-14
+rel = 0.0
+period = 6.283185307179586
+reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 8.9e-16 (rel 2.2e-16) at t=7 s; bound 10x that."
+
+[[tolerance]]
+case = "nasa-atmos-02"
+property = "aero/qbar-psf"
+abs = 2e-12
+rel = 0.0
+reason = "Output only, the state being bit-identical here: the standard atmosphere's pow/exp differ in the last digit between Rust libm and Apple libm; observed max 1.1e-13 (rel 3.8e-16) at t=23 s; bound 10x that."
+
+[[tolerance]]
+case = "nasa-atmos-02"
+property = "atmosphere/rho-slugs_ft3"
+abs = 5e-18
+rel = 0.0
+reason = "Output only, the state being bit-identical here: the standard atmosphere's pow/exp differ in the last digit between Rust libm and Apple libm; observed max 4.3e-19 (rel 4.1e-16) at t=17 s; bound 10x that."
+
+[[tolerance]]
+case = "nasa-atmos-02"
+property = "attitude/phi-deg"
+abs = 2e-13
+rel = 0.0
+period = 360.0
+reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 1.4e-14 (rel 2.5e-16) at t=11 s; bound 10x that."
+
+[[tolerance]]
+case = "nasa-atmos-02"
+property = "attitude/theta-deg"
+abs = 1e-13
+rel = 0.0
+period = 360.0
+reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 7.1e-15 (rel 2.4e-16) at t=2 s; bound 10x that."
+
+[[tolerance]]
+case = "nasa-atmos-02"
+property = "attitude/psi-deg"
+abs = 1e-12
+rel = 0.0
+period = 360.0
+reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 5.7e-14 (rel 2.5e-16) at t=7 s; bound 10x that."

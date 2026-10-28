@@ -163,12 +163,21 @@ impl ToleranceTable {
         Self::parse(&text, path)
     }
 
-    /// The row bounding `property` of `case` at `time`, if any.
+    /// The row of `case` named exactly `property` covering `time`, if any.
     #[must_use]
     pub fn lookup(&self, case: &str, property: &str, time: f64) -> Option<&Tolerance> {
         self.rows
             .iter()
             .find(|row| row.case == case && row.property == property && row.covers(time))
+    }
+
+    /// The row bounding series column `property` of `case` at `time`: the
+    /// column's own row, else the case's `*` row, which bounds every
+    /// column the case does not list.
+    #[must_use]
+    pub fn lookup_series(&self, case: &str, property: &str, time: f64) -> Option<&Tolerance> {
+        self.lookup(case, property, time)
+            .or_else(|| self.lookup(case, "*", time))
     }
 
     /// All rows, in file order.

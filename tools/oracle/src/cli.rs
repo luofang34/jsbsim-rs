@@ -75,8 +75,12 @@ pub fn command() -> Command {
         .subcommand(nasa_command(jsbsim_root))
         .subcommand(
             Command::new("port")
-                .about("Run the Rust port on a transcript case and compare it with the reference")
-                .arg(Arg::new("case").required(true)),
+                .about("Run the Rust port on golden cases and compare them with their references")
+                .arg(
+                    Arg::new("case")
+                        .action(ArgAction::Append)
+                        .help("Golden case names; all cases when omitted"),
+                ),
         )
         .subcommand(compare_command())
         .subcommand(
@@ -157,8 +161,22 @@ where
         return crate::stats::port_stats_blocking(&repo_root, &case, until);
     }
     if name == "port" {
-        let case = sub.get_one::<String>("case").cloned().unwrap_or_default();
-        return cases::port_blocking(&repo_root, &case);
+        let mut names: Vec<String> = sub
+            .try_get_many::<String>("case")
+            .ok()
+            .flatten()
+            .map(|values| values.cloned().collect())
+            .unwrap_or_default();
+        if names.is_empty() {
+            names = manifest::list_cases_blocking(&repo_root.join("oracle").join("goldens"))?;
+        }
+        let mut code = ExitCode::SUCCESS;
+        for case in &names {
+            if cases::port_blocking(&repo_root, case)? != ExitCode::SUCCESS {
+                code = ExitCode::FAILURE;
+            }
+        }
+        return Ok(code);
     }
     if name == "compare" {
         let tolerances = sub

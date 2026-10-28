@@ -1,0 +1,13 @@
+[case]
+kind = "script"
+script = "scripts/ball_orbit_g_torque.xml"
+rate_hz = 0.05
+properties = ["position/h-sl-ft", "position/lat-gc-deg", "position/long-gc-deg", "position/lat-geod-deg", "position/eci-x-ft", "position/eci-y-ft", "position/eci-z-ft", "position/ecef-x-ft", "position/ecef-y-ft", "position/ecef-z-ft", "velocities/eci-x-fps", "velocities/eci-y-fps", "velocities/eci-z-fps", "velocities/u-fps", "velocities/v-fps", "velocities/w-fps", "velocities/p-rad_sec", "velocities/q-rad_sec", "velocities/r-rad_sec", "velocities/pi-rad_sec", "velocities/qi-rad_sec", "velocities/ri-rad_sec", "attitude/phi-rad", "attitude/theta-rad", "attitude/psi-rad", "accelerations/udot-ft_sec2", "accelerations/vdot-ft_sec2", "accelerations/wdot-ft_sec2", "forces/fbx-total-lbs", "forces/fby-total-lbs", "forces/fbz-total-lbs", "moments/l-total-lbsft", "moments/m-total-lbsft", "moments/n-total-lbsft", "orbital/eccentricity", "orbital/inclination-deg", "orbital/period-sec"]
+
+[provenance]
+upstream_commit = "66f7fafc07fe13e7ede9db20873030fed2881713"
+driver = "tools/oracle/cpp"
+cxx_flags = "-ffp-contract=off"
+dt = 0.005
+every_n_frames = 4000
+rows = 541

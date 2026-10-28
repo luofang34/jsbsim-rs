@@ -102,7 +102,7 @@ pub fn compare(
     for (index, (ref_row, cand_row)) in reference.rows.iter().zip(&candidate.rows).enumerate() {
         let time = ref_row.first().copied().unwrap_or(f64::NAN);
         for ((property, &r), &c) in reference.columns.iter().zip(ref_row).zip(cand_row) {
-            let tolerance = table.lookup(case, property, time).ok_or_else(|| {
+            let tolerance = table.lookup_series(case, property, time).ok_or_else(|| {
                 OracleError::MissingTolerance {
                     case: case.to_owned(),
                     property: property.clone(),

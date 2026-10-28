@@ -124,8 +124,9 @@ fn every_tolerance_row_belongs_to_a_logged_column_or_probe_op() {
         assert!(cases.contains(&row.case), "orphan case {}", row.case);
         let manifest = manifest(&row.case);
         if let Some(columns) = manifest.expected_columns() {
+            // A series case's `*` row bounds the columns it does not list.
             assert!(
-                columns.contains(&row.property),
+                row.property == "*" || columns.contains(&row.property),
                 "{} does not log {}",
                 row.case,
                 row.property

@@ -86,6 +86,9 @@ pub fn port_stats_blocking(
     if let Some(e) = &failure {
         error!("{case}: the Rust run stopped after t={last}: {e}");
     }
+    let out = repo_root.join("target").join("oracle").join("port");
+    std::fs::create_dir_all(&out).map_err(|e| OracleError::io("creating", &out, e))?;
+    candidate.write_blocking(&out.join(format!("{case}.csv")))?;
     let table =
         crate::ToleranceTable::read_blocking(&repo_root.join("oracle").join("tolerances.toml"))?;
     let until = until.unwrap_or(f64::INFINITY);
