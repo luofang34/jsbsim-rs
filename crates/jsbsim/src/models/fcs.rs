@@ -9,6 +9,7 @@
 //! no family registers yet is refused with
 //! [`Error::Unsupported`](crate::Error::Unsupported).
 
+pub mod accelerometer;
 mod bind;
 pub mod component;
 pub mod deadband;

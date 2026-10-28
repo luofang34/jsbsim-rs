@@ -40,6 +40,14 @@ pub const SYSTEMS: &[System] = &[
     scenario("fcs_switch", "fcs_switch.xml"),
     scenario("fcs_filter", "fcs_filter.xml"),
     scenario("fcs_sensor", "fcs_sensor.xml"),
+    scenario("fcs_accelerometer", "fcs_accelerometer.xml"),
+    System {
+        loads: false,
+        ..scenario(
+            "fcs_accelerometer_no_location",
+            "fcs_accelerometer_no_location.xml",
+        )
+    },
     derived("waypoint", "gnc_waypoint.xml"),
     scenario("fcs_waypoint", "fcs_waypoint.xml"),
 ];

@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  FGAccelerometer beyond the upstream tests, on a tripod tumbling in free
+  fall: locations off the CG in inches and feet, rotated sensor frames
+  (roll, pitch and yaw in degrees and in radians), every axis spelling, a
+  missing axis (X assumed), and an accelerometer degraded by lag, bias,
+  gain and quantization. The fcs-accelerometer golden drives it.
+-->
+<system name="fcs-accelerometer">
+  <channel name="accelerometers">
+    <accelerometer name="test/accel-x">
+      <location unit="IN">
+        <x>20</x>
+        <y>-10</y>
+        <z>5</z>
+      </location>
+      <axis>X</axis>
+    </accelerometer>
+    <accelerometer name="test/accel-y">
+      <location unit="IN">
+        <x>20</x>
+        <y>-10</y>
+        <z>5</z>
+      </location>
+      <axis>y</axis>
+    </accelerometer>
+    <accelerometer name="test/accel-z">
+      <location unit="IN">
+        <x>20</x>
+        <y>-10</y>
+        <z>5</z>
+      </location>
+      <axis>z</axis>
+    </accelerometer>
+    <accelerometer name="test/accel-rotated">
+      <location unit="FT">
+        <x>-1.5</x>
+        <y>2</y>
+        <z>0.25</z>
+      </location>
+      <orientation unit="DEG">
+        <roll>30</roll>
+        <pitch>-10</pitch>
+        <yaw>45</yaw>
+      </orientation>
+      <axis>Y</axis>
+    </accelerometer>
+    <accelerometer name="test/accel-rotated-rad">
+      <location>
+        <x>3</x>
+        <y>0</y>
+        <z>-7</z>
+      </location>
+      <orientation unit="RAD">
+        <roll>-0.2</roll>
+        <pitch>0.4</pitch>
+        <yaw>1.1</yaw>
+      </orientation>
+      <axis>Z</axis>
+    </accelerometer>
+    <accelerometer name="test/accel-no-axis">
+      <location unit="IN">
+        <x>0</x>
+        <y>12</y>
+        <z>0</z>
+      </location>
+    </accelerometer>
+    <accelerometer name="test/accel-degraded">
+      <location unit="IN">
+        <x>20</x>
+        <y>-10</y>
+        <z>5</z>
+      </location>
+      <axis>Z</axis>
+      <lag>8.0</lag>
+      <gain>2.0</gain>
+      <bias>0.01</bias>
+      <quantization name="accel-degraded-steps">
+        <bits>10</bits>
+        <min>-0.5</min>
+        <max>0.5</max>
+      </quantization>
+    </accelerometer>
+  </channel>
+</system>

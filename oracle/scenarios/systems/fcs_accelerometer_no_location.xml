@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  An accelerometer without a <location>, which FGAccelerometer refuses:
+  the aircraft including it does not load. The fcs-accelerometer golden
+  loads it.
+-->
+<system name="fcs-accelerometer-no-location">
+  <channel name="accelerometers">
+    <accelerometer name="test/accel-nowhere">
+      <axis>X</axis>
+    </accelerometer>
+  </channel>
+</system>

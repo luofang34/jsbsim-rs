@@ -4917,3 +4917,45 @@ property = "*"
 abs = 0.0
 rel = 0.0
 reason = "FGSensor's lag, drift, gain, bias, transport delay, failures, quantization and clipping use only IEEE basic operations, truncation and comparisons in JSBSim's order, and the failure and seed properties only copy values, so they must be bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "ball_orbit_accelerometers"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "FGAccelerometer adds the body acceleration and the rotational terms at its location and rotates them into its frame with IEEE basic operations in JSBSim's order, on a ball in free fall whose readings are exactly 0, so the case must be bit-identical; properties listed with a window differ."
+
+[[tolerance]]
+case = "ball_spin_accelerometers"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "FGAccelerometer adds the body acceleration and the rotational terms at its location and rotates them into its frame with IEEE basic operations in JSBSim's order, so the spinning ball's readings must be bit-identical; properties listed with a window differ."
+
+[[tolerance]]
+case = "ball_orbit_accelerometers"
+property = "position/h-sl-ft"
+abs = 5.3e-7
+rel = 0.0
+reason = "As in ball_orbit, a last-digit libm difference in the dynamics first shows in the integrated state (u-fps first differs at t=6700 s) and the propagation carries it; observed max 5.2e-8 ft (rel 6.5e-14) at t=10440 s; bound 10x that. The accelerometers read exactly 0 throughout."
+
+[[tolerance]]
+case = "ball_orbit_accelerometers"
+property = "velocities/u-fps"
+abs = 5.9e-10
+rel = 0.0
+reason = "As in ball_orbit, a last-digit libm difference in the dynamics first shows in the integrated state at t=6700 s and the propagation carries it; observed max 5.8e-11 ft/s (rel 7.7e-14) at t=10420 s; bound 10x that."
+
+[[tolerance]]
+case = "ball_spin_accelerometers"
+property = "attitude/phi-rad"
+abs = 2.3e-15
+rel = 0.0
+reason = "The 1 rad/s spin is integrated through the attitude quaternion and read back with atan2, where Rust's libm and the platform libm may differ in the last ulp; observed max 2.2e-16 rad (one ulp of pi/2) at t=0.6 s; bound 10x that. The accelerometer readings stay bit-identical."
+
+[[tolerance]]
+case = "fcs-accelerometer"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "FGAccelerometer's lever arm (StructuralToBody), its cross products, the sensor rotation (cos and sin of the orientation angles round alike in both libms) and the sensor degradation use IEEE basic operations in JSBSim's order, and the tumbling tripod's rates integrate identically over these frames, so the readings must be bit-identical; observed max |diff| 0."

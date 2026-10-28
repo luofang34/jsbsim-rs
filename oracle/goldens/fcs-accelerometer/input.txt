@@ -1,0 +1,85 @@
+# oracle/scenarios/systems/fcs_accelerometer.xml on tripod_fcs_accelerometer:
+# accelerometers off the CG, in rotated frames and degraded, on a tripod
+# tumbling in free fall from 10000 ft; then an accelerometer without a
+# location, which does not load.
+paths ../.. derived/aircraft scenarios/systems
+new
+load tripod_fcs_accelerometer
+watch test/accel-x test/accel-y test/accel-z test/accel-rotated test/accel-rotated-rad test/accel-no-axis test/accel-degraded fcs/accel-degraded-steps velocities/p-rad_sec velocities/q-rad_sec velocities/r-rad_sec inertia/cg-x-in
+print
+set ic/h-sl-ft 10000
+set ic/p-rad_sec 0.3
+set ic/q-rad_sec -0.2
+set ic/r-rad_sec 0.5
+runic
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+set test/accel-degraded/malfunction/fail_high 1
+run
+run
+set test/accel-degraded/malfunction/fail_high 0
+set test/accel-x/malfunction/fail_stuck 1
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+set simulation/reset 0
+print
+run
+run
+new
+load tripod_fcs_accelerometer_no_location

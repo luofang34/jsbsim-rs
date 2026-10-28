@@ -11,6 +11,7 @@
 //! with [`Error::Unsupported`]. A `<noise>` of 0 draws nothing and loads.
 
 mod bind;
+pub mod orientation;
 #[cfg(test)]
 mod tests;
 
@@ -216,6 +217,14 @@ fn noise(
         });
     }
     Ok(())
+}
+
+/// The error of a sensor family's [`Family::sample`], which needs the
+/// models that only [`Family::sample_models`] is given.
+pub(super) fn needs_models(base: &Base) -> Error {
+    Error::Model {
+        message: format!("Sensor {} reads the models it was not given", base.name),
+    }
 }
 
 /// `FGSensor`.

@@ -1,0 +1,14 @@
+[case]
+kind = "script"
+script = "scripts/ball_orbit_accelerometers.xml"
+rate_hz = 0.05
+properties = ["fcs/accelerometer/X", "fcs/accelerometer/Y", "fcs/accelerometer/Z", "accelerations/a-pilot-x-ft_sec2", "accelerations/a-pilot-y-ft_sec2", "accelerations/a-pilot-z-ft_sec2", "position/h-sl-ft", "velocities/u-fps"]
+inputs = "oracle/derived"
+
+[provenance]
+upstream_commit = "66f7fafc07fe13e7ede9db20873030fed2881713"
+driver = "tools/oracle/cpp"
+cxx_flags = "-ffp-contract=off"
+dt = 0.1
+every_n_frames = 200
+rows = 541

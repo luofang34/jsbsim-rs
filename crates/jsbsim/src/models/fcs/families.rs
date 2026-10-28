@@ -61,6 +61,17 @@ pub trait Family: Sized {
     /// The reads of `Run`, in its order.
     fn sample(&self, base: &Base, ev: &mut Evaluator<'_>) -> Result<Self::Sample, Error>;
 
+    /// [`Family::sample`] for a family that also reads the models
+    /// directly, as the inertial sensors read accelerations and rates.
+    fn sample_models(
+        &self,
+        base: &Base,
+        _models: &Models,
+        ev: &mut Evaluator<'_>,
+    ) -> Result<Self::Sample, Error> {
+        self.sample(base, ev)
+    }
+
     /// The rest of `Run` up to `SetOutput`: `base.output` is what the
     /// outputs receive.
     fn step(&mut self, base: &mut Base, sample: Self::Sample, tick: &Tick);
@@ -148,7 +159,7 @@ macro_rules! families {
                 $(Kind::$variant(family) => {
                     let base = &c.base;
                     let (sample, clip) = env.eval(models, |ev| {
-                        let sample = family.sample(base, ev)?;
+                        let sample = family.sample_models(base, models, ev)?;
                         Ok((sample, base.clip_limits(ev)?))
                     })?;
                     let tick = Tick { clip, trim_status };
@@ -183,6 +194,8 @@ families! {
     Pid(super::pid::Pid) = "pid" | "integrator";
     /// `<sensor>` (`FGSensor`).
     Sensor(super::sensor::Sensor) = "sensor";
+    /// `<accelerometer>` (`FGAccelerometer`).
+    Accelerometer(super::accelerometer::Accelerometer) = "accelerometer";
     /// `<waypoint_heading>` and `<waypoint_distance>` (`FGWaypoint`).
     Waypoint(super::waypoint::Waypoint) = "waypoint_heading" | "waypoint_distance";
 }

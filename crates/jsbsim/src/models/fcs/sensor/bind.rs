@@ -19,6 +19,7 @@ fn signal(m: &Models, at: ComponentAt) -> Option<&Signal> {
     let c = m.fcs.channels.get(at.channel)?.components.get(at.index)?;
     match &c.kind {
         Kind::Sensor(s) => Some(&s.signal),
+        Kind::Accelerometer(s) => Some(&s.signal),
         _ => None,
     }
 }
@@ -27,6 +28,7 @@ fn signal(m: &Models, at: ComponentAt) -> Option<&Signal> {
 fn signal_mut(m: &mut Models, at: ComponentAt) -> Option<&mut Signal> {
     match &mut families::component_mut(&mut m.fcs, at)?.kind {
         Kind::Sensor(s) => Some(&mut s.signal),
+        Kind::Accelerometer(s) => Some(&mut s.signal),
         _ => None,
     }
 }

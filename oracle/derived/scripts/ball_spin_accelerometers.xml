@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  ball_spin_accelerometers.xml: JSBSim's tests/TestAccelerometer.py
+  testSpinningBodyOnOrbit as a script: ball_accelerometers from reset00
+  with its CG offset along Y by a 50 lb point mass, rolled 90 degrees so
+  that it spins about Z, at an inertial yaw rate of 1 rad/s (r = 1 -
+  omega). Regenerate with `oracle derive`.
+-->
+<runscript name="spinning ball accelerometers">
+  <use aircraft="ball_accelerometers" initialize="reset00"/>
+  <run start="0.0" end="20" dt="0.01">
+    <property value="1"> fcs/accelerometer/on </property>
+    <property value="50.0"> inertia/pointmass-weight-lbs[1] </property>
+    <property value="1.5707963267948966"> ic/phi-rad </property>
+    <property value="0.0"> ic/p-rad_sec </property>
+    <property value="0.0"> ic/q-rad_sec </property>
+    <property value="0.99992707885"> ic/r-rad_sec </property>
+  </run>
+</runscript>
