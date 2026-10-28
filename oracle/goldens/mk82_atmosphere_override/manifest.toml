@@ -1,0 +1,14 @@
+[case]
+kind = "script"
+script = "scripts/mk82_atmosphere_override.xml"
+rate_hz = 50.0
+properties = ["atmosphere/T-R", "atmosphere/rho-slugs_ft3", "atmosphere/a-fps", "atmosphere/P-psf", "velocities/mach", "aero/qbar-psf", "forces/fbx-aero-lbs", "forces/fbz-aero-lbs", "velocities/u-fps", "velocities/w-fps", "position/h-sl-ft", "attitude/theta-rad"]
+inputs = "oracle/scenarios"
+
+[provenance]
+upstream_commit = "66f7fafc07fe13e7ede9db20873030fed2881713"
+driver = "tools/oracle/cpp"
+cxx_flags = "-ffp-contract=off"
+dt = 0.02
+every_n_frames = 1
+rows = 202

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<runscript name="mk82 atmosphere override">
+  <!--
+    The mk82 drop with atmosphere/override/temperature declared by the
+    script: FGAtmosphere first looks the node up before the script exists
+    and finds nothing, then finds it once declared. Events change the
+    override mid-run, stepped and ramped, to show the first frame each
+    value rules the atmosphere.
+  -->
+  <use aircraft="mk82" initialize="reset00"/>
+  <run start="0.00" end="4.00" dt="0.020">
+    <property value="3">simulation/integrator/position/rotational</property>
+    <property value="500">atmosphere/override/temperature</property>
+    <event name="Step the override">
+      <condition>simulation/sim-time-sec ge 1.0</condition>
+      <set name="atmosphere/override/temperature" value="400"/>
+    </event>
+    <event name="Ramp the override">
+      <condition>simulation/sim-time-sec ge 2.0</condition>
+      <set name="atmosphere/override/temperature" value="550" action="FG_RAMP" tc="1.0"/>
+    </event>
+  </run>
+</runscript>

@@ -4546,3 +4546,74 @@ property = "moments/yaw-wind-aero-lbsft"
 abs = 2e-10
 rel = 0.0
 reason = "The integrated state first differs at t=7 s, from a last-digit libm difference in the dynamics, and the propagation carries it; observed max 1.3e-11 (rel 1.4e-11) at t=43 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_atmosphere_override"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the same IEEE operations in JSBSim's order. The override temperature, and so the speed of sound, match exactly on every frame, including the first frame of the step at t=1 s and of the ramp from t=2 s."
+
+[[tolerance]]
+case = "mk82_atmosphere_override"
+property = "atmosphere/rho-slugs_ft3"
+abs = 1e-17
+rel = 0.0
+reason = "The standard-atmosphere pressure first differs at t=0.04 s, by a last-digit libm difference at the same altitude; density, qbar and the aero forces follow it and the dynamics carry it; observed max 6.5e-19 (rel 4.0e-16) at t=3.4 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_atmosphere_override"
+property = "atmosphere/P-psf"
+abs = 5e-12
+rel = 0.0
+reason = "The standard-atmosphere pressure first differs at t=0.04 s, by a last-digit libm difference at the same altitude; density, qbar and the aero forces follow it and the dynamics carry it; observed max 4.5e-13 (rel 2.9e-16) at t=3.4 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_atmosphere_override"
+property = "velocities/mach"
+abs = 2e-15
+rel = 0.0
+reason = "The standard-atmosphere pressure first differs at t=0.04 s, by a last-digit libm difference at the same altitude; density, qbar and the aero forces follow it and the dynamics carry it; observed max 1.7e-16 (rel 4.2e-16) at t=2.8 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_atmosphere_override"
+property = "aero/qbar-psf"
+abs = 2e-12
+rel = 0.0
+reason = "The standard-atmosphere pressure first differs at t=0.04 s, by a last-digit libm difference at the same altitude; density, qbar and the aero forces follow it and the dynamics carry it; observed max 1.4e-13 (rel 8.2e-16) at t=2.8 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_atmosphere_override"
+property = "forces/fbx-aero-lbs"
+abs = 5e-13
+rel = 0.0
+reason = "The standard-atmosphere pressure first differs at t=0.04 s, by a last-digit libm difference at the same altitude; density, qbar and the aero forces follow it and the dynamics carry it; observed max 5.0e-14 (rel 8.4e-16) at t=3.4 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_atmosphere_override"
+property = "forces/fbz-aero-lbs"
+abs = 9e-13
+rel = 0.0
+reason = "The standard-atmosphere pressure first differs at t=0.04 s, by a last-digit libm difference at the same altitude; density, qbar and the aero forces follow it and the dynamics carry it; observed max 8.5e-14 (rel 8.7e-15) at t=1.8 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_atmosphere_override"
+property = "velocities/u-fps"
+abs = 2e-12
+rel = 0.0
+reason = "The standard-atmosphere pressure first differs at t=0.04 s, by a last-digit libm difference at the same altitude; density, qbar and the aero forces follow it and the dynamics carry it; observed max 1.7e-13 (rel 3.9e-16) at t=2.8 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_atmosphere_override"
+property = "velocities/w-fps"
+abs = 9e-13
+rel = 0.0
+reason = "The standard-atmosphere pressure first differs at t=0.04 s, by a last-digit libm difference at the same altitude; density, qbar and the aero forces follow it and the dynamics carry it; observed max 8.5e-14 (rel 8.9e-15) at t=3.6 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_atmosphere_override"
+property = "attitude/theta-rad"
+abs = 5e-14
+rel = 0.0
+period = 6.283185307179586
+reason = "The standard-atmosphere pressure first differs at t=0.04 s, by a last-digit libm difference at the same altitude; density, qbar and the aero forces follow it and the dynamics carry it; observed max 4.2e-15 (rel 2.9e-15) at t=3.6 s; bound 10x that."
