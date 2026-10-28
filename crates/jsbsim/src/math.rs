@@ -78,3 +78,16 @@ pub const E_LAT: Axis = Axis::X;
 pub const E_LONG: Axis = Axis::Y;
 /// Radius axis (`eRad`).
 pub const E_RAD: Axis = Axis::Z;
+
+/// Tracing target of [`uncached_derived_read`].
+pub const UNCACHED_DERIVED_TARGET: &str = "jsbsim::uncached_derived";
+
+/// A derived value (Euler angles, rotation matrices, geodetic position) read
+/// through `&self` from a [`Location`] or [`Quaternion`] whose owner did not
+/// call `cache_derived` after changing it, so the read computes the values
+/// again. Only this miss path reports it, at trace level; a test counts these
+/// events over steady-state frames and requires none.
+#[cold]
+fn uncached_derived_read(kind: &'static str) {
+    tracing::trace!(target: "jsbsim::uncached_derived", kind);
+}

@@ -212,7 +212,10 @@ impl Location {
     fn read<R>(&self, f: impl FnOnce(&Derived) -> R) -> R {
         match &self.derived {
             Some(d) => f(d),
-            None => f(&compute_derived(self.ec_loc, self.ellipse)),
+            None => {
+                super::uncached_derived_read("Location");
+                f(&compute_derived(self.ec_loc, self.ellipse))
+            }
         }
     }
 

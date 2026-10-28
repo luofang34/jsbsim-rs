@@ -213,7 +213,10 @@ impl Quaternion {
     fn read<R>(&self, f: impl FnOnce(&Derived) -> R) -> R {
         match &self.derived {
             Some(d) => f(d),
-            None => f(&compute_derived(&self.data)),
+            None => {
+                super::uncached_derived_read("Quaternion");
+                f(&compute_derived(&self.data))
+            }
         }
     }
 
