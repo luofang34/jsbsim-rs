@@ -47,28 +47,37 @@ fn parse_rejects_a_file_without_time_first() {
 fn a_candidate_inside_the_spread_passes_and_counts_as_inside() {
     let sims = [sim("a", &[(0.0, 1.0)]), sim("b", &[(0.0, 3.0)])];
     let s = compare_column(&PLAIN, &sims, &candidate(&[(0.0, 2.0)])).unwrap();
-    assert_eq!((s.samples, s.inside, s.within_spread), (1, 1, 1));
+    assert_eq!((s.samples, s.inside), (1, 1));
     assert!(s.passes());
 }
 
 #[test]
-fn a_candidate_outside_by_less_than_the_spread_passes_but_is_not_inside() {
+fn a_candidate_outside_the_interval_fails_however_wide_it_is() {
     let sims = [sim("a", &[(0.0, 1.0)]), sim("b", &[(0.0, 3.0)])];
-    let s = compare_column(&PLAIN, &sims, &candidate(&[(0.0, 4.5)])).unwrap();
-    assert_eq!((s.inside, s.within_spread), (0, 1));
-    assert_eq!(s.max_excursion, 1.5);
-    assert!(s.passes());
+    let s = compare_column(&PLAIN, &sims, &candidate(&[(0.0, 3.0001)])).unwrap();
+    assert_eq!((s.inside, s.outside.as_slice()), (0, [0].as_slice()));
+    assert!((s.max_excursion - 1e-4).abs() < 1e-12);
+    assert!(!s.passes());
 }
 
 #[test]
-fn the_widest_spread_of_the_run_bounds_every_sample() {
+fn printed_precision_is_not_a_difference() {
+    let sims = [sim("a", &[(0.0, 1e6)]), sim("b", &[(0.0, 1e6)])];
+    let s = compare_column(&PLAIN, &sims, &candidate(&[(0.0, 1e6 + 5e-5)])).unwrap();
+    assert!(s.passes());
+    let s = compare_column(&PLAIN, &sims, &candidate(&[(0.0, 1e6 + 2e-4)])).unwrap();
+    assert!(!s.passes());
+}
+
+#[test]
+fn each_sample_is_judged_by_its_own_envelope() {
     let sims = [
         sim("a", &[(0.0, 1.0), (0.1, 1.0)]),
         sim("b", &[(0.0, 1.0), (0.1, 3.0)]),
     ];
     let s = compare_column(&PLAIN, &sims, &candidate(&[(0.0, 2.5), (0.1, 2.0)])).unwrap();
-    assert_eq!((s.inside, s.within_spread), (1, 2));
-    assert!(s.passes());
+    assert_eq!((s.inside, s.outside.as_slice()), (1, [0].as_slice()));
+    assert!(!s.passes());
 }
 
 #[test]

@@ -2,13 +2,10 @@
 //! The spread of the simulators as the yardstick. The simulators are
 //! anonymous and one of them is probably JSBSim, so none is taken as truth:
 //! at each sample the simulators that recorded a variable span `[lo, hi]`,
-//! and a candidate passes when it is never farther outside that interval
-//! than the simulators' widest spread over the run, i.e. no farther from
-//! the ensemble than its members are from each other. Differences below
-//! the recordings' printed precision (ten significant digits of the
-//! variable's largest magnitude over the run, or of 1 when smaller) are
-//! not differences. How often the candidate is strictly inside `[lo, hi]`
-//! is reported too.
+//! and a candidate sample passes when it lies inside that interval,
+//! widened only by the recordings' printed precision (ten significant
+//! digits of the variable's largest magnitude over the run, or of 1 when
+//! smaller).
 
 use super::data::{Column, Simulator, time_key};
 use crate::Series;
@@ -34,15 +31,15 @@ pub struct ColumnStats {
     pub worst_time: f64,
     /// Samples inside the interval.
     pub inside: usize,
-    /// Samples no farther outside the interval than the widest spread.
-    pub within_spread: usize,
+    /// Time keys of the samples outside it, in order.
+    pub outside: Vec<i64>,
 }
 
 impl ColumnStats {
-    /// Whether every sample lies within the spread.
+    /// Whether every sample lies inside the interval.
     #[must_use]
     pub fn passes(&self) -> bool {
-        self.within_spread == self.samples
+        self.outside.is_empty()
     }
 }
 
@@ -79,7 +76,7 @@ pub fn compare_column(
         max_excursion: 0.0,
         worst_time: 0.0,
         inside: 0,
-        within_spread: 0,
+        outside: Vec::new(),
     };
     let magnitude = simulators
         .iter()
@@ -88,7 +85,6 @@ pub fn compare_column(
         .fold(0.0_f64, |m, v| m.max(v.abs()));
     let floor = PRINTED_PRECISION * magnitude.max(1.0);
     let mut values = Vec::with_capacity(simulators.len());
-    let mut excursions = Vec::with_capacity(candidate.rows.len());
     for row in &candidate.rows {
         let (Some(&t), Some(&raw)) = (row.first(), row.get(index)) else {
             continue;
@@ -119,10 +115,9 @@ pub fn compare_column(
         }
         if excursion <= floor {
             stats.inside += 1;
+        } else {
+            stats.outside.push(key);
         }
-        excursions.push(excursion);
     }
-    let allowed = stats.max_spread + floor;
-    stats.within_spread = excursions.iter().filter(|e| **e <= allowed).count();
     (stats.samples > 0).then_some(stats)
 }

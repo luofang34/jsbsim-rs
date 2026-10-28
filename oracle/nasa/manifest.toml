@@ -6,6 +6,12 @@
 #
 # A case's script is found under `root`: "jsbsim" is the JSBSim checkout
 # for C++ and oracle/inputs for Rust; "nasa" is oracle/nasa for both.
+#
+# A sample passes when it lies inside the simulators' [min, max] at that
+# time, widened only by their ten-digit printed precision. Each
+# expected_miss names a variable C++ JSBSim lies outside on and why; the
+# comparison fails if it stops missing, and the Rust port must miss on
+# exactly the same samples.
 
 [[archive]]
 name = "Atmos_01_DroppedSphere"
@@ -71,6 +77,26 @@ script = "scripts/Atmos_01.xml"
 aircraft_path = "aircraft"
 section = "Appendix C.1.1, Table 25"
 
+[[case.expected_miss]]
+variable = "gePosition_ft_Y"
+cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 2.7e-06 at t=30.0 s)."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Y"
+cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 9.3e-08 at t=8.4 s)."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_X"
+cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 1.4e-07 at t=30.0 s)."
+
+[[case.expected_miss]]
+variable = "speedOfSound_ft_s"
+cause = "JSBSim's gas constant (FGAtmosphere.h Mair 28.9645 g/mol) differs from these simulators' at about 6e-7 relative in the speed of sound; the simulators disagree among the check-cases (the US 1976 value 28.9644 moves cases 1, 2, 6 and 7 inside but cases 4 and 5 outside), so no single constant is at fault (outside by up to 0.00061 at t=29.9 s)."
+
+[[case.expected_miss]]
+variable = "mach"
+cause = "JSBSim's gas constant (FGAtmosphere.h Mair 28.9645 g/mol) differs from these simulators' at about 6e-7 relative in the speed of sound; the simulators disagree among the check-cases (the US 1976 value 28.9644 moves cases 1, 2, 6 and 7 inside but cases 4 and 5 outside), so no single constant is at fault (outside by up to 5.5e-07 at t=29.7 s)."
+
 [[case]]
 name = "Atmos_02"
 archive = "Atmos_02_TumblingBrickNoDamping"
@@ -78,6 +104,82 @@ root = "jsbsim"
 script = "check_cases/NASA_EOM_2015/scripts/Atmos_02.xml"
 aircraft_path = "check_cases/NASA_EOM_2015/aircraft"
 section = "Appendix C.1.2, Table 26"
+
+[[case.expected_miss]]
+variable = "gePosition_ft_X"
+cause = "The upstream brick.xml planet is 0.67 ft larger than TM Table 73's (equatorial radius 20925646.9951 ft against 20925646.32546 ft); inside with the TM radius (outside by up to 0.67 at t=16.1 s)."
+
+[[case.expected_miss]]
+variable = "gePosition_ft_Y"
+cause = "Not isolated: outside by up to 3.4e-06 at t=30.0 s; with Adams-Bashforth 4 everywhere still outside by up to 6.3e-06."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_X"
+cause = "The upstream brick.xml planet is 0.67 ft larger than TM Table 73's (equatorial radius 20925646.9951 ft against 20925646.32546 ft); inside with the TM radius (outside by up to 0.67 at t=29.7 s)."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Y"
+cause = "The upstream brick.xml planet is 0.67 ft larger than TM Table 73's (equatorial radius 20925646.9951 ft against 20925646.32546 ft); inside with the TM radius (outside by up to 0.011 at t=30.0 s)."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Y"
+cause = "The upstream brick.xml planet radius (0.67 ft above TM Table 73) and JSBSim's default integrators; inside with both the TM radius and Adams-Bashforth 4 (outside by up to 9.3e-08 at t=0.1 s)."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Z"
+cause = "The upstream brick.xml planet is 0.67 ft larger than TM Table 73's (equatorial radius 20925646.9951 ft against 20925646.32546 ft); inside with the TM radius (outside by up to 1e-05 at t=8.5 s)."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_X"
+cause = "The upstream brick.xml planet radius (0.67 ft above TM Table 73) and JSBSim's default integrators; inside with both the TM radius and Adams-Bashforth 4 (outside by up to 6.2e-05 at t=30.0 s)."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Y"
+cause = "The upstream brick.xml planet is 0.67 ft larger than TM Table 73's (equatorial radius 20925646.9951 ft against 20925646.32546 ft); inside with the TM radius (outside by up to 0.00037 at t=0.0 s)."
+
+[[case.expected_miss]]
+variable = "localGravity_ft_s2"
+cause = "The upstream brick.xml planet is 0.67 ft larger than TM Table 73's (equatorial radius 20925646.9951 ft against 20925646.32546 ft); inside with the TM radius (outside by up to 2.1e-06 at t=1.0 s)."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Yaw"
+cause = "Not isolated: outside by up to 2.4 at t=27.5 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00015."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Pitch"
+cause = "Not isolated: outside by up to 1.2 at t=29.8 s; with Adams-Bashforth 4 everywhere still outside by up to 6.7e-05."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Roll"
+cause = "Not isolated: outside by up to 1.8 at t=27.4 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0001."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Roll"
+cause = "Not isolated: outside by up to 0.29 at t=23.9 s; with Adams-Bashforth 4 everywhere still outside by up to 2.2e-05."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Pitch"
+cause = "Not isolated: outside by up to 0.44 at t=28.7 s; with Adams-Bashforth 4 everywhere still outside by up to 3.2e-05."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Yaw"
+cause = "Not isolated: outside by up to 0.12 at t=28.1 s; with Adams-Bashforth 4 everywhere still outside by up to 1e-05."
+
+[[case.expected_miss]]
+variable = "altitudeRateWrtMsl_ft_min"
+cause = "The upstream brick.xml planet is 0.67 ft larger than TM Table 73's (equatorial radius 20925646.9951 ft against 20925646.32546 ft); inside with the TM radius (outside by up to 0.00063 at t=8.5 s)."
+
+[[case.expected_miss]]
+variable = "speedOfSound_ft_s"
+cause = "JSBSim's gas constant (FGAtmosphere.h Mair 28.9645 g/mol) differs from these simulators' at about 6e-7 relative in the speed of sound; the simulators disagree among the check-cases (the US 1976 value 28.9644 moves cases 1, 2, 6 and 7 inside but cases 4 and 5 outside), so no single constant is at fault (outside by up to 0.00062 at t=30.0 s)."
+
+[[case.expected_miss]]
+variable = "ambientTemperature_dgR"
+cause = "Not isolated: outside by up to 4.1e-06 at t=30.0 s; with Adams-Bashforth 4 everywhere still outside by up to 4.1e-06."
+
+[[case.expected_miss]]
+variable = "mach"
+cause = "JSBSim's gas constant (FGAtmosphere.h Mair 28.9645 g/mol) differs from these simulators' at about 6e-7 relative in the speed of sound; the simulators disagree among the check-cases (the US 1976 value 28.9644 moves cases 1, 2, 6 and 7 inside but cases 4 and 5 outside), so no single constant is at fault (outside by up to 5e-07 at t=29.7 s)."
 
 [[case]]
 name = "Atmos_04"
@@ -87,6 +189,62 @@ script = "scripts/Atmos_04.xml"
 aircraft_path = "aircraft"
 section = "Appendix C.1.4, Table 28"
 
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Z"
+cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 2e-06 at t=4.1 s)."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_X"
+cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 2e-06 at t=4.1 s)."
+
+[[case.expected_miss]]
+variable = "altitudeMsl_ft"
+cause = "Not isolated: outside by up to 4.6e-05 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 4.6e-05."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Yaw"
+cause = "Not isolated: outside by up to 0.0054 at t=26.0 s; with Adams-Bashforth 4 everywhere still outside by up to 3e-07."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Pitch"
+cause = "Not isolated: outside by up to 0.0022 at t=28.1 s; with Adams-Bashforth 4 everywhere still outside by up to 1.2e-07."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Roll"
+cause = "Not isolated: outside by up to 0.0034 at t=25.9 s; with Adams-Bashforth 4 everywhere still outside by up to 1.9e-07."
+
+[[case.expected_miss]]
+variable = "altitudeRateWrtMsl_ft_min"
+cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 0.00013 at t=4.6 s)."
+
+[[case.expected_miss]]
+variable = "speedOfSound_ft_s"
+cause = "JSBSim's gas constant (FGAtmosphere.h Mair 28.9645 g/mol) differs from these simulators' at about 6e-7 relative in the speed of sound; the simulators disagree among the check-cases (the US 1976 value 28.9644 moves cases 1, 2, 6 and 7 inside but cases 4 and 5 outside), so no single constant is at fault (outside by up to 0.00058 at t=2.3 s)."
+
+[[case.expected_miss]]
+variable = "ambientTemperature_dgR"
+cause = "Not isolated: outside by up to 9.4e-07 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 9.4e-07."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_X"
+cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 0.00035 at t=28.7 s)."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Y"
+cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 0.00021 at t=26.1 s)."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Z"
+cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 0.00014 at t=30.0 s)."
+
+[[case.expected_miss]]
+variable = "mach"
+cause = "JSBSim's gas constant (FGAtmosphere.h Mair 28.9645 g/mol) differs from these simulators' at about 6e-7 relative in the speed of sound; the simulators disagree among the check-cases (the US 1976 value 28.9644 moves cases 1, 2, 6 and 7 inside but cases 4 and 5 outside), so no single constant is at fault (outside by up to 3e-07 at t=19.5 s)."
+
+[[case.expected_miss]]
+variable = "trueAirspeed_nmi_h"
+cause = "Not isolated: outside by up to 7.6e-06 at t=7.4 s; with Adams-Bashforth 4 everywhere still outside by up to 4.3e-06."
+
 [[case]]
 name = "Atmos_05"
 archive = "Atmos_05_DroppedSphereRoundRotation"
@@ -94,6 +252,70 @@ root = "nasa"
 script = "scripts/Atmos_05.xml"
 aircraft_path = "aircraft"
 section = "Appendix C.1.5, Table 29"
+
+[[case.expected_miss]]
+variable = "gePosition_ft_Y"
+cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 1.4e-06 at t=18.0 s)."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Y"
+cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 9.4e-08 at t=5.7 s)."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Z"
+cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 2e-06 at t=4.1 s)."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_X"
+cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 2e-06 at t=4.1 s)."
+
+[[case.expected_miss]]
+variable = "altitudeMsl_ft"
+cause = "Not isolated: outside by up to 4.3e-05 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 4.3e-05."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Yaw"
+cause = "Not isolated: outside by up to 0.0054 at t=26.0 s; with Adams-Bashforth 4 everywhere still outside by up to 2.9e-07."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Pitch"
+cause = "Not isolated: outside by up to 0.0022 at t=28.1 s; with Adams-Bashforth 4 everywhere still outside by up to 1.2e-07."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Roll"
+cause = "Not isolated: outside by up to 0.0034 at t=25.9 s; with Adams-Bashforth 4 everywhere still outside by up to 1.8e-07."
+
+[[case.expected_miss]]
+variable = "altitudeRateWrtMsl_ft_min"
+cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 0.00013 at t=4.6 s)."
+
+[[case.expected_miss]]
+variable = "speedOfSound_ft_s"
+cause = "JSBSim's gas constant (FGAtmosphere.h Mair 28.9645 g/mol) differs from these simulators' at about 6e-7 relative in the speed of sound; the simulators disagree among the check-cases (the US 1976 value 28.9644 moves cases 1, 2, 6 and 7 inside but cases 4 and 5 outside), so no single constant is at fault (outside by up to 0.00058 at t=2.3 s)."
+
+[[case.expected_miss]]
+variable = "ambientTemperature_dgR"
+cause = "Not isolated: outside by up to 9.4e-07 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 9.4e-07."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_X"
+cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 0.00035 at t=28.7 s)."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Y"
+cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 0.00021 at t=26.1 s)."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Z"
+cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 0.00014 at t=30.0 s)."
+
+[[case.expected_miss]]
+variable = "mach"
+cause = "JSBSim's gas constant (FGAtmosphere.h Mair 28.9645 g/mol) differs from these simulators' at about 6e-7 relative in the speed of sound; the simulators disagree among the check-cases (the US 1976 value 28.9644 moves cases 1, 2, 6 and 7 inside but cases 4 and 5 outside), so no single constant is at fault (outside by up to 3e-07 at t=20.5 s)."
+
+[[case.expected_miss]]
+variable = "trueAirspeed_nmi_h"
+cause = "Not isolated: outside by up to 7.8e-06 at t=6.9 s; with Adams-Bashforth 4 everywhere still outside by up to 4.7e-06."
 
 [[case]]
 name = "Atmos_06"
@@ -103,6 +325,38 @@ script = "scripts/Atmos_06.xml"
 aircraft_path = "aircraft"
 section = "Appendix C.1.6, Table 30"
 
+[[case.expected_miss]]
+variable = "gePosition_ft_Y"
+cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 1.4e-06 at t=18.0 s)."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Y"
+cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 9.3e-08 at t=3.3 s)."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_X"
+cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 2e-06 at t=4.1 s)."
+
+[[case.expected_miss]]
+variable = "altitudeMsl_ft"
+cause = "Not isolated: outside by up to 0.00022 at t=4.2 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00023."
+
+[[case.expected_miss]]
+variable = "speedOfSound_ft_s"
+cause = "JSBSim's gas constant (FGAtmosphere.h Mair 28.9645 g/mol) differs from these simulators' at about 6e-7 relative in the speed of sound; the simulators disagree among the check-cases (the US 1976 value 28.9644 moves cases 1, 2, 6 and 7 inside but cases 4 and 5 outside), so no single constant is at fault (outside by up to 0.00062 at t=29.9 s)."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Y"
+cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 3.4e-10 at t=14.3 s)."
+
+[[case.expected_miss]]
+variable = "mach"
+cause = "JSBSim's gas constant (FGAtmosphere.h Mair 28.9645 g/mol) differs from these simulators' at about 6e-7 relative in the speed of sound; the simulators disagree among the check-cases (the US 1976 value 28.9644 moves cases 1, 2, 6 and 7 inside but cases 4 and 5 outside), so no single constant is at fault (outside by up to 3e-07 at t=21.5 s)."
+
+[[case.expected_miss]]
+variable = "trueAirspeed_nmi_h"
+cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 5.9e-07 at t=10.7 s)."
+
 [[case]]
 name = "Atmos_07"
 archive = "Atmos_07_DroppedSphereSteadyWind"
@@ -110,6 +364,50 @@ root = "nasa"
 script = "scripts/Atmos_07.xml"
 aircraft_path = "aircraft"
 section = "Appendix C.1.7, Table 31"
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Y"
+cause = "Not isolated: outside by up to 2e-07 at t=5.5 s; with Adams-Bashforth 4 everywhere still outside by up to 3.4e-07."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_X"
+cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 2e-06 at t=4.1 s)."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Y"
+cause = "Not isolated: outside by up to 2.2e-07 at t=5.5 s; with Adams-Bashforth 4 everywhere still outside by up to 3.6e-07."
+
+[[case.expected_miss]]
+variable = "altitudeMsl_ft"
+cause = "Not isolated: outside by up to 0.00022 at t=4.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00023."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Roll"
+cause = "The version 1 initial-condition format, the only one carrying wind, sets the body rates to zero relative to the Earth, not the zero inertial rate the TM specifies, so the body rolls by about 0.0042 deg/s relative to the simulators (outside by up to 0.13 at t=30.0 s)."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Roll"
+cause = "The version 1 initial-condition format, the only one carrying wind, sets the body rates to zero relative to the Earth, not the zero inertial rate the TM specifies, so the body rolls by about 0.0042 deg/s relative to the simulators (outside by up to 0.0042 at t=0.0 s)."
+
+[[case.expected_miss]]
+variable = "speedOfSound_ft_s"
+cause = "JSBSim's gas constant (FGAtmosphere.h Mair 28.9645 g/mol) differs from these simulators' at about 6e-7 relative in the speed of sound; the simulators disagree among the check-cases (the US 1976 value 28.9644 moves cases 1, 2, 6 and 7 inside but cases 4 and 5 outside), so no single constant is at fault (outside by up to 0.00062 at t=29.9 s)."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Y"
+cause = "The version 1 initial-condition format, the only one carrying wind, sets the body rates to zero relative to the Earth, not the zero inertial rate the TM specifies, so the body rolls by about 0.0042 deg/s relative to the simulators (outside by up to 0.023 at t=30.0 s)."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Z"
+cause = "Not isolated: outside by up to 7.4e-05 at t=15.4 s; with Adams-Bashforth 4 everywhere still outside by up to 7.4e-05."
+
+[[case.expected_miss]]
+variable = "mach"
+cause = "JSBSim's gas constant (FGAtmosphere.h Mair 28.9645 g/mol) differs from these simulators' at about 6e-7 relative in the speed of sound; the simulators disagree among the check-cases (the US 1976 value 28.9644 moves cases 1, 2, 6 and 7 inside but cases 4 and 5 outside), so no single constant is at fault (outside by up to 3e-07 at t=20.4 s)."
+
+[[case.expected_miss]]
+variable = "trueAirspeed_nmi_h"
+cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 2.1e-06 at t=10.8 s)."
 
 [[case]]
 name = "Atmos_09"
@@ -119,6 +417,54 @@ script = "scripts/Atmos_09.xml"
 aircraft_path = "aircraft"
 section = "Appendix C.1.9, Table 33"
 
+[[case.expected_miss]]
+variable = "gePosition_ft_Y"
+cause = "Not isolated: outside by up to 0.00026 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00027."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Y"
+cause = "Not isolated: outside by up to 0.00026 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00027."
+
+[[case.expected_miss]]
+variable = "altitudeMsl_ft"
+cause = "Not isolated: outside by up to 0.00043 at t=0.4 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00051."
+
+[[case.expected_miss]]
+variable = "longitude_deg"
+cause = "Not isolated: outside by up to 7e-10 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 7.4e-10."
+
+[[case.expected_miss]]
+variable = "speedOfSound_ft_s"
+cause = "JSBSim's gas constant (FGAtmosphere.h Mair 28.9645 g/mol) differs from these simulators' at about 6e-7 relative in the speed of sound; the simulators disagree among the check-cases (the US 1976 value 28.9644 moves cases 1, 2, 6 and 7 inside but cases 4 and 5 outside), so no single constant is at fault (outside by up to 0.00065 at t=0.0 s)."
+
+[[case.expected_miss]]
+variable = "airDensity_slug_ft3"
+cause = "Not isolated: outside by up to 1.2e-08 at t=0.0 s; with Adams-Bashforth 4 everywhere still outside by up to 1.2e-08."
+
+[[case.expected_miss]]
+variable = "ambientTemperature_dgR"
+cause = "Not isolated: outside by up to 1.5e-06 at t=0.4 s; with Adams-Bashforth 4 everywhere still outside by up to 1.8e-06."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_X"
+cause = "Not isolated: outside by up to 0.00016 at t=0.0 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00016."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Z"
+cause = "Not isolated: outside by up to 0.00016 at t=0.0 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00016."
+
+[[case.expected_miss]]
+variable = "mach"
+cause = "JSBSim's gas constant (FGAtmosphere.h Mair 28.9645 g/mol) differs from these simulators' at about 6e-7 relative in the speed of sound; the simulators disagree among the check-cases (the US 1976 value 28.9644 moves cases 1, 2, 6 and 7 inside but cases 4 and 5 outside), so no single constant is at fault (outside by up to 7.4e-07 at t=0.0 s)."
+
+[[case.expected_miss]]
+variable = "dynamicPressure_lbf_ft2"
+cause = "Not isolated: outside by up to 0.012 at t=0.0 s; with Adams-Bashforth 4 everywhere still outside by up to 0.012."
+
+[[case.expected_miss]]
+variable = "trueAirspeed_nmi_h"
+cause = "Not isolated: outside by up to 1.9e-06 at t=0.0 s; with Adams-Bashforth 4 everywhere still outside by up to 1.9e-06."
+
 [[case]]
 name = "Atmos_10"
 archive = "Atmos_10_NorthwardCannonball"
@@ -126,3 +472,67 @@ root = "nasa"
 script = "scripts/Atmos_10.xml"
 aircraft_path = "aircraft"
 section = "Appendix C.1.10, Table 34"
+
+[[case.expected_miss]]
+variable = "gePosition_ft_Z"
+cause = "Not isolated: outside by up to 0.00026 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00027."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Y"
+cause = "Not isolated: outside by up to 1.3e-05 at t=30.0 s; with Adams-Bashforth 4 everywhere still outside by up to 1.1e-05."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Z"
+cause = "Not isolated: outside by up to 0.00026 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00027."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Y"
+cause = "Not isolated: outside by up to 8.3e-07 at t=30.0 s; with Adams-Bashforth 4 everywhere still outside by up to 7.9e-07."
+
+[[case.expected_miss]]
+variable = "altitudeMsl_ft"
+cause = "Not isolated: outside by up to 0.00043 at t=0.4 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00051."
+
+[[case.expected_miss]]
+variable = "latitude_deg"
+cause = "Not isolated: outside by up to 6.5e-10 at t=0.2 s; with Adams-Bashforth 4 everywhere still outside by up to 7.3e-10."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Pitch"
+cause = "Not isolated: outside by up to 6.5e-10 at t=0.2 s; with Adams-Bashforth 4 everywhere still outside by up to 7.3e-10."
+
+[[case.expected_miss]]
+variable = "speedOfSound_ft_s"
+cause = "JSBSim's gas constant (FGAtmosphere.h Mair 28.9645 g/mol) differs from these simulators' at about 6e-7 relative in the speed of sound; the simulators disagree among the check-cases (the US 1976 value 28.9644 moves cases 1, 2, 6 and 7 inside but cases 4 and 5 outside), so no single constant is at fault (outside by up to 0.00065 at t=0.0 s)."
+
+[[case.expected_miss]]
+variable = "airDensity_slug_ft3"
+cause = "Not isolated: outside by up to 1.2e-08 at t=0.0 s; with Adams-Bashforth 4 everywhere still outside by up to 1.2e-08."
+
+[[case.expected_miss]]
+variable = "ambientTemperature_dgR"
+cause = "Not isolated: outside by up to 1.5e-06 at t=0.4 s; with Adams-Bashforth 4 everywhere still outside by up to 1.8e-06."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_X"
+cause = "Not isolated: outside by up to 0.00016 at t=0.0 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00016."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Y"
+cause = "Not isolated: outside by up to 4.2e-08 at t=8.2 s; with Adams-Bashforth 4 everywhere still outside by up to 4.4e-08."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Z"
+cause = "Not isolated: outside by up to 0.00016 at t=0.0 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00016."
+
+[[case.expected_miss]]
+variable = "mach"
+cause = "JSBSim's gas constant (FGAtmosphere.h Mair 28.9645 g/mol) differs from these simulators' at about 6e-7 relative in the speed of sound; the simulators disagree among the check-cases (the US 1976 value 28.9644 moves cases 1, 2, 6 and 7 inside but cases 4 and 5 outside), so no single constant is at fault (outside by up to 7.4e-07 at t=0.0 s)."
+
+[[case.expected_miss]]
+variable = "dynamicPressure_lbf_ft2"
+cause = "Not isolated: outside by up to 0.012 at t=0.0 s; with Adams-Bashforth 4 everywhere still outside by up to 0.012."
+
+[[case.expected_miss]]
+variable = "trueAirspeed_nmi_h"
+cause = "Not isolated: outside by up to 1.9e-06 at t=0.0 s; with Adams-Bashforth 4 everywhere still outside by up to 1.9e-06."

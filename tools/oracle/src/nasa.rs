@@ -81,6 +81,20 @@ pub struct Case {
     pub aircraft_path: String,
     /// Where the TM defines the case.
     pub section: String,
+    /// Variables JSBSim itself misses the simulators on.
+    #[serde(default)]
+    pub expected_miss: Vec<ExpectedMiss>,
+}
+
+/// A variable C++ JSBSim lies outside the simulators on, and why. The
+/// comparison fails if it stops missing, so the list stays current.
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ExpectedMiss {
+    /// TM variable, e.g. `gePosition_ft_X`.
+    pub variable: String,
+    /// What makes JSBSim miss.
+    pub cause: String,
 }
 
 impl NasaManifest {
@@ -210,43 +224,83 @@ fn spec(case: &Case) -> ScriptSpec {
     }
 }
 
-/// Logs how `candidate` compares with the simulators; returns whether every
-/// variable lies within their spread.
-fn report_side(case: &str, side: &str, simulators: &[Simulator], candidate: &Series) -> bool {
+/// Largest Rust-vs-C++ difference allowed, relative to the largest
+/// magnitude of the property over the run (or 1 when smaller).
+const PARITY_REL: f64 = 1e-12;
+
+/// Logs each variable's verdict: C++ inside the simulators at every sample,
+/// or missing where the manifest names the cause; Rust outside on exactly
+/// the same samples. Returns whether every verdict holds.
+fn report_case(case: &Case, simulators: &[Simulator], cpp: &Series, rust: &Series) -> bool {
     let mut pass = true;
     for column in COLUMNS {
-        let Some(s) = compare_column(column, simulators, candidate) else {
+        let (Some(c), Some(r)) = (
+            compare_column(column, simulators, cpp),
+            compare_column(column, simulators, rust),
+        ) else {
             continue;
         };
-        let verdict = if s.passes() { "PASS" } else { "FAIL" };
-        pass &= s.passes();
+        let expected = case
+            .expected_miss
+            .iter()
+            .find(|m| m.variable == column.nasa);
+        let verdict = match (c.passes(), expected) {
+            (true, None) => "PASS".to_owned(),
+            (false, Some(m)) => format!("EXPECTED MISS ({})", m.cause),
+            (true, Some(_)) => {
+                pass = false;
+                "FAIL: listed as an expected miss but inside; update oracle/nasa/manifest.toml"
+                    .to_owned()
+            }
+            (false, None) => {
+                pass = false;
+                "FAIL".to_owned()
+            }
+        };
+        let same = c.outside == r.outside;
+        pass &= same;
         info!(
-            "{case} {side:<4} {:<33} sims {}, spread <= {:.3e}, outside <= {:.3e} at t={}, inside {}/{}, within spread {}/{} {verdict}",
-            s.nasa,
-            s.simulators,
-            s.max_spread,
-            s.max_excursion,
-            s.worst_time,
-            s.inside,
-            s.samples,
-            s.within_spread,
-            s.samples
+            "{} {:<33} sims {}, spread <= {:.3e}, C++ outside <= {:.3e} at t={}, inside {}/{}; Rust inside {}/{}, {}: {verdict}",
+            case.name,
+            c.nasa,
+            c.simulators,
+            c.max_spread,
+            c.max_excursion,
+            c.worst_time,
+            c.inside,
+            c.samples,
+            r.inside,
+            r.samples,
+            if same {
+                "same samples"
+            } else {
+                "DIFFERENT samples (FAIL)"
+            },
         );
     }
     pass
 }
 
-/// Logs the largest Rust-vs-C++ difference of each property.
-fn report_parity(case: &str, cpp: &Series, rust: &Series) {
+/// Logs the largest Rust-vs-C++ difference of each property; returns
+/// whether all are within [`PARITY_REL`].
+fn report_parity(case: &str, cpp: &Series, rust: &Series) -> bool {
+    let mut pass = cpp.rows.len() == rust.rows.len();
     for (i, property) in cpp.columns.iter().enumerate().skip(1) {
-        let max = cpp
-            .rows
-            .iter()
-            .zip(&rust.rows)
-            .filter_map(|(a, b)| Some((a.get(i)? - b.get(i)?).abs()))
-            .fold(0.0_f64, f64::max);
-        info!("{case} parity {property:<33} max |Rust - C++| {max:.3e}");
+        let (mut max, mut magnitude) = (0.0_f64, 1.0_f64);
+        for (a, b) in cpp.rows.iter().zip(&rust.rows) {
+            if let (Some(a), Some(b)) = (a.get(i), b.get(i)) {
+                max = max.max((a - b).abs());
+                magnitude = magnitude.max(a.abs());
+            }
+        }
+        let ok = max <= PARITY_REL * magnitude;
+        pass &= ok;
+        info!(
+            "{case} parity {property:<33} max |Rust - C++| {max:.3e}{}",
+            if ok { "" } else { " FAIL" }
+        );
     }
+    pass
 }
 
 /// Runs `names` (all cases when empty) in C++ and Rust and compares both
@@ -274,15 +328,14 @@ pub fn compare_blocking(paths: &Paths, names: &[String]) -> Result<ExitCode, Ora
             .join("run")
             .join(format!("nasa-{}", case.name));
         let cpp = upstream::run_script_in_blocking(paths, &cpp_root, &spec, &run_dir)?.series;
-        pass &= report_side(&case.name, "C++", &simulators, &cpp);
         let (rust, failure) = crate::port_script::run_script(&rust_root, &spec);
         if let Some(e) = failure {
             error!("{}: the Rust run failed: {e}", case.name);
             pass = false;
             continue;
         }
-        pass &= report_side(&case.name, "Rust", &simulators, &rust);
-        report_parity(&case.name, &cpp, &rust);
+        pass &= report_case(case, &simulators, &cpp, &rust);
+        pass &= report_parity(&case.name, &cpp, &rust);
     }
     Ok(if pass {
         ExitCode::SUCCESS
