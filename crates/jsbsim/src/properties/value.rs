@@ -187,7 +187,7 @@ impl PropertyTree {
 
     /// Follows aliases from `id` for a write, returning the node that
     /// receives it, or `None` when some node on the way is not writable.
-    fn writable_target(&self, mut id: NodeId) -> Option<NodeId> {
+    pub fn write_target(&self, mut id: NodeId) -> Option<NodeId> {
         loop {
             if !self.attribute(id, Attribute::WRITE) {
                 return None;
@@ -200,7 +200,7 @@ impl PropertyTree {
     }
 
     fn write<T: Written>(&mut self, id: NodeId, value: T) -> bool {
-        match self.writable_target(id) {
+        match self.write_target(id) {
             Some(target) => {
                 self.store_typed(target, value);
                 self.trace_write(target);
@@ -271,7 +271,7 @@ impl PropertyTree {
     }
 
     fn write_text(&mut self, id: NodeId, text: &str, unspecified: bool) -> bool {
-        let Some(target) = self.writable_target(id) else {
+        let Some(target) = self.write_target(id) else {
             return false;
         };
         let slot = &mut self.node_mut(target).value;

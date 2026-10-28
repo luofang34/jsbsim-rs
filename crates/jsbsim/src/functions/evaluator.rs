@@ -16,20 +16,47 @@ use crate::properties::{NodeId, PropertyTree};
 /// Deeper nesting than this means a property reads itself.
 const MAX_DEPTH: u32 = 256;
 
+/// Values of nodes tied to model getters, which JSBSim evaluates on every
+/// read of the node.
+pub trait GetterSource {
+    /// The getter's value if `node` is tied to one.
+    fn get(&self, node: NodeId) -> Option<f64>;
+}
+
+/// A source with no getters, for function sets used on their own.
+pub struct NoGetters;
+
+impl GetterSource for NoGetters {
+    fn get(&self, _node: NodeId) -> Option<f64> {
+        None
+    }
+}
+
 /// Reads properties and evaluates functions and tables.
 pub struct Evaluator<'a> {
     set: &'a FunctionSet,
     tree: &'a mut PropertyTree,
+    getters: &'a dyn GetterSource,
     depth: u32,
     template_argument: Option<NodeId>,
 }
 
 impl<'a> Evaluator<'a> {
-    /// An evaluator over `set` and `tree`.
+    /// An evaluator over `set` and `tree`, without model getters.
     pub fn new(set: &'a FunctionSet, tree: &'a mut PropertyTree) -> Self {
+        Self::with_getters(set, tree, &NoGetters)
+    }
+
+    /// An evaluator that also reads model getters from `getters`.
+    pub fn with_getters(
+        set: &'a FunctionSet,
+        tree: &'a mut PropertyTree,
+        getters: &'a dyn GetterSource,
+    ) -> Self {
         Self {
             set,
             tree,
+            getters,
             depth: 0,
             template_argument: None,
         }
@@ -48,6 +75,9 @@ impl<'a> Evaluator<'a> {
             return Ok(0.0);
         };
         let Some(bound) = self.set.bound.get(&target).copied() else {
+            if let Some(value) = self.getters.get(target) {
+                return Ok(value);
+            }
             return Ok(self.tree.get_double(node));
         };
         let value = self.nested(target, |e| match bound {

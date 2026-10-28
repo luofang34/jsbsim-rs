@@ -28,7 +28,7 @@ use std::collections::BTreeMap;
 
 pub use condition::Condition;
 pub use error::FunctionError;
-pub use evaluator::Evaluator;
+pub use evaluator::{Evaluator, GetterSource, NoGetters};
 pub use ops::{OPERATIONS, Op};
 pub use parameter::{Parameter, PropertyValue};
 pub use table::{Table, TableKind};
