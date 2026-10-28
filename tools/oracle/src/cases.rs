@@ -11,11 +11,9 @@ use crate::cli::report;
 use crate::manifest::{
     self, CaseSpec, INPUT_FILE, Manifest, Provenance, REFERENCE_FILE, TRANSCRIPT_FILE,
 };
+use crate::transcript::{TranscriptOutcome, compare_transcript};
 use crate::upstream::{self, Paths};
 use crate::{OracleError, Series, ToleranceTable, compare};
-
-#[cfg(test)]
-mod tests;
 
 /// Freshly produced reference output of a case.
 #[derive(Debug, Clone)]
@@ -112,7 +110,7 @@ pub fn check_drift_blocking(paths: &Paths, cases: &[String]) -> Result<ExitCode,
                 let path = dir.join(TRANSCRIPT_FILE);
                 let reference = std::fs::read_to_string(&path)
                     .map_err(|e| OracleError::io("reading", &path, e))?;
-                report_transcript(case, &reference, &text)
+                report_transcript(case, &compare_transcript(case, &reference, &text, &table)?)
             }
         };
         if !agrees {
@@ -122,44 +120,52 @@ pub fn check_drift_blocking(paths: &Paths, cases: &[String]) -> Result<ExitCode,
     Ok(code)
 }
 
-/// First line at which two transcripts differ: one-based line number and
-/// both lines (empty when a transcript has ended).
-#[must_use]
-pub fn first_line_difference(reference: &str, candidate: &str) -> Option<(usize, String, String)> {
-    let mut left = reference.lines();
-    let mut right = candidate.lines();
-    let mut line = 0usize;
-    loop {
-        line = line.wrapping_add(1);
-        match (left.next(), right.next()) {
-            (None, None) => return None,
-            (a, b) if a == b => {}
-            (a, b) => {
-                return Some((
-                    line,
-                    a.unwrap_or_default().to_owned(),
-                    b.unwrap_or_default().to_owned(),
-                ));
-            }
+/// Logs a transcript comparison; returns whether it agreed.
+pub fn report_transcript(case: &str, outcome: &TranscriptOutcome) -> bool {
+    match &outcome.divergence {
+        None => {
+            info!(
+                "{case}: PASS, {} lines; {} numbers differ, max |diff| {:e}, max rel {:e}",
+                outcome.lines, outcome.numbers_differing, outcome.max_abs, outcome.max_rel
+            );
+            true
+        }
+        Some(divergence) => {
+            error!("{case}: FIRST DIVERGENCE {divergence}");
+            false
         }
     }
 }
 
-/// Logs whether `candidate` matches `reference`; returns whether it does.
-pub fn report_transcript(case: &str, reference: &str, candidate: &str) -> bool {
-    match first_line_difference(reference, candidate) {
-        None => {
-            info!(
-                "{case}: PASS, {} lines identical",
-                reference.lines().count()
-            );
-            true
-        }
-        Some((line, expected, got)) => {
-            error!(
-                "{case}: FIRST DIFFERENCE at line {line}: reference {expected:?}, candidate {got:?}"
-            );
-            false
-        }
-    }
+/// Runs the Rust twin of transcript case `case`, writes its output under
+/// `target/oracle/port/` and compares it with the reference.
+pub fn port_blocking(repo_root: &Path, case: &str) -> Result<ExitCode, OracleError> {
+    let dir = repo_root.join("oracle").join("goldens").join(case);
+    let manifest = Manifest::read_blocking(&dir)?;
+    let CaseSpec::Transcript(spec) = &manifest.case else {
+        return Err(OracleError::Provenance(format!(
+            "{case} is not a transcript case"
+        )));
+    };
+    let input_path = dir.join(INPUT_FILE);
+    let input = std::fs::read_to_string(&input_path)
+        .map_err(|e| OracleError::io("reading", &input_path, e))?;
+    let context = crate::probe::ProbeContext {
+        input_dir: dir.clone(),
+        jsbsim_root: None,
+    };
+    let candidate = crate::probe::run(&spec.probe, &input, &context)?;
+    let out_dir = repo_root.join("target").join("oracle").join("port");
+    std::fs::create_dir_all(&out_dir).map_err(|e| OracleError::io("creating", &out_dir, e))?;
+    write_blocking(&out_dir.join(format!("{case}.txt")), &candidate)?;
+    let reference_path = dir.join(TRANSCRIPT_FILE);
+    let reference = std::fs::read_to_string(&reference_path)
+        .map_err(|e| OracleError::io("reading", &reference_path, e))?;
+    let table = ToleranceTable::read_blocking(&repo_root.join("oracle").join("tolerances.toml"))?;
+    let outcome = compare_transcript(case, &reference, &candidate, &table)?;
+    Ok(if report_transcript(case, &outcome) {
+        ExitCode::SUCCESS
+    } else {
+        ExitCode::FAILURE
+    })
 }

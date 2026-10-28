@@ -62,6 +62,11 @@ pub fn command() -> Command {
                 .arg(jsbsim_root),
         )
         .subcommand(
+            Command::new("port")
+                .about("Run the Rust port on a transcript case and compare it with the reference")
+                .arg(Arg::new("case").required(true)),
+        )
+        .subcommand(
             Command::new("compare")
                 .about("Compare a candidate CSV against a reference CSV")
                 .arg(Arg::new("case").long("case").required(true))
@@ -101,6 +106,10 @@ where
     let Some((name, sub)) = matches.subcommand() else {
         return Ok(ExitCode::FAILURE);
     };
+    if name == "port" {
+        let case = sub.get_one::<String>("case").cloned().unwrap_or_default();
+        return cases::port_blocking(&repo_root, &case);
+    }
     if name == "compare" {
         let tolerances = sub
             .get_one::<PathBuf>("tolerances")

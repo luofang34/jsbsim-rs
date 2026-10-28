@@ -11,11 +11,12 @@ use jsbsim::xml::{DocumentLoader, Element, IncludeKind};
 use jsbsim::{Error, FileResolver};
 use tracing::{error, info};
 
-use crate::OracleError;
 use crate::cases::report_transcript;
 use crate::manifest::TranscriptSpec;
 use crate::probe::{self, ProbeContext};
+use crate::transcript::compare_transcript;
 use crate::upstream::{self, Paths};
+use crate::{OracleError, ToleranceTable};
 
 /// Directories of the JSBSim tree that hold XML inputs.
 pub const XML_DIRS: [&str; 5] = ["aircraft", "engine", "systems", "scripts", "tests"];
@@ -63,7 +64,14 @@ pub fn check_xml_blocking(paths: &Paths) -> Result<ExitCode, OracleError> {
         .map_err(|_| OracleError::Provenance("the Rust XML parser panicked".to_owned()))??;
     let errors = reference.text.lines().filter(|l| *l == "ERROR").count();
     info!("corpus: {} files, {errors} rejected by C++", files.len());
-    let mut code = if report_transcript("corpus", &reference.text, &candidate) {
+    // The corpus has no tolerance rows: the dumps must be identical.
+    let outcome = compare_transcript(
+        "corpus",
+        &reference.text,
+        &candidate,
+        &ToleranceTable::default(),
+    )?;
+    let mut code = if report_transcript("corpus", &outcome) {
         ExitCode::SUCCESS
     } else {
         ExitCode::FAILURE

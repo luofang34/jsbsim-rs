@@ -13,6 +13,7 @@ use std::f64::consts::PI;
 use std::sync::OnceLock;
 
 use super::{Element, XmlError};
+use crate::math::ColumnVector3;
 use crate::units::UnitTable;
 
 fn table() -> &'static UnitTable {
@@ -78,18 +79,17 @@ impl Element {
     /// `FindElementTripletConvertTo(target)`: children `x`/`roll`,
     /// `y`/`pitch` and `z`/`yaw`, converted from this element's `unit`;
     /// a missing child reads as 0.
-    pub fn find_element_triplet_convert_to(&self, target: &str) -> Result<[f64; 3], XmlError> {
+    pub fn find_element_triplet_convert_to(&self, target: &str) -> Result<ColumnVector3, XmlError> {
         let supplied = self.attribute("unit");
         let factor = self.conversion(supplied, target)?;
-        let mut triplet = [0.0; 3];
-        for (slot, (name, alias)) in
-            triplet
-                .iter_mut()
-                .zip([("x", "roll"), ("y", "pitch"), ("z", "yaw")])
+        let mut triplet = ColumnVector3::zero();
+        for (i, (name, alias)) in [("x", "roll"), ("y", "pitch"), ("z", "yaw")]
+            .into_iter()
+            .enumerate()
         {
             if let Some(item) = self.find_element(name).or_else(|| self.find_element(alias)) {
                 let value = item.data_as_number()?;
-                *slot = factor.map_or(value, |f| value * f);
+                triplet[i + 1] = factor.map_or(value, |f| value * f);
             }
         }
         Ok(triplet)

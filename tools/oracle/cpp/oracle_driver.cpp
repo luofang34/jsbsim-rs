@@ -9,7 +9,7 @@
 //
 // Usage: oracle_driver script <root> <script> <rate_hz> <end_time|-> <out.csv>
 //                             <property>...
-//        oracle_driver properties|units|xml <input.txt> <out.txt>
+//        oracle_driver properties|units|xml|math <input.txt> <out.txt>
 //
 // The script mode is implemented here; the probe modes are in probe_*.cpp.
 //
@@ -135,8 +135,9 @@ int main(int argc, char** argv)
   if (argc == 4) {
     if (mode == "properties") return RunPropertiesProbe(argv[2], argv[3]);
     if (mode == "units") return RunUnitsProbe(argv[2], argv[3]);
+    if (mode == "math") return RunMathProbe(argv[2], argv[3]);
     if (mode == "xml") return RunXmlProbe(argv[2], argv[3]);
   }
-  std::fprintf(stderr, "usage: %s script|properties|units|xml ...\n", argv[0]);
+  std::fprintf(stderr, "usage: %s script|properties|units|xml|math ...\n", argv[0]);
   return 2;
 }

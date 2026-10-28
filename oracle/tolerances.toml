@@ -98,3 +98,30 @@ property = "attitude/psi-rad"
 abs = 0.0
 rel = 1e-12
 reason = "Allows last-digit libm and FMA differences between C++ toolchains when regenerating; the Rust propagator bound is set when it exists."
+[[tolerance]]
+case = "math"
+property = "*"
+abs = 1e-14
+rel = 1e-14
+reason = "Quaternion and location results depend on sin, cos, atan, atan2 and asin, where Rust's libm and the platform libm used by C++ may differ in the last ulp; observed max |diff| 4.2e-15, max rel 4.0e-14 (a cosine near 0.1)."
+
+[[tolerance]]
+case = "math"
+property = "vec/*"
+abs = 0.0
+rel = 0.0
+reason = "Vector operations use only IEEE basic operations and sqrt in JSBSim's order, so they must be bit-identical."
+
+[[tolerance]]
+case = "math"
+property = "mat/*"
+abs = 0.0
+rel = 0.0
+reason = "Matrix operations use only IEEE basic operations and sqrt in JSBSim's order, so they must be bit-identical."
+
+[[tolerance]]
+case = "math"
+property = "mat/euler"
+abs = 1e-14
+rel = 1e-14
+reason = "GetEuler uses asin and atan2 (libm last-ulp differences); observed max |diff| 8.9e-16."

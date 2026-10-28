@@ -15,6 +15,7 @@ pub mod manifest;
 pub mod probe;
 pub mod series;
 pub mod tolerance;
+pub mod transcript;
 pub mod upstream;
 
 pub use compare::{Divergence, Outcome, compare};

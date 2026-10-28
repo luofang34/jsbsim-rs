@@ -138,7 +138,10 @@ fn unit_conversion() {
 #[test]
 fn triplets_accept_axis_aliases_and_default_to_zero() {
     let e = parse("<loc unit=\"IN\"><x>12</x><pitch>24</pitch></loc>");
-    assert_eq!(e.find_element_triplet_convert_to("FT"), Ok([1.0, 2.0, 0.0]));
+    assert_eq!(
+        e.find_element_triplet_convert_to("FT"),
+        Ok(crate::math::ColumnVector3::new(1.0, 2.0, 0.0))
+    );
 }
 
 #[test]

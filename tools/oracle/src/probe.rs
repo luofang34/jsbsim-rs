@@ -3,6 +3,7 @@
 //! the same input as its `tools/oracle/cpp/probe_*.cpp` twin and must print
 //! the same transcript.
 
+mod math;
 mod properties;
 mod units;
 mod xml;
@@ -25,6 +26,7 @@ pub fn run(name: &str, input: &str, context: &ProbeContext) -> Result<String, Or
     match name {
         "properties" => Ok(properties::run(input)),
         "units" => Ok(units::run(input)),
+        "math" => Ok(math::run(input)),
         "xml" => Ok(xml::run(input, context)),
         other => Err(OracleError::Provenance(format!("unknown probe {other}"))),
     }

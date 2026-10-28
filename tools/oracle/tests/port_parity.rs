@@ -3,8 +3,9 @@
 
 use std::path::{Path, PathBuf};
 
-use oracle::cases::first_line_difference;
+use oracle::ToleranceTable;
 use oracle::manifest::{self, CaseSpec, INPUT_FILE, Manifest, TRANSCRIPT_FILE};
+use oracle::transcript::compare_transcript;
 
 #[cfg(test)]
 fn goldens() -> PathBuf {
@@ -24,14 +25,16 @@ fn transcript_parity(case: &str) {
         jsbsim_root: None,
     };
     let candidate = oracle::probe::run(&spec.probe, &input, &context).unwrap();
-    if let Some((line, expected, got)) = first_line_difference(&reference, &candidate) {
-        panic!("{case} line {line}:\n  C++:  {expected}\n  Rust: {got}");
+    let table = ToleranceTable::read_blocking(&goldens().join("../tolerances.toml")).unwrap();
+    let outcome = compare_transcript(case, &reference, &candidate, &table).unwrap();
+    if let Some(divergence) = outcome.divergence {
+        panic!("{case} {divergence}");
     }
 }
 
 #[test]
 fn every_transcript_case_has_a_parity_test() {
-    let tested = ["properties", "units", "xml"];
+    let tested = ["math", "properties", "units", "xml"];
     let cases = manifest::list_cases_blocking(&goldens()).unwrap();
     for case in cases {
         let manifest = Manifest::read_blocking(&goldens().join(&case)).unwrap();
@@ -54,4 +57,9 @@ fn units() {
 #[test]
 fn xml() {
     transcript_parity("xml");
+}
+
+#[test]
+fn math() {
+    transcript_parity("math");
 }

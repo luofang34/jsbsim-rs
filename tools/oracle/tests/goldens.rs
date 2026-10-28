@@ -118,16 +118,30 @@ fn every_golden_series_agrees_with_itself_under_the_table() {
 }
 
 #[test]
-fn every_tolerance_row_belongs_to_a_logged_column() {
-    let cases = series_cases();
+fn every_tolerance_row_belongs_to_a_logged_column_or_probe_op() {
+    let cases = cases();
     for row in table().rows() {
         assert!(cases.contains(&row.case), "orphan case {}", row.case);
-        let columns = manifest(&row.case).expected_columns().unwrap();
+        let manifest = manifest(&row.case);
+        if let Some(columns) = manifest.expected_columns() {
+            assert!(
+                columns.contains(&row.property),
+                "{} does not log {}",
+                row.case,
+                row.property
+            );
+            continue;
+        }
+        let dir = oracle_dir().join("goldens").join(&row.case);
+        let input = std::fs::read_to_string(dir.join(manifest::INPUT_FILE)).unwrap();
+        let op = row.property.split('/').next().unwrap();
         assert!(
-            columns.contains(&row.property),
-            "{} does not log {}",
-            row.case,
-            row.property
+            row.property == "*"
+                || input
+                    .lines()
+                    .any(|l| l.split_whitespace().next() == Some(op)),
+            "{}: no input line starts with {op}",
+            row.case
         );
     }
 }
