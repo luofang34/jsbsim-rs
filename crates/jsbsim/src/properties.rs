@@ -108,9 +108,17 @@ struct Node {
 }
 
 /// Arena of property nodes rooted at an unnamed node.
+///
+/// Relative paths start at the manager root ([`root`](Self::root)), which
+/// is the true root unless the tree was made [`for_instance`]; a leading
+/// `/` always starts at the true root, as SimGear's `getNode` does.
+///
+/// [`for_instance`]: Self::for_instance
 #[derive(Debug, Clone)]
 pub struct PropertyTree {
     nodes: Vec<Node>,
+    /// `FGPropertyManager`'s root node.
+    base: NodeId,
     /// Changes whenever a path lookup could start resolving differently:
     /// a node is created, or one's REMOVED bit flips.
     generation: u32,
@@ -128,8 +136,20 @@ impl PropertyTree {
     pub fn new() -> Self {
         Self {
             nodes: vec![Node::new(String::new(), 0, None)],
+            base: NodeId(0),
             generation: 0,
         }
+    }
+
+    /// A tree whose manager root is `/fdm/jsbsim[index]`, as `FGFDMExec`
+    /// makes its instance (`Root->getNode("fdm/jsbsim", IdFDM, true)`):
+    /// absolute paths then reach nodes outside the instance.
+    #[must_use]
+    pub fn for_instance(index: i32) -> Self {
+        let mut tree = Self::new();
+        let fdm = tree.add_child(NodeId(0), "fdm".to_owned(), 0);
+        tree.base = tree.add_child(fdm, "jsbsim".to_owned(), index);
+        tree
     }
 
     /// The lookup generation: while it is unchanged, a path that resolved
@@ -139,9 +159,16 @@ impl PropertyTree {
         self.generation
     }
 
-    /// The root node.
+    /// The manager root, where relative paths start
+    /// (`FGPropertyManager::GetNode()`).
     #[must_use]
     pub fn root(&self) -> NodeId {
+        self.base
+    }
+
+    /// The true root, where absolute paths start (`getRootNode`).
+    #[must_use]
+    pub fn true_root(&self) -> NodeId {
         NodeId(0)
     }
 
@@ -174,7 +201,7 @@ impl PropertyTree {
         let mut current = from;
         for component in &components {
             current = match component {
-                Component::Root => self.root(),
+                Component::Root => self.true_root(),
                 Component::Current => current,
                 Component::Parent => self.parent(current).ok_or_else(past_root)?,
                 Component::Child(name, index) => match self.child(current, name, *index) {
@@ -210,7 +237,7 @@ impl PropertyTree {
         let mut current = from;
         for component in components {
             current = match component {
-                Component::Root => self.root(),
+                Component::Root => self.true_root(),
                 Component::Current => current,
                 Component::Parent => self.parent(current).ok_or_else(past_root)?,
                 Component::Child(name, index) => match self.child(current, &name, index) {

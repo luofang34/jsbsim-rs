@@ -1,0 +1,14 @@
+paths ../.. derived/aircraft scenarios/systems => ok
+new => ok
+load tripod_fcs_absolute_paths => ok
+watch test/declared-absolute /test/declared-absolute test/declared-relative /test/declared-relative /fdm/jsbsim/test/declared-relative test/declared-instance /test/declared-instance test/from-absolute /test/out-absolute test/out-absolute test/from-instance test/out-instance /test/out-instance /test/absolute-name test/absolute-name fcs/test/absolute-name test/gain-of-absolute-name => ok
+print => test/declared-absolute absent /test/declared-absolute 2 test/declared-relative 3 /test/declared-relative absent /fdm/jsbsim/test/declared-relative 3 test/declared-instance 5 /test/declared-instance absent test/from-absolute 0 /test/out-absolute 0 test/out-absolute absent test/from-instance 0 test/out-instance 0 /test/out-instance absent /test/absolute-name 0 test/absolute-name absent fcs/test/absolute-name absent test/gain-of-absolute-name 0
+set ic/h-sl-ft 10000 => ok
+runic => test/declared-absolute absent /test/declared-absolute 2 test/declared-relative 3 /test/declared-relative absent /fdm/jsbsim/test/declared-relative 3 test/declared-instance 5 /test/declared-instance absent test/from-absolute 20 /test/out-absolute 20 test/out-absolute absent test/from-instance 8 test/out-instance 8 /test/out-instance absent /test/absolute-name 28 test/absolute-name absent fcs/test/absolute-name absent test/gain-of-absolute-name 56
+run => test/declared-absolute absent /test/declared-absolute 2 test/declared-relative 3 /test/declared-relative absent /fdm/jsbsim/test/declared-relative 3 test/declared-instance 5 /test/declared-instance absent test/from-absolute 20 /test/out-absolute 20 test/out-absolute absent test/from-instance 8 test/out-instance 8 /test/out-instance absent /test/absolute-name 28 test/absolute-name absent fcs/test/absolute-name absent test/gain-of-absolute-name 56
+set /test/declared-absolute 4 => ok
+set test/declared-absolute 100 => ok
+set /fdm/jsbsim[0]/test/declared-instance 7 => ok
+run => test/declared-absolute 100 /test/declared-absolute 4 test/declared-relative 3 /test/declared-relative absent /fdm/jsbsim/test/declared-relative 3 test/declared-instance 7 /test/declared-instance absent test/from-absolute 40 /test/out-absolute 40 test/out-absolute absent test/from-instance 10 test/out-instance 10 /test/out-instance absent /test/absolute-name 50 test/absolute-name absent fcs/test/absolute-name absent test/gain-of-absolute-name 100
+set /test/declared-relative 50 => ok
+run => test/declared-absolute 100 /test/declared-absolute 4 test/declared-relative 3 /test/declared-relative 50 /fdm/jsbsim/test/declared-relative 3 test/declared-instance 7 /test/declared-instance absent test/from-absolute 40 /test/out-absolute 40 test/out-absolute absent test/from-instance 10 test/out-instance 10 /test/out-instance absent /test/absolute-name 50 test/absolute-name absent fcs/test/absolute-name absent test/gain-of-absolute-name 100

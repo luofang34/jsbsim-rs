@@ -41,6 +41,11 @@ pub const EXCLUDED: &str = "simulation/output";
 /// `kUninitialized` in the C++ probe.
 pub const UNINITIALIZED: [&str; 2] = ["/AGL-ft", "/side_friction_coeff"];
 
+/// What the walk strips from fully qualified names: the instance root,
+/// as `GetRelativeName(child, "/fdm/jsbsim/")` in the C++ probe. Nodes an
+/// absolute path made outside the instance are not walked.
+const INSTANCE_PREFIX: &str = "/fdm/jsbsim/";
+
 fn walk(fdm: &mut Fdm, node: NodeId, lines: &mut Vec<String>) -> Result<(), jsbsim::Error> {
     let children = fdm.tree().children(node).to_vec();
     for child in children {
@@ -48,7 +53,7 @@ fn walk(fdm: &mut Fdm, node: NodeId, lines: &mut Vec<String>) -> Result<(), jsbs
             walk(fdm, child, lines)?;
             continue;
         }
-        let path = fdm.tree().relative_name(child, "/");
+        let path = fdm.tree().relative_name(child, INSTANCE_PREFIX);
         if !PREFIXES.iter().any(|p| path.starts_with(p))
             || path.starts_with(EXCLUDED)
             || UNINITIALIZED.iter().any(|s| path.ends_with(s))

@@ -35,6 +35,7 @@ pub const SYSTEMS: &[System] = &[
         ..derived("function_bad_table", "function_bad_table.xml")
     },
     scenario("fcs_base", "fcs_base.xml"),
+    scenario("fcs_absolute_paths", "fcs_absolute_paths.xml"),
     scenario("fcs_gain", "fcs_gain.xml"),
     scenario("fcs_summer_deadband", "fcs_summer_deadband.xml"),
     scenario("fcs_switch", "fcs_switch.xml"),

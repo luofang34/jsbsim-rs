@@ -244,3 +244,23 @@ fn ids_from_another_tree_read_as_an_unreadable_detached_node() {
     assert_eq!(small.nodes.len(), before + 1);
     assert_eq!(small.parent(child), Some(root));
 }
+
+#[test]
+fn absolute_paths_leave_an_instance_tree() {
+    let mut tree = PropertyTree::for_instance(0);
+    let base = tree.root();
+    assert_ne!(base, tree.true_root());
+    assert_eq!(tree.fully_qualified_name(base), "/fdm/jsbsim");
+    let relative = tree.get_or_create(base, "systems/x").unwrap();
+    let absolute = tree.get_or_create(base, "/systems/x").unwrap();
+    assert_ne!(relative, absolute);
+    assert_eq!(tree.fully_qualified_name(relative), "/fdm/jsbsim/systems/x");
+    assert_eq!(tree.fully_qualified_name(absolute), "/systems/x");
+    assert_eq!(tree.relative_name(relative, "/fdm/jsbsim/"), "systems/x");
+    assert_eq!(
+        tree.get("/fdm/jsbsim[0]/systems/x").unwrap(),
+        Some(relative)
+    );
+    assert_eq!(tree.get("../../systems/x").unwrap(), Some(absolute));
+    assert_eq!(tree.children(base), &[tree.parent(relative).unwrap()]);
+}

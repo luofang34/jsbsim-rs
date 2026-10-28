@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  Absolute property paths in a system. FGFDMExec roots its property
+  manager at /fdm/jsbsim[0], so a path with a leading "/" names a node
+  outside the instance and a relative path one inside it, and
+  /fdm/jsbsim/x is the same node as x: declarations, inputs, outputs and
+  component names, as the corpus aircraft use them (fokker50, L410,
+  Short_S23, ZLT-NT). The fcs-absolute-paths golden drives it, watching
+  every node both ways.
+-->
+<system name="fcs-absolute-paths">
+  <property value="2">/test/declared-absolute</property>
+  <property value="3">test/declared-relative</property>
+  <property value="5">/fdm/jsbsim/test/declared-instance</property>
+  <channel name="paths">
+    <fcs_function name="test/from-absolute">
+      <function>
+        <product>
+          <property>/test/declared-absolute</property>
+          <value>10.0</value>
+        </product>
+      </function>
+      <output>/test/out-absolute</output>
+    </fcs_function>
+    <fcs_function name="test/from-instance">
+      <function>
+        <sum>
+          <property>/fdm/jsbsim/test/declared-relative</property>
+          <property>test/declared-instance</property>
+        </sum>
+      </function>
+      <output>/fdm/jsbsim[0]/test/out-instance</output>
+    </fcs_function>
+    <summer name="/test/absolute-name">
+      <input>/test/out-absolute</input>
+      <input>test/out-instance</input>
+    </summer>
+    <pure_gain name="test/gain-of-absolute-name">
+      <input>/test/absolute-name</input>
+      <gain>2.0</gain>
+    </pure_gain>
+  </channel>
+</system>

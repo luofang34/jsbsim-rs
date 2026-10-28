@@ -163,7 +163,7 @@ impl Fdm {
     pub fn with_options(options: crate::LoadOptions) -> Result<Self, Error> {
         let mut fdm = Self {
             env: env::Env {
-                tree: PropertyTree::new(),
+                tree: PropertyTree::for_instance(0),
                 functions: FunctionSet::new(),
                 bindings: Bindings::default(),
             },

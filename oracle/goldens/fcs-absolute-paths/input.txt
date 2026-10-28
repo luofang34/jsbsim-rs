@@ -1,0 +1,18 @@
+# oracle/scenarios/systems/fcs_absolute_paths.xml on
+# tripod_fcs_absolute_paths: each node watched by its absolute and its
+# relative path, so a node an absolute path makes outside the instance
+# prints "absent" through the relative one.
+paths ../.. derived/aircraft scenarios/systems
+new
+load tripod_fcs_absolute_paths
+watch test/declared-absolute /test/declared-absolute test/declared-relative /test/declared-relative /fdm/jsbsim/test/declared-relative test/declared-instance /test/declared-instance test/from-absolute /test/out-absolute test/out-absolute test/from-instance test/out-instance /test/out-instance /test/absolute-name test/absolute-name fcs/test/absolute-name test/gain-of-absolute-name
+print
+set ic/h-sl-ft 10000
+runic
+run
+set /test/declared-absolute 4
+set test/declared-absolute 100
+set /fdm/jsbsim[0]/test/declared-instance 7
+run
+set /test/declared-relative 50
+run
