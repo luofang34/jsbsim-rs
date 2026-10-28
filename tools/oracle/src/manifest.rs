@@ -47,6 +47,10 @@ pub struct ScriptSpec {
     pub end_time: Option<f64>,
     /// Property paths to sample, in column order.
     pub properties: Vec<String>,
+    /// Aircraft directory relative to the JSBSim root; `aircraft` when
+    /// absent.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub aircraft_path: Option<String>,
 }
 
 /// A driver probe fed with `input.txt` from the case directory.

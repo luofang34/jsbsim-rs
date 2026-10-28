@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/pogo-jsbsim/pogo-jsbsim.xml (LGPL-2.1-or-later). -->
+<mass_balance>
+   <ixx unit="SLUG*FT2">      12016 </ixx>
+   <iyy unit="SLUG*FT2">      23361 </iyy>
+   <izz unit="SLUG*FT2">      30647 </izz>
+   <emptywt unit="LBS" >      11700 </emptywt>
+   <location name="CG" unit="IN">
+     <x> 139.68 </x>
+     <y>   0.00 </y>
+     <z>  -8.73 </z>
+   </location>
+ </mass_balance>

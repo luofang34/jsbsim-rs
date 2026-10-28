@@ -9,7 +9,8 @@
 //
 // Usage: oracle_driver script <root> <script> <rate_hz> <end_time|-> <out.csv>
 //                             <property>...
-//        oracle_driver properties|units|xml|math <input.txt> <out.txt>
+//        oracle_driver properties|units|xml|math|functions|table|mass-balance
+//                      <input.txt> <out.txt>
 //
 // The script mode is implemented here; the probe modes are in probe_*.cpp.
 //
@@ -60,7 +61,10 @@ int RunScript(int argc, char** argv)
 
   JSBSim::FGFDMExec exec;
   exec.SetRootDir(SGPath::fromLocal8Bit(root.c_str()));
-  exec.SetAircraftPath(SGPath("aircraft"));
+  // ORACLE_AIRCRAFT_PATH points at another aircraft directory, relative to
+  // the root (the NASA check cases keep theirs under check_cases/).
+  const char* aircraft_path = std::getenv("ORACLE_AIRCRAFT_PATH");
+  exec.SetAircraftPath(SGPath(aircraft_path ? aircraft_path : "aircraft"));
   exec.SetEnginePath(SGPath("engine"));
   exec.SetSystemsPath(SGPath("systems"));
 
@@ -139,7 +143,9 @@ int main(int argc, char** argv)
     if (mode == "functions") return RunFunctionsProbe(argv[2], argv[3]);
     if (mode == "table") return RunTableProbe(argv[2], argv[3]);
     if (mode == "xml") return RunXmlProbe(argv[2], argv[3]);
+    if (mode == "mass-balance") return RunMassBalanceProbe(argv[2], argv[3]);
+    if (mode == "atmosphere") return RunAtmosphereProbe(argv[2], argv[3]);
   }
-  std::fprintf(stderr, "usage: %s script|properties|units|xml|math|functions|table ...\n", argv[0]);
+  std::fprintf(stderr, "usage: %s script|properties|units|xml|math|functions|table|mass-balance|atmosphere ...\n", argv[0]);
   return 2;
 }

@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<mass_balance>
+  <ixx unit="LBS">100</ixx>
+  <emptywt>100</emptywt>
+</mass_balance>

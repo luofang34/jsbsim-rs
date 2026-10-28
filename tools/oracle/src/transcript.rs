@@ -4,7 +4,8 @@
 //! A case without rows in the tolerance table must match byte for byte.
 //! Otherwise lines are compared token by token: text exactly, numbers with
 //! the row for `<op>/<tag>` (the line's first word and the nearest text
-//! token before the number), falling back to `<op>/*` and then to the
+//! token before the number), falling back to `*/<tag>` (that tag under any
+//! op), then to `<op>/*` and then to the
 //! case's `*` row. The line number plays the role of time in the table.
 
 use std::fmt;
@@ -134,9 +135,12 @@ fn lookup<'t>(
     line: usize,
 ) -> Result<&'t Tolerance, OracleError> {
     let time = line as f64;
-    let op_wide = format!("{}/*", property.split('/').next().unwrap_or_default());
+    let (op, tag) = property.split_once('/').unwrap_or((property, ""));
+    let tag_wide = format!("*/{tag}");
+    let op_wide = format!("{op}/*");
     table
         .lookup(case, property, time)
+        .or_else(|| table.lookup(case, &tag_wide, time))
         .or_else(|| table.lookup(case, &op_wide, time))
         .or_else(|| table.lookup(case, "*", time))
         .ok_or_else(|| OracleError::MissingTolerance {

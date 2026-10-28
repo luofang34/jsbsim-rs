@@ -186,6 +186,10 @@ pub fn run_script_blocking(
         Command::new(paths.driver_exe())
             .current_dir(run_dir)
             .env("JSBSIM_DEBUG", "0")
+            .env(
+                "ORACLE_AIRCRAFT_PATH",
+                spec.aircraft_path.as_deref().unwrap_or("aircraft"),
+            )
             .arg("script")
             .arg(&paths.jsbsim_root)
             .arg(paths.jsbsim_root.join(&spec.script))

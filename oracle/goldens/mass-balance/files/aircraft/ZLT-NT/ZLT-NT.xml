@@ -1,0 +1,254 @@
+<?xml version="1.0"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/ZLT-NT/ZLT-NT.xml (LGPL-2.1-or-later). -->
+<mass_balance>
+
+  <documentation>
+   Maximum weights according to [FAA:2008:AS1CE] and [EASA:2008:TC_LZ_N07]:
+     Maximum airship equilibrium (normal condition) weight 16,865 lbs (7650 kg)
+     Maximum car (gondola) gross weight                     5,390 lbs (2690 kg)
+     Maximum static heaviness
+       In Flight                                            1,102 lbs (500 kg)
+       Take off and landing                                   882 lbs (400 kg)
+       Maximum static lightness                              -441 lbs (-200 kg)
+  </documentation>
+  <documentation>
+   C.G. Range according to [FAA:2008:AS1CE]:
+     Take off and Landing
+       Maximum Forward         39.150 m (1344.5 GE /fdm/jsbsim/inertia/cg-x-in)
+       Maximum Aft             39.900 m (/fdm/jsbsim/inertia/cg-x-in LT 1374.0)
+     In Flight
+       Maximum Forward         38.400 m
+       Maximum Aft             39.900 m
+   Note: C.G locations in the Construction Coordinate System with reference
+         datum 5.000 m ahead of the nose of the ship.
+  </documentation>
+
+  <documentation>
+   The empty weight is estimated to consist of:
+    - The weight of the envelope and frame, guesstimated to 1500 kg.
+    - The frame weighs ~1000kg.
+
+   The car and engines etc will be added as point masses.
+  </documentation>
+
+  <documentation>
+   % Very rough estimation model of the empty weight CG and inertia tensor.
+   % Assume the empty weight of is to 100% a cylindrical shell.
+
+   m = 1500.0   % KG
+   r = 7.05     % meter
+   l = 75.0     % meter
+
+   % Very rough estimate of center of gravity (based on the inertial estimate):
+   CGx = 0
+   CGy = 0
+   CGz = 0
+
+   % Steiners theorem:
+   % Ixx = \bar{Ixx} + m sqrt(\bar{y}^2 + \bar{z}^2)
+   % Ixy = \bar{Ixy} + m \bar{x} \bar{y}
+
+   % Very rough estimation model of Ixx, Iyy and Izz relative the CG.
+   Ixx = m * r^2
+
+   Iyy = 1/2*m * r^2 + 1/12*m*l^2
+
+   Izz = 1/2*m * r^2 + 1/12*m*l^2
+
+   Ixy = 0
+   Ixz = 0
+   Iyz = 0
+
+  </documentation>
+
+  <ixx unit="KG*M2">  74554.0 </ixx>
+  <iyy unit="KG*M2"> 740400.0 </iyy>
+  <izz unit="KG*M2"> 740400.0 </izz>
+  <ixy unit="KG*M2">      0.0 </ixy>
+  <ixz unit="KG*M2">      0.0 </ixz>
+  <iyz unit="KG*M2">      0.0 </iyz>
+  <emptywt unit="KG"> 1500 </emptywt>
+
+  <location name="CG" unit="M">
+   <x> 37.500 </x>
+   <y>  0.000 </y>
+   <z>  0.000 </z>
+  </location>
+
+  <!--
+  === Ballast ================================================
+  -->
+  <!--
+   Ballast according to [FAA:2008:AS1CE]:
+     In Flight:
+       1543 lbs (700 kg) of water at 25.6 m
+       441 lbs (200 kg) at 26.9 m. (Gondola locker aft)
+     Ground:
+       1543 lbs (700 kg) of water at 25.6 m
+       441 lbs (200 kg) at 24.1 m. (Gondola locker forward)
+       661 lbs (300 kg) at 26.9 m. (Gondola locker aft)
+       397 lbs (180 kg) at 63.2 m. (Landing gear aft)
+  -->
+
+  <!-- Experimental ballast setup. -->
+  <!-- Center initial weigh-off ballast n=0 -->
+  <pointmass name="Ballast_Center">
+   <weight unit="KG"> 2000 </weight>
+   <location unit="M">
+    <x>  37.5 </x>
+    <y>   0.0 </y>
+    <z> -8.70 </z>
+   </location>
+  </pointmass>
+
+  <!--
+       Ballast tanks for fine tuning the CG.
+       These are for FDM development and controlled via static-trim-cmd-norm.
+  -->
+  <!-- Forward ballast n=1 -->
+  <pointmass name="Ballast_Forward">
+   <weight unit="LBS"> 500 </weight>
+   <location unit="M">
+    <x> 0.0 </x>
+    <y> 0.0 </y>
+    <z> -1.0 </z>
+   </location>
+  </pointmass>
+  <!-- Aft ballast n=2 -->
+  <pointmass name="Ballast_Aft">
+   <weight unit="LBS"> 500 </weight>
+   <location unit="M">
+    <x> 75.0 </x>
+    <y>  0.0 </y>
+    <z> -1.0 </z>
+   </location>
+  </pointmass>
+
+  <!--
+  === Crew and payload =======================================
+  -->
+  <!--
+   Payload according to [EASA:2008:TC_LZ_N07]:
+     Max gondola payload: 1,040 kg
+
+   Seats according to [FAA:2008:AS1CE]: (Recall the 5.00m difference in origin)
+     2 (flight deck) at gondola station 22.38 m
+     1 passenger LH  at gondola station 23.31 m
+     1 passenger LH  at gondola station 24.49 m
+     1 passenger LH  at gondola station 25.31 m
+     1 passenger LH  at gondola station 26.12 m
+     1 passenger LH  at gondola station 26.93 m
+     1 passenger LH  at gondola station 27.75 m
+     1 passenger RH  at gondola station 23.31 m
+     1 passenger RH  at gondola station 24.72 m
+     1 passenger RH  at gondola station 25.49 m
+     1 passenger RH  at gondola station 26.25 m
+     1 passenger RH  at gondola station 27.00 m
+     1 passenger RH  at gondola station 27.77 m
+     1 passenger RH  at gondola station 28.53 m
+  -->
+  <pointmass name="Pilot"> <!-- n=3 -->
+   <weight unit="KG"> 85.0 </weight>
+   <location unit="M">
+    <x> 17.38 </x>
+    <y> -0.45 </y>
+    <z> -8.25 </z>
+   </location>
+  </pointmass>
+  <pointmass name="Pilot"> <!-- n=4 -->
+   <weight unit="KG"> 85.0 </weight>
+   <location unit="M">
+    <x> 17.38 </x>
+    <y>  0.45 </y>
+    <z> -8.25 </z>
+   </location>
+  </pointmass>
+  <pointmass name="Cabin payload"> <!-- n=5 -->
+   <weight unit="KG"> 500.0 </weight>
+   <location unit="M">
+    <x> 21.0 </x>
+    <y>  0.0 </y>
+    <z> -8.5 </z>
+   </location>
+  </pointmass>
+
+  <!--
+  === Engines ================================================
+  -->
+  <!-- IO360: dry weight ~130kg. -->
+  <pointmass name="Left_Engine">
+   <weight unit="KG"> 250.0 </weight>
+   <location unit="M">
+    <x> 26.4 </x>
+    <y> -6.6 </y>
+    <z> -3.4 </z>
+   </location>
+  </pointmass>
+  <pointmass name="Right_Engine">
+   <weight unit="KG"> 250.0 </weight>
+   <location unit="M">
+    <x> 26.4 </x>
+    <y>  6.6 </y>
+    <z> -3.4 </z>
+   </location>
+  </pointmass>
+  <pointmass name="Aft_Engine">
+   <weight unit="KG"> 250.0 </weight>
+   <location unit="M">
+    <x> 73.0 </x>
+    <y>  0.0 </y>
+    <z>  0.0 </z>
+   </location>
+  </pointmass>
+
+  <!--
+  === Structure ==============================================
+  -->
+
+  <pointmass name="Mooring cone">
+   <!-- Pure guess. -->
+   <weight unit="KG"> 60.0 </weight>
+   <location unit="M">
+    <x>  0.0 </x>
+    <y>  0.0 </y>
+    <z>  0.0 </z>
+   </location>
+  </pointmass>
+  <pointmass name="Car">
+   <!-- Pure guess. -->
+   <weight unit="KG"> 1650.0 </weight>
+   <location unit="M">
+    <x> 22.0 </x>
+    <y>  0.0 </y>
+    <z> -8.7 </z>
+   </location>
+  </pointmass>
+  <pointmass name="Upper_fin">
+   <!-- Pure guess. -->
+   <weight unit="KG"> 180.0 </weight>
+   <location unit="M">
+    <x> 63.2 </x>
+    <y>  0.0 </y>
+    <z>  5.0 </z>
+   </location>
+  </pointmass>
+  <pointmass name="Left_fin">
+   <!-- Pure guess. -->
+   <weight unit="KG"> 180.0 </weight>
+   <location unit="M">
+    <x> 63.2 </x>
+    <y> -4.5 </y>
+    <z> -2.1 </z>
+   </location>
+  </pointmass>
+  <pointmass name="Right_fin">
+   <!-- Pure guess. -->
+   <weight unit="KG"> 180.0 </weight>
+   <location unit="M">
+    <x> 63.2 </x>
+    <y>  4.5 </y>
+    <z> -2.1 </z>
+   </location>
+  </pointmass>
+
+ </mass_balance>

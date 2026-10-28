@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/J3Cub/J3Cub.xml (LGPL-2.1-or-later). -->
+<mass_balance>
+   <ixx unit="SLUG*FT2">    538.01 </ixx>
+   <iyy unit="SLUG*FT2">    386.81 </iyy>
+   <izz unit="SLUG*FT2">    871.03 </izz>
+   <emptywt unit="LBS" >    765.00 </emptywt>
+   <location name="CG" unit="IN">
+     <x>    -3.94 </x>
+     <y>     0.00 </y>
+     <z>   -22.83 </z>
+   </location>
+   <pointmass name="Pilot">
+    <description> 274.44 LBS should bring model up to max weight </description>
+    <weight unit="LBS"> 137.22 </weight>
+    <location unit="IN">
+     <x>    20.87 </x>
+     <y>     0.00 </y>
+     <z>   -36.22 </z>
+   </location>
+  </pointmass>
+ </mass_balance>

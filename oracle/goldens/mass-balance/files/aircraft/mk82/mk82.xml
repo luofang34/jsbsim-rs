@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/mk82/mk82.xml (LGPL-2.1-or-later). -->
+<mass_balance>
+        <ixx unit="SLUG*FT2"> 0.66 </ixx>
+        <iyy unit="SLUG*FT2"> 633 </iyy>
+        <izz unit="SLUG*FT2"> 633 </izz>
+        <emptywt unit="LBS"> 500 </emptywt>
+        <location name="CG" unit="IN">
+            <x> 31 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+    </mass_balance>

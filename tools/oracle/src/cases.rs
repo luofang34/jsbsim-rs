@@ -142,10 +142,9 @@ pub fn report_transcript(case: &str, outcome: &TranscriptOutcome) -> bool {
 pub fn port_blocking(repo_root: &Path, case: &str) -> Result<ExitCode, OracleError> {
     let dir = repo_root.join("oracle").join("goldens").join(case);
     let manifest = Manifest::read_blocking(&dir)?;
-    let CaseSpec::Transcript(spec) = &manifest.case else {
-        return Err(OracleError::Provenance(format!(
-            "{case} is not a transcript case"
-        )));
+    let spec = match &manifest.case {
+        CaseSpec::Transcript(spec) => spec,
+        CaseSpec::Script(spec) => return port_script_blocking(repo_root, case, spec),
     };
     let input_path = dir.join(INPUT_FILE);
     let input = std::fs::read_to_string(&input_path)
@@ -164,6 +163,34 @@ pub fn port_blocking(repo_root: &Path, case: &str) -> Result<ExitCode, OracleErr
     let table = ToleranceTable::read_blocking(&repo_root.join("oracle").join("tolerances.toml"))?;
     let outcome = compare_transcript(case, &reference, &candidate, &table)?;
     Ok(if report_transcript(case, &outcome) {
+        ExitCode::SUCCESS
+    } else {
+        ExitCode::FAILURE
+    })
+}
+
+/// Runs the Rust port on script case `case` with the vendored inputs and
+/// compares it with the reference. A run that stops with an error is
+/// compared up to the last row it produced.
+pub fn port_script_blocking(
+    repo_root: &Path,
+    case: &str,
+    spec: &crate::manifest::ScriptSpec,
+) -> Result<ExitCode, OracleError> {
+    let dir = repo_root.join("oracle").join("goldens").join(case);
+    let inputs = repo_root.join("oracle").join("inputs");
+    let (candidate, error) = crate::port_script::run_script(&inputs, spec);
+    let mut reference = Series::read_blocking(&dir.join(REFERENCE_FILE))?;
+    if let Some(e) = &error {
+        let cut = candidate
+            .time(candidate.rows.len().saturating_sub(1))
+            .unwrap_or(f64::NAN);
+        error!("{case}: the Rust run stopped after t={cut}: {e}");
+        reference.rows.truncate(candidate.rows.len());
+    }
+    let table = ToleranceTable::read_blocking(&repo_root.join("oracle").join("tolerances.toml"))?;
+    let outcome = compare(case, &reference, &candidate, &table)?;
+    Ok(if report(case, &outcome) && error.is_none() {
         ExitCode::SUCCESS
     } else {
         ExitCode::FAILURE

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!-- No CG location and no cross products: the CG is the structural origin
+     weighted with the point mass. -->
+<mass_balance>
+  <ixx>500</ixx>
+  <iyy>700</iyy>
+  <izz>900</izz>
+  <emptywt>1000</emptywt>
+  <pointmass name="payload">
+    <weight>250</weight>
+    <location unit="IN"><x>20</x><y>0</y><z>-10</z></location>
+  </pointmass>
+</mass_balance>

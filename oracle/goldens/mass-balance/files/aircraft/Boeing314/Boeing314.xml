@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/Boeing314/Boeing314.xml (LGPL-2.1-or-later). -->
+<mass_balance>
+        <documentation>
+         Center of gravity location, empty weight, in aircraft's own structural coord
+         system. X, Y, Z, in inches; X is positive out the tail, Y positive out the
+         right wing.
+
+         Put in comment payload, to test at empty weight.
+        </documentation>
+        <ixx unit="SLUG*FT2"> 2.31442e+06 </ixx>
+        <iyy unit="SLUG*FT2"> 1.34649e+06 </iyy>
+        <izz unit="SLUG*FT2"> 3.59608e+06 </izz>
+        <ixy unit="SLUG*FT2"> 0 </ixy>
+        <ixz unit="SLUG*FT2"> 0 </ixz>
+        <iyz unit="SLUG*FT2"> 0 </iyz>
+        <emptywt unit="LBS"> 48400 </emptywt>                               <!-- aeromatic 50400 -->
+        <location name="CG" unit="IN">
+            <x> 459.2 </x>
+            <y> 0 </y>
+            <z> -31.8 </z>
+        </location>
+        <pointmass name="payload">
+            <weight unit="LBS"> 1500 </weight>
+            <location unit="IN">
+                <x> 460.0 </x>
+                <y> 0 </y>
+                <z> -31.8 </z>
+            </location>
+        </pointmass>
+    </mass_balance>

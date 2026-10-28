@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/A320/A320.xml (LGPL-2.1-or-later). -->
+<mass_balance negated_crossproduct_inertia="true">
+        <ixx unit="SLUG*FT2"> 942877 </ixx>
+        <iyy unit="SLUG*FT2"> 2.78892e+06 </iyy>
+        <izz unit="SLUG*FT2"> 3.59757e+06 </izz>
+        <ixy unit="SLUG*FT2"> -0 </ixy>
+        <ixz unit="SLUG*FT2"> -10000 </ixz>
+        <iyz unit="SLUG*FT2"> -0 </iyz>
+        <emptywt unit="LBS"> 111000 </emptywt>
+        <location name="CG" unit="IN">
+            <x> 672 </x>
+            <y> 0 </y>
+            <z> -40 </z>
+        </location>
+    </mass_balance>

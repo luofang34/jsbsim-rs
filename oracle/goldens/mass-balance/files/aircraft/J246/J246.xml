@@ -1,0 +1,304 @@
+<?xml version="1.0"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/J246/J246.xml (LGPL-2.1-or-later). -->
+<mass_balance>
+
+      <!--
+                   Weight (each)   Quantity    Subtotal    Total
+        SRBs                                              2,593,208
+          Case        185,000         2         370,000
+          Prop      1,111,604         2       2,223,208
+
+        Core Stage                                        1,768,670
+          Struct     119,479          1         119,479
+          LOX      1,389,592          1       1,389,592
+          LH2        231,599          1         231,599
+          Engines (4)  7,000          4          28,000
+
+        Interstage     8,748          1           8,748       8,748
+
+        Upper Stage                                         411,730
+          Struct      21,117          1          21,117
+          LOX        331,674          1         331,674
+          LH2         55,279          1          55,279
+          Engines (6)    610          6           3,660
+
+        SM            26,000          1          26,000      26,000
+
+        CM            20,000          1          20,000      20,000
+
+        LAS           16,000          1          16,000      16,000
+
+        Shroud        12,571          1          12,571      12,571
+
+        Total                                             4,856,927
+      -->
+
+      <!-- Item 0 -->
+      <pointmass name="Left SRB case weight">
+        <form shape="tube">
+          <radius unit="FT"> 6 </radius>
+          <length unit="FT"> 145 </length>
+        </form>
+        <weight unit="LBS"> 185000 </weight>
+        <location unit="IN">
+          <x> 2770.0 </x>
+          <y> -225.0 </y>
+          <z>    0.0 </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 1 -->
+      <pointmass name="Right SRB case weight">
+        <form shape="tube">
+          <radius unit="FT"> 6 </radius>
+          <length unit="FT"> 145 </length>
+        </form>
+        <weight unit="LBS"> 185000 </weight>
+        <location unit="IN">
+          <x> 2770.0 </x>
+          <y>  225.0 </y>
+          <z>    0.0 </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 2 -->
+      <pointmass name="Core Main Stage Structure">
+        <form shape="tube">
+          <radius unit="FT"> 13.75 </radius>
+          <length unit="FT"> 153 </length>
+        </form>
+        <weight unit="LBS"> 119479 </weight>
+        <location unit="IN">
+          <x> 2556.0 </x>
+          <y>    0.0 </y>
+          <z>    0.0 </z>
+        </location>
+      </pointmass>
+
+      <!-- SSMEs weigh 7000 lbs each -->
+
+      <!-- Item 3 -->
+      <pointmass name="SSME 0">
+        <form shape="cylinder">
+          <radius unit="FT"> 3 </radius>
+          <length unit="FT"> 10 </length>
+        </form>
+        <weight unit="LBS"> 7000 </weight>
+        <location unit="IN">
+          <x> 3500.0 </x>
+          <y>    0.0 </y>
+          <z>  165.0 </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 4 -->
+      <pointmass name="SSME 1">
+        <form shape="cylinder">
+          <radius unit="FT"> 3 </radius>
+          <length unit="FT"> 10 </length>
+        </form>
+        <weight unit="LBS"> 7000 </weight>
+        <location unit="IN">
+          <x> 3500.0 </x>
+          <y>    0.0 </y>
+          <z>   55.0 </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 5 -->
+      <pointmass name="SSME 2">
+        <form shape="cylinder">
+          <radius unit="FT"> 3 </radius>
+          <length unit="FT"> 10 </length>
+        </form>
+        <weight unit="LBS"> 7000 </weight>
+        <location unit="IN">
+          <x> 3500.0 </x>
+          <y>    0.0 </y>
+          <z>  -55.0 </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 6 -->
+      <pointmass name="SSME 3">
+        <form shape="cylinder">
+          <radius unit="FT"> 3 </radius>
+          <length unit="FT"> 10 </length>
+        </form>
+        <weight unit="LBS"> 7000 </weight>
+        <location unit="IN">
+          <x> 3500.0 </x>
+          <y>    0.0 </y>
+          <z> -165.0 </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 7 -->
+      <pointmass name="Interstage">
+        <form shape="tube">
+          <radius unit="FT"> 13.75 </radius>
+          <length unit="FT"> 20 </length>
+        </form>
+        <weight unit="LBS"> 8748 </weight>
+        <location unit="IN">
+          <x> 1600.0 </x>
+          <y>    0.0 </y>
+          <z>    0.0 </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 8 -->
+      <pointmass name="Upper Stage Structure">
+        <form shape="tube">
+          <radius unit="FT"> 13.75 </radius>
+          <length unit="FT"> 30 </length>
+        </form>
+        <weight unit="LBS"> 21117 </weight>
+        <location unit="IN">
+          <x> 1176.0 </x>
+          <y>    0.0 </y>
+          <z>    0.0 </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 9 -->
+      <pointmass name="RL10-B-2 Upper Stage Engine #0">
+        <form shape="cylinder">
+          <radius unit="FT"> 2.0 </radius>
+          <length unit="FT"> 6 </length>
+        </form>
+        <weight unit="LBS"> 610 </weight>
+        <location unit="FT">
+          <x>   78.0 </x>
+          <y>    0.0 </y>
+          <z>    8.0 </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 10 -->
+      <pointmass name="RL10-B-2 Upper Stage Engine #1">
+        <form shape="cylinder">
+          <radius unit="FT"> 2.0 </radius>
+          <length unit="FT"> 6 </length>
+        </form>
+        <weight unit="LBS"> 610 </weight>
+        <location unit="FT">
+          <x>   78.0   </x>
+          <y>    6.928 </y>
+          <z>    4.0   </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 11 -->
+      <pointmass name="RL10-B-2 Upper Stage Engine #2">
+        <form shape="cylinder">
+          <radius unit="FT"> 2.0 </radius>
+          <length unit="FT"> 6 </length>
+        </form>
+        <weight unit="LBS"> 610 </weight>
+        <location unit="FT">
+          <x>   78.0   </x>
+          <y>    6.928 </y>
+          <z>   -4.0   </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 12 -->
+      <pointmass name="RL10-B-2 Upper Stage Engine #3">
+        <form shape="cylinder">
+          <radius unit="FT"> 2.0 </radius>
+          <length unit="FT"> 6 </length>
+        </form>
+        <weight unit="LBS"> 610 </weight>
+        <location unit="FT">
+          <x>   78.0 </x>
+          <y>    0.0 </y>
+          <z>   -8.0 </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 13 -->
+      <pointmass name="RL10-B-2 Upper Stage Engine #4">
+        <form shape="cylinder">
+          <radius unit="FT"> 2.0 </radius>
+          <length unit="FT"> 6 </length>
+        </form>
+        <weight unit="LBS"> 610 </weight>
+        <location unit="FT">
+          <x>   78.0   </x>
+          <y>   -6.928 </y>
+          <z>   -4.0   </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 14 -->
+      <pointmass name="RL10-B-2 Upper Stage Engine #5">
+        <form shape="cylinder">
+          <radius unit="FT"> 2.0 </radius>
+          <length unit="FT"> 6 </length>
+        </form>
+        <weight unit="LBS"> 610 </weight>
+        <location unit="FT">
+          <x>   78.0 </x>
+          <y>   -6.928 </y>
+          <z>    4.0   </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 15 -->
+      <pointmass name="Service Module (w/prop)">
+        <form shape="cylinder">
+          <radius unit="FT"> 7.0 </radius>
+          <length unit="FT"> 14 </length>
+        </form>
+        <weight unit="LBS"> 26000 </weight>
+        <location unit="IN">
+          <x>  700.0 </x>
+          <y>    0.0 </y>
+          <z>    0.0 </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 16 -->
+      <pointmass name="Command Module">
+        <form shape="cylinder">
+          <radius unit="FT"> 7.0 </radius>
+          <length unit="FT"> 14 </length>
+        </form>
+        <weight unit="LBS"> 20000 </weight>
+        <location unit="IN">
+          <x>  400.0 </x>
+          <y>    0.0 </y>
+          <z>    0.0 </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 17 -->
+      <pointmass name="LAS">
+        <form shape="cylinder">
+          <radius unit="FT"> 1.0 </radius>
+          <length unit="FT"> 20 </length>
+        </form>
+        <weight unit="LBS"> 16000 </weight>
+        <location unit="IN">
+          <x> 120.0 </x>
+          <y>   0.0 </y>
+          <z>   0.0 </z>
+        </location>
+      </pointmass>
+
+      <!-- Item 18 -->
+      <pointmass name="Payload Shroud">
+        <form shape="tube">
+          <radius unit="FT"> 10.0 </radius>
+          <length unit="FT"> 40 </length>
+        </form>
+        <weight unit="LBS"> 12571 </weight>
+        <location unit="IN">
+          <x> 1176.0 </x>
+          <y>   0.0 </y>
+          <z>   0.0 </z>
+        </location>
+      </pointmass>
+
+    </mass_balance>

@@ -1,0 +1,202 @@
+<?xml version="1.0"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/Short_S23/Short_S23.xml (LGPL-2.1-or-later). -->
+<mass_balance>
+  <documentation>
+   The inertia was estimated by Aeromatic.
+   CG location X-coordinate is based on [Short:RN-3-1-37].
+   However, the document is not very clear. My assumption is that the
+   datum marker plate is located on the bulkhead of frame 15/16.
+   "C.G. is 4.56ft aft of datum point measured parallel to hull datum."
+   "Datum plate in spar compartment is 19.65 in. aft of datum point measured
+    parallel to hull datum. Permissible CG limits 55.5" to 66.8" aft of
+    datum point measured parallel to hull datum." ([Short:RN-3-1-37])
+
+   Based on the drawings the frame 15/16 bulkhead is 8.25 meters behind the
+   origin of the FDM structural frame.
+
+   Revised datum location based on 1:48 GA drawing: 7.728 meters behind the
+   origin of the FDM structural frame.
+   The resulting permissible range for the CG x coordinate is
+   359.75in to 371.05in in the structural frame.
+
+   Empty weight (incl. oil) according to [Cassidy:2004:FE] p.121: 23451 lbs.
+
+   Tare weight according to [Short:RN-3-1-37]: 27845 lbs
+   (including passenger compartments and some equipment.
+  </documentation>
+  <ixx unit="SLUG*FT2">    251174 </ixx>
+  <iyy unit="SLUG*FT2">    180055 </iyy>
+  <izz unit="SLUG*FT2">    426351 </izz>
+  <emptywt unit="LBS" >     27528 </emptywt>
+  <location name="CG" unit="M">
+   <x> 9.12 </x>
+   <y> 0.00 </y>
+   <z> 1.10 </z>
+  </location>
+
+  <!--
+   Adjustable payload pointmasses located according to [Short:RN-3-1-37].
+  -->
+  <!-- Crew -->
+  <pointmass name="Pilot">
+   <weight unit="KG"> 85 </weight>
+   <location unit="M">
+    <x>  2.44 </x>
+    <y> -0.5 </y>
+    <z>  1.5 </z>
+   </location>
+  </pointmass>
+  <pointmass name="Copilot">
+   <weight unit="KG"> 85 </weight>
+   <location unit="M">
+    <x>  2.44 </x>
+    <y>  0.5 </y>
+    <z>  1.5 </z>
+   </location>
+  </pointmass>
+  <pointmass name="Steward">
+   <weight unit="KG"> 85 </weight>
+   <location unit="M">
+    <x>  7.0 </x>
+    <y>  0.0 </y>
+    <z>  0.0 </z>
+   </location>
+  </pointmass>
+  <pointmass name="Flight Clerk">
+   <!-- Originally the Flight Clerk's office was located on the aft end of the
+        flight deck, but it was soon was moved down into the forward cabin.
+   -->
+   <weight unit="KG"> 85 </weight>
+   <location unit="M">
+    <x>  5.4 </x>
+    <y>  0.0 </y>
+    <z>  0.0 </z>
+   </location>
+  </pointmass>
+  <pointmass name="W/T operator">
+   <weight unit="KG"> 85 </weight>
+   <location unit="M">
+    <x>  3.2 </x>
+    <y> -0.5 </y>
+    <z>  1.5 </z>
+   </location>
+  </pointmass>
+
+  <!-- Mail & Freight. -->
+  <pointmass name="Spar Mail Compartment">
+   <weight unit="KG"> 0.0 </weight>
+   <location unit="M">
+    <x>  9.3 </x>
+    <y>  0.0 </y>
+    <z>  1.5 </z>
+   </location>
+  </pointmass>
+  <pointmass name="Forward upper mail compartment">
+   <weight unit="KG"> 0.0 </weight>
+   <location unit="M">
+    <x>  6.2 </x>
+    <y>  0.0 </y>
+    <z>  1.5 </z>
+   </location>
+  </pointmass>
+  <pointmass name="Rear freight compartment">
+   <weight unit="KG"> 345.6 </weight> <!-- To get CG within the range. -->
+   <location unit="M">
+    <x> 19.1 </x>
+    <y>  0.0 </y>
+    <z>  1.5 </z>
+   </location>
+  </pointmass>
+  <pointmass name="Freight in the Forward Cabin">
+   <!-- Originally there were space for 7 passengers here but the cabin was
+        soon converted to contain freight and the Flight Clerk's office. -->
+   <weight unit="KG"> 0.0 </weight>
+   <location unit="M">
+    <x>  4.2 </x>
+    <y>  0.0 </y>
+    <z> -0.5 </z>
+   </location>
+  </pointmass>
+  <pointmass name="Bullion locker">
+   <weight unit="KG"> 0.0 </weight>
+   <location unit="M">
+    <x>  9.5 </x>
+    <y>  0.0 </y>
+    <z> -1.0 </z>
+   </location>
+  </pointmass>
+
+  <!-- Passengers. -->
+  <pointmass name="Passengers in the Spar Cabin (max 3)">
+   <weight unit="KG"> 0.0 </weight>
+   <location unit="M">
+    <x>  9.5 </x>
+    <y>  0.0 </y>
+    <z>  0.0 </z>
+   </location>
+  </pointmass>
+  <pointmass name="Passengers in the Promenade Cabin (max 8)">
+   <weight unit="KG"> 0.0 </weight>
+   <location unit="M">
+    <x> 12.5 </x>
+    <y>  0.0 </y>
+    <z>  0.0 </z>
+   </location>
+  </pointmass>
+  <pointmass name="Passengers in the Rear Cabin (max 6)">
+   <weight unit="KG"> 0.0 </weight>
+   <location unit="M">
+    <x> 15.9 </x>
+    <y>  0.0 </y>
+    <z>  0.0 </z>
+   </location>
+  </pointmass>
+
+  <!-- Fixed weights included in tare weight according to [Short:RN-3-1-37]. -->
+  <pointmass name="Radio equipment">
+   <weight unit="LBS"> 317.0 </weight>
+   <location unit="M">
+    <x> 3.8 </x>
+    <y> 0.0 </y>
+    <z> 0.0 </z>
+   </location>
+  </pointmass>
+
+  <!--
+     Oil tank contents. One mass per engine.
+     These will be controlled by the engine model.
+  -->
+  <pointmass name="Oil Port Outer">
+   <weight unit="LBS"> 117.3 </weight>
+   <location unit="M">
+    <x>  7.6 </x>
+    <y> -8.0 </y>
+    <z>  2.8 </z>
+   </location>
+  </pointmass>
+  <pointmass name="Oil Port Inner">
+   <weight unit="LBS"> 117.3 </weight>
+   <location unit="M">
+    <x>  7.3 </x>
+    <y> -4.0 </y>
+    <z>  2.6 </z>
+   </location>
+  </pointmass>
+  <pointmass name="Oil Starboard Inner">
+   <weight unit="LBS"> 117.3 </weight>
+   <location unit="M">
+    <x>  7.3 </x>
+    <y>  4.0 </y>
+    <z>  2.6 </z>
+   </location>
+  </pointmass>
+  <pointmass name="Oil Starboard Outer">
+   <weight unit="LBS"> 117.3 </weight>
+   <location unit="M">
+    <x>  7.6 </x>
+    <y>  8.0 </y>
+    <z>  2.8 </z>
+   </location>
+  </pointmass>
+
+ </mass_balance>

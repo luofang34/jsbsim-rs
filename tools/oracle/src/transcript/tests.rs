@@ -100,3 +100,23 @@ fn op_wide_rows_sit_between_tag_rows_and_the_wildcard() {
     let outcome = compare_transcript("c", "vec => mag 1\n", "vec => mag 1.5\n", &t).unwrap();
     assert!(outcome.divergence.is_none(), "vec falls back to *");
 }
+
+#[test]
+fn tag_wide_rows_sit_between_tag_rows_and_op_wide_rows() {
+    let t = table(&[
+        ("alt/x/p", 1.0),
+        ("*/x/p", 0.0),
+        ("alt/*", 1.0),
+        ("set/*", 1.0),
+    ]);
+    let line = |op: &str, v: &str| format!("{op} => x/p {v}\n");
+    let outcome = compare_transcript("c", &line("alt", "1"), &line("alt", "1.5"), &t).unwrap();
+    assert!(outcome.divergence.is_none(), "alt/x/p is looser");
+    let outcome = compare_transcript("c", &line("set", "1"), &line("set", "1.5"), &t).unwrap();
+    assert!(outcome.divergence.is_some(), "*/x/p is exact under set");
+    let outcome = compare_transcript("c", "set => y 1\n", "set => y 1.5\n", &t).unwrap();
+    assert!(
+        outcome.divergence.is_none(),
+        "other tags fall back to set/*"
+    );
+}

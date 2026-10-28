@@ -1,0 +1,56 @@
+<?xml-stylesheet href="JSBSim.xsl" type="application/xml"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/Camel/Camel.xml (LGPL-2.1-or-later). -->
+<mass_balance>
+        <!-- iyy and izz are .3 X that of a typical plane of these dimensions due to Camel design concentrating mass v. close to c of g.  ixx is not affected by this
+         design feature so remains unchanged. -->
+        <!-- <ixx unit="SLUG*FT2">708</ixx> -->
+        <ixx unit="SLUG*FT2">740</ixx>
+        <iyy unit="SLUG*FT2">182.7</iyy>
+        <izz unit="SLUG*FT2">366.9</izz>
+        <ixy unit="KG*M2">0</ixy>
+        <ixz unit="KG*M2">0</ixz>
+        <iyz unit="KG*M2">0</iyz>
+        <emptywt unit="LBS">1210</emptywt>
+        <!-- This was used in ver 1.0-1.3:
+        <location name="CG" unit="IN">
+            <x>60</x>
+            <y>0</y>
+            <z>-5.62</z>
+        </location>
+        -->
+        <!-- Updated CoG info, courtesy Simon,
+         http://www.flightgear.org/forums/viewtopic.php?f=4&t=19584&start=30#p182202
+          x=111.8cm  = 44.012 in
+          y=0
+          z=8cm (above)
+          -->
+        <location name="CG" unit="IN">
+            <x>44</x>
+            <y>0</y>
+            <z>3.54</z>
+        </location>
+
+        <pointmass name="Equipment">
+            <form shape="ball">
+               <radius unit="FT"> 3 </radius>
+            </form>
+            <weight unit="LBS"> 90 </weight>
+            <location unit="IN">
+                <x> 80 </x>
+                <y> 0 </y>
+                <z> 0 </z>
+            </location>
+        </pointmass>
+       <pointmass name="Castor Oil/Engine Lube">
+            <form shape="ball">
+               <radius unit="FT"> 1.5 </radius>
+            </form>
+            <!-- <weight unit="LBS"> 62.31 </weight>-->
+            <weight unit="LBS"> 0 </weight>
+            <location unit="IN">
+                <x> 30 </x>
+                <y> 0 </y>
+                <z> 10.62 </z>
+            </location>
+        </pointmass>
+    </mass_balance>

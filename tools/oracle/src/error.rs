@@ -87,6 +87,15 @@ pub enum OracleError {
         /// Captured stderr or context.
         detail: String,
     },
+    /// The Rust side of a probe failed.
+    #[error("probe {probe}: {source}")]
+    Probe {
+        /// Probe name.
+        probe: &'static str,
+        /// What failed.
+        #[source]
+        source: jsbsim::Error,
+    },
     /// The upstream checkout or a manifest is not in the expected state.
     #[error("{0}")]
     Provenance(String),

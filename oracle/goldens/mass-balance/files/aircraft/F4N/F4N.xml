@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/F4N/F4N.xml (LGPL-2.1-or-later). -->
+<mass_balance>
+   <ixx unit="SLUG*FT2">     35698 </ixx>
+   <iyy unit="SLUG*FT2">    132077 </iyy>
+   <izz unit="SLUG*FT2">    124386 </izz>
+   <ixy unit="SLUG*FT2">         0 </ixy>
+   <ixz unit="SLUG*FT2">         0 </ixz>
+   <iyz unit="SLUG*FT2">         0 </iyz>
+   <emptywt unit="LBS" >     28000 </emptywt>
+   <location name="CG" unit="IN">
+     <x> 0 </x>
+     <y> 0 </y>
+     <z> 0 </z>
+   </location>
+ </mass_balance>

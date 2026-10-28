@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/DHC6/DHC6.xml (LGPL-2.1-or-later). -->
+<mass_balance negated_crossproduct_inertia="true">
+        <ixx unit="SLUG*FT2"> 19317 </ixx>
+        <iyy unit="SLUG*FT2"> 24679 </iyy>
+        <izz unit="SLUG*FT2"> 35344 </izz>
+        <ixz unit="SLUG*FT2"> -1099 </ixz>
+        <emptywt unit="LBS"> 8100 </emptywt>
+        <location name="CG" unit="IN">
+            <x> 211.8 </x>
+            <y> 0 </y>
+            <z> -14.9 </z>
+        </location>
+        <pointmass name="name">
+            <weight unit="LBS"> 230 </weight>
+            <location unit="IN">
+                <x> 93.6 </x>
+                <y> -18.2 </y>
+                <z> 8.4 </z>
+            </location>
+        </pointmass>
+    </mass_balance>

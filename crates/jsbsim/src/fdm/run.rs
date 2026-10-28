@@ -10,8 +10,9 @@ use super::exec_bind::ExecRequest;
 use super::order::{Model, ORDER};
 use super::{Fdm, Models};
 use crate::Error;
-use crate::math::{ColumnVector3, Location, Quaternion};
+use crate::math::{ColumnVector3, Location, Matrix33, Quaternion};
 use crate::models::aircraft;
+use crate::models::atmosphere::Overrides;
 
 /// What the initial conditions give the models (`FGInitialCondition`'s
 /// getters used by `SetInitialState`).
@@ -70,9 +71,23 @@ impl Models {
                 a.tw2b = x.tw2b;
                 a.rp_body = self.mass_balance.structural_to_body(self.aircraft.xyz_rp);
             }
+            Model::MassBalance => self.load_mass_balance_inputs(),
             Model::Accelerations => self.load_accelerations_inputs(),
             _ => {}
         }
+    }
+
+    /// The executive supplies no tank, lifting gas or weight-on-wheels
+    /// inputs, so they contribute nothing.
+    fn load_mass_balance_inputs(&mut self) {
+        let i = &mut self.mass_balance.input;
+        i.gas_inertia = Matrix33::zero();
+        i.gas_mass = 0.0;
+        i.gas_moment = ColumnVector3::zero();
+        i.tanks_weight = 0.0;
+        i.tanks_moment = ColumnVector3::zero();
+        i.tank_inertia = Matrix33::zero();
+        i.wow = false;
     }
 
     fn load_accelerations_inputs(&mut self) {
@@ -124,9 +139,8 @@ impl Models {
             Model::Inertial => self.inertial.base.init(),
             Model::Aircraft => self.aircraft.init_model(),
             Model::Accelerations => self.accelerations.init_model(),
-            Model::Atmosphere => self.atmosphere.base.init(),
             Model::Winds => self.winds.base.init(),
-            Model::MassBalance => self.mass_balance.base.init(),
+            Model::MassBalance => self.mass_balance.init_model(),
             Model::Auxiliary => self.auxiliary.base.init(),
             Model::Systems => self.fcs.init_model(),
             Model::Aerodynamics => self.aerodynamics.init_model(),
@@ -155,10 +169,48 @@ impl Fdm {
                 continue;
             }
             self.models.load_inputs(model);
-            self.models.init_model(model);
+            if model == Model::Atmosphere {
+                self.init_atmosphere()?;
+            } else {
+                self.models.init_model(model);
+            }
             self.reset_local_properties(model)?;
         }
         Ok(())
+    }
+
+    /// `Atmosphere->InitModel()`.
+    pub fn init_atmosphere(&mut self) -> Result<(), Error> {
+        let overrides = self.atmosphere_overrides()?;
+        self.models.atmosphere.init_model(&overrides);
+        Ok(())
+    }
+
+    /// `Atmosphere->Run(holding)` on the inputs already loaded: the
+    /// override properties are read only when the model calculates.
+    pub fn run_atmosphere(&mut self, holding: bool) -> Result<(), Error> {
+        if self.models.atmosphere.base.skip() || holding {
+            return Ok(());
+        }
+        let overrides = self.atmosphere_overrides()?;
+        let altitude = self.models.atmosphere.input.altitude_asl;
+        self.models.atmosphere.calculate(altitude, &overrides);
+        Ok(())
+    }
+
+    /// The `atmosphere/override/*` properties that exist.
+    fn atmosphere_overrides(&mut self) -> Result<Overrides, Error> {
+        let mut read = |name: &str| -> Result<Option<f64>, Error> {
+            match self.tree.get(&format!("atmosphere/override/{name}"))? {
+                Some(node) => Ok(Some(self.read_node(node)?)),
+                None => Ok(None),
+            }
+        };
+        Ok(Overrides {
+            temperature: read("temperature")?,
+            pressure: read("pressure")?,
+            density: read("density")?,
+        })
     }
 
     /// `LoadInputs` of every model.
@@ -194,11 +246,22 @@ impl Fdm {
 
     fn run_model(&mut self, model: Model) -> Result<(), Error> {
         let holding = self.models.exec.holding;
+        if model == Model::Atmosphere {
+            return self.run_atmosphere(holding);
+        }
         let suspended = self.models.exec.integration_suspended();
         let m = &mut self.models;
         match model {
             Model::Propagate => m.propagate.run(holding, suspended, &m.inertial),
             Model::Inertial => m.inertial.run(holding),
+            Model::MassBalance => {
+                if !m.mass_balance.base.skip() && !holding {
+                    self.run_model_functions(model, true)?;
+                    let m = &mut self.models;
+                    m.mass_balance.run_frame(m.exec.hold_down, &mut m.propagate);
+                    self.run_model_functions(model, false)?;
+                }
+            }
             Model::Aircraft => {
                 if !m.aircraft.base.skip() && !holding {
                     self.run_model_functions(model, true)?;

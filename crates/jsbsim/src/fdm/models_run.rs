@@ -55,10 +55,6 @@ impl Fdm {
         Ok(())
     }
 
-    pub(super) fn load_mass_balance(&mut self, el: &Element) -> Result<(), Error> {
-        self.models.mass_balance.load(el)
-    }
-
     pub(super) fn load_ground_reactions(&mut self, el: &Element) -> Result<(), Error> {
         self.models.ground_reactions.load(el)?;
         self.post_load(el, "", Model::GroundReactions)

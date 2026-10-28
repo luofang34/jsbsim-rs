@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<!-- Nothing at all: zero weight, so the CG division and the inverse
+     degenerate. -->
+<mass_balance/>

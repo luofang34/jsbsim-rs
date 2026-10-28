@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/fokker100/xf100.xml (LGPL-2.1-or-later). -->
+<mass_balance>
+   <ixx unit="SLUG*FT2">    218368 </ixx>
+   <iyy unit="SLUG*FT2">    675849 </iyy>
+   <izz unit="SLUG*FT2">    860261 </izz>
+   <emptywt unit="LBS" >     51307 </emptywt>
+   <location name="CG" unit="IN">
+     <x> 719.81 </x> <!-- 693.81 -->
+     <y>   0.00 </y>
+     <z>  38.12 </z>
+   </location>
+   <pointmass name="pilot">
+     <weight unit="LBS"> 230 </weight>
+     <location name="POINTMASS" unit="IN">
+       <x> 122.04 </x>
+       <y> -30.0 </y>
+       <z>  66.0 </z>
+     </location>
+   </pointmass>
+   <pointmass name="copilot">
+     <weight unit="LBS"> 230 </weight>
+     <location name="POINTMASS" unit="IN">
+       <x> 122.04 </x>
+       <y>  30.0 </y>
+       <z>  66.0 </z>
+     </location>
+   </pointmass>
+   <pointmass name="steward">
+     <weight unit="LBS"> 400 </weight>
+     <location name="POINTMASS" unit="IN">
+       <x>  218 </x>
+       <y>  32.0 </y>
+       <z>  66.0 </z>
+     </location>
+   </pointmass>
+ </mass_balance>

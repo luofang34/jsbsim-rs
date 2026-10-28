@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/c172x/c172x.xml (LGPL-2.1-or-later). -->
+<mass_balance>
+        <ixx unit="SLUG*FT2"> 948.0 </ixx>
+        <iyy unit="SLUG*FT2"> 1346.0 </iyy>
+        <izz unit="SLUG*FT2"> 1967.0 </izz>
+        <ixz unit="SLUG*FT2"> 0.0 </ixz>
+        <emptywt unit="LBS"> 1454.0 </emptywt>
+        <location name="CG" unit="IN">
+            <x> 41.0 </x>
+            <y> 0.0 </y>
+            <z> 36.5 </z>
+        </location>
+        <pointmass name="PILOT">
+            <weight unit="LBS">190.0</weight>
+            <location unit="IN">
+                <x> 36.0 </x>
+                <y> -14.0 </y>
+                <z> 24.0 </z>
+            </location>
+        </pointmass>
+        <pointmass name="CO-PILOT">
+            <weight unit="LBS">140.0</weight>
+            <location unit="IN">
+                <x> 36.0 </x>
+                <y> 14.0 </y>
+                <z> 24.0 </z>
+            </location>
+        </pointmass>
+        <pointmass name="PASSENGER 1">
+            <weight unit="LBS">130.0</weight>
+            <location unit="IN">
+                <x> 60.0 </x>
+                <y> -14.0 </y>
+                <z> 24.0 </z>
+            </location>
+        </pointmass>
+        <pointmass name="PASSENGER 2">
+            <weight unit="LBS">106.0</weight>
+            <location unit="IN">
+                <x> 60.0 </x>
+                <y> 14.0 </y>
+                <z> 24.0 </z>
+            </location>
+        </pointmass>
+        <pointmass name="LUGGAGE">
+            <weight unit="LBS">120.0</weight>
+            <location unit="IN">
+                <x> 95.0 </x>
+                <y>  0.0 </y>
+                <z> 24.0 </z>
+            </location>
+        </pointmass>
+        <pointmass name="PesticideBomb">
+            <weight unit="LBS">80.0</weight>
+            <location unit="IN">
+                <x>  41.0 </x>
+                <y> 144.0 </y>
+                <z> 36.0 </z>
+            </location>
+        </pointmass>
+    </mass_balance>

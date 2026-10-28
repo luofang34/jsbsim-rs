@@ -54,19 +54,19 @@ pub fn kelvin_to_fahrenheit(kelvin: f64) -> f64 {
 
 /// `CelsiusToRankine`.
 #[must_use]
-pub fn celsius_to_rankine(celsius: f64) -> f64 {
+pub const fn celsius_to_rankine(celsius: f64) -> f64 {
     celsius * 1.8 + 491.67
 }
 
 /// `RankineToCelsius`.
 #[must_use]
-pub fn rankine_to_celsius(rankine: f64) -> f64 {
+pub const fn rankine_to_celsius(rankine: f64) -> f64 {
     (rankine - 491.67) / 1.8
 }
 
 /// `KelvinToRankine`.
 #[must_use]
-pub fn kelvin_to_rankine(kelvin: f64) -> f64 {
+pub const fn kelvin_to_rankine(kelvin: f64) -> f64 {
     kelvin * 1.8
 }
 

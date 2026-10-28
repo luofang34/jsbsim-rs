@@ -275,6 +275,14 @@ impl Propagate {
         self.compute_orbital_parameters();
     }
 
+    /// `NudgeBodyLocation`: moves the vehicle by `delta` (body frame, ft).
+    pub fn nudge_body_location(&mut self, delta: ColumnVector3) {
+        self.state.inertial_position -= self.frames.tb2i * delta;
+        self.state
+            .location
+            .sub_assign(&Location::from_ecef(self.frames.tb2ec * delta));
+    }
+
     /// `SetHoldDown`.
     pub fn set_hold_down(&mut self, hd: bool) {
         if hd {

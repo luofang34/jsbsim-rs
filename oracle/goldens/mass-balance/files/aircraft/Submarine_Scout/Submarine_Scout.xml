@@ -1,0 +1,214 @@
+<?xml version="1.0"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/Submarine_Scout/Submarine_Scout.xml (LGPL-2.1-or-later). -->
+<mass_balance>
+
+  <documentation>
+   According to [VentryKo:1982:AS] the SS Zero class had a useful lift
+   of 1344lbs (~610kg). Considering that the lift of 1 m^3 hydrogen
+   approximately is 1 kg that leaves 1370kg of lift for the structure
+   itself.
+  </documentation>
+
+  <documentation>
+   The empty weight is estimated to consist of:
+    - The weight of the envelope (70000 ft^3),
+      which according to [ADA:1917:Handbook] consists of
+      - Fabric
+        - Envelope        1143 lb
+        - Ballonets        263 lb
+      - Envelope fittings   99 lb
+      - Rigging            112 lb
+   Not included in the empty weight here:
+      - Planes (3)         294 lb
+   Total with 3 planes    1911 lb
+   Total with 4 planes    2009 lb
+
+   The car, engine and planes will be added as point masses.
+  </documentation>
+
+  <documentation>
+   % Very rough estimation model of the empty weight CG and inertia tensor.
+   % Assume the empty weight of is to 100% a cylindrical shell.
+
+   m = 733.5   % KG
+   r = 4.5     % meter
+   l = 43.7    % meter
+
+   % Very rough estimate of center of gravity (based on the inertial estimate):
+   CGx = 0
+   CGy = 0
+   CGz = 0
+
+   % Steiners theorem:
+   % Ixx = \bar{Ixx} + m sqrt(\bar{y}^2 + \bar{z}^2)
+   % Ixy = \bar{Ixy} + m \bar{x} \bar{y}
+
+   % Very rough estimation model of Ixx, Iyy and Izz relative the CG.
+   Ixx = m * r^2
+
+   Iyy = 1/2*m * r^2 + 1/12*m*l^2
+
+   Izz = 1/2*m * r^2 + 1/12*m*l^2
+
+   Ixy = 0
+   Ixz = 0
+   Iyz = 0
+
+  </documentation>
+
+  <ixx unit="KG*M2">  14853.0 </ixx>
+  <iyy unit="KG*M2"> 124160.0 </iyy>
+  <izz unit="KG*M2"> 124160.0 </izz>
+  <ixy unit="KG*M2">      0.0 </ixy>
+  <ixz unit="KG*M2">      0.0 </ixz>
+  <iyz unit="KG*M2">      0.0 </iyz>
+  <emptywt unit="KG"> 733.50 </emptywt>
+  <location name="CG" unit="M">
+   <x> 21.850 </x>
+   <y>  0.000 </y>
+   <z>  0.000 </z>
+  </location>
+
+  <!--
+  === Ballast ================================================
+  -->
+  <!--
+   Ballast for a S.S. B.E.2C according to [Whale:1919:BA]:
+    - Water ballast tank
+      - Located immediatly behind pilot
+      - Capacity 14 gallons.
+  -->
+
+  <!-- Experimental ballast setup. -->
+  <!-- Center ballast -->
+  <pointmass name="Ballast_Center">
+   <!-- According to the AHT this should be max 100 kg -->
+   <weight unit="KG"> 100 </weight>
+   <location unit="M">
+    <x> 17.22 </x>
+    <y>  0.0  </y>
+    <z> -7.20 </z>
+   </location>
+  </pointmass>
+
+  <!--
+       Ballast tanks for fine tuning the CG.
+       These are controlled by the FCS.
+       The weight in these are unaccounted for!
+       NOTE: The combined weight is set in the FCS.
+  -->
+  <!-- Forward ballast -->
+  <pointmass name="Ballast_Forward">
+   <weight unit="KG"> 0.0 </weight>
+   <location unit="M">
+    <x> 0.0 </x>
+    <y> 0.0 </y>
+    <z> -1.0 </z>
+   </location>
+  </pointmass>
+  <!-- Aft ballast -->
+  <pointmass name="Ballast_Aft">
+   <weight unit="KG"> 0.0 </weight>
+   <location unit="M">
+    <x> 43.7 </x>
+    <y> 0.0 </y>
+    <z> -1.0 </z>
+   </location>
+  </pointmass>
+
+  <!--
+  === Armament ===============================================
+  -->
+  <!--
+   According to [VentryKo:1982:AS] page 44 these ships normally carried
+   two 65lb bombs set as depth charges.
+
+   According to [Mowthrope:1998:Battlebags] the SSZ type could carry either
+   two 110lb or one 250lb bomb on each side of the car.
+
+   The inspiration for my bomb model appears to be a 110lb bomb
+   from a photo of the car of SSZ.27.
+  -->
+  <pointmass name="Bomb1">
+   <weight unit="LBS"> 110.0 </weight>
+   <location unit="M">
+    <x> 17.00 </x>
+    <y> -0.57 </y>
+    <z> -7.35 </z>
+   </location>
+  </pointmass>
+  <pointmass name="Bomb2">
+   <weight unit="LBS"> 110.0 </weight>
+   <location unit="M">
+    <x> 17.00 </x>
+    <y>  0.57 </y>
+    <z> -7.35 </z>
+   </location>
+  </pointmass>
+
+  <!--
+  === Crew ===================================================
+  -->
+  <pointmass name="Crew 1 Observer">
+   <weight unit="KG"> 85.0 </weight>
+   <location unit="M">
+    <x> 14.9  </x>
+    <y>  0.0  </y>
+    <z> -6.85 </z>
+   </location>
+  </pointmass>
+  <pointmass name="Crew 2 Pilot">
+   <weight unit="KG"> 85.0 </weight>
+   <location unit="M">
+    <x> 16.17 </x>
+    <y>  0.0  </y>
+    <z> -6.85 </z>
+   </location>
+  </pointmass>
+  <pointmass name="Crew 3 Mechanic">
+   <weight unit="KG"> 85.0 </weight>
+   <location unit="M">
+    <x> 17.22 </x>
+    <y>  0.0  </y>
+    <z> -6.85 </z>
+   </location>
+  </pointmass>
+
+  <!--
+  === Other point masses =====================================
+  -->
+  <!--
+   According to [Whale:1919:BA] the engine of a S.S. B.E.2C
+   (also 75h.p. but air cooled) weighed 438lb.
+
+   According to [ADA:1917:Handbook] the water cooled 100hp Green engine
+   of the S.S. Armstrong-Whitworth was 601 lb including carburettor,
+   exhaust pipe, radiator and cooling water. 714 lb complete including
+   fuel tanks (and propeller a 46 lb?).
+  -->
+
+  <pointmass name="Engine">
+   <weight unit="LBS"> 601.0 </weight>
+   <location unit="M">
+    <x> 18.60 </x>
+    <y>  0.00 </y>
+    <z> -6.10 </z>
+   </location>
+  </pointmass>
+
+  <!--
+   According to [ADA:1917:Handbook] the empty weight of a complete car of a
+   S.S. Maurice Farman was 1150 lb including engine (516 + 35 lb),
+   wireless and bomb racks.
+  -->
+
+  <pointmass name="Car">
+   <weight unit="LBS"> 599.0 </weight>
+   <location unit="M">
+    <x> 16.20 </x>
+    <y>  0.00 </y>
+    <z> -7.85 </z>
+   </location>
+  </pointmass>
+
+ </mass_balance>

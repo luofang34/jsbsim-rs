@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!-- No empty weight or base inertia: everything comes from point masses. -->
+<mass_balance>
+  <pointmass name="a">
+    <form shape="ball"><radius unit="FT">1</radius></form>
+    <weight>100</weight>
+    <location unit="IN"><x>0</x><y>0</y><z>0</z></location>
+  </pointmass>
+  <pointmass name="b">
+    <form shape="sphere"><radius unit="FT">2</radius></form>
+    <weight>50</weight>
+    <location unit="IN"><x>120</x><y>0</y><z>0</z></location>
+  </pointmass>
+</mass_balance>

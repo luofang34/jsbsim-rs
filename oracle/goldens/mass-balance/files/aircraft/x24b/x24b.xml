@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/x24b/x24b.xml (LGPL-2.1-or-later). -->
+<mass_balance negated_crossproduct_inertia="true">
+        <ixx unit="SLUG*FT2"> 2650 </ixx>
+        <iyy unit="SLUG*FT2"> 23710 </iyy>
+        <izz unit="SLUG*FT2"> 24120 </izz>
+        <ixz unit="SLUG*FT2"> -620 </ixz>
+        <emptywt unit="LBS"> 8500 </emptywt>
+        <location name="CG" unit="IN">
+            <x> 288 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+    </mass_balance>

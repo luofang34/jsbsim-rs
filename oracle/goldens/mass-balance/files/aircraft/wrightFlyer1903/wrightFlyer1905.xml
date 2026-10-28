@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/wrightFlyer1903/wrightFlyer1905.xml (LGPL-2.1-or-later). -->
+<mass_balance>
+   <ixx unit="SLUG*FT2">      1378 </ixx>		<!-- UIUC -->
+   <iyy unit="SLUG*FT2">       271 </iyy>		<!-- UIUC -->
+   <izz unit="SLUG*FT2">      1343 </izz>		<!-- UIUC -->
+   <emptywt unit="LBS" >       565 </emptywt>		<!-- Flyer -->
+   <location name="CG" unit="IN">			<!-- Flyer III -->
+     <x>   0.0 </x>
+     <y>   0.0 </y>
+     <z> -23.0 </z>
+   </location>
+   <pointmass name="Pilot">
+    <description> 145 lbs pilot </description>
+    <weight unit="LBS">    145.0 </weight>		<!-- Model -->
+    <location name="POINTMASS" unit="IN">
+      <x>  -2.3 </x>
+      <y>  18.1 </y>
+      <z> -30.9 </z>
+    </location>
+  </pointmass> 
+  <pointmass name="Engine">
+    <description> 152 lbs engine + 18 lbs magneto </description>
+    <weight unit="LBS">    170.0 </weight>		<!-- Model -->
+    <location name="POINTMASS" unit="IN">
+      <x>  -4.9 </x>
+      <y> -19.5 </y>
+      <z> -27.6 </z>
+    </location>
+  </pointmass>
+  <pointmass name="Canard_mass">
+  <description> 70 lbs to move C.G. forward </description>
+    <weight unit="LBS">    70.0 </weight>
+    <location name="POINTMASS" unit="IN">
+      <x> -120.2 </x>
+      <y>    0.0 </y>
+      <z>  -55.9 </z>
+    </location>
+  </pointmass>
+
+ </mass_balance>

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/C130/C130.xml (LGPL-2.1-or-later). -->
+<mass_balance>
+        <ixx unit="SLUG*FT2"> 3.66391e+06 </ixx>
+        <iyy unit="SLUG*FT2"> 2.38552e+06 </iyy>
+        <izz unit="SLUG*FT2"> 5.9669e+06 </izz>
+        <ixy unit="SLUG*FT2"> -0 </ixy>
+        <ixz unit="SLUG*FT2"> -0 </ixz>
+        <iyz unit="SLUG*FT2"> -0 </iyz>
+        <emptywt unit="LBS"> 105000 </emptywt>
+        <location name="CG" unit="IN">
+            <x> 586.5 </x>
+            <y> 0 </y>
+            <z> -29.3 </z>
+        </location>
+    </mass_balance>

@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<!-- Every point mass shape, units on radius/length, an unknown shape, a
+     form without radius, and explicit point mass inertia. -->
+<mass_balance>
+  <ixx unit="SLUG*FT2">1200</ixx>
+  <iyy unit="SLUG*FT2">2300</iyy>
+  <izz unit="SLUG*FT2">3100</izz>
+  <ixy unit="SLUG*FT2">12.5</ixy>
+  <ixz unit="SLUG*FT2">-45.25</ixz>
+  <iyz unit="SLUG*FT2">3.75</iyz>
+  <emptywt unit="LBS">1500</emptywt>
+  <location name="CG" unit="IN">
+    <x>41.3</x>
+    <y>0.1</y>
+    <z>36.7</z>
+  </location>
+  <pointmass name="tube">
+    <form shape="tube">
+      <radius unit="IN">6</radius>
+      <length unit="FT">3.5</length>
+    </form>
+    <weight unit="LBS">55.5</weight>
+    <location unit="IN"><x>60</x><y>-12</y><z>20</z></location>
+  </pointmass>
+  <pointmass name="cylinder">
+    <form shape="cylinder">
+      <radius unit="M">0.3</radius>
+      <length unit="M">1.2</length>
+    </form>
+    <weight unit="KG">40</weight>
+    <location unit="M"><x>1.1</x><y>0.4</y><z>0.5</z></location>
+  </pointmass>
+  <pointmass name="sphere">
+    <form shape="sphere">
+      <radius unit="FT">0.75</radius>
+      <length unit="FT">9</length>
+    </form>
+    <weight>17.25</weight>
+    <location unit="FT"><x>5</x><y>1</y><z>-2</z></location>
+  </pointmass>
+  <pointmass name="ball">
+    <form shape="ball">
+      <radius>0.5</radius>
+    </form>
+    <weight unit="LBS">8</weight>
+    <location unit="IN"><x>-10</x><y>3</y><z>7</z></location>
+  </pointmass>
+  <pointmass name="blob">
+    <form shape="blob">
+      <radius>2</radius>
+    </form>
+    <ixx>99</ixx>
+    <weight unit="LBS">12</weight>
+    <location unit="IN"><x>80</x><y>0</y><z>0</z></location>
+  </pointmass>
+  <pointmass name="noradius">
+    <form shape="tube">
+      <length unit="IN">30</length>
+    </form>
+    <weight unit="LBS">3</weight>
+    <location unit="IN"><x>90</x><y>5</y><z>1</z></location>
+  </pointmass>
+  <pointmass name="explicit" negated_crossproduct_inertia="false">
+    <ixx unit="KG*M2">2.5</ixx>
+    <iyy unit="KG*M2">3.5</iyy>
+    <izz unit="KG*M2">4.5</izz>
+    <ixy unit="KG*M2">0.25</ixy>
+    <ixz unit="KG*M2">-0.5</ixz>
+    <iyz unit="KG*M2">0.125</iyz>
+    <weight unit="LBS">20</weight>
+    <location name="seat" unit="IN"><roll>30</roll><pitch>-8</pitch><yaw>15</yaw></location>
+  </pointmass>
+  <pointmass name="explicit-negated">
+    <ixx>1</ixx>
+    <ixy>0.5</ixy>
+    <ixz>0.25</ixz>
+    <iyz>-0.75</iyz>
+    <weight unit="LBS">4</weight>
+    <location unit="IN"><x>10</x><y>0</y><z>-5</z></location>
+  </pointmass>
+</mass_balance>

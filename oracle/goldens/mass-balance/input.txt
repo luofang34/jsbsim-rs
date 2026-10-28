@@ -1,0 +1,106 @@
+# The <mass_balance> of every aircraft configuration of the JSBSim tree,
+# copied verbatim from the upstream commit into files/aircraft (the whole
+# configurations would be megabytes); F450's is its included Mass.xml.
+load local files/aircraft/737/737.xml
+load local files/aircraft/787-8/787-8.xml
+load local files/aircraft/A320/A320.xml
+load local files/aircraft/A4/A4.xml
+load local files/aircraft/B17/B17.xml
+load local files/aircraft/B747/B747.xml
+load local files/aircraft/Boeing314/Boeing314.xml
+load local files/aircraft/C130/C130.xml
+load local files/aircraft/Camel/Camel.xml
+load local files/aircraft/Concorde/Concorde.xml
+load local files/aircraft/DHC6/DHC6.xml
+load local files/aircraft/F450/Mass.xml
+load local files/aircraft/F4N/F4N-jsbsim.xml
+load local files/aircraft/F4N/F4N.xml
+load local files/aircraft/F80C/F80C.xml
+load local files/aircraft/J246/J246.xml
+load local files/aircraft/J3Cub/J3Cub.xml
+load local files/aircraft/L17/L17.xml
+load local files/aircraft/L410/L410.xml
+load local files/aircraft/MD11/MD11.xml
+load local files/aircraft/OV10/OV10.xml
+load local files/aircraft/Pterosaur/Pterosaur.xml
+load local files/aircraft/SGS/SGS.xml
+load local files/aircraft/Short_S23/Short_S23.xml
+load local files/aircraft/Shuttle/Shuttle.xml
+load local files/aircraft/Submarine_Scout/Submarine_Scout.xml
+load local files/aircraft/T37/T37.xml
+load local files/aircraft/T38/T38.xml
+load local files/aircraft/X15/X15.xml
+load local files/aircraft/XB-70/XB-70.xml
+load local files/aircraft/ZLT-NT/ZLT-NT.xml
+load local files/aircraft/ah1s/ah1s.xml
+load local files/aircraft/ball/ball.xml
+load local files/aircraft/ballx/ballx.xml
+load local files/aircraft/c172p/c172p.xml
+load local files/aircraft/c172r/c172r.xml
+load local files/aircraft/c172x/c172x.xml
+load local files/aircraft/c182/c182.xml
+load local files/aircraft/c310/c310.xml
+load local files/aircraft/dr1/dr1.xml
+load local files/aircraft/f104/f104.xml
+load local files/aircraft/f15/f15.xml
+load local files/aircraft/f16/f16.xml
+load local files/aircraft/f22/f22.xml
+load local files/aircraft/f22/yf22.xml
+load local files/aircraft/fokker100/fokker100.xml
+load local files/aircraft/fokker100/fokker70.xml
+load local files/aircraft/fokker100/xf100.xml
+load local files/aircraft/fokker50/fokker50.xml
+load local files/aircraft/global5000/global5000.xml
+load local files/aircraft/minisgs/minisgs.xml
+load local files/aircraft/mk82/mk82.xml
+load local files/aircraft/p51d/p51d.xml
+load local files/aircraft/pa28/pa28.xml
+load local files/aircraft/paraglider/paraglider.xml
+load local files/aircraft/pc7/pc7.xml
+load local files/aircraft/pogo-jsbsim/pogo-jsbsim.xml
+load local files/aircraft/sgs126/sgs126.xml
+load local files/aircraft/sgs233/sgs233.xml
+load local files/aircraft/t6texan2/t6texan2.xml
+load local files/aircraft/weather-balloon/weather-balloon.xml
+load local files/aircraft/wrightFlyer1903/wrightFlyer1903.xml
+load local files/aircraft/wrightFlyer1903/wrightFlyer1905.xml
+load local files/aircraft/x24b/x24b.xml
+# A document without <mass_balance>, and a file that does not exist.
+load local ../../inputs/tests/function.xml
+load local files/none.xml
+# Point mass shapes and inertia options. Changing a shaped point mass's
+# weight recomputes its shape inertia; an explicit inertia is kept. Moving
+# one shifts the CG, which the next run reports as a delta.
+load local files/shapes.xml
+set inertia/pointmass-weight-lbs[0] 80.25
+run
+set inertia/pointmass-weight-lbs[4] 30
+set inertia/pointmass-weight-lbs[6] 0
+run
+set inertia/pointmass-location-X-inches[2] 75.5
+set inertia/pointmass-location-Y-inches[3] -4
+set inertia/pointmass-location-Z-inches[7] 12
+run
+run
+init
+run
+set inertia/pointmass-weight-lbs 1
+set inertia/weight-lbs 5
+set inertia/cg-x-in 5
+run
+load local files/metric.xml
+set inertia/pointmass-weight-lbs[0] 0
+run
+load local files/no-cg.xml
+load local files/point-masses-only.xml
+set inertia/pointmass-weight-lbs[0] 0
+set inertia/pointmass-weight-lbs[1] 0
+run
+load local files/empty.xml
+# Invalid point masses, units and numbers.
+load local files/no-location.xml
+load local files/no-weight.xml
+load local files/unknown-unit.xml
+load local files/wrong-unit.xml
+load local files/bad-radius-unit.xml
+load local files/bad-number.xml

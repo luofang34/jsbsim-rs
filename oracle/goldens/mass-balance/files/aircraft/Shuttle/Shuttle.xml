@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/Shuttle/Shuttle.xml (LGPL-2.1-or-later). -->
+<mass_balance negated_crossproduct_inertia="true">
+        <ixx unit="SLUG*FT2"> 953159 </ixx>
+        <iyy unit="SLUG*FT2"> 7.46508e+06 </iyy>
+        <izz unit="SLUG*FT2"> 7.74758e+06 </izz>
+        <ixz unit="SLUG*FT2"> 140307 </ixz>
+        <emptywt unit="LBS"> 231300 </emptywt>
+        <location name="CG" unit="IN">
+            <x> 1080 </x>
+            <y> 0 </y>
+            <z> 373 </z>
+        </location>
+    </mass_balance>

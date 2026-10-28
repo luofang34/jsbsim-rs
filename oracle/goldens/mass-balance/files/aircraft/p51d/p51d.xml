@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/p51d/p51d.xml (LGPL-2.1-or-later). -->
+<mass_balance>
+        <ixx unit="SLUG*FT2"> 8031 </ixx>
+        <iyy unit="SLUG*FT2"> 9274 </iyy>
+        <izz unit="SLUG*FT2"> 14547 </izz>
+        <emptywt unit="LBS"> 7125 </emptywt>
+        <location name="CG" unit="IN">
+            <x> 96.5 </x>
+            <y> 0 </y>
+            <z> -9 </z>
+        </location>
+        <pointmass name="pilot">
+            <weight unit="LBS"> 180 </weight>
+            <location unit="IN">
+                <x> 98 </x>
+                <y> 0 </y>
+                <z> 15 </z>
+            </location>
+        </pointmass>
+
+         <!-- each 50 cal bullet is a little less than 180 grams but with links are
+      probably close to 180 gram each.  The inner two guns can have up to 400
+      rounds each and the outer 4 guns can be loaded with up to 270 rounds each. -->
+
+      <pointmass name="Ammo right inner gun">
+            <weight unit="LBS"> 0 </weight>
+            <location unit="IN">
+                <x> 97 </x>
+                <y> -79.2</y>
+                <z> -19.2 </z>
+            </location>
+        </pointmass>
+        <pointmass name="Ammo left inner gun">
+            <weight unit="LBS"> 0 </weight>
+            <location unit="IN">
+                <x> 97 </x>
+                <y> 79.2</y>
+                <z> -19.2 </z>
+            </location>
+        </pointmass>
+
+        <pointmass name="Ammo right middle gun">
+            <weight unit="LBS"> 0 </weight>
+            <location unit="IN">
+                <x> 97 </x>
+                <y> -87.6</y>
+                <z> -19.2 </z>
+            </location>
+        </pointmass>
+        <pointmass name="Ammo left middle gun">
+            <weight unit="LBS"> 0 </weight>
+            <location unit="IN">
+                <x> 97 </x>
+                <y> 87.6</y>
+                <z> -19.2 </z>
+            </location>
+        </pointmass>
+
+        <pointmass name="Ammo right outer gun">
+            <weight unit="LBS"> 0 </weight>
+            <location unit="IN">
+                <x> 97 </x>
+                <y> -96</y>
+                <z> -19.2 </z>
+            </location>
+        </pointmass>
+        <pointmass name="Ammo left outer gun">
+            <weight unit="LBS"> 0 </weight>
+            <location unit="IN">
+                <x> 97 </x>
+                <y> 96</y>
+                <z> -19.2 </z>
+            </location>
+        </pointmass>
+
+        <pointmass name="left rockets">
+            <weight unit="LBS"> 0 </weight>
+            <location unit="IN">
+                <x> 97 </x>
+                <y> 87.6</y>
+                <z> -30 </z>
+            </location>
+        </pointmass>
+        <pointmass name="right rockets">
+            <weight unit="LBS"> 0 </weight>
+            <location unit="IN">
+                <x> 97 </x>
+                <y> -87</y>
+                <z> -30 </z>
+            </location>
+        </pointmass>
+
+        <pointmass name="left bomb">
+            <weight unit="LBS"> 0 </weight>
+            <location unit="IN">
+                <x> 97 </x>
+                <y> 87.6</y>
+                <z> -43 </z>
+            </location>
+        </pointmass>
+        <pointmass name="right bomb">
+            <weight unit="LBS"> 0 </weight>
+            <location unit="IN">
+                <x> 97 </x>
+                <y> -87</y>
+                <z> -43 </z>
+            </location>
+        </pointmass>
+
+        <pointmass name="left drop tank">
+            <weight unit="LBS"> 0 </weight>
+            <location unit="IN">
+                <x> 97 </x>
+                <y> 87.6</y>
+                <z> -43 </z>
+            </location>
+        </pointmass>
+        <pointmass name="right drop tank">
+            <weight unit="LBS"> 0 </weight>
+            <location unit="IN">
+                <x> 97 </x>
+                <y> -87</y>
+                <z> -43 </z>
+            </location>
+        </pointmass>
+
+    </mass_balance>

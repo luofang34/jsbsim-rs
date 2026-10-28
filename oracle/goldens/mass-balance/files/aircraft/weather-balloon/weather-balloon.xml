@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/weather-balloon/weather-balloon.xml (LGPL-2.1-or-later). -->
+<mass_balance>
+   <description> Inertia varies between 0.35 and 4.5 slug*ft2 as radius increases from 3.1 ft to 11.1 ft </description>
+   <ixx unit="SLUG*FT2">     1.0 </ixx>
+   <iyy unit="SLUG*FT2">     1.0 </iyy>
+   <izz unit="SLUG*FT2">     1.0 </izz>
+   <emptywt unit="KG" >      0.8 </emptywt>
+   <location name="CG" unit="IN">
+     <x> 0.0 </x>
+     <y> 0.0 </y>
+     <z> 0.0 </z>
+   </location>
+   <pointmass name="Radiosonde">
+    <weight unit="KG">    1.15 </weight>
+    <location unit="IN">
+     <x>   0.0 </x>
+     <y>   0.0 </y>
+     <z> -25.1 </z>
+    </location>
+  </pointmass>
+ </mass_balance>

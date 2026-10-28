@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/minisgs/minisgs.xml (LGPL-2.1-or-later). -->
+<mass_balance negated_crossproduct_inertia="true">
+        <ixx unit="SLUG*FT2"> 0.4752 </ixx>
+        <iyy unit="SLUG*FT2"> 0.3147 </iyy>
+        <izz unit="SLUG*FT2"> 0.7785 </izz>
+        <ixz unit="SLUG*FT2"> -0.0255 </ixz>
+        <emptywt unit="LBS"> 11.07 </emptywt>
+        <location name="CG" unit="IN">
+            <x> 0 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+        <pointmass name="name">
+            <weight unit="LBS"> 0 </weight>
+            <location unit="IN">
+                <x> 0 </x>
+                <y> 0 </y>
+                <z> 0 </z>
+            </location>
+        </pointmass>
+    </mass_balance>

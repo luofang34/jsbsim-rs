@@ -141,6 +141,7 @@ pub struct Fdm {
     model_functions: Vec<ModelFunctions>,
     options: crate::LoadOptions,
     script: Option<crate::script::Script>,
+    aircraft_path: String,
 }
 
 impl Fdm {
@@ -164,6 +165,7 @@ impl Fdm {
             model_functions: vec![ModelFunctions::default(); order::ORDER.len()],
             options: crate::LoadOptions::default(),
             script: None,
+            aircraft_path: "aircraft".to_owned(),
         };
         fdm.options = options;
         fdm.functions = FunctionSet::with_options(options);
@@ -191,10 +193,12 @@ impl Fdm {
         propagate::bind(b)?;
         enable!("FGInput", input);
         enable!("FGAtmosphere", atmosphere);
+        crate::models::atmosphere::bind(b)?;
         enable!("FGWinds", winds);
         enable!("FGFCS", fcs);
         crate::models::fcs::bind(b)?;
         enable!("FGMassBalance", mass_balance);
+        crate::models::mass_balance::bind(b)?;
         enable!("FGAuxiliary", auxiliary);
         enable!("FGPropulsion", propulsion);
         enable!("FGAerodynamics", aerodynamics);
@@ -210,6 +214,22 @@ impl Fdm {
         accelerations::bind(b)?;
         enable!("FGOutput", output);
         exec_bind::bind_exec(b)
+    }
+
+    /// `FGMassBalance::Load(<mass_balance>)`, tying the point mass
+    /// properties as it adds them.
+    pub fn load_mass_balance(&mut self, el: &crate::xml::Element) -> Result<(), Error> {
+        let b = &mut Binder {
+            tree: &mut self.tree,
+            bindings: &mut self.bindings,
+        };
+        self.models.mass_balance.load(el, b)
+    }
+
+    /// `SetAircraftPath`: where `load_script` finds aircraft, relative to
+    /// the resolver's root.
+    pub fn set_aircraft_path(&mut self, path: &str) {
+        self.aircraft_path = path.to_owned();
     }
 
     /// The property tree.

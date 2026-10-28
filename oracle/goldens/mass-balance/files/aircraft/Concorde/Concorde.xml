@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/Concorde/Concorde.xml (LGPL-2.1-or-later). -->
+<mass_balance>
+        <documentation>
+             Center of gravity location, empty weight, in aircraft's own structural coord
+             system. X, Y, Z, in inches; X is positive out the tail, Y positive out the
+             right wing.
+        </documentation>
+
+        <ixx unit="SLUG*FT2"> 1432000.0000 </ixx>                                        <!-- aeromatic 3419278 -->
+        <iyy unit="SLUG*FT2"> 19034000.0000 </iyy>                                       <!-- aeromatic 22486091 -->
+        <izz unit="SLUG*FT2"> 10100000.0000 </izz>                                       <!-- aeromatic 21487661 -->
+        <ixy unit="SLUG*FT2"> 0.0000 </ixy>
+        <ixz unit="SLUG*FT2"> 0.0000 </ixz>
+        <iyz unit="SLUG*FT2"> 0.0000 </iyz>
+        <emptywt unit="LBS"> 173500.0000 </emptywt>                                      <!-- aeromatic 244800 -->
+        <location name="CG" unit="IN">                                                   <!-- aeromatic 1335.4, 0.0, -60.7 -->
+            <x> 1299.4000 </x>
+            <y> 0.0000 </y>
+            <z> -32.5000 </z>
+        </location>
+        <pointmass name="payload">
+            <weight unit="LBS"> 29500 </weight>
+            <location unit="IN">
+                <x> 1299.4 </x>
+                <y> 0 </y>
+                <z> -32.5 </z>
+            </location>
+        </pointmass>
+    </mass_balance>

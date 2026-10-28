@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<mass_balance>
+  <emptywt>100</emptywt>
+  <pointmass name="weightless">
+    <location unit="IN"><x>1</x><y>2</y><z>3</z></location>
+  </pointmass>
+</mass_balance>

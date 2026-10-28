@@ -134,7 +134,16 @@ fn every_tolerance_row_belongs_to_a_logged_column_or_probe_op() {
         }
         let dir = oracle_dir().join("goldens").join(&row.case);
         let input = std::fs::read_to_string(dir.join(manifest::INPUT_FILE)).unwrap();
-        let op = row.property.split('/').next().unwrap();
+        let (op, tag) = row.property.split_once('/').unwrap_or((&row.property, ""));
+        if op == "*" && !tag.is_empty() {
+            let reference = std::fs::read_to_string(dir.join(manifest::TRANSCRIPT_FILE)).unwrap();
+            assert!(
+                reference.split_whitespace().any(|t| t == tag),
+                "{}: no transcript tag {tag}",
+                row.case
+            );
+            continue;
+        }
         assert!(
             row.property == "*"
                 || input

@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/ball/ball.xml (LGPL-2.1-or-later). -->
+<mass_balance>
+        <ixx unit="SLUG*FT2"> 20 </ixx>
+        <iyy unit="SLUG*FT2"> 10 </iyy>
+        <izz unit="SLUG*FT2"> 10 </izz>
+        <ixy unit="SLUG*FT2"> -0 </ixy>
+        <ixz unit="SLUG*FT2"> -0 </ixz>
+        <iyz unit="SLUG*FT2"> -0 </iyz>
+        <emptywt unit="LBS"> 20000 </emptywt>
+        <location name="CG" unit="IN">
+            <x> 0 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+        <pointmass name="M0">
+            <weight unit="LBS"> 10 </weight>
+            <location unit="IN">
+                <x> 0 </x>
+                <y> 0 </y>
+                <z> 0 </z>
+            </location>
+        </pointmass>
+        <pointmass name="M1">
+            <weight unit="LBS"> 0 </weight>
+            <location unit="FT">
+                <x> 0 </x>
+                <y> -5 </y>
+                <z> 0 </z>
+            </location>
+        </pointmass>
+    </mass_balance>

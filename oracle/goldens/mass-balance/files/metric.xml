@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!-- SI units, positive cross products, several locations (only the last
+     CG counts). -->
+<mass_balance negated_crossproduct_inertia="false">
+  <ixx unit="KG*M2">950.5</ixx>
+  <iyy unit="KG*M2">1520.25</iyy>
+  <izz unit="KG*M2">2210.125</izz>
+  <ixy unit="KG*M2">4.5</ixy>
+  <ixz unit="KG*M2">-60.75</ixz>
+  <iyz unit="KG*M2">2.25</iyz>
+  <emptywt unit="KG">830</emptywt>
+  <location name="CG" unit="M"><x>9</x><y>9</y><z>9</z></location>
+  <location name="AERORP" unit="M"><x>1</x><y>0</y><z>0</z></location>
+  <location name="CG" unit="M"><x>2.15</x><y>0.01</y><z>-0.3</z></location>
+  <pointmass name="pilot">
+    <weight unit="KG">80</weight>
+    <location name="POINTMASS" unit="M"><x>1.6</x><y>-0.3</y><z>0.2</z></location>
+  </pointmass>
+</mass_balance>

@@ -273,3 +273,108 @@ property = "eval/o/log10"
 abs = 1e-15
 rel = 1e-15
 reason = "Evaluated with log10, where Rust's libm and the platform libm used by C++ may differ in the last ulp; observed max |diff| none yet."
+
+[[tolerance]]
+case = "atmosphere"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Temperatures, sound speeds, their ratios, biases, gradients, unit conversions and every value not listed below use only IEEE basic operations and sqrt in JSBSim's order, so they must be bit-identical."
+
+[[tolerance]]
+case = "atmosphere"
+property = "*/atmosphere/P-psf"
+abs = 0.0
+rel = 1e-15
+reason = "Pressure comes from pow/exp of the layer equations (libm last-ulp differences); observed max rel 4.4e-16."
+
+[[tolerance]]
+case = "atmosphere"
+property = "*/atmosphere/delta"
+abs = 0.0
+rel = 1e-15
+reason = "Pressure ratio inherits the pow/exp pressure; observed max rel 4.3e-16."
+
+[[tolerance]]
+case = "atmosphere"
+property = "*/atmosphere/rho-slugs_ft3"
+abs = 0.0
+rel = 1e-15
+reason = "Density divides the pow/exp pressure; observed max rel 4.2e-16."
+
+[[tolerance]]
+case = "atmosphere"
+property = "*/atmosphere/sigma"
+abs = 0.0
+rel = 1e-15
+reason = "Density ratio inherits the pow/exp pressure; observed max rel 5.0e-16."
+
+[[tolerance]]
+case = "atmosphere"
+property = "*/atmosphere/pressure-altitude"
+abs = 1e-10
+rel = 1e-14
+reason = "Inverts pressure with pow/log; Hb + (Tmb/Lmb)*(pow(x)-1) cancels near layer bases, so an absolute floor covers near-zero references; observed max |diff| 2.2e-11 ft, max rel 1.6e-15."
+
+[[tolerance]]
+case = "atmosphere"
+property = "*/atmosphere/density-altitude"
+abs = 1e-10
+rel = 1e-14
+reason = "Inverts density with pow/log; cancels near layer bases like the pressure altitude; observed max |diff| 2.9e-11 ft, max rel 5.8e-16."
+
+[[tolerance]]
+case = "atmosphere"
+property = "*/atmosphere/saturated-vapor-pressure-psf"
+abs = 0.0
+rel = 1e-15
+reason = "Sonntag formula uses exp; observed max rel 2.3e-16."
+
+[[tolerance]]
+case = "atmosphere"
+property = "*/atmosphere/RH"
+abs = 0.0
+rel = 1e-15
+reason = "Divides by the exp-based saturated vapor pressure; observed max rel 1.2e-16."
+
+[[tolerance]]
+case = "atmosphere"
+property = "at/P"
+abs = 0.0
+rel = 1e-15
+reason = "GetPressure(h) uses pow/exp; observed max rel 3.4e-16."
+
+[[tolerance]]
+case = "atmosphere"
+property = "at/rho"
+abs = 0.0
+rel = 1e-15
+reason = "GetDensity(h) divides GetPressure(h); observed max rel 3.1e-16."
+
+[[tolerance]]
+case = "atmosphere"
+property = "at/stdP"
+abs = 0.0
+rel = 1e-15
+reason = "GetStdPressure(h) uses pow/exp; observed max rel 3.4e-16."
+
+[[tolerance]]
+case = "atmosphere"
+property = "at/stdrho"
+abs = 0.0
+rel = 1e-15
+reason = "GetStdDensity(h) divides GetStdPressure(h); observed max rel 3.8e-16."
+
+[[tolerance]]
+case = "atmosphere"
+property = "units/mu"
+abs = 0.0
+rel = 1e-15
+reason = "Sutherland viscosity uses pow(T, 1.5); observed max rel 2.0e-16."
+
+[[tolerance]]
+case = "atmosphere"
+property = "units/nu"
+abs = 0.0
+rel = 1e-15
+reason = "Kinematic viscosity divides pow-based viscosity by pow/exp density; observed max rel 3.6e-16."

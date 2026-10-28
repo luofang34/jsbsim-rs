@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<mass_balance>
+  <emptywt>100</emptywt>
+  <pointmass name="lost"><weight>5</weight></pointmass>
+</mass_balance>

@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<!-- The <mass_balance> element of JSBSim's aircraft/F450/Mass.xml (LGPL-2.1-or-later). -->
+<mass_balance>
+  <emptywt unit="KG">1.4</emptywt>
+  <location name="CG" unit="M">
+    <x>0.0</x>
+    <y>0.0</y>
+    <z>0.0</z>
+  </location>
+  <ixx unit="KG*M2">0.0190</ixx>
+  <iyy unit="KG*M2">0.0190</iyy>
+  <izz unit="KG*M2">0.0252</izz>
+  <ixy unit="KG*M2">0.0</ixy>
+  <ixz unit="KG*M2">0.0</ixz>
+  <iyz unit="KG*M2">0.0</iyz>
+</mass_balance>

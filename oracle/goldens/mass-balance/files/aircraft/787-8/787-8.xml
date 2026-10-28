@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/787-8/787-8.xml (LGPL-2.1-or-later). -->
+<mass_balance>
+        <ixx unit="SLUG*FT2"> 7675399.200088156 </ixx> <!-- Values from YASIM Solver (old 787 FDM) -->
+        <iyy unit="SLUG*FT2"> 6595543.304209171 </iyy> <!-- Values from YASIM Solver (old 787 FDM) -->
+        <izz unit="SLUG*FT2"> 22197429.613714606 </izz> <!-- Values from YASIM Solver (old 787 FDM) -->
+	<ixy unit="SLUG*FT2"> 0.015488805 </ixy> <!-- Values from YASIM Solver (old 787 FDM) -->
+	<ixz unit="SLUG*FT2"> 0.015488805 </ixz> <!-- Values from YASIM Solver (old 787 FDM) -->
+	<iyz unit="SLUG*FT2">         0 </iyz>
+   <emptywt unit="LBS" > 239200 </emptywt> <!-- Supposed to be 242000 but the plane acts too heavy with that setting -->
+   <location name="CG" unit="IN"> <!-- Values from YASIM Solver (old 787 FDM) -->
+     <x> -16 </x>
+     <y>   0.00 </y>
+     <z>22.5972</z>
+   </location>
+
+	<!--Crew. Min 350 Max 500 Default 350, for two crew members in the
+	cockpit.-->
+
+	<pointmass name="Crew">
+		<weight unit="LBS">350</weight>
+		<location unit="IN">
+			<x>-898.32</x>
+			<y>0</y>
+			<z>51.22</z>
+		</location>
+	</pointmass>
+
+	<!--First class. 12 seats, adding 360 pounds for 30 pounds of seat
+	accessories for each seat. Min 360 Max 2160 Default 1800-->
+
+	<pointmass name="first-class">
+		<weight unit="LBS">1800</weight>
+		<location unit="IN">
+			<x>-591</x>
+			<y>0</y>
+			<z>78.8</z>
+		</location>
+	</pointmass>
+
+	<!--Business class. 42 seats. Min 0 Max 7560 Default 6400-->
+
+	<pointmass name="business-class">
+		<weight unit="LBS">6400</weight>
+		<location unit="IN">
+			<x>-216.7</x>
+			<y>0</y>
+			<z>78.8</z>
+		</location>
+	</pointmass>
+
+	<!--Economy class. 170 seats. Min 0 Max 30600 Default 25000-->
+
+	<pointmass name="economy-class">
+		<weight unit="LBS">25000</weight>
+		<location unit="IN">
+			<x>157.6</x>
+			<y>0</y>
+			<z>78.8</z>
+		</location>
+	</pointmass>
+
+	<!--Forward cargo. I don't know how much cargo usually goes on an
+	average plane flight, so I guessed. Min 0 Max 10000 Default 10000-->
+
+	<pointmass name="forward-cargo">
+		<weight unit="LBS">10000</weight>
+		<location unit="IN">
+			<x>-394</x>
+			<y>0</y>
+			<z>-39.4</z>
+		</location>
+	</pointmass>
+
+	<!--Rear cargo. Same as above, but Min 0 Max 10000 Default 5000-->
+
+	<pointmass name="forward-cargo">
+		<weight unit="LBS">5000</weight>
+		<location unit="IN">
+			<x>157.6</x>
+			<y>0</y>
+			<z>-39.4</z>
+		</location>
+	</pointmass>
+
+</mass_balance>

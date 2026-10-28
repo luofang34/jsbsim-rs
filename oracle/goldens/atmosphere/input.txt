@@ -1,0 +1,244 @@
+# Standard day across the 1976 table, below sea level and above its top.
+alt 0
+alt -1000
+alt -5000
+alt 1000
+alt 10000
+alt 20000
+alt 36150.797303780717
+alt 36151.797303780717
+alt 36152.797303780717
+at 36151.797303780717
+alt 65822.896593244281
+alt 65823.896593244281
+alt 65824.896593244281
+at 65823.896593244281
+alt 105517.0551526769
+alt 105518.0551526769
+alt 105519.0551526769
+at 105518.0551526769
+alt 155347.07162978069
+alt 155348.07162978069
+alt 155349.07162978069
+at 155348.07162978069
+alt 168675.11421143057
+alt 168676.11421143057
+alt 168677.11421143057
+at 168676.11421143057
+alt 235569.76988312911
+alt 235570.76988312911
+alt 235571.76988312911
+at 235570.76988312911
+alt 282151.07649316726
+alt 282152.07649316726
+alt 282153.07649316726
+at 282152.07649316726
+alt 302891.47409555694
+alt 302892.47409555694
+alt 302893.47409555694
+at 302892.47409555694
+alt 282152
+alt 300000
+alt 400000
+alt 1000000
+alt 1500000
+alt 3000000
+at -3000
+at 0
+at 15000
+at 45000
+at 90000
+at 150000
+at 250000
+at 290000
+at 500000
+units
+# Holding leaves the state alone.
+hold 20000
+alt 20000
+# Read-only properties ignore writes.
+set atmosphere/T-R 1
+set atmosphere/saturated-vapor-pressure-psf 1
+# Bias, graded delta and sea-level pressure through their properties.
+set atmosphere/delta-T 18
+alt -2000
+alt 0
+alt 5000
+alt 36000
+alt 70000
+alt 120000
+alt 200000
+alt 280000
+alt 300000
+at 10000
+at -2000
+units
+set atmosphere/delta-T -400
+alt 50000
+set atmosphere/delta-T 0
+set atmosphere/SL-graded-delta-T 20
+alt -2000
+alt 0
+alt 5000
+alt 36000
+alt 70000
+alt 120000
+alt 200000
+alt 280000
+alt 300000
+at 10000
+at -2000
+at 290000
+units
+set atmosphere/SL-graded-delta-T -200
+alt 50000
+set atmosphere/SL-graded-delta-T 0
+set atmosphere/P-sl-psf 2000
+alt -2000
+alt 0
+alt 5000
+alt 36000
+alt 70000
+alt 120000
+alt 200000
+alt 280000
+alt 300000
+at 10000
+set atmosphere/P-sl-psf -5
+alt 0
+set atmosphere/P-sl-psf 2116.228
+set atmosphere/delta-T -30
+set atmosphere/SL-graded-delta-T 10
+set atmosphere/P-sl-psf 2200
+alt -2000
+alt 0
+alt 5000
+alt 36000
+alt 70000
+alt 120000
+alt 200000
+alt 280000
+alt 300000
+at 10000
+units
+init
+# Setters with units.
+settemp 30 5000 C
+alt 25000
+at 60000
+settemp 500 0 R
+alt 25000
+at 60000
+settemp 250 40000 K
+alt 25000
+at 60000
+settempsl 70 F
+alt 25000
+at 60000
+settempsl 10 C
+alt 25000
+at 60000
+bias K 5
+alt 25000
+at 60000
+bias C -3
+alt 25000
+at 60000
+bias F 9
+alt 25000
+at 60000
+bias R -1000
+alt 25000
+at 60000
+graded C -10
+alt 25000
+at 60000
+graded F 25
+alt 25000
+at 60000
+graded R -300
+alt 25000
+at 60000
+gradedh 15 10000 F
+alt 25000
+at 60000
+gradedh -5 30000 K
+alt 25000
+at 60000
+gradedh 8 -1000 C
+alt 25000
+at 60000
+psl mbar 1000
+alt 25000
+at 60000
+psl inhg 29.5
+alt 25000
+at 60000
+psl pa 101000
+alt 25000
+at 60000
+psl psf 0
+alt 25000
+at 60000
+resett
+alt 25000
+at 60000
+resetp
+alt 25000
+at 60000
+units
+init
+# Humidity.
+alt 0
+rh 50
+alt 0
+units
+rh 120
+rh -1
+rh 100
+alt 0
+dew F 50
+dew C 40
+dew R 10
+dew K 280
+vapor psf 5000
+vapor psf -1
+vapor mbar 10
+vapor inhg 0.5
+vapor pa 2000
+ppm 50000
+ppm 10000
+ppm -5
+alt 30000
+ppm 100
+rh 30
+alt 30000
+units
+alt 0
+set atmosphere/RH 80
+alt 3000
+set atmosphere/dew-point-R 500
+alt 3000
+set atmosphere/vapor-pressure-psf 10
+alt 3000
+set atmosphere/vapor-fraction-ppm 2000
+alt 3000
+set atmosphere/delta-T 25
+rh 90
+alt 0
+alt 40000
+units
+init
+units
+# Overrides last: their nodes cannot be removed.
+set atmosphere/override/temperature 450
+alt 10000
+set atmosphere/override/pressure 1500
+alt 10000
+set atmosphere/override/density 0.001
+alt 5000
+init
+set atmosphere/override/temperature 0.5
+set atmosphere/override/pressure -1
+alt 0
+units

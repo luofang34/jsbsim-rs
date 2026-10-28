@@ -40,6 +40,34 @@ pub struct Table {
 }
 
 impl Table {
+    /// `FGTable(NRows)` filled with `<<`: a 1D table of `(key, value)` rows
+    /// built in code rather than loaded.
+    #[must_use]
+    pub fn one_d(rows: &[(f64, f64)]) -> Self {
+        let mut data = vec![f64::NAN, f64::NAN];
+        for &(key, value) in rows {
+            data.push(key);
+            data.push(value);
+        }
+        Self {
+            kind: TableKind::OneD,
+            n_rows: rows.len(),
+            n_cols: 1,
+            n_dims: 1,
+            data,
+            tables: Vec::new(),
+            lookup: vec![None],
+            internal: false,
+            name: String::new(),
+        }
+    }
+
+    /// `GetNumRows()`.
+    #[must_use]
+    pub fn num_rows(&self) -> usize {
+        self.n_rows
+    }
+
     /// Shape.
     #[must_use]
     pub fn kind(&self) -> TableKind {
@@ -93,7 +121,9 @@ impl Table {
         })
     }
 
-    fn value_1d(&self, key: f64) -> f64 {
+    /// `GetValue(key)` of a 1D table.
+    #[must_use]
+    pub fn value_1d(&self, key: f64) -> f64 {
         let d = &self.data;
         let n = self.n_rows;
         if key <= d[2] {

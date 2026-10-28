@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/Pterosaur/Pterosaur.xml (LGPL-2.1-or-later). -->
+<mass_balance>
+   <ixx unit="SLUG*FT2">    528.43 </ixx>
+   <iyy unit="SLUG*FT2">    269.14 </iyy>
+   <izz unit="SLUG*FT2">    613.46 </izz>
+   <emptywt unit="LBS" >    187.26 </emptywt>
+   <location name="CG" unit="IN">
+     <x>   188.99 </x>
+     <y>     0.00 </y>
+     <z>    -9.84 </z>
+   </location>
+ </mass_balance>

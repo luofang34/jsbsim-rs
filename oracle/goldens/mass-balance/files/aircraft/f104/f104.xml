@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/f104/f104.xml (LGPL-2.1-or-later). -->
+<mass_balance>
+   <ixx unit="SLUG*FT2">3663</ixx>
+   <iyy unit="SLUG*FT2">59000</iyy>		<!-- orig: 38362, Rk: 59000 -->
+   <izz unit="SLUG*FT2">60000</izz>		<!-- orig: 24572, Rk: 60000 -->
+   <ixy unit="SLUG*FT2">0</ixy>
+   <ixz unit="SLUG*FT2">0</ixz>
+   <iyz unit="SLUG*FT2">0</iyz>
+   <emptywt unit="LBS" >12760</emptywt>
+   <location name="CG" unit="IN">
+     <x>319.5</x>
+     <y>0.0</y>
+     <z>-35.08</z>
+   </location>
+
+   <pointmass name="left-tip-tank"><!--empty-->
+      <weight unit="LBS">125</weight>
+      <location unit="IN">
+          <x>389</x>
+          <y>-148</y>
+          <z>-52</z>
+      </location>
+   </pointmass>
+
+   <pointmass name="right-tip-tank"><!--empty-->
+      <weight unit="LBS">125</weight>
+      <location unit="IN">
+          <x>389</x>
+          <y>148</y>
+          <z>-52</z>
+      </location>
+   </pointmass>
+
+ </mass_balance>

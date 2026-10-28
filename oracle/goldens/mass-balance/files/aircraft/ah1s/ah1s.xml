@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!-- The <mass_balance> element of JSBSim's aircraft/ah1s/ah1s.xml (LGPL-2.1-or-later). -->
+<mass_balance>
+    <ixx unit="SLUG*FT2">    2593.0 </ixx>
+    <iyy unit="SLUG*FT2">   14320.0 </iyy>
+    <izz unit="SLUG*FT2">   12330.0 </izz>
+    <ixz unit="SLUG*FT2">       0.0 </ixz>
+    <!-- grossweight: 6000 to 10000 lbs  -->
+    <emptywt unit="LBS">    8500.0 </emptywt>
+    <location name="CG" unit="IN">
+      <x>   172.0 </x><!-- 'allowed' range ~ 167 - 177 -->
+      <y>     0.0 </y>
+      <z>    75.0 </z>
+    </location>
+  </mass_balance>

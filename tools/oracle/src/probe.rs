@@ -3,7 +3,9 @@
 //! the same input as its `tools/oracle/cpp/probe_*.cpp` twin and must print
 //! the same transcript.
 
+mod atmosphere;
 mod functions;
+mod mass_balance;
 mod math;
 mod properties;
 mod table;
@@ -32,6 +34,11 @@ pub fn run(name: &str, input: &str, context: &ProbeContext) -> Result<String, Or
         "functions" => Ok(functions::run(input, context)),
         "table" => Ok(table::run(input, context)),
         "xml" => Ok(xml::run(input, context)),
+        "mass-balance" => Ok(mass_balance::run(input, context)),
+        "atmosphere" => atmosphere::run(input).map_err(|source| OracleError::Probe {
+            probe: "atmosphere",
+            source,
+        }),
         other => Err(OracleError::Provenance(format!("unknown probe {other}"))),
     }
 }
