@@ -4959,3 +4959,10 @@ property = "*"
 abs = 0.0
 rel = 0.0
 reason = "FGAccelerometer's lever arm (StructuralToBody), its cross products, the sensor rotation (cos and sin of the orientation angles round alike in both libms) and the sensor degradation use IEEE basic operations in JSBSim's order, and the tumbling tripod's rates integrate identically over these frames, so the readings must be bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-gyro"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "FGGyro rotates the inertial body rates into its sensor frame (cos and sin of the orientation angles round alike in both libms) and degrades them with IEEE basic operations in JSBSim's order, and the torque-free tripod keeps its inertial rates exactly, so the readings must be bit-identical; observed max |diff| 0."

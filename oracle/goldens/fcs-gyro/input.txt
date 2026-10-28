@@ -1,0 +1,73 @@
+# oracle/scenarios/systems/fcs_gyro.xml on tripod_fcs_gyro: gyros along
+# every axis, in rotated frames and degraded, on a tripod tumbling in free
+# fall from 10000 ft, a failure, and a reset to a new initial rate.
+paths ../.. derived/aircraft scenarios/systems
+new
+load tripod_fcs_gyro
+watch test/gyro-x test/gyro-y test/gyro-z test/gyro-rotated test/gyro-rotated-rad test/gyro-unknown-axis test/gyro-drifting test/gyro-quantized fcs/gyro-steps test/gyro-slow velocities/pi-rad_sec velocities/qi-rad_sec velocities/ri-rad_sec
+print
+set ic/h-sl-ft 10000
+set ic/p-rad_sec 0.3
+set ic/q-rad_sec -0.2
+set ic/r-rad_sec 0.5
+runic
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+set test/gyro-rotated/malfunction/fail_low 1
+run
+run
+set test/gyro-rotated/malfunction/fail_low 0
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+set ic/p-rad_sec -0.6
+set ic/r-rad_sec 0.05
+set simulation/reset 0
+print
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run

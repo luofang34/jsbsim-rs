@@ -48,6 +48,7 @@ pub const SYSTEMS: &[System] = &[
             "fcs_accelerometer_no_location.xml",
         )
     },
+    scenario("fcs_gyro", "fcs_gyro.xml"),
     derived("waypoint", "gnc_waypoint.xml"),
     scenario("fcs_waypoint", "fcs_waypoint.xml"),
 ];

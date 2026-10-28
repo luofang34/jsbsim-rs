@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  FGGyro, which no upstream test covers, on a tripod tumbling in free
+  fall: the inertial rate along every axis spelling, rotated sensor
+  frames in degrees and radians, an unknown axis (X assumed), and gyros
+  degraded by drift, bias, lag and quantization, one of them in a channel
+  run every other frame. The fcs-gyro golden drives it.
+-->
+<system name="fcs-gyro">
+  <channel name="gyros">
+    <gyro name="test/gyro-x">
+      <axis>x</axis>
+    </gyro>
+    <gyro name="test/gyro-y">
+      <axis>Y</axis>
+    </gyro>
+    <gyro name="test/gyro-z">
+      <axis>Z</axis>
+    </gyro>
+    <gyro name="test/gyro-rotated">
+      <orientation unit="DEG">
+        <roll>-15</roll>
+        <pitch>25</pitch>
+        <yaw>120</yaw>
+      </orientation>
+      <axis>z</axis>
+    </gyro>
+    <gyro name="test/gyro-rotated-rad">
+      <orientation>
+        <roll>0.7</roll>
+        <pitch>-0.3</pitch>
+        <yaw>2.0</yaw>
+      </orientation>
+      <axis>y</axis>
+    </gyro>
+    <gyro name="test/gyro-unknown-axis">
+      <axis>W</axis>
+    </gyro>
+    <gyro name="test/gyro-drifting">
+      <axis>X</axis>
+      <drift_rate>0.002</drift_rate>
+      <bias>-0.01</bias>
+      <noise variation="PERCENT" distribution="UNIFORM">0</noise>
+    </gyro>
+    <gyro name="test/gyro-quantized">
+      <axis>Z</axis>
+      <lag>15</lag>
+      <quantization name="gyro-steps">
+        <bits>8</bits>
+        <min>-1</min>
+        <max>1</max>
+      </quantization>
+    </gyro>
+  </channel>
+  <channel name="slow gyros" execrate="2">
+    <gyro name="test/gyro-slow">
+      <axis>Y</axis>
+      <drift_rate>-0.004</drift_rate>
+      <lag>15</lag>
+    </gyro>
+  </channel>
+</system>

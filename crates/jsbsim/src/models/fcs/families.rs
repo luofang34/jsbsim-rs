@@ -196,6 +196,8 @@ families! {
     Sensor(super::sensor::Sensor) = "sensor";
     /// `<accelerometer>` (`FGAccelerometer`).
     Accelerometer(super::accelerometer::Accelerometer) = "accelerometer";
+    /// `<gyro>` (`FGGyro`).
+    Gyro(super::gyro::Gyro) = "gyro";
     /// `<waypoint_heading>` and `<waypoint_distance>` (`FGWaypoint`).
     Waypoint(super::waypoint::Waypoint) = "waypoint_heading" | "waypoint_distance";
 }

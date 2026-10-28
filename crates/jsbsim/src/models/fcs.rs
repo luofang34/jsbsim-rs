@@ -17,6 +17,7 @@ pub mod families;
 pub mod filter;
 pub mod function;
 pub mod gain;
+pub mod gyro;
 mod load;
 pub mod pid;
 pub mod sensor;
