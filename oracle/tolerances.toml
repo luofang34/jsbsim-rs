@@ -597,14 +597,6 @@ rel = 5e-13
 reason = "Speeds kept across an altitude change are recomputed from the atmosphere at an altitude a few radius ulps apart (see h-agl-ft), through libm pow in the standard atmosphere and the pitot relations; observed max rel 1.9e-13 (ve-kts)."
 
 [[tolerance]]
-case = "initial-condition"
-property = "*/vw-dir-deg-of-noise"
-abs = 180.0
-rel = 0.0
-period = 360.0
-reason = "The probe labels the wind direction so while the horizontal wind is below 1e-9 ft/s, i.e. round-off of airspeed minus ground velocity; its direction is then arbitrary (observed 123.7 vs -135 deg), and the components are bounded by the * row."
-
-[[tolerance]]
 case = "ball"
 property = "*"
 abs = 0.0

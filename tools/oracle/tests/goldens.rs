@@ -155,3 +155,18 @@ fn every_tolerance_row_belongs_to_a_logged_column_or_probe_op() {
         );
     }
 }
+
+#[test]
+fn no_tolerance_row_is_wide_enough_to_accept_anything() {
+    for row in table().rows() {
+        if let Some(period) = row.period {
+            assert!(
+                row.abs < period / 2.0,
+                "{} {}: abs {} spans half the period {period}, so it checks nothing",
+                row.case,
+                row.property,
+                row.abs
+            );
+        }
+    }
+}

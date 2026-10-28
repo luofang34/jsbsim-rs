@@ -93,12 +93,12 @@ fn print(fdm: &mut Fdm) -> Result<String, jsbsim::Error> {
     let mut out = String::new();
     let noise_wind = fdm.models.ic.wind_mag_fps() < NOISE_WIND;
     for name in PROPERTIES {
+        if name == "vw-dir-deg" && noise_wind {
+            out.push_str(" vw-dir-deg below-noise-floor");
+            continue;
+        }
         let v = fdm.get_property(&format!("ic/{name}"))?;
-        let label = match name {
-            "vw-dir-deg" if noise_wind => "vw-dir-deg-of-noise",
-            _ => name,
-        };
-        out.push_str(&format!(" {label} {}", number(v)));
+        out.push_str(&format!(" {name} {}", number(v)));
     }
     let ic = &fdm.models.ic;
     out.push_str(" ecef");

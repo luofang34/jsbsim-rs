@@ -11,8 +11,10 @@
 //   set <property> <value>   setDoubleValue; print
 //
 // A print is the Load result (load and reload), then every ic/ property in
-// bind order as "<name> <value>" (vw-dir-deg is labelled vw-dir-deg-of-noise
-// while the wind is round-off), then the ECEF position, the orientation
+// bind order as "<name> <value>" (vw-dir-deg prints "below-noise-floor"
+// instead of a value while the wind is round-off of airspeed minus ground
+// velocity, so its direction is arbitrary; the wind components are still
+// printed and compared), then the ECEF position, the orientation
 // quaternion, the planet position angle, GetSpeedSet and TrimRequested.
 // A Load that throws prints "load-error". Nothing is destroyed (see
 // probe_functions.cpp); the probe leaves with _Exit.
@@ -60,9 +62,11 @@ std::string Print(JSBSim::FGFDMExec& exec)
   std::string out;
   const bool noise_wind = ic->GetWindMagFpsIC() < kNoiseWind;
   for (const char* name : kProperties) {
-    std::string label = name;
-    if (noise_wind && label == "vw-dir-deg") label = "vw-dir-deg-of-noise";
-    out += " " + label + " " +
+    if (noise_wind && std::string(name) == "vw-dir-deg") {
+      out += " vw-dir-deg below-noise-floor";
+      continue;
+    }
+    out += " " + std::string(name) + " " +
            Number(pm->GetNode(std::string("ic/") + name)->getDoubleValue());
   }
   out += " ecef";
