@@ -25,3 +25,31 @@ fn contact_values_cpp_leaves_uninitialized_start_at_zero() {
         assert_eq!(fdm.get_property(path).unwrap(), 0.0, "{path}");
     }
 }
+
+#[test]
+fn engines_in_an_included_propulsion_file_are_unsupported() {
+    let ball = std::fs::read_to_string(
+        Path::new(env!("CARGO_MANIFEST_DIR")).join("../../oracle/inputs/aircraft/ball/ball.xml"),
+    )
+    .unwrap();
+    let root = tempfile::tempdir().unwrap();
+    let dir = root.path().join("aircraft/prop");
+    std::fs::create_dir_all(&dir).unwrap();
+    std::fs::write(
+        dir.join("prop.xml"),
+        ball.replacen("<propulsion/>", "<propulsion file=\"Propulsion.xml\"/>", 1),
+    )
+    .unwrap();
+    std::fs::write(
+        dir.join("Propulsion.xml"),
+        "<?xml version=\"1.0\"?>\n<propulsion>\n  <engine file=\"x\"/>\n</propulsion>\n",
+    )
+    .unwrap();
+    let mut fdm = Fdm::new().unwrap();
+    match fdm.load_model(&FileResolver::new(root.path()), "aircraft", "prop") {
+        Err(jsbsim::Error::Unsupported { construct, .. }) => {
+            assert!(construct.contains("<engine>"), "{construct}");
+        }
+        other => panic!("expected the included engine to be unsupported, got {other:?}"),
+    }
+}

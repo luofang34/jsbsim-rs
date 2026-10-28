@@ -252,8 +252,12 @@ impl Fdm {
         document: &Element,
     ) -> Result<(), Error> {
         unsupported_if_present(document, "buoyant_forces")?;
-        if let Some(propulsion) = document.find_element("propulsion") {
-            refuse_children(propulsion)?;
+        if let Some(mut propulsion) = document.find_element("propulsion").cloned() {
+            refuse_children(&propulsion)?;
+            // A `file` include holds the engines; it is refused like inline ones.
+            if let Some(included) = loader.open(&mut propulsion, IncludeKind::Model)? {
+                refuse_children(&included)?;
+            }
         }
         let systems: Vec<Element> = document
             .children()

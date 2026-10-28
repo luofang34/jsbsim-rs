@@ -12,7 +12,7 @@ C130 unsupported <engine> in <propulsion> (In file aircraft/C130/C130.xml: line 
 Camel unsupported <engine> in <propulsion> (In file aircraft/Camel/Camel.xml: line 580)
 Concorde unsupported <property> in <propulsion> (In file aircraft/Concorde/Concorde.xml: line 641)
 DHC6 unsupported <engine> in <propulsion> (In file aircraft/DHC6/DHC6.xml: line 166)
-F450 unsupported <actuator> FCS component (In file aircraft/F450/Effectors.xml: line 5)
+F450 unsupported <engine> in <propulsion> (In file aircraft/F450/Propulsion.xml: line 4)
 F4N unsupported <engine> in <propulsion> (In file aircraft/F4N/F4N.xml: line 214)
 F80C unsupported <engine> in <propulsion> (In file aircraft/F80C/F80C.xml: line 190)
 J246 unsupported <engine> in <propulsion> (In file aircraft/J246/J246.xml: line 368)
