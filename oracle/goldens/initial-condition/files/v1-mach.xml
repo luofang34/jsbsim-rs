@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!-- Version 1: Mach number and climb rate over raised terrain, geodetic
+     latitude, rolled so that alpha moves beta. -->
+<initialize name="v1-mach">
+  <elevation unit="M">     450.0 </elevation>
+  <altitude unit="FT">   12000.0 </altitude>
+  <latitude type="geodetic" unit="DEG"> -33.9 </latitude>
+  <longitude unit="DEG">  151.2 </longitude>
+  <mach>                    0.78 </mach>
+  <roc unit="FT/SEC">       25.0 </roc>
+  <phi unit="DEG">          30.0 </phi>
+  <theta unit="DEG">         2.0 </theta>
+  <psi unit="DEG">         135.0 </psi>
+  <alpha unit="DEG">         3.0 </alpha>
+  <trim>                  none   </trim>
+</initialize>

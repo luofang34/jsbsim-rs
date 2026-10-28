@@ -15,54 +15,37 @@ impl Auxiliary {
     /// carries the planet's ellipse, which `semimajor` and `semiminor`
     /// give.
     pub fn set_initial_state(&mut self, ic_position: &Location, semimajor: f64, semiminor: f64) {
-        let (lon, lat) = self.set_ic_reference(ic_position, semimajor, semiminor);
         let mut start = ic_position.clone();
         start.set_ellipse(semimajor, semiminor);
+        let (lon, lat) = (start.longitude(), start.geod_latitude_rad());
         start.set_position_geodetic(lon, lat, 0.0);
         self.start.neu_location = start;
     }
 
-    /// Records the initial-condition longitude and geodetic latitude the
-    /// distances from start are measured to, as JSBSim reads them from
-    /// `FGInitialCondition`, and returns them. The latitude is taken on
-    /// the planet's ellipse, which JSBSim's initial position carries.
-    pub fn set_ic_reference(
-        &mut self,
-        ic_position: &Location,
-        semimajor: f64,
-        semiminor: f64,
-    ) -> (f64, f64) {
-        let mut p = ic_position.clone();
-        p.set_ellipse(semimajor, semiminor);
-        let (lon, lat) = (p.longitude(), p.geod_latitude_rad());
-        self.start.ic_longitude = lon;
-        self.start.ic_geod_latitude = lat;
-        (lon, lat)
-    }
-
     /// `GetLongitudeRelativePosition`: distance, m, along the current
-    /// latitude to the initial longitude.
+    /// latitude to the initial conditions' longitude `ic_longitude`, which
+    /// JSBSim reads live from `FGInitialCondition`.
     #[must_use]
-    pub fn longitude_relative_position(&self) -> f64 {
+    pub fn longitude_relative_position(&self, ic_longitude: f64) -> f64 {
         let l = &self.input.location;
-        l.distance_to(self.start.ic_longitude, l.geod_latitude_rad()) * FTTOM
+        l.distance_to(ic_longitude, l.geod_latitude_rad()) * FTTOM
     }
 
     /// `GetLatitudeRelativePosition`: distance, m, along the current
-    /// meridian to the initial latitude.
+    /// meridian to the initial conditions' geodetic latitude.
     #[must_use]
-    pub fn latitude_relative_position(&self) -> f64 {
+    pub fn latitude_relative_position(&self, ic_geod_latitude: f64) -> f64 {
         let l = &self.input.location;
-        l.distance_to(l.longitude(), self.start.ic_geod_latitude) * FTTOM
+        l.distance_to(l.longitude(), ic_geod_latitude) * FTTOM
     }
 
     /// `GetDistanceRelativePosition`: geodesic distance, m, to the initial
-    /// position.
+    /// conditions' longitude and geodetic latitude.
     #[must_use]
-    pub fn distance_relative_position(&self) -> f64 {
+    pub fn distance_relative_position(&self, ic_longitude: f64, ic_geod_latitude: f64) -> f64 {
         self.input
             .location
-            .distance_to(self.start.ic_longitude, self.start.ic_geod_latitude)
+            .distance_to(ic_longitude, ic_geod_latitude)
             * FTTOM
     }
 

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<!-- Version 1 with a trim request. -->
+<initialize name="v1-trim">
+  <vc unit="KTS">        120.0 </vc>
+  <altitude unit="FT">  3000.0 </altitude>
+  <trim>          Longitudinal </trim>
+</initialize>

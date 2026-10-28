@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!-- Version 2: an ECEF position without altitude or radius, and no
+     position element's latitude is then read. -->
+<initialize name="v2-no-altitude" version="2.0">
+  <position frame="ECEF">
+    <longitude unit="DEG"> 45.0 </longitude>
+    <latitude unit="DEG"> 45.0 </latitude>
+  </position>
+  <velocity unit="FT/SEC" frame="LOCAL">
+    <x> 10.0 </x>
+  </velocity>
+</initialize>

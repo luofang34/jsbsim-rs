@@ -6,6 +6,7 @@
 mod atmosphere;
 mod auxiliary;
 mod functions;
+mod initial_condition;
 mod mass_balance;
 mod math;
 pub mod models;
@@ -39,6 +40,7 @@ pub fn run(name: &str, input: &str, context: &ProbeContext) -> Result<String, Or
         "xml" => Ok(xml::run(input, context)),
         "mass-balance" => Ok(mass_balance::run(input, context)),
         "models" => Ok(models::run(input, context)),
+        "initial-condition" => Ok(initial_condition::run(input, context)),
         "auxiliary" => auxiliary::run(input).map_err(|source| OracleError::Probe {
             probe: "auxiliary",
             source,

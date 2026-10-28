@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
 
 use oracle::ToleranceTable;
 use oracle::manifest::{self, CaseSpec, INPUT_FILE, Manifest, TRANSCRIPT_FILE};
-use oracle::transcript::compare_transcript;
+use oracle::transcript::compare_transcript_declaring;
 
 #[cfg(test)]
 fn goldens() -> PathBuf {
@@ -26,7 +26,9 @@ fn transcript_parity(case: &str) {
     };
     let candidate = oracle::probe::run(&spec.probe, &input, &context).unwrap();
     let table = ToleranceTable::read_blocking(&goldens().join("../tolerances.toml")).unwrap();
-    let outcome = compare_transcript(case, &reference, &candidate, &table).unwrap();
+    let outcome =
+        compare_transcript_declaring(case, &reference, &candidate, &table, &spec.unsupported)
+            .unwrap();
     if let Some(divergence) = outcome.divergence {
         panic!("{case} {divergence}");
     }

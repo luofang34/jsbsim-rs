@@ -127,6 +127,8 @@ pub struct Models {
     pub input: ForceModel,
     /// `FGOutput`, which writes no files in the core.
     pub output: ForceModel,
+    /// `FGInitialCondition`, which `run_ic` applies.
+    pub ic: crate::initial_condition::InitialCondition,
 }
 
 /// The executive.
@@ -136,7 +138,6 @@ pub struct Fdm {
     bindings: Bindings,
     /// The models.
     pub models: Models,
-    initial: InitialState,
     /// Declarations and pre/post functions of each model, by `Model`.
     model_functions: Vec<ModelFunctions>,
     options: crate::LoadOptions,
@@ -161,7 +162,6 @@ impl Fdm {
                 fcs: crate::models::fcs::Fcs::new(),
                 ..Models::default()
             },
-            initial: InitialState::default(),
             model_functions: vec![ModelFunctions::default(); order::ORDER.len()],
             options: crate::LoadOptions::default(),
             script: None,
@@ -172,11 +172,13 @@ impl Fdm {
         fdm.bind_all()?;
         fdm.load_planet_constants();
         fdm.initialize_models()?;
+        fdm.models.ic.initialize_ic(&fdm.models.inertial);
         Ok(fdm)
     }
 
-    /// Binds every model in `FGFDMExec::Allocate`'s construction order:
-    /// each model's enable flag, then its properties.
+    /// Binds every model in `FGFDMExec::Allocate`'s construction order
+    /// (each model's enable flag, then its properties), then the initial
+    /// conditions, then the executive.
     fn bind_all(&mut self) -> Result<(), Error> {
         let b = &mut Binder {
             tree: &mut self.tree,
@@ -219,6 +221,7 @@ impl Fdm {
         // keeps no output types (`<output>` is an I/O directive), so a
         // write has nothing to print.
         b.setter_only("simulation/force-output", Kind::Int, |_, _| {})?;
+        crate::initial_condition::bind(b)?;
         exec_bind::bind_exec(b)
     }
 

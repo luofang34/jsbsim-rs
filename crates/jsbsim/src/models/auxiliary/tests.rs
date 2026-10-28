@@ -182,15 +182,15 @@ fn distances_from_start_vanish_at_the_start_and_grow_with_offset() {
     here.set_position_geodetic(0.1, 0.5, 1000.0);
     x.input.location = here.clone();
     x.set_initial_state(&here, A_WGS84, B_WGS84);
-    assert_eq!(x.distance_relative_position(), 0.0);
+    let (lon, lat) = (here.longitude(), here.geod_latitude_rad());
+    assert_eq!(x.distance_relative_position(lon, lat), 0.0);
     let neu = x.neu_position_from_start();
     assert!(neu[1].abs() < 1e-6 && neu[2].abs() < 1e-6);
     assert!((neu[3] - 1000.0).abs() < 1e-6);
 
-    x.start.ic_geod_latitude = here.geod_latitude_rad() + 1e-4;
-    let north = x.latitude_relative_position();
+    let north = x.latitude_relative_position(lat + 1e-4);
     assert!((north - 1e-4 * 6.36e6).abs() < 0.01 * 6.36e2, "{north}");
-    assert_eq!(x.longitude_relative_position(), 0.0);
+    assert_eq!(x.longitude_relative_position(lon), 0.0);
     assert!(here.heading_to(0.1, 0.5 + 1e-4).abs() < 1e-9);
 }
 
@@ -219,14 +219,9 @@ fn properties_read_the_computed_values() {
 #[test]
 fn run_ic_measures_from_the_initial_position() {
     let mut fdm = Fdm::new().unwrap();
-    let (a, b) = (fdm.models.inertial.a, fdm.models.inertial.b);
-    let mut position = Location::default();
-    position.set_ellipse(a, b);
-    position.set_position_geodetic(0.1, 0.5, 1000.0);
-    fdm.set_initial_state(crate::fdm::InitialState {
-        position,
-        ..Default::default()
-    });
+    fdm.set_property("ic/long-gc-rad", 0.1).unwrap();
+    fdm.set_property("ic/lat-geod-rad", 0.5).unwrap();
+    fdm.set_property("ic/h-sl-ft", 1000.0).unwrap();
     // No aircraft is loaded, so there is no aerodynamics to run.
     fdm.models.aerodynamics.base.enabled = false;
     fdm.run_ic().unwrap();
@@ -235,8 +230,12 @@ fn run_ic_measures_from_the_initial_position() {
         .unwrap();
     assert!(mag.abs() < 1e-6, "{mag}");
     let up = fdm.get_property("position/from-start-neu-u-ft").unwrap();
-    assert!((up - 1000.0).abs() < 1e-6, "{up}");
-    let start = &fdm.models.auxiliary.start;
-    assert!((start.ic_geod_latitude - 0.5).abs() < 1e-12);
-    assert!((start.ic_longitude - 0.1).abs() < 1e-12);
+    let height = fdm.get_property("ic/geod-alt-ft").unwrap();
+    assert!((up - height).abs() < 1e-6, "{up} {height}");
+    // JSBSim measures from the live initial conditions, not a copy.
+    fdm.set_property("ic/lat-geod-rad", 0.5 + 1e-4).unwrap();
+    let north = fdm
+        .get_property("position/distance-from-start-lat-mt")
+        .unwrap();
+    assert!((north - 1e-4 * 6.36e6).abs() < 0.01 * 6.36e2, "{north}");
 }

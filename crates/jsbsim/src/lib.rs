@@ -9,6 +9,7 @@ pub mod c_numeric;
 pub mod error;
 pub mod fdm;
 pub mod functions;
+pub mod initial_condition;
 pub mod math;
 pub mod models;
 pub mod options;

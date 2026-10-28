@@ -179,7 +179,13 @@ impl Fdm {
                 "Initialization file must be specified in use element.",
             ));
         }
-        self.load_initial_conditions(resolver, &format!("{aircraft_path}/{aircraft}"), initialize)?;
+        if !self.load_initial_conditions(
+            resolver,
+            &format!("{aircraft_path}/{aircraft}"),
+            initialize,
+        )? {
+            return Err(script_error("Initialization unsuccessful"));
+        }
         for name in ["input", "output"] {
             for el in document.find_elements(name) {
                 self.io_directive(el)?;

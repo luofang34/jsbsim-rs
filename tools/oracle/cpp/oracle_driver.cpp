@@ -9,7 +9,7 @@
 //
 // Usage: oracle_driver script <root> <script> <rate_hz> <end_time|-> <out.csv>
 //                             <property>...
-//        oracle_driver properties|units|xml|math|functions|table|mass-balance
+//        oracle_driver properties|units|xml|math|functions|table|mass-balance|initial-condition
 //                      <input.txt> <out.txt>
 //
 // The script mode is implemented here; the probe modes are in probe_*.cpp.
@@ -147,8 +147,9 @@ int main(int argc, char** argv)
     if (mode == "atmosphere") return RunAtmosphereProbe(argv[2], argv[3]);
     if (mode == "models") return RunModelsProbe(argv[2], argv[3]);
     if (mode == "auxiliary") return RunAuxiliaryProbe(argv[2], argv[3]);
+    if (mode == "initial-condition") return RunInitialConditionProbe(argv[2], argv[3]);
     if (mode == "winds") return RunWindsProbe(argv[2], argv[3]);
   }
-  std::fprintf(stderr, "usage: %s script|properties|units|xml|math|functions|table|mass-balance|atmosphere|winds|models|auxiliary ...\n", argv[0]);
+  std::fprintf(stderr, "usage: %s script|properties|units|xml|math|functions|table|mass-balance|atmosphere|winds|models|auxiliary|initial-condition ...\n", argv[0]);
   return 2;
 }

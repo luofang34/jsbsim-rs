@@ -307,6 +307,7 @@ impl Fdm {
     fn load_planet(&mut self, el: &Element) -> Result<(), Error> {
         self.models.inertial.load(el)?;
         self.load_planet_constants();
+        self.models.ic.initialize_ic(&self.models.inertial);
         self.initialize_models()?;
         if let Some(atm) = el.find_element("atmosphere")
             && atm.has_attribute("model")

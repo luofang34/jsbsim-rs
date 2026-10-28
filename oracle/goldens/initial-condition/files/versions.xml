@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<!-- Version 3: Load throws. -->
+<initialize name="versions" version="3.0">
+  <altitude unit="FT"> 1000.0 </altitude>
+</initialize>

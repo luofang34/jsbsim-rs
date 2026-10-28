@@ -103,10 +103,6 @@ pub struct Loads {
 pub struct Start {
     /// Origin of the NEU frame: the initial position at zero height.
     pub neu_location: Location,
-    /// Initial-condition longitude, rad.
-    pub ic_longitude: f64,
-    /// Initial-condition geodetic latitude, rad.
-    pub ic_geod_latitude: f64,
 }
 
 /// Derived quantities.

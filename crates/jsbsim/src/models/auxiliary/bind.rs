@@ -70,13 +70,16 @@ const AERO: [(&str, Get); 19] = [
 /// Positions relative to the start and the VRP.
 const POSITION: [(&str, Get); 6] = [
     ("position/distance-from-start-lon-mt", |m| {
-        m.auxiliary.longitude_relative_position()
+        m.auxiliary
+            .longitude_relative_position(m.ic.longitude_rad())
     }),
     ("position/distance-from-start-lat-mt", |m| {
-        m.auxiliary.latitude_relative_position()
+        m.auxiliary
+            .latitude_relative_position(m.ic.geod_latitude_rad())
     }),
     ("position/distance-from-start-mag-mt", |m| {
-        m.auxiliary.distance_relative_position()
+        m.auxiliary
+            .distance_relative_position(m.ic.longitude_rad(), m.ic.geod_latitude_rad())
     }),
     ("position/vrp-gc-latitude_deg", |m| {
         m.auxiliary.location_vrp.latitude_deg()

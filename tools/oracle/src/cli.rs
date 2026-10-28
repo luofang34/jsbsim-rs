@@ -79,6 +79,17 @@ pub fn command() -> Command {
                 .arg(Arg::new("case").required(true)),
         )
         .subcommand(compare_command())
+        .subcommand(
+            Command::new("port-stats")
+                .about("Run the Rust port on a script case and log its largest differences per property")
+                .arg(Arg::new("case").required(true))
+                .arg(
+                    Arg::new("until")
+                        .long("until")
+                        .value_parser(value_parser!(f64))
+                        .help("Compare rows up to this time, s"),
+                ),
+        )
 }
 
 fn nasa_command(jsbsim_root: Arg) -> Command {
@@ -140,6 +151,11 @@ where
     let Some((name, sub)) = matches.subcommand() else {
         return Ok(ExitCode::FAILURE);
     };
+    if name == "port-stats" {
+        let case = sub.get_one::<String>("case").cloned().unwrap_or_default();
+        let until = sub.get_one::<f64>("until").copied();
+        return crate::stats::port_stats_blocking(&repo_root, &case, until);
+    }
     if name == "port" {
         let case = sub.get_one::<String>("case").cloned().unwrap_or_default();
         return cases::port_blocking(&repo_root, &case);

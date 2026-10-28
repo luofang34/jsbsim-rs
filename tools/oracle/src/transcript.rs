@@ -7,6 +7,8 @@
 //! token before the number), falling back to `*/<tag>` (that tag under any
 //! op), then to `<op>/*` and then to the
 //! case's `*` row. The line number plays the role of time in the table.
+//! When comparing the port, a Rust line refusing a construct the case
+//! declares unsupported replaces the C++ line for the same input.
 
 use std::fmt;
 
@@ -41,6 +43,8 @@ pub struct TranscriptOutcome {
     pub max_abs: f64,
     /// Largest |candidate - reference| / |reference| over all numbers.
     pub max_rel: f64,
+    /// Lines the port refused as declared unsupported.
+    pub unsupported: usize,
     /// First disagreement beyond tolerance.
     pub divergence: Option<LineDivergence>,
 }
@@ -51,6 +55,34 @@ pub fn compare_transcript(
     reference: &str,
     candidate: &str,
     table: &ToleranceTable,
+) -> Result<TranscriptOutcome, OracleError> {
+    compare_transcript_declaring(case, reference, candidate, table, &[])
+}
+
+/// Whether candidate line `b` is the port's refusal, declared in
+/// `unsupported`, of the operation reference line `a` reports on.
+fn declared_unsupported(a: &str, b: &str, unsupported: &[String]) -> bool {
+    let (Some((input_a, _)), Some((input_b, result))) = (a.split_once(" =>"), b.split_once(" =>"))
+    else {
+        return false;
+    };
+    let Some(construct) = result.strip_prefix(" unsupported ") else {
+        return false;
+    };
+    input_a == input_b
+        && unsupported
+            .iter()
+            .any(|u| construct.starts_with(u.as_str()))
+}
+
+/// [`compare_transcript`], accepting the port's refusals of the constructs
+/// in `unsupported` (see `TranscriptSpec::unsupported`) and counting them.
+pub fn compare_transcript_declaring(
+    case: &str,
+    reference: &str,
+    candidate: &str,
+    table: &ToleranceTable,
+    unsupported: &[String],
 ) -> Result<TranscriptOutcome, OracleError> {
     let numeric = table.rows().iter().any(|row| row.case == case);
     let mut outcome = TranscriptOutcome::default();
@@ -64,6 +96,10 @@ pub fn compare_transcript(
         outcome.lines = outcome.lines.wrapping_add(1);
         let (a, b) = (a.unwrap_or_default(), b.unwrap_or_default());
         if a == b {
+            continue;
+        }
+        if declared_unsupported(a, b, unsupported) {
+            outcome.unsupported = outcome.unsupported.wrapping_add(1);
             continue;
         }
         let detail = if numeric {

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<!-- Version 1 with a latitude out of range: Load returns false. -->
+<initialize name="v1-bad-latitude">
+  <altitude unit="FT">  1000.0 </altitude>
+  <latitude unit="DEG">   95.0 </latitude>
+  <ubody unit="FT/SEC">  100.0 </ubody>
+</initialize>

@@ -595,3 +595,109 @@ property = "*/tb2w31"
 abs = 0.0
 rel = 1e-15
 reason = "Wind-axis matrix entry 3,1 is built from sin and cos of the atan2 alpha and beta; observed max rel 2.2e-16."
+
+[[tolerance]]
+case = "initial-condition"
+property = "*"
+abs = 1e-12
+rel = 5e-14
+reason = "Angles, rates, positions and wind components: Rust libm's sin, cos, atan2, asin and tan differ from Apple libm by 1-2 ulp, which the Euler angle and quaternion round trips carry; observed max rel 1.5e-14 (gamma-deg) and max abs 6.8e-13 on wind components that are round-off around zero."
+
+[[tolerance]]
+case = "initial-condition"
+property = "*/h-sl-ft"
+abs = 2e-8
+rel = 0.0
+reason = "Altitudes are differences of ECEF radii near 2.1e7 ft (1 ulp = 3.7e-9 ft); at a geocentric latitude the AGL iteration cannot reach its 1e-10 ft stop and runs all 10 iterations, ending a few radius ulps apart under libm's 1-2 ulp differences; observed max 9.6e-9 ft (h-agl-ft)."
+
+[[tolerance]]
+case = "initial-condition"
+property = "*/h-agl-ft"
+abs = 2e-8
+rel = 0.0
+reason = "Altitudes are differences of ECEF radii near 2.1e7 ft (1 ulp = 3.7e-9 ft); at a geocentric latitude the AGL iteration cannot reach its 1e-10 ft stop and runs all 10 iterations, ending a few radius ulps apart under libm's 1-2 ulp differences; observed max 9.6e-9 ft (h-agl-ft)."
+
+[[tolerance]]
+case = "initial-condition"
+property = "*/geod-alt-ft"
+abs = 2e-8
+rel = 0.0
+reason = "Altitudes are differences of ECEF radii near 2.1e7 ft (1 ulp = 3.7e-9 ft); at a geocentric latitude the AGL iteration cannot reach its 1e-10 ft stop and runs all 10 iterations, ending a few radius ulps apart under libm's 1-2 ulp differences; observed max 9.6e-9 ft (h-agl-ft)."
+
+[[tolerance]]
+case = "initial-condition"
+property = "*/terrain-elevation-ft"
+abs = 2e-8
+rel = 0.0
+reason = "Altitudes are differences of ECEF radii near 2.1e7 ft (1 ulp = 3.7e-9 ft); at a geocentric latitude the AGL iteration cannot reach its 1e-10 ft stop and runs all 10 iterations, ending a few radius ulps apart under libm's 1-2 ulp differences; observed max 9.6e-9 ft (h-agl-ft)."
+
+[[tolerance]]
+case = "initial-condition"
+property = "*/vc-kts"
+abs = 0.0
+rel = 5e-13
+reason = "Speeds kept across an altitude change are recomputed from the atmosphere at an altitude a few radius ulps apart (see h-agl-ft), through libm pow in the standard atmosphere and the pitot relations; observed max rel 1.9e-13 (ve-kts)."
+
+[[tolerance]]
+case = "initial-condition"
+property = "*/ve-kts"
+abs = 0.0
+rel = 5e-13
+reason = "Speeds kept across an altitude change are recomputed from the atmosphere at an altitude a few radius ulps apart (see h-agl-ft), through libm pow in the standard atmosphere and the pitot relations; observed max rel 1.9e-13 (ve-kts)."
+
+[[tolerance]]
+case = "initial-condition"
+property = "*/mach"
+abs = 0.0
+rel = 5e-13
+reason = "Speeds kept across an altitude change are recomputed from the atmosphere at an altitude a few radius ulps apart (see h-agl-ft), through libm pow in the standard atmosphere and the pitot relations; observed max rel 1.9e-13 (ve-kts)."
+
+[[tolerance]]
+case = "initial-condition"
+property = "*/vt-kts"
+abs = 0.0
+rel = 5e-13
+reason = "Speeds kept across an altitude change are recomputed from the atmosphere at an altitude a few radius ulps apart (see h-agl-ft), through libm pow in the standard atmosphere and the pitot relations; observed max rel 1.9e-13 (ve-kts)."
+
+[[tolerance]]
+case = "initial-condition"
+property = "*/vg-kts"
+abs = 0.0
+rel = 5e-13
+reason = "Speeds kept across an altitude change are recomputed from the atmosphere at an altitude a few radius ulps apart (see h-agl-ft), through libm pow in the standard atmosphere and the pitot relations; observed max rel 1.9e-13 (ve-kts)."
+
+[[tolerance]]
+case = "initial-condition"
+property = "*/vt-fps"
+abs = 0.0
+rel = 5e-13
+reason = "Speeds kept across an altitude change are recomputed from the atmosphere at an altitude a few radius ulps apart (see h-agl-ft), through libm pow in the standard atmosphere and the pitot relations; observed max rel 1.9e-13 (ve-kts)."
+
+[[tolerance]]
+case = "initial-condition"
+property = "*/vg-fps"
+abs = 0.0
+rel = 5e-13
+reason = "Speeds kept across an altitude change are recomputed from the atmosphere at an altitude a few radius ulps apart (see h-agl-ft), through libm pow in the standard atmosphere and the pitot relations; observed max rel 1.9e-13 (ve-kts)."
+
+[[tolerance]]
+case = "initial-condition"
+property = "*/u-fps"
+abs = 0.0
+rel = 5e-13
+reason = "Speeds kept across an altitude change are recomputed from the atmosphere at an altitude a few radius ulps apart (see h-agl-ft), through libm pow in the standard atmosphere and the pitot relations; observed max rel 1.9e-13 (ve-kts)."
+
+[[tolerance]]
+case = "initial-condition"
+property = "*/vn-fps"
+abs = 0.0
+rel = 5e-13
+reason = "Speeds kept across an altitude change are recomputed from the atmosphere at an altitude a few radius ulps apart (see h-agl-ft), through libm pow in the standard atmosphere and the pitot relations; observed max rel 1.9e-13 (ve-kts)."
+
+[[tolerance]]
+case = "initial-condition"
+property = "*/vw-dir-deg-of-noise"
+abs = 180.0
+rel = 0.0
+period = 360.0
+reason = "The probe labels the wind direction so while the horizontal wind is below 1e-9 ft/s, i.e. round-off of airspeed minus ground velocity; its direction is then arbitrary (observed 123.7 vs -135 deg), and the components are bounded by the * row."

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!-- Version 1: calibrated airspeed, flight path angle and every wind
+     element, applied in Load_v1's order whatever the order here. -->
+<initialize name="v1-vc-wind">
+  <xwind unit="KTS">       6.0  </xwind>
+  <hwind unit="KTS">      12.0  </hwind>
+  <winddir unit="DEG">   250.0  </winddir>
+  <vwind unit="FT/SEC">   25.0  </vwind>
+  <gamma unit="DEG">       3.0  </gamma>
+  <vc unit="KTS">        180.0  </vc>
+  <latitude unit="DEG">   37.6  </latitude>
+  <longitude unit="DEG">-122.4  </longitude>
+  <phi unit="DEG">         5.0  </phi>
+  <psi unit="DEG">       280.0  </psi>
+  <altitudeMSL unit="FT"> 8000.0 </altitudeMSL>
+  <alpha unit="DEG">       4.0  </alpha>
+  <beta unit="DEG">        1.0  </beta>
+  <targetNlf>              1.2  </targetNlf>
+  <trim>                   0    </trim>
+</initialize>

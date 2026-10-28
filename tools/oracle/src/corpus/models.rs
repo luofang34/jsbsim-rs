@@ -141,6 +141,7 @@ pub fn check_models_blocking(paths: &Paths) -> Result<ExitCode, OracleError> {
     std::fs::write(&input_path, &input).map_err(|e| OracleError::io("writing", &input_path, e))?;
     let spec = TranscriptSpec {
         probe: "models".to_owned(),
+        unsupported: Vec::new(),
     };
     let cpp = upstream::run_transcript_blocking(paths, &spec, &input_path, &run_dir)?;
     let context = ProbeContext {

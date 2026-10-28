@@ -83,6 +83,11 @@ impl ScriptSpec {
 pub struct TranscriptSpec {
     /// Driver mode, e.g. `properties`.
     pub probe: String,
+    /// Constructs the Rust port refuses: a Rust line `<input> =>
+    /// unsupported <construct>...` whose construct starts with one of these
+    /// stands in for the C++ line of the same input.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub unsupported: Vec<String>,
 }
 
 /// Where a reference came from.

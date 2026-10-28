@@ -120,3 +120,22 @@ fn tag_wide_rows_sit_between_tag_rows_and_op_wide_rows() {
         "other tags fall back to set/*"
     );
 }
+
+#[test]
+fn declared_refusals_replace_the_reference_line_of_the_same_input() {
+    let declared = ["<trim>".to_owned()];
+    let r = "load a.xml => true x 1\nload b.xml => true x 2\n";
+    let c = "load a.xml => unsupported <trim> full (FGTrim)\nload b.xml => true x 2\n";
+    let outcome = compare_transcript_declaring("c", r, c, &table(&[]), &declared).unwrap();
+    assert_eq!(outcome.divergence, None);
+    assert_eq!(outcome.unsupported, 1);
+
+    let undeclared = compare_transcript("c", r, c, &table(&[])).unwrap();
+    assert!(undeclared.divergence.is_some(), "only declared constructs");
+    let other = "load a.xml => unsupported <running>\nload b.xml => true x 2\n";
+    let outcome = compare_transcript_declaring("c", r, other, &table(&[]), &declared).unwrap();
+    assert!(outcome.divergence.is_some(), "another construct");
+    let shifted = "load b.xml => unsupported <trim>\nload b.xml => true x 2\n";
+    let outcome = compare_transcript_declaring("c", r, shifted, &table(&[]), &declared).unwrap();
+    assert!(outcome.divergence.is_some(), "another input");
+}

@@ -11,7 +11,7 @@ use crate::cli::report;
 use crate::manifest::{
     self, CaseSpec, INPUT_FILE, Manifest, Provenance, REFERENCE_FILE, TRANSCRIPT_FILE,
 };
-use crate::transcript::{TranscriptOutcome, compare_transcript};
+use crate::transcript::{TranscriptOutcome, compare_transcript, compare_transcript_declaring};
 use crate::upstream::{self, Paths};
 use crate::{OracleError, Series, ToleranceTable, compare};
 
@@ -126,8 +126,12 @@ pub fn report_transcript(case: &str, outcome: &TranscriptOutcome) -> bool {
     match &outcome.divergence {
         None => {
             info!(
-                "{case}: PASS, {} lines; {} numbers differ, max |diff| {:e}, max rel {:e}",
-                outcome.lines, outcome.numbers_differing, outcome.max_abs, outcome.max_rel
+                "{case}: PASS, {} lines; {} numbers differ, max |diff| {:e}, max rel {:e}; {} declared unsupported",
+                outcome.lines,
+                outcome.numbers_differing,
+                outcome.max_abs,
+                outcome.max_rel,
+                outcome.unsupported
             );
             true
         }
@@ -162,7 +166,8 @@ pub fn port_blocking(repo_root: &Path, case: &str) -> Result<ExitCode, OracleErr
     let reference = std::fs::read_to_string(&reference_path)
         .map_err(|e| OracleError::io("reading", &reference_path, e))?;
     let table = ToleranceTable::read_blocking(&repo_root.join("oracle").join("tolerances.toml"))?;
-    let outcome = compare_transcript(case, &reference, &candidate, &table)?;
+    let outcome =
+        compare_transcript_declaring(case, &reference, &candidate, &table, &spec.unsupported)?;
     Ok(if report_transcript(case, &outcome) {
         ExitCode::SUCCESS
     } else {

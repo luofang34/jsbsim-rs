@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<!-- Not an <initialize> document: Load throws. -->
+<runscript name="not-reset">
+  <altitude unit="FT"> 1000.0 </altitude>
+</runscript>

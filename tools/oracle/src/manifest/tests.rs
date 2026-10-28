@@ -67,7 +67,8 @@ fn parses_transcript_case() {
     assert_eq!(
         m.case,
         CaseSpec::Transcript(TranscriptSpec {
-            probe: "properties".into()
+            probe: "properties".into(),
+            unsupported: Vec::new(),
         })
     );
     assert_eq!(m.expected_columns(), None);

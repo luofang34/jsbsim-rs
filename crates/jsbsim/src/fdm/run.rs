@@ -14,8 +14,8 @@ use crate::math::{ColumnVector3, E_PHI, E_THT, Location, Matrix33, Quaternion};
 use crate::models::aircraft;
 use crate::models::atmosphere::Overrides;
 
-/// What the initial conditions give the models (`FGInitialCondition`'s
-/// getters used by `SetInitialState`).
+/// What the initial conditions give the models: the `FGInitialCondition`
+/// getters that `FGFDMExec::Initialize` hands to `SetInitialState`.
 #[derive(Debug, Clone, Default)]
 pub struct InitialState {
     /// Position.
@@ -335,7 +335,7 @@ impl Fdm {
 
     /// `Initialize(IC)`: the initial state into the models, then one frame.
     fn initialize(&mut self) -> Result<(), Error> {
-        let ic = self.initial.clone();
+        let ic = self.models.ic.initial_state();
         let m = &mut self.models;
         m.propagate.set_initial_state(
             &m.inertial,
@@ -364,14 +364,6 @@ impl Fdm {
         let e = &mut self.models.exec;
         e.dt = e.saved_dt;
         Ok(())
-    }
-
-    /// Sets the initial conditions `run_ic` applies.
-    pub fn set_initial_state(&mut self, state: InitialState) {
-        let m = &mut self.models;
-        let (a, b) = (m.inertial.a, m.inertial.b);
-        m.auxiliary.set_ic_reference(&state.position, a, b);
-        self.initial = state;
     }
 
     /// `Setdt`.
@@ -417,16 +409,31 @@ impl Fdm {
 }
 
 impl Fdm {
-    /// `FGInitialCondition::Load(file)` for `dir/name.xml`.
+    /// `FGInitialCondition::Load(file)` for `dir/name` (`.xml` added when
+    /// it has no extension), applied to [`Models::ic`]. False, with the
+    /// problem logged, where JSBSim's `Load` returns false.
     pub fn load_initial_conditions(
         &mut self,
-        _resolver: &dyn crate::Resolver,
+        resolver: &dyn crate::Resolver,
         dir: &str,
         name: &str,
-    ) -> Result<(), Error> {
-        Err(Error::Unsupported {
-            construct: "initial conditions (FGInitialCondition is being ported)".to_owned(),
-            path: format!("{dir}/{name}.xml"),
-        })
+    ) -> Result<bool, Error> {
+        let loader = crate::xml::DocumentLoader::new(resolver, dir);
+        let document = loader.load_document(&format!("{dir}/{name}"))?;
+        self.load_initial_conditions_document(&document)
+    }
+
+    /// `FGInitialCondition::Load` on a parsed `<initialize>` document.
+    pub fn load_initial_conditions_document(
+        &mut self,
+        document: &crate::xml::Element,
+    ) -> Result<bool, Error> {
+        let m = &mut self.models;
+        let outcome = m.ic.load(document, &m.atmosphere, &mut m.inertial)?;
+        if outcome.planet_rotation_changed {
+            m.propagate.input.omega_planet = m.inertial.omega_planet;
+            m.accelerations.input.omega_planet = m.inertial.omega_planet;
+        }
+        Ok(outcome.result)
     }
 }

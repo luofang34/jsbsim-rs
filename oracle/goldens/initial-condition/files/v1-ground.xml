@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!-- Version 1: local velocity components, then true airspeed and ground
+     speed, which drops the vertical ground speed. -->
+<initialize name="v1-ground">
+  <vnorth unit="FT/SEC">  80.0 </vnorth>
+  <veast unit="FT/SEC">  -40.0 </veast>
+  <vdown unit="FT/SEC">   -5.0 </vdown>
+  <vt unit="KTS">        120.0 </vt>
+  <vground unit="KTS">   110.0 </vground>
+  <vbody unit="FT/SEC">    3.0 </vbody>
+  <latitude unit="RAD">    0.9 </latitude>
+  <altitudeAGL unit="FT"> 300.0 </altitudeAGL>
+  <psi unit="DEG">        -30.0 </psi>
+</initialize>

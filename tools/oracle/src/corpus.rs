@@ -56,6 +56,7 @@ pub fn check_xml_blocking(paths: &Paths) -> Result<ExitCode, OracleError> {
     std::fs::write(&input_path, &input).map_err(|e| OracleError::io("writing", &input_path, e))?;
     let spec = TranscriptSpec {
         probe: "xml".to_owned(),
+        unsupported: Vec::new(),
     };
     let reference = upstream::run_transcript_blocking(paths, &spec, &input_path, &run_dir)?;
     let context = ProbeContext {
@@ -222,6 +223,7 @@ fn check_functions_blocking(
     std::fs::write(&input_path, &input).map_err(|e| OracleError::io("writing", &input_path, e))?;
     let spec = TranscriptSpec {
         probe: "functions".to_owned(),
+        unsupported: Vec::new(),
     };
     let reference = upstream::run_transcript_blocking(paths, &spec, &input_path, run_dir)?;
     let context = ProbeContext {

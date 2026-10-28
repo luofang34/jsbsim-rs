@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 use super::*;
-use crate::fdm::{Fdm, InitialState};
+use crate::fdm::Fdm;
 
 fn identity() -> Matrix33 {
     Matrix33::new(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0)
@@ -239,14 +239,18 @@ fn initial_conditions_set_the_steady_wind() {
     // No aircraft is loaded, so its aerodynamics cannot run.
     fdm.set_property("simulation/models/FGAerodynamics/enabled", 0.0)
         .unwrap();
-    fdm.set_initial_state(InitialState {
-        wind_ned: ColumnVector3::new(3.0, 4.0, 0.0),
-        ..InitialState::default()
-    });
+    fdm.set_property("ic/vw-mag-fps", 5.0).unwrap();
+    fdm.set_property("ic/vw-dir-deg", 30.0).unwrap();
     fdm.run_ic().unwrap();
-    assert_eq!(fdm.get_property("atmosphere/wind-mag-fps").unwrap(), 5.0);
-    assert_eq!(
-        fdm.get_property("atmosphere/total-wind-east-fps").unwrap(),
-        4.0
-    );
+    let mag = fdm.get_property("atmosphere/wind-mag-fps").unwrap();
+    assert!((mag - 5.0).abs() < 1e-12, "{mag}");
+    for axis in ["north", "east"] {
+        let ic = fdm.get_property(&format!("ic/vw-{axis}-fps")).unwrap();
+        assert_ne!(ic, 0.0);
+        assert_eq!(
+            fdm.get_property(&format!("atmosphere/total-wind-{axis}-fps"))
+                .unwrap(),
+            ic
+        );
+    }
 }

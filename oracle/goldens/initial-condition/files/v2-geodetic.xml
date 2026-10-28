@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!-- Version 2: geodetic position above raised terrain, ECI orientation,
+     ECEF velocity, local attitude rate, a planet position angle and
+     rotation rate; a <trim> is not read in version 2. -->
+<initialize name="v2-geodetic" version="2.0">
+  <planet_position_angle unit="DEG"> 30.0 </planet_position_angle>
+  <planet_rotation_rate unit="RAD"> 0.0001 </planet_rotation_rate>
+  <elevation unit="FT"> 1200.0 </elevation>
+  <position frame="ECEF">
+    <longitude unit="DEG"> -71.0 </longitude>
+    <latitude unit="DEG" type="geod"> 42.4 </latitude>
+    <altitudeAGL unit="FT"> 2500.0 </altitudeAGL>
+  </position>
+  <orientation unit="DEG" frame="ECI">
+    <roll> 10.0 </roll>
+    <pitch> -20.0 </pitch>
+    <yaw> 75.0 </yaw>
+  </orientation>
+  <velocity unit="FT/SEC" frame="ECEF">
+    <x> 120.0 </x>
+    <y> -80.0 </y>
+    <z> 40.0 </z>
+  </velocity>
+  <attitude_rate unit="DEG/SEC" frame="LOCAL">
+    <x> 1.0 </x>
+    <y> -2.0 </y>
+    <z> 0.5 </z>
+  </attitude_rate>
+  <trim> full </trim>
+</initialize>

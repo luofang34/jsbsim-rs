@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!-- Version 2: a radius and geocentric latitude, no velocity, and an
+     attitude rate without a frame. -->
+<initialize name="v2-radius" version="2.5">
+  <position frame="ECEF">
+    <longitude unit="DEG"> 10.0 </longitude>
+    <radius unit="FT"> 21000000.0 </radius>
+    <latitude unit="DEG"> -60.0 </latitude>
+  </position>
+  <orientation unit="DEG" frame="local">
+    <x> 0.0 </x>
+    <y> 15.0 </y>
+    <z> 200.0 </z>
+  </orientation>
+  <attitude_rate unit="RAD/SEC">
+    <x> 0.1 </x>
+  </attitude_rate>
+</initialize>

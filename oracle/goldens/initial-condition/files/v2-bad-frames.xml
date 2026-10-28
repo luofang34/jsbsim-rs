@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!-- Version 2 with unknown frames everywhere: Load returns false. -->
+<initialize name="v2-bad-frames" version="2.0">
+  <position frame="GALACTIC">
+    <x> 1.0 </x>
+  </position>
+  <orientation unit="DEG" frame="WIND">
+    <x> 10.0 </x>
+  </orientation>
+  <velocity unit="FT/SEC" frame="STABILITY">
+    <x> 100.0 </x>
+  </velocity>
+  <attitude_rate unit="DEG/SEC" frame="HORIZON">
+    <x> 1.0 </x>
+  </attitude_rate>
+</initialize>

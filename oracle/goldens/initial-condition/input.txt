@@ -1,0 +1,108 @@
+# Initialization files of the JSBSim tree, vendored in oracle/inputs.
+load ../../inputs/aircraft/ball/reset00.xml
+load ../../inputs/aircraft/ball/reset00_v2.xml
+load ../../inputs/aircraft/ball/reset01.xml
+load ../../inputs/aircraft/ball/iss_orbit.xml
+load ../../inputs/check_cases/NASA_EOM_2015/aircraft/brick/reset_Atmos_02.xml
+# Version 1 files exercising the setters Load_v1 calls.
+load files/v1-vc-wind.xml
+load files/v1-mach.xml
+load files/v1-ground.xml
+load files/v1-bad-latitude.xml
+# Version 2 frames.
+load files/v2-geodetic.xml
+load files/v2-ecef.xml
+load files/v2-radius.xml
+load files/v2-bad-frames.xml
+load files/v2-no-altitude.xml
+# Versions and documents Load rejects.
+load files/versions.xml
+load files/version-half.xml
+load files/not-reset.xml
+load files/missing.xml
+# Trim requests and running engines, which the port refuses.
+load files/v1-trim.xml
+load files/v1-running.xml
+# Calibrated, Mach and equivalent speeds kept across altitude, latitude
+# and longitude changes.
+new
+set ic/vc-kts 250
+set ic/h-sl-ft 10000
+set ic/lat-gc-deg 45
+set ic/mach 0.7
+set ic/h-agl-ft 20000
+set ic/long-gc-deg -120
+set ic/ve-kts 200
+set ic/terrain-elevation-ft 3000
+set ic/h-sl-ft 35000
+set ic/lat-geod-deg 60
+set ic/h-agl-ft 1500
+set ic/terrain-elevation-ft 500
+set ic/lat-geod-rad -0.3
+set ic/h-sl-ft 4000
+set ic/lat-gc-rad 1.2
+set ic/long-gc-rad 2.5
+set ic/vt-kts 300
+set ic/h-sl-ft 15000
+# Flight path, alpha, beta and attitude, with wind.
+new
+set ic/vt-fps 400
+set ic/psi-true-deg 45
+set ic/vw-mag-fps 30
+set ic/vw-dir-deg 120
+set ic/alpha-deg 5
+set ic/gamma-deg 3
+set ic/beta-deg 2
+set ic/phi-deg 20
+set ic/alpha-deg 6
+set ic/roc-fpm 1200
+set ic/theta-deg 8
+set ic/beta-rad -0.05
+set ic/gamma-rad -0.04
+set ic/alpha-rad 0.02
+set ic/phi-rad -0.3
+set ic/psi-true-rad 3.5
+set ic/theta-rad 0.1
+set ic/vw-mag-fps 0
+set ic/vw-dir-deg 10
+set ic/vw-mag-fps 15
+# Refused: a climb rate above the airspeed; alpha unreachable at this roll.
+set ic/roc-fps 500
+set ic/phi-deg 89
+set ic/alpha-deg 80
+# Body, local and ground velocities, rates and the read-only properties.
+new
+set ic/u-fps 200
+set ic/v-fps 10
+set ic/w-fps 15
+set ic/theta-deg 10
+set ic/vn-fps 150
+set ic/ve-fps -60
+set ic/vd-fps 12
+set ic/psi-true-deg 300
+set ic/vg-kts 90
+set ic/phi-deg 15
+set ic/vg-fps 160
+set ic/vt-fps 0.05
+set ic/vt-fps 250
+set ic/p-rad_sec 0.1
+set ic/q-rad_sec -0.2
+set ic/r-rad_sec 0.3
+set ic/targetNlf 2.5
+set ic/vw-bx-fps 5
+set ic/vw-north-fps 5
+set ic/geod-alt-ft 1000
+# Loading on top of a modified state, and setters after a load.
+new
+set ic/vt-kts 150
+set ic/h-agl-ft 2000
+reload files/v1-ground.xml
+set ic/mach 0.3
+set ic/alpha-deg 7
+reload files/v2-geodetic.xml
+set ic/h-sl-ft 9000
+set ic/vc-kts 140
+load ../../inputs/aircraft/ball/reset01.xml
+set ic/vc-kts 300
+set ic/h-agl-ft 30000
+set ic/beta-deg 3
