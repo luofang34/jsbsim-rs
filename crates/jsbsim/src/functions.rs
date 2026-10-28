@@ -131,27 +131,25 @@ impl FunctionSet {
 
     /// The function `id`; an error only for an id another set created.
     pub fn function(&self, id: FnId) -> Result<&Function, FunctionError> {
-        self.functions.get(id.0).ok_or(FunctionError::UnknownId {
-            what: "function",
-            id: id.0,
-        })
+        match self.functions.get(id.0) {
+            Some(function) => Ok(function),
+            None => Err(unknown_id("function", id.0)),
+        }
     }
 
     fn function_mut(&mut self, id: FnId) -> Result<&mut Function, FunctionError> {
-        self.functions
-            .get_mut(id.0)
-            .ok_or(FunctionError::UnknownId {
-                what: "function",
-                id: id.0,
-            })
+        match self.functions.get_mut(id.0) {
+            Some(function) => Ok(function),
+            None => Err(unknown_id("function", id.0)),
+        }
     }
 
     /// The table `id`; an error only for an id another set created.
     pub fn table(&self, id: TableId) -> Result<&Table, FunctionError> {
-        self.tables.get(id.0).ok_or(FunctionError::UnknownId {
-            what: "table",
-            id: id.0,
-        })
+        match self.tables.get(id.0) {
+            Some(table) => Ok(table),
+            None => Err(unknown_id("table", id.0)),
+        }
     }
 
     /// The template registered as `name` (`GetTemplateFunc`).
@@ -235,6 +233,14 @@ impl FunctionSet {
         tree.set_double(node, value);
         tree.set_attribute(node, Attribute::WRITE, false);
     }
+}
+
+/// The error of an id lookup that missed. The id accessors run several
+/// times per frame, so the error is built only on the miss path: an eager
+/// `ok_or(FunctionError::..)` costs a `FunctionError` drop on every hit.
+#[cold]
+fn unknown_id(what: &'static str, id: usize) -> FunctionError {
+    FunctionError::UnknownId { what, id }
 }
 
 /// `is_number`: whether `text` passes `atof_locale_c`.
