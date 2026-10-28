@@ -1,0 +1,16 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+//! Unofficial pure-Rust port of the JSBSim flight dynamics model.
+//!
+//! The core performs no I/O, runs single-threaded and is deterministic, so
+//! native and `wasm32-unknown-unknown` builds produce the same results. Model
+//! and data files reach the core through a [`Resolver`].
+
+pub mod error;
+pub mod math;
+pub mod models;
+pub mod properties;
+pub mod resolver;
+pub mod xml;
+
+pub use error::Error;
+pub use resolver::{MemoryResolver, Resolver};

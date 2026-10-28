@@ -1,0 +1,32 @@
+[workspace]
+resolver = "3"
+members = ["crates/jsbsim"]
+
+[workspace.package]
+edition = "2024"
+license = "LGPL-2.1-or-later"
+publish = false
+rust-version = "1.99"
+
+[workspace.dependencies]
+libm = "0.2"
+thiserror = "2"
+tracing = "0.1"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+unwrap_used = "forbid"
+expect_used = "forbid"
+panic = "forbid"
+todo = "forbid"
+unimplemented = "forbid"
+unreachable = "forbid"
+exit = "forbid"
+mem_forget = "forbid"
+get_unwrap = "forbid"
+let_underscore_must_use = "deny"
+let_underscore_future = "deny"
+await_holding_lock = "deny"
+disallowed_types = "deny"
