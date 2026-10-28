@@ -1,0 +1,100 @@
+# Per-property tolerances: |candidate - reference| <= abs + rel * |reference|,
+# optionally within [t_start, t_end). Every row states its reason.
+
+[[tolerance]]
+case = "ball"
+property = "Time"
+abs = 0.0
+rel = 0.0
+reason = "Sample times are sums of dt in the same order on both sides, so they must match exactly."
+
+[[tolerance]]
+case = "ball"
+property = "position/h-sl-ft"
+abs = 0.0
+rel = 1e-12
+reason = "Allows last-digit libm and FMA differences between C++ toolchains when regenerating; the Rust propagator bound is set when it exists."
+
+[[tolerance]]
+case = "ball"
+property = "position/lat-gc-deg"
+abs = 1e-09
+rel = 1e-12
+reason = "Equatorial orbit: the reference is round-off noise around zero, so an absolute floor replaces the relative bound."
+
+[[tolerance]]
+case = "ball"
+property = "position/long-gc-deg"
+abs = 0.0
+rel = 1e-12
+reason = "Allows last-digit libm and FMA differences between C++ toolchains when regenerating; the Rust propagator bound is set when it exists."
+
+[[tolerance]]
+case = "ball"
+property = "position/eci-x-ft"
+abs = 0.0
+rel = 1e-12
+reason = "Allows last-digit libm and FMA differences between C++ toolchains when regenerating; the Rust propagator bound is set when it exists."
+
+[[tolerance]]
+case = "ball"
+property = "position/eci-y-ft"
+abs = 0.0
+rel = 1e-12
+reason = "Allows last-digit libm and FMA differences between C++ toolchains when regenerating; the Rust propagator bound is set when it exists."
+
+[[tolerance]]
+case = "ball"
+property = "position/eci-z-ft"
+abs = 1e-06
+rel = 1e-12
+reason = "Equatorial orbit: the reference is round-off noise around zero, so an absolute floor replaces the relative bound."
+
+[[tolerance]]
+case = "ball"
+property = "velocities/eci-x-fps"
+abs = 0.0
+rel = 1e-12
+reason = "Allows last-digit libm and FMA differences between C++ toolchains when regenerating; the Rust propagator bound is set when it exists."
+
+[[tolerance]]
+case = "ball"
+property = "velocities/eci-y-fps"
+abs = 0.0
+rel = 1e-12
+reason = "Allows last-digit libm and FMA differences between C++ toolchains when regenerating; the Rust propagator bound is set when it exists."
+
+[[tolerance]]
+case = "ball"
+property = "velocities/eci-z-fps"
+abs = 1e-09
+rel = 1e-12
+reason = "Equatorial orbit: the reference is round-off noise around zero, so an absolute floor replaces the relative bound."
+
+[[tolerance]]
+case = "ball"
+property = "velocities/u-fps"
+abs = 0.0
+rel = 1e-12
+reason = "Allows last-digit libm and FMA differences between C++ toolchains when regenerating; the Rust propagator bound is set when it exists."
+
+[[tolerance]]
+case = "ball"
+property = "attitude/phi-rad"
+abs = 1e-09
+rel = 1e-12
+reason = "Equatorial orbit: the reference is round-off noise around zero, so an absolute floor replaces the relative bound."
+
+[[tolerance]]
+case = "ball"
+property = "attitude/theta-rad"
+abs = 0.0
+rel = 1e-12
+reason = "Allows last-digit libm and FMA differences between C++ toolchains when regenerating; the Rust propagator bound is set when it exists."
+
+[[tolerance]]
+case = "ball"
+property = "attitude/psi-rad"
+abs = 0.0
+rel = 1e-12
+reason = "Allows last-digit libm and FMA differences between C++ toolchains when regenerating; the Rust propagator bound is set when it exists."

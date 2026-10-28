@@ -1,0 +1,22 @@
+[package]
+name = "oracle"
+version = "0.0.0"
+description = "Runs C++ JSBSim as a reference oracle and compares outputs against it"
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+clap.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+toml.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+
+[lints]
+workspace = true

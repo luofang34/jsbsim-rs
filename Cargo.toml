@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["crates/jsbsim"]
+members = ["crates/jsbsim", "tools/oracle"]
 
 [workspace.package]
 edition = "2024"
@@ -9,9 +9,14 @@ publish = false
 rust-version = "1.99"
 
 [workspace.dependencies]
+clap = { version = "4", default-features = false, features = ["std", "help", "usage", "error-context", "env"] }
 libm = "0.2"
+serde = { version = "1", features = ["derive"] }
+tempfile = "3"
 thiserror = "2"
+toml = "0.9"
 tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
 [workspace.lints.rust]
 unsafe_code = "forbid"

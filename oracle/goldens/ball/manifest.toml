@@ -1,0 +1,11 @@
+[case]
+script = "scripts/ball.xml"
+rate_hz = 0.1
+properties = ["position/h-sl-ft", "position/lat-gc-deg", "position/long-gc-deg", "position/eci-x-ft", "position/eci-y-ft", "position/eci-z-ft", "velocities/eci-x-fps", "velocities/eci-y-fps", "velocities/eci-z-fps", "velocities/u-fps", "attitude/phi-rad", "attitude/theta-rad", "attitude/psi-rad"]
+
+[provenance]
+upstream_commit = "66f7fafc07fe13e7ede9db20873030fed2881713"
+driver = "tools/oracle/cpp/oracle_driver.cpp"
+dt = 0.01
+every_n_frames = 1000
+rows = 1081
