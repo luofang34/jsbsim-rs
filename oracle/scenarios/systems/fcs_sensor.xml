@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  FGSensor beyond the upstream tests, none of it random: lag, drift
+  without noise (kept across a reset), gain and bias, transport delays in
+  frames and in seconds (the default type), quantization with and without
+  a tied quantized property, the three failures, a zero noise with known
+  and with unknown types, clipping, a signed input, every degradation at
+  once, and sensors in a channel run every third frame. The fcs-sensor
+  golden drives it.
+-->
+<system name="fcs-sensor">
+  <property>test/input</property>
+  <channel name="sensors">
+    <sensor name="test/lag">
+      <input>test/input</input>
+      <lag>2.0</lag>
+    </sensor>
+    <sensor name="test/drift">
+      <input>test/input</input>
+      <drift_rate>0.25</drift_rate>
+    </sensor>
+    <sensor name="test/gain-bias">
+      <input>test/input</input>
+      <gain>-1.5</gain>
+      <bias>0.125</bias>
+    </sensor>
+    <sensor name="test/delay-frames">
+      <input>test/input</input>
+      <delay type="frames">3</delay>
+    </sensor>
+    <sensor name="test/delay-time">
+      <input>test/input</input>
+      <delay>0.02</delay>
+    </sensor>
+    <sensor name="test/quantized">
+      <input>test/input</input>
+      <quantization name="quantized-steps">
+        <bits>4</bits>
+        <min>-1.0</min>
+        <max>1.0</max>
+      </quantization>
+    </sensor>
+    <sensor name="test/quantized-path-name">
+      <input>test/input</input>
+      <quantization name="test/quantized-path-steps">
+        <bits>3</bits>
+        <min>0</min>
+        <max>2.5</max>
+      </quantization>
+    </sensor>
+    <sensor name="test/quantization-no-bits">
+      <input>test/input</input>
+      <quantization name="no-bits-steps">
+        <min>0</min>
+        <max>1</max>
+      </quantization>
+    </sensor>
+    <sensor name="Failing Sensor">
+      <input>test/input</input>
+      <bias>0.5</bias>
+    </sensor>
+    <sensor name="test/failing-quantized">
+      <input>test/input</input>
+      <quantization>
+        <bits>2</bits>
+        <min>-2</min>
+        <max>2</max>
+      </quantization>
+    </sensor>
+    <sensor name="test/zero-noise">
+      <input>test/input</input>
+      <noise variation="ABSOLUTE" distribution="GAUSSIAN">0.0</noise>
+      <bias>1</bias>
+    </sensor>
+    <sensor name="test/zero-noise-unknown-types">
+      <input>test/input</input>
+      <noise>0</noise>
+    </sensor>
+    <sensor name="test/clipped">
+      <input>-test/input</input>
+      <clipto>
+        <min>-0.5</min>
+        <max>0.75</max>
+      </clipto>
+    </sensor>
+    <sensor name="test/everything">
+      <input>test/input</input>
+      <lag>5.0</lag>
+      <drift_rate>-0.1</drift_rate>
+      <gain>2.0</gain>
+      <bias>-0.3</bias>
+      <delay type="frames">2</delay>
+      <quantization name="everything-steps">
+        <bits>6</bits>
+        <min>-4</min>
+        <max>4</max>
+      </quantization>
+      <clipto>
+        <min>-3</min>
+        <max>3</max>
+      </clipto>
+    </sensor>
+  </channel>
+  <channel name="slow sensors" execrate="3">
+    <sensor name="test/lag-slow">
+      <input>test/input</input>
+      <lag>2.0</lag>
+    </sensor>
+    <sensor name="test/drift-slow">
+      <input>test/input</input>
+      <drift_rate>0.25</drift_rate>
+      <delay type="time">0.05</delay>
+    </sensor>
+  </channel>
+</system>

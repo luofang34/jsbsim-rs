@@ -175,7 +175,7 @@ pub fn expected_blocking(repo_root: &Path) -> Result<Vec<(String, String)>, Orac
         ));
     }
     let tripod_text = read("tests/tripod.xml")?;
-    for system in &tripod::SYSTEMS {
+    for system in tripod::SYSTEMS {
         let suffix = system.suffix;
         files.push((
             format!("aircraft/tripod_{suffix}/tripod_{suffix}.xml"),

@@ -1,0 +1,81 @@
+# oracle/scenarios/systems/fcs_sensor.xml on tripod_fcs_sensor: lag, drift,
+# gain and bias, delays, quantization, failures, zero noise, clipping and a
+# slow channel, the random seed properties, and a reset.
+# The tripod starts at 10000 ft so that its contacts stay clear of the
+# ground; nothing else differs from the upstream tests.
+paths ../.. derived/aircraft scenarios/systems
+new
+load tripod_fcs_sensor
+watch test/input test/lag test/drift test/gain-bias test/delay-frames test/delay-time test/quantized fcs/quantized-steps test/quantized-path-name test/quantized-path-steps test/quantization-no-bits fcs/no-bits-steps fcs/failing-sensor fcs/failing-sensor/malfunction/fail_low fcs/failing-sensor/malfunction/fail_high fcs/failing-sensor/malfunction/fail_stuck test/failing-quantized test/zero-noise test/zero-noise-unknown-types test/clipped test/everything fcs/everything-steps test/lag-slow test/drift-slow test/lag/randomseed fcs/failing-sensor/randomseed simulation/channel-dt
+print
+set ic/h-sl-ft 10000
+runic
+set test/input 1.0
+run
+run
+run
+run
+run
+run
+run
+run
+set test/input 0.37
+run
+run
+run
+run
+set test/input -0.81
+run
+run
+run
+run
+set test/input 3.3
+run
+run
+run
+set test/input -7.5
+run
+run
+set test/input 0.2
+set fcs/failing-sensor/malfunction/fail_stuck 1
+set test/failing-quantized/malfunction/fail_stuck 0.5
+run
+set test/input 0.6
+run
+set fcs/failing-sensor/malfunction/fail_stuck 0
+set test/failing-quantized/malfunction/fail_stuck -1
+set fcs/failing-sensor/malfunction/fail_low 1
+set test/failing-quantized/malfunction/fail_low 1
+run
+set fcs/failing-sensor/malfunction/fail_high 2
+set test/failing-quantized/malfunction/fail_high 2
+run
+set fcs/failing-sensor/malfunction/fail_low 0
+set test/failing-quantized/malfunction/fail_low 0
+run
+set fcs/failing-sensor/malfunction/fail_high 0
+set test/failing-quantized/malfunction/fail_high 0
+run
+set simulation/randomseed 3
+print
+set test/lag/randomseed 5.7
+print
+set fcs/failing-sensor/randomseed -4
+set simulation/randomseed 11
+print
+set test/input 0.9
+run
+run
+set simulation/reset 0
+print
+run
+run
+run
+run
+run
+run
+set test/input -0.25
+run
+run
+run
+run

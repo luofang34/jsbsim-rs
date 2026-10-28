@@ -18,6 +18,7 @@ pub mod function;
 pub mod gain;
 mod load;
 pub mod pid;
+pub mod sensor;
 pub mod summer;
 pub mod switch;
 #[cfg(test)]

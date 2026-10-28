@@ -4910,3 +4910,10 @@ property = "*"
 abs = 0.0
 rel = 0.0
 reason = "The latitude checks compare the scaled latitudes with pi/2 exactly, so the same runs fail; the frames before them are coincident points, bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-sensor"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "FGSensor's lag, drift, gain, bias, transport delay, failures, quantization and clipping use only IEEE basic operations, truncation and comparisons in JSBSim's order, and the failure and seed properties only copy values, so they must be bit-identical; observed max |diff| 0."
