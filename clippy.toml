@@ -7,3 +7,10 @@ allow-unwrap-in-tests = true
 disallowed-types = [
     { path = "anyhow::Error", reason = "libraries use typed thiserror enums" },
 ]
+disallowed-macros = [
+    { path = "std::println", reason = "use tracing" },
+    { path = "std::eprintln", reason = "use tracing" },
+    { path = "std::print", reason = "use tracing" },
+    { path = "std::eprint", reason = "use tracing" },
+    { path = "std::dbg", reason = "use tracing" },
+]

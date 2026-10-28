@@ -3,7 +3,7 @@
 
 use std::path::{Path, PathBuf};
 
-use oracle::manifest::{self, REFERENCE_FILE};
+use oracle::manifest::{self, CaseSpec, REFERENCE_FILE, TRANSCRIPT_FILE};
 use oracle::{Manifest, Series, ToleranceTable, compare};
 
 #[cfg(test)]
@@ -17,10 +17,23 @@ fn cases() -> Vec<String> {
 }
 
 #[cfg(test)]
+fn manifest(case: &str) -> Manifest {
+    Manifest::read_blocking(&oracle_dir().join("goldens").join(case)).unwrap()
+}
+
+#[cfg(test)]
+fn series_cases() -> Vec<String> {
+    cases()
+        .into_iter()
+        .filter(|case| manifest(case).expected_columns().is_some())
+        .collect()
+}
+
+#[cfg(test)]
 fn load(case: &str) -> (Manifest, Series) {
     let dir = oracle_dir().join("goldens").join(case);
     (
-        Manifest::read_blocking(&dir).unwrap(),
+        manifest(case),
         Series::read_blocking(&dir.join(REFERENCE_FILE)).unwrap(),
     )
 }
@@ -38,7 +51,7 @@ fn ball_case_is_committed() {
 #[test]
 fn every_golden_matches_its_manifest() {
     for case in cases() {
-        let (manifest, series) = load(&case);
+        let manifest = manifest(&case);
         let provenance = manifest.provenance.as_ref().expect(&case);
         assert_eq!(provenance.upstream_commit.len(), 40, "{case}");
         assert!(
@@ -48,17 +61,30 @@ fn every_golden_matches_its_manifest() {
                 .all(|b| b.is_ascii_hexdigit()),
             "{case}"
         );
-        assert_eq!(series.columns, manifest.expected_columns(), "{case}");
-        assert_eq!(series.rows.len(), provenance.rows, "{case}");
+        let dir = oracle_dir().join("goldens").join(&case);
+        match &manifest.case {
+            CaseSpec::Script(_) => {
+                let series = Series::read_blocking(&dir.join(REFERENCE_FILE)).unwrap();
+                assert_eq!(Some(series.columns), manifest.expected_columns(), "{case}");
+                assert_eq!(series.rows.len(), provenance.rows, "{case}");
+            }
+            CaseSpec::Transcript(_) => {
+                let text = std::fs::read_to_string(dir.join(TRANSCRIPT_FILE)).unwrap();
+                assert_eq!(text.lines().count(), provenance.rows, "{case}");
+            }
+        }
     }
 }
 
 #[test]
-fn samples_are_spaced_by_the_frame_interval() {
-    for case in cases() {
+fn script_samples_are_spaced_by_the_frame_interval() {
+    for case in series_cases() {
         let (manifest, series) = load(&case);
         let provenance = manifest.provenance.unwrap();
-        let interval = provenance.dt * provenance.every_n_frames as f64;
+        let (Some(dt), Some(every)) = (provenance.dt, provenance.every_n_frames) else {
+            continue;
+        };
+        let interval = dt * every as f64;
         for (i, row) in series.rows.iter().enumerate() {
             let expected = i as f64 * interval;
             assert!(
@@ -74,16 +100,16 @@ fn samples_are_spaced_by_the_frame_interval() {
 fn ball_samples_the_whole_script_at_the_requested_rate() {
     let (manifest, series) = load("ball");
     let provenance = manifest.provenance.unwrap();
-    assert_eq!(provenance.dt, 0.01);
+    assert_eq!(provenance.dt, Some(0.01));
     // 0.1 Hz at dt = 0.01 s is every 1000 frames; ball.xml ends at 10800 s.
-    assert_eq!(provenance.every_n_frames, 1000);
+    assert_eq!(provenance.every_n_frames, Some(1000));
     assert_eq!(series.rows.len(), 10800 / 10 + 1);
 }
 
 #[test]
-fn every_golden_agrees_with_itself_under_the_table() {
+fn every_golden_series_agrees_with_itself_under_the_table() {
     let table = table();
-    for case in cases() {
+    for case in series_cases() {
         let (_, series) = load(&case);
         let outcome = compare(&case, &series, &series, &table).unwrap();
         assert_eq!(outcome.divergence, None, "{case}");
@@ -93,12 +119,12 @@ fn every_golden_agrees_with_itself_under_the_table() {
 
 #[test]
 fn every_tolerance_row_belongs_to_a_logged_column() {
-    let cases = cases();
+    let cases = series_cases();
     for row in table().rows() {
         assert!(cases.contains(&row.case), "orphan case {}", row.case);
-        let (manifest, _) = load(&row.case);
+        let columns = manifest(&row.case).expected_columns().unwrap();
         assert!(
-            manifest.expected_columns().contains(&row.property),
+            columns.contains(&row.property),
             "{} does not log {}",
             row.case,
             row.property

@@ -8,7 +8,8 @@ use std::process::ExitCode;
 use clap::{Arg, ArgAction, ArgMatches, Command, value_parser};
 use tracing::{error, info};
 
-use crate::manifest::{self, Manifest, REFERENCE_FILE};
+use crate::cases;
+use crate::manifest;
 use crate::upstream::{self, Paths};
 use crate::{OracleError, Outcome, Series, ToleranceTable, compare};
 
@@ -112,17 +113,22 @@ where
         jsbsim_root: path(sub, "jsbsim-root"),
     };
     upstream::build_blocking(&paths)?;
+    if name == "build" {
+        return Ok(ExitCode::SUCCESS);
+    }
     let cases = selected_cases(&paths, sub)?;
     match name {
-        "generate" => generate_blocking(&paths, &cases).map(|()| ExitCode::SUCCESS),
-        "check-drift" => check_drift_blocking(&paths, &cases),
+        "generate" => cases::generate_blocking(&paths, &cases).map(|()| ExitCode::SUCCESS),
+        "check-drift" => cases::check_drift_blocking(&paths, &cases),
         _ => Ok(ExitCode::SUCCESS),
     }
 }
 
 fn selected_cases(paths: &Paths, sub: &ArgMatches) -> Result<Vec<String>, OracleError> {
     let named: Vec<String> = sub
-        .get_many::<String>("case")
+        .try_get_many::<String>("case")
+        .ok()
+        .flatten()
         .map(|values| values.cloned().collect())
         .unwrap_or_default();
     if named.is_empty() {
@@ -130,50 +136,6 @@ fn selected_cases(paths: &Paths, sub: &ArgMatches) -> Result<Vec<String>, Oracle
     } else {
         Ok(named)
     }
-}
-
-fn generate_blocking(paths: &Paths, cases: &[String]) -> Result<(), OracleError> {
-    for case in cases {
-        let dir = manifest::case_dir(&paths.goldens_dir(), case);
-        let mut manifest = Manifest::read_blocking(&dir)?;
-        let run = upstream::run_case_blocking(paths, &manifest.case, &run_dir(paths, case))?;
-        run.series.write_blocking(&dir.join(REFERENCE_FILE))?;
-        info!(
-            "{case}: {} rows x {} properties at {}",
-            run.provenance.rows,
-            manifest.case.properties.len(),
-            run.provenance.upstream_commit
-        );
-        manifest.provenance = Some(run.provenance);
-        manifest.write_blocking(&dir)?;
-    }
-    Ok(())
-}
-
-fn check_drift_blocking(paths: &Paths, cases: &[String]) -> Result<ExitCode, OracleError> {
-    let table = ToleranceTable::read_blocking(&paths.tolerances_file())?;
-    let mut code = ExitCode::SUCCESS;
-    for case in cases {
-        let dir = manifest::case_dir(&paths.goldens_dir(), case);
-        let manifest = Manifest::read_blocking(&dir)?;
-        let recorded = manifest.provenance.as_ref().ok_or_else(|| {
-            OracleError::Provenance(format!("{case}: manifest has no provenance; run generate"))
-        })?;
-        let run = upstream::run_case_blocking(paths, &manifest.case, &run_dir(paths, case))?;
-        if run.provenance.upstream_commit != recorded.upstream_commit {
-            error!(
-                "{case}: reference is from {} but the checkout is at {}",
-                recorded.upstream_commit, run.provenance.upstream_commit
-            );
-            code = ExitCode::FAILURE;
-        }
-        let reference = Series::read_blocking(&dir.join(REFERENCE_FILE))?;
-        let outcome = compare(case, &reference, &run.series, &table)?;
-        if !report(case, &outcome) {
-            code = ExitCode::FAILURE;
-        }
-    }
-    Ok(code)
 }
 
 fn compare_files_blocking(
@@ -197,7 +159,7 @@ fn compare_files_blocking(
 }
 
 /// Logs the outcome; returns whether the candidate agreed.
-fn report(case: &str, outcome: &Outcome) -> bool {
+pub(crate) fn report(case: &str, outcome: &Outcome) -> bool {
     match &outcome.divergence {
         None => {
             info!(
@@ -211,8 +173,4 @@ fn report(case: &str, outcome: &Outcome) -> bool {
             false
         }
     }
-}
-
-fn run_dir(paths: &Paths, case: &str) -> PathBuf {
-    paths.work_dir().join("run").join(case)
 }

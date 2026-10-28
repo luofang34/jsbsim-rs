@@ -1,0 +1,272 @@
+# Path syntax and node creation
+find /
+create /a/b
+find a/b
+find a//b
+find /a/b/
+create a[1]b
+find a[1]/b
+create x[007]
+find x[7]
+create y[]
+find y[0]
+find a/./b
+find a/b/../b
+find a/b/../../a
+find ..
+find a/../..
+create 1abc
+create _ok-name.v2
+create a#b
+create a[2
+create a[x]
+create .x
+create ...
+create a/.../b
+find missing
+find a/missing/deeper
+createi engine 3
+findi engine 3
+findi engine 2
+createi engine/thrust[1] 4
+find engine[3]
+find engine/thrust[4]
+path engine/thrust[4]
+path a/b
+has a/b
+has -a/b
+has --a/b
+has nope
+# Double node read as every type
+set double d 3.75
+get double d
+get float d
+get int d
+get long d
+get bool d
+get string d
+type d
+set double d -3.7
+get int d
+get long d
+set double d 1e20
+get int d
+get long d
+get string d
+set double d nan
+get int d
+get bool d
+get string d
+set double d inf
+get string d
+set double d -0.0
+get string d
+get bool d
+set double d 0.1
+get string d
+set double d 123456789012
+get string d
+set double d 1e21
+get string d
+set double d 1e-5
+get string d
+set double d 0.3333333333333333
+get string d
+# Int, long, float and bool nodes
+set int i 7
+type i
+set double i 9.99
+get int i
+get double i
+set string i 42.9xyz
+get int i
+set bool i 1
+get int i
+set long l 9000000000
+get int l
+get double l
+set string l 0x1A
+get long l
+set float f 0.1
+get double f
+get string f
+set float f 16777217
+get double f
+set double f 1e40
+get double f
+set bool b 1
+type b
+get double b
+get string b
+set string b yes
+get bool b
+set string b true
+get bool b
+set string b 2
+get bool b
+set double b 0.5
+get bool b
+set int b 0
+get string b
+# String nodes
+set string s 12abc
+type s
+get double s
+get int s
+get long s
+get bool s
+set string s 0x1A
+get double s
+get int s
+get long s
+set string s 010
+get long s
+get int s
+set string s true
+get bool s
+get double s
+set string s TRUE
+get bool s
+set string s 1e400
+get double s
+get float s
+set string s -inf
+get double s
+set string s 0x1p-3
+get double s
+set double s 1e20
+get string s
+set double s 0.1234567
+get string s
+set int s -12
+get string s
+set long s 9000000000
+get string s
+set float s 0.1
+get string s
+set bool s 0
+get string s
+set string s text with spaces
+get string s
+# Unspecified values
+set unspecified u 4.5
+type u
+get double u
+set unspecified u 5.5
+type u
+set double u 6
+type u
+get string u
+set unspecified u2 7
+set string u2 hello
+type u2
+set double dd 1.5
+set unspecified dd 2.5
+type dd
+get double dd
+set string ss abc
+set unspecified ss 3
+type ss
+type nothing
+get double nothing
+get string nothing
+get bool nothing
+# Attributes
+getattr w READ
+getattr w WRITE
+getattr w ARCHIVE
+set double w 5
+attr w WRITE 0
+set double w 6
+set string w 7
+get double w
+attr w WRITE 1
+attr w READ 0
+get double w
+get string w
+get bool w
+get int w
+attr w READ 1
+get double w
+attr w ARCHIVE 1
+getattr w ARCHIVE
+# Aliases
+set double target 1.5
+set string src old
+alias src target
+type src
+get double src
+get string src
+set double src 2.5
+get double target
+alias src target
+set double other 9
+alias src other
+get double src
+unalias src
+type src
+get double src
+unalias src
+alias src2 newtarget
+type newtarget
+set int src2 3
+type newtarget
+get int newtarget
+alias-rel /p/q ../r
+set double /p/r 4
+get double /p/q
+set double guarded 1
+alias galias guarded
+attr galias WRITE 0
+set double galias 2
+get double guarded
+attr galias WRITE 1
+attr guarded WRITE 0
+set double galias 3
+get double guarded
+attr guarded READ 0
+get double galias
+attr guarded READ 1
+attr galias READ 0
+get double galias
+# Ties
+tie-rw trw
+type trw
+get double trw
+set double trw 5
+get double trw
+set string trw 6.5
+get double trw
+tie-rw trw
+tie-ro tro
+get double tro
+set double tro 1
+get double tro
+getattr tro WRITE
+untie tro
+getattr tro WRITE
+get double tro
+set double tro 2
+get double tro
+attr tro2 WRITE 0
+tie-ro tro2
+untie tro2
+getattr tro2 WRITE
+attr tro3 READ 0
+tie-ro tro3
+untie tro3
+attr tro3 READ 1
+get double tro3
+set double tied_alias_target 1
+alias ta tied_alias_target
+tie-rw ta
+tie-rw tied_alias_target
+alias ta2 tied_alias_target
+get double ta2
+untie never_tied
+# Names
+mkname 1 Left Main Gear
+mkname 0 Left Main  Gear
+relname a/b /a/
+relname a/b /z/
+relname engine[3] /

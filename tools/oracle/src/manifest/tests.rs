@@ -3,6 +3,7 @@ use super::*;
 
 const SPEC_ONLY: &str = r#"
 [case]
+kind = "script"
 script = "scripts/ball.xml"
 rate_hz = 0.1
 properties = ["position/h-sl-ft"]
@@ -11,22 +12,27 @@ properties = ["position/h-sl-ft"]
 #[test]
 fn parses_spec_without_provenance() {
     let m = Manifest::parse(SPEC_ONLY, Path::new("m.toml")).unwrap();
-    assert_eq!(m.case.script, "scripts/ball.xml");
-    assert_eq!(m.case.end_time, None);
+    let CaseSpec::Script(spec) = &m.case else {
+        panic!("not a script case");
+    };
+    assert_eq!(spec.script, "scripts/ball.xml");
+    assert_eq!(spec.end_time, None);
     assert_eq!(m.provenance, None);
-    assert_eq!(m.expected_columns(), ["Time", "position/h-sl-ft"]);
+    assert_eq!(m.expected_columns().unwrap(), ["Time", "position/h-sl-ft"]);
 }
 
 #[test]
 fn round_trips_through_files() {
     let dir = tempfile::tempdir().unwrap();
     let mut m = Manifest::parse(SPEC_ONLY, Path::new("m.toml")).unwrap();
-    m.case.end_time = Some(5.0);
+    if let CaseSpec::Script(spec) = &mut m.case {
+        spec.end_time = Some(5.0);
+    }
     m.provenance = Some(Provenance {
         upstream_commit: "abc".into(),
-        driver: "tools/oracle/cpp/oracle_driver.cpp".into(),
-        dt: 0.01,
-        every_n_frames: 1000,
+        driver: "tools/oracle/cpp".into(),
+        dt: Some(0.01),
+        every_n_frames: Some(1000),
         rows: 2,
     });
     m.write_blocking(dir.path()).unwrap();
@@ -48,4 +54,25 @@ fn lists_only_directories_with_manifests() {
     }
     std::fs::create_dir(dir.path().join("empty")).unwrap();
     assert_eq!(list_cases_blocking(dir.path()).unwrap(), ["a", "b"]);
+}
+
+#[test]
+fn parses_transcript_case() {
+    let m = Manifest::parse(
+        "[case]\nkind = \"transcript\"\nprobe = \"properties\"\n",
+        Path::new("m.toml"),
+    )
+    .unwrap();
+    assert_eq!(
+        m.case,
+        CaseSpec::Transcript(TranscriptSpec {
+            probe: "properties".into()
+        })
+    );
+    assert_eq!(m.expected_columns(), None);
+}
+
+#[test]
+fn unknown_kind_is_rejected() {
+    assert!(Manifest::parse("[case]\nkind = \"movie\"\n", Path::new("m.toml")).is_err());
 }

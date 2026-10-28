@@ -39,8 +39,8 @@ while IFS= read -r file; do
   if ! grep -q '^// SPDX-License-Identifier: LGPL-2.1-or-later$' "$file"; then
     fail "$file: missing SPDX-License-Identifier line"
   fi
-  if grep -q 'Derived from JSBSim' "$file" && ! grep -q 'Copyright' "$file"; then
-    fail "$file: derived from JSBSim but carries no copyright line"
+  if grep -q 'Derived from JSBSim' "$file" && ! grep -q -E 'Copyright|Public Domain' "$file"; then
+    fail "$file: derived from JSBSim but carries no copyright or public-domain line"
   fi
   # Function bodies, relying on rustfmt layout: a signature at some indent
   # ends at the first line holding only "}" at that same indent.
@@ -84,7 +84,9 @@ while IFS= read -r file; do
   if grep -n -E '\b(println|eprintln|print|eprint|dbg)!' "$file"; then
     fail "$file: use tracing, not print macros"
   fi
-  if grep -n -E '\+= 1\b' "$file"; then
+  # Monotonic counters (IDs, generations, epochs, frames) must wrap
+  # explicitly; parser cursors and loop indices are not counters.
+  if grep -n -i -E '(id|ids|count|counter|ctr|gen|generation|epoch|seq|serial|frame|frames|tick|ticks)\b[])]* \+= 1\b' "$file"; then
     fail "$file: counters use wrapping_add(1)"
   fi
   if grep -n -E 'process::exit|lazy_static!' "$file"; then

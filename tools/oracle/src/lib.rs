@@ -6,10 +6,12 @@
 //! CSVs with a provenance manifest, and compares candidate output against a
 //! golden using a per-property tolerance table.
 
+pub mod cases;
 pub mod cli;
 pub mod compare;
 pub mod error;
 pub mod manifest;
+pub mod probe;
 pub mod series;
 pub mod tolerance;
 pub mod upstream;

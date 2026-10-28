@@ -5,6 +5,7 @@
 //! native and `wasm32-unknown-unknown` builds produce the same results. Model
 //! and data files reach the core through a [`Resolver`].
 
+pub mod c_numeric;
 pub mod error;
 pub mod math;
 pub mod models;

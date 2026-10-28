@@ -11,14 +11,29 @@ use std::process::{Command, Output};
 
 use tracing::info;
 
-use crate::manifest::{CaseSpec, Provenance};
+use crate::manifest::{Provenance, ScriptSpec, TranscriptSpec};
 use crate::{OracleError, Series};
 
 #[cfg(test)]
 mod tests;
 
-/// Driver source, relative to the repository root.
-pub const DRIVER_SOURCE: &str = "tools/oracle/cpp/oracle_driver.cpp";
+/// Driver sources, relative to the repository root.
+pub const DRIVER_DIR: &str = "tools/oracle/cpp";
+
+fn driver_sources_blocking(dir: &Path) -> Result<Vec<PathBuf>, OracleError> {
+    let entries = std::fs::read_dir(dir).map_err(|e| OracleError::io("listing", dir, e))?;
+    let mut sources = Vec::new();
+    for entry in entries {
+        let path = entry
+            .map_err(|e| OracleError::io("listing", dir, e))?
+            .path();
+        if path.extension().is_some_and(|ext| ext == "cpp") {
+            sources.push(path);
+        }
+    }
+    sources.sort();
+    Ok(sources)
+}
 
 /// Locations used by the oracle.
 #[derive(Debug, Clone)]
@@ -123,14 +138,15 @@ pub fn build_blocking(paths: &Paths) -> Result<(), OracleError> {
             .arg(&build_dir)
             .arg("libJSBSim"),
     )?;
-    info!("compiling {DRIVER_SOURCE}");
+    info!("compiling {DRIVER_DIR}");
+    let sources = driver_sources_blocking(&paths.repo_root.join(DRIVER_DIR))?;
     run_blocking(
         Command::new("c++")
             .args(["-std=c++17", "-O2", "-I"])
             .arg(paths.jsbsim_root.join("src"))
             .arg("-I")
             .arg(build_dir.join("src"))
-            .arg(paths.repo_root.join(DRIVER_SOURCE))
+            .args(&sources)
             .arg(build_dir.join("src").join("libJSBSim.a"))
             .arg("-o")
             .arg(paths.driver_exe()),
@@ -149,9 +165,9 @@ pub struct Run {
 
 /// Runs `spec` through the compiled driver with its working directory in
 /// `run_dir`, and checks that every requested property was logged.
-pub fn run_case_blocking(
+pub fn run_script_blocking(
     paths: &Paths,
-    spec: &CaseSpec,
+    spec: &ScriptSpec,
     run_dir: &Path,
 ) -> Result<Run, OracleError> {
     let upstream_commit = upstream_commit_blocking(&paths.jsbsim_root)?;
@@ -164,6 +180,7 @@ pub fn run_case_blocking(
         Command::new(paths.driver_exe())
             .current_dir(run_dir)
             .env("JSBSIM_DEBUG", "0")
+            .arg("script")
             .arg(&paths.jsbsim_root)
             .arg(paths.jsbsim_root.join(&spec.script))
             .arg(format!("{:?}", spec.rate_hz))
@@ -187,11 +204,52 @@ pub fn run_case_blocking(
         series,
         provenance: Provenance {
             upstream_commit,
-            driver: DRIVER_SOURCE.to_owned(),
-            dt,
-            every_n_frames,
+            driver: DRIVER_DIR.to_owned(),
+            dt: Some(dt),
+            every_n_frames: Some(every_n_frames),
             rows,
         },
+    })
+}
+
+/// Output of one probe run.
+#[derive(Debug, Clone)]
+pub struct Transcript {
+    /// The probe's output.
+    pub text: String,
+    /// Where the output came from.
+    pub provenance: Provenance,
+}
+
+/// Runs the driver's `spec.probe` mode on `input`, in `run_dir`.
+pub fn run_transcript_blocking(
+    paths: &Paths,
+    spec: &TranscriptSpec,
+    input: &Path,
+    run_dir: &Path,
+) -> Result<Transcript, OracleError> {
+    let upstream_commit = upstream_commit_blocking(&paths.jsbsim_root)?;
+    std::fs::create_dir_all(run_dir).map_err(|e| OracleError::io("creating", run_dir, e))?;
+    let out = run_dir.join("driver.txt");
+    run_blocking(
+        Command::new(paths.driver_exe())
+            .current_dir(run_dir)
+            .env("JSBSIM_DEBUG", "0")
+            .env("JSBSIM_ROOT", &paths.jsbsim_root)
+            .arg(&spec.probe)
+            .arg(input)
+            .arg(&out),
+    )?;
+    let text = std::fs::read_to_string(&out).map_err(|e| OracleError::io("reading", &out, e))?;
+    Ok(Transcript {
+        provenance: Provenance {
+            upstream_commit,
+            driver: DRIVER_DIR.to_owned(),
+            dt: None,
+            every_n_frames: None,
+            rows: text.lines().count(),
+        },
+        text,
     })
 }
 

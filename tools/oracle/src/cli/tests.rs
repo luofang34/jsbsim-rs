@@ -18,3 +18,19 @@ fn compare_requires_a_case() {
         Err(OracleError::Usage(_))
     ));
 }
+
+#[test]
+fn every_subcommand_parses_without_a_case_argument() {
+    for sub in ["build", "generate", "check-drift"] {
+        let matches = command()
+            .try_get_matches_from(["oracle", sub, "--jsbsim-root", "/nonexistent"])
+            .unwrap();
+        let (_, sub_matches) = matches.subcommand().unwrap();
+        let paths = Paths {
+            repo_root: PathBuf::from("/nonexistent"),
+            jsbsim_root: PathBuf::from("/nonexistent"),
+        };
+        // Must not panic on subcommands that define no case argument.
+        selected_cases(&paths, sub_matches).ok();
+    }
+}

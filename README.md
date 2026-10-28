@@ -33,11 +33,15 @@ the `wasm32-unknown-unknown` build of `jsbsim`, and the structural checks in
 `tools/oracle` compares this port against C++ JSBSim. Its inputs and outputs
 live in `oracle/`:
 
-- `oracle/goldens/<case>/manifest.toml`: the script to run, the sampling rate
-  and the properties to log (`[case]`), plus the upstream commit, time step and
-  row count of the committed reference (`[provenance]`).
-- `oracle/goldens/<case>/reference.csv`: C++ output, sampled at full double
-  precision by `tools/oracle/cpp/oracle_driver.cpp`.
+- `oracle/goldens/<case>/manifest.toml`: what the case runs (`[case]`) and the
+  upstream commit of the committed reference (`[provenance]`). A `script` case
+  runs a JSBSim script and samples properties into `reference.csv` at full
+  double precision. A `transcript` case feeds `input.txt` to a probe mode of
+  the driver (for example `properties`, which exercises the property tree) and
+  stores its output in `reference.txt`; the Rust port must reproduce it line
+  for line.
+- `tools/oracle/cpp/`: the C++ driver, one `probe_*.cpp` per probe mode, with
+  Rust twins in `tools/oracle/src/probe/`.
 - `oracle/tolerances.toml`: per case and property, the accepted difference
   `abs + rel * |reference|`, optionally for a time window `[t_start, t_end)`,
   with a mandatory reason. A logged property without a row is an error.
@@ -59,4 +63,5 @@ cargo run -p oracle -- compare --case ball oracle/goldens/ball/reference.csv can
 time, property, both values and the tolerance applied.
 
 To add a case, create `oracle/goldens/<case>/manifest.toml` with a `[case]`
-table, add tolerance rows for `Time` and each property, and run `generate`.
+table (and `input.txt` for a transcript), add tolerance rows for `Time` and
+each property of a series case, and run `generate`.

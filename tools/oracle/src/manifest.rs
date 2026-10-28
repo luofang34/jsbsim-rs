@@ -18,11 +18,25 @@ mod tests;
 pub const MANIFEST_FILE: &str = "manifest.toml";
 /// Name of the reference CSV inside a case directory.
 pub const REFERENCE_FILE: &str = "reference.csv";
+/// Name of the reference transcript inside a case directory.
+pub const TRANSCRIPT_FILE: &str = "reference.txt";
+/// Name of the probe input inside a case directory.
+pub const INPUT_FILE: &str = "input.txt";
 
-/// What to run for a case.
+/// What to run for a case, by kind.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(tag = "kind", rename_all = "lowercase")]
+pub enum CaseSpec {
+    /// A JSBSim script sampled into a time series.
+    Script(ScriptSpec),
+    /// A probe whose transcript must match the reference line for line.
+    Transcript(TranscriptSpec),
+}
+
+/// A JSBSim script sampled at a fixed rate.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct CaseSpec {
+pub struct ScriptSpec {
     /// Script path relative to the JSBSim root, e.g. `scripts/ball.xml`.
     pub script: String,
     /// Sampling rate, converted to a frame interval as JSBSim's
@@ -35,7 +49,15 @@ pub struct CaseSpec {
     pub properties: Vec<String>,
 }
 
-/// Where a reference CSV came from.
+/// A driver probe fed with `input.txt` from the case directory.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct TranscriptSpec {
+    /// Driver mode, e.g. `properties`.
+    pub probe: String,
+}
+
+/// Where a reference came from.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Provenance {
@@ -45,10 +67,12 @@ pub struct Provenance {
     /// Driver source that produced the CSV, relative to the repository root.
     pub driver: String,
     /// Integration time step reported by the script.
-    pub dt: f64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub dt: Option<f64>,
     /// Frames between samples.
-    pub every_n_frames: u64,
-    /// Data rows in the reference CSV.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub every_n_frames: Option<u64>,
+    /// Data rows (CSV) or lines (transcript) in the reference.
     pub rows: usize,
 }
 
@@ -90,12 +114,18 @@ impl Manifest {
         std::fs::write(&path, text).map_err(|e| OracleError::io("writing", &path, e))
     }
 
-    /// Column header a reference for this case must have.
+    /// Column header a reference for this case must have, for cases that
+    /// produce a series.
     #[must_use]
-    pub fn expected_columns(&self) -> Vec<String> {
-        std::iter::once(crate::series::TIME_COLUMN.to_owned())
-            .chain(self.case.properties.iter().cloned())
-            .collect()
+    pub fn expected_columns(&self) -> Option<Vec<String>> {
+        match &self.case {
+            CaseSpec::Script(spec) => Some(
+                std::iter::once(crate::series::TIME_COLUMN.to_owned())
+                    .chain(spec.properties.iter().cloned())
+                    .collect(),
+            ),
+            CaseSpec::Transcript(_) => None,
+        }
     }
 }
 

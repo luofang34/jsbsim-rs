@@ -7,8 +7,11 @@
 // (%.17g). The stock CSV output is limited to 10 significant digits, which
 // would set the floor of every parity tolerance.
 //
-// Usage: oracle_driver <root> <script> <rate_hz> <end_time|-> <out.csv>
-//                      <property>...
+// Usage: oracle_driver script <root> <script> <rate_hz> <end_time|-> <out.csv>
+//                             <property>...
+//        oracle_driver properties <ops.txt> <out.txt>
+//
+// The script mode is implemented here; the probe modes are in probe_*.cpp.
 //
 // Rows are written after RunIC (and trim, if requested) and then after every
 // N-th call to FGFDMExec::Run(), where N is derived from <rate_hz> with the
@@ -24,6 +27,7 @@
 #include "initialization/FGInitialCondition.h"
 #include "initialization/FGTrim.h"
 #include "input_output/FGPropertyManager.h"
+#include "probes.h"
 
 namespace {
 
@@ -37,7 +41,7 @@ bool WriteRow(FILE* out, JSBSim::FGFDMExec& exec,
 
 }  // namespace
 
-int main(int argc, char** argv)
+int RunScript(int argc, char** argv)
 {
   if (argc < 7) {
     std::fprintf(stderr, "usage: %s <root> <script> <rate_hz> "
@@ -122,4 +126,13 @@ int main(int argc, char** argv)
     return 1;
   }
   return 0;
+}
+
+int main(int argc, char** argv)
+{
+  const std::string mode = argc > 1 ? argv[1] : "";
+  if (mode == "script") return RunScript(argc - 1, argv + 1);
+  if (mode == "properties" && argc == 4) return RunPropertiesProbe(argv[2], argv[3]);
+  std::fprintf(stderr, "usage: %s script|properties ...\n", argv[0]);
+  return 2;
 }
