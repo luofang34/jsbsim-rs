@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
-// Copyright (C) 2005 Jon S. Berndt (jon@jsbsim.org).
+// Copyright (C) 2009 Jon S. Berndt (jon@jsbsim.org).
 // Derived from JSBSim src/models/flight_control/FGSensorOrientation.h.
 //
 //! `FGSensorOrientation`: the axis an inertial sensor measures along and
