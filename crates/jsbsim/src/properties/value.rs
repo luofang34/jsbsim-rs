@@ -35,6 +35,20 @@ pub enum Value {
 }
 
 impl Value {
+    /// The value as `getDoubleValue` converts it; an alias reads 0 here,
+    /// since following it is the reader's job.
+    fn to_double(&self) -> f64 {
+        match self {
+            Self::Bool(b) => f64::from(u8::from(*b)),
+            Self::Int(i) => f64::from(*i),
+            Self::Long(l) => *l as f64,
+            Self::Float(f) => f64::from(*f),
+            Self::Double(d) => *d,
+            Self::String(s) | Self::Unspecified(s) => strtod(s),
+            Self::None | Self::Alias(_) => 0.0,
+        }
+    }
+
     fn value_type(&self) -> Option<ValueType> {
         Some(match self {
             Self::None => ValueType::None,
@@ -169,15 +183,15 @@ impl PropertyTree {
     /// `getDoubleValue`.
     #[must_use]
     pub fn get_double(&self, id: NodeId) -> f64 {
-        self.read(id, 0.0, |v| match v {
-            Value::Bool(b) => f64::from(u8::from(*b)),
-            Value::Int(i) => f64::from(*i),
-            Value::Long(l) => *l as f64,
-            Value::Float(f) => f64::from(*f),
-            Value::Double(d) => *d,
-            Value::String(s) | Value::Unspecified(s) => strtod(s),
-            Value::None | Value::Alias(_) => 0.0,
-        })
+        self.read(id, 0.0, Value::to_double)
+    }
+
+    /// [`get_double`](Self::get_double) of a node that
+    /// [`read_target`](Self::read_target) returned: its own value, with no
+    /// aliases to follow and no second TRACE_READ record.
+    #[must_use]
+    pub(crate) fn target_double(&self, target: NodeId) -> f64 {
+        self.node(target).value.to_double()
     }
 
     /// `getStringValue`: numbers are formatted as SimGear's `make_string`

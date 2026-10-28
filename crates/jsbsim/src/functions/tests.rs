@@ -459,3 +459,21 @@ fn lookups_past_the_data_read_as_nan() {
     f.set("x", 3.0);
     assert_eq!(f.eval(id).unwrap(), 1.0);
 }
+
+#[test]
+fn read_node_reads_the_target_of_a_chain_of_aliases() {
+    let mut f = Fixture::new(&[("a/target", 2.5)]);
+    let target = f.tree.get("a/target").unwrap().unwrap();
+    let int = f.tree.get_or_create(f.tree.root(), "a/int").unwrap();
+    f.tree.set_int(int, 7);
+    let mid = f.tree.get_or_create(f.tree.root(), "a/mid").unwrap();
+    let top = f.tree.get_or_create(f.tree.root(), "a/top").unwrap();
+    assert!(f.tree.alias(mid, target));
+    assert!(f.tree.alias(top, mid));
+    assert_eq!(f.read("a/top"), 2.5);
+    assert_eq!(f.read("a/int"), 7.0);
+
+    f.tree.set_attribute(mid, Attribute::READ, false);
+    assert_eq!(f.read("a/top"), 0.0);
+    assert_eq!(f.read("a/target"), 2.5);
+}

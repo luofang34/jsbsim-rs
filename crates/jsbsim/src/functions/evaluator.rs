@@ -80,7 +80,7 @@ impl<'a> Evaluator<'a> {
             if let Some(value) = self.getters.get(target) {
                 return Ok(value);
             }
-            return Ok(self.tree.get_double(node));
+            return Ok(self.tree.target_double(target));
         };
         let value = self.nested(target, |e| match bound {
             Bound::Function(id) => e.function(id),
