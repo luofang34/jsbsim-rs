@@ -239,3 +239,20 @@ fn run_ic_measures_from_the_initial_position() {
         .unwrap();
     assert!((north - 1e-4 * 6.36e6).abs() < 0.01 * 6.36e2, "{north}");
 }
+
+#[test]
+fn coefficients_are_the_pow_expressions_bit_for_bit() {
+    let b = SH_RATIO / (SH_RATIO - 1.0);
+    let d = 1.0 / (SH_RATIO - 1.0);
+    let pitot =
+        libm::pow(0.5 * (SH_RATIO + 1.0), b) * libm::pow((SH_RATIO + 1.0) / (SH_RATIO - 1.0), d);
+    assert_eq!(pitot.to_bits(), airspeed::PITOT_COEFF.to_bits());
+
+    let a = 2.0 / (SH_RATIO - 1.0);
+    let b = (SH_RATIO - 1.0) / SH_RATIO;
+    let c = 2.0 / b;
+    let d = 0.5 * a;
+    let rayleigh = libm::pow(0.5 * (SH_RATIO + 1.0), -0.25 * c)
+        * libm::pow(0.5 * (SH_RATIO + 1.0) / SH_RATIO, -0.5 * d);
+    assert_eq!(rayleigh.to_bits(), airspeed::RAYLEIGH_COEFF.to_bits());
+}

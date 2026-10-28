@@ -16,6 +16,18 @@
 use super::Auxiliary;
 use crate::models::atmosphere::{SH_RATIO, STD_DAY_SL_PRESSURE};
 
+/// `coeff` of [`pitot_total_pressure`]: `pow(0.5*(SHRatio+1), b) *
+/// pow((SHRatio+1)/(SHRatio-1), d)`. Clang folds the `pow`s of these
+/// constant operands at compile time; Rust cannot fold `libm::pow`, so the
+/// value is spelled out bit for bit, and a test checks it against the
+/// expression.
+pub(super) const PITOT_COEFF: f64 = f64::from_bits(0x4064_dd7d_9589_19b5);
+
+/// `coeff` of [`mach_from_impact_pressure`]: `pow(0.5*(SHRatio+1),
+/// -0.25*c) * pow(0.5*(SHRatio+1)/SHRatio, -0.5*d)`, spelled out as
+/// [`PITOT_COEFF`] is.
+pub(super) const RAYLEIGH_COEFF: f64 = f64::from_bits(0x3fec_337c_4b7c_389b);
+
 /// `PitotTotalPressure(mach, pressure)`, psf: isentropic below Mach 1,
 /// Rayleigh's pitot formula behind a normal shock above it. A negative
 /// Mach number gives the static pressure.
@@ -25,8 +37,6 @@ pub fn pitot_total_pressure(mach: f64, pressure: f64) -> f64 {
     let b = SH_RATIO / (SH_RATIO - 1.0);
     let c = 2.0 * b;
     let d = 1.0 / (SH_RATIO - 1.0);
-    let coeff =
-        libm::pow(0.5 * (SH_RATIO + 1.0), b) * libm::pow((SH_RATIO + 1.0) / (SH_RATIO - 1.0), d);
 
     if mach < 0.0 {
         return pressure;
@@ -36,7 +46,7 @@ pub fn pitot_total_pressure(mach: f64, pressure: f64) -> f64 {
     } else {
         // The denominator vanishes near Mach 0.38, well inside the
         // subsonic branch.
-        pressure * coeff * libm::pow(mach, c) / libm::pow(c * mach * mach - 1.0, d)
+        pressure * PITOT_COEFF * libm::pow(mach, c) / libm::pow(c * mach * mach - 1.0, d)
     }
 }
 
@@ -48,14 +58,12 @@ pub fn mach_from_impact_pressure(qc: f64, pressure: f64) -> f64 {
     let b = (SH_RATIO - 1.0) / SH_RATIO;
     let c = 2.0 / b;
     let d = 0.5 * a;
-    let coeff = libm::pow(0.5 * (SH_RATIO + 1.0), -0.25 * c)
-        * libm::pow(0.5 * (SH_RATIO + 1.0) / SH_RATIO, -0.5 * d);
 
     let big_a = qc / pressure + 1.0;
     let mut m = (a * (libm::pow(big_a, b) - 1.0)).sqrt();
     if m > 1.0 {
         for _ in 0..10 {
-            m = coeff * (big_a * libm::pow(1.0 - 1.0 / (c * m * m), d)).sqrt();
+            m = RAYLEIGH_COEFF * (big_a * libm::pow(1.0 - 1.0 / (c * m * m), d)).sqrt();
         }
     }
     m
@@ -66,7 +74,22 @@ pub fn mach_from_impact_pressure(qc: f64, pressure: f64) -> f64 {
 /// of sound `std_day_sl_soundspeed`, ft/s.
 #[must_use]
 pub fn vcalibrated_from_mach(mach: f64, pressure: f64, std_day_sl_soundspeed: f64) -> f64 {
-    let qc = pitot_total_pressure(mach, pressure) - pressure;
+    vcalibrated_from_total_pressure(
+        pitot_total_pressure(mach, pressure),
+        pressure,
+        std_day_sl_soundspeed,
+    )
+}
+
+/// [`vcalibrated_from_mach`] given the pitot total pressure `pt` it
+/// computes first, for callers that already have it.
+#[must_use]
+pub(super) fn vcalibrated_from_total_pressure(
+    pt: f64,
+    pressure: f64,
+    std_day_sl_soundspeed: f64,
+) -> f64 {
+    let qc = pt - pressure;
     std_day_sl_soundspeed * mach_from_impact_pressure(qc, STD_DAY_SL_PRESSURE)
 }
 
