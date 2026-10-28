@@ -2,8 +2,8 @@
 <!--
   SPDX-License-Identifier: LGPL-2.1-or-later
   gnc_waypoint.xml: systems/GNCUtilities.xml without its "Included Angle
-  to Heading" channel, whose <angle> the port does not load yet.
-  Regenerate with `oracle derive`.
+  to Heading" channel, so that it holds only the waypoint channel
+  TestWaypoint.py reads. Regenerate with `oracle derive`.
 -->
 <!DOCTYPE system [
   <!ENTITY none  "0"> <!-- No magnetos    -->

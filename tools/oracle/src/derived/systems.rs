@@ -65,8 +65,8 @@ pub fn bad_table(text: &str) -> Result<String, OracleError> {
 
 /// `gnc_waypoint.xml`: upstream `systems/GNCUtilities.xml`, which
 /// `TestWaypoint.py` runs through c310, without its "Included Angle to
-/// Heading" channel, whose `<angle>` the port does not load yet; what is
-/// left is the waypoint channel the test reads.
+/// Heading" channel, so that the fcs-waypoint case reads only the
+/// waypoint channel the test reads; fcs-angles-gnc runs the whole file.
 pub fn gnc_waypoint(text: &str) -> Result<String, OracleError> {
     let fail =
         |message: &str| OracleError::Provenance(format!("systems/GNCUtilities.xml: {message}"));
@@ -84,7 +84,7 @@ pub fn gnc_waypoint(text: &str) -> Result<String, OracleError> {
     let mut out = String::with_capacity(text.len() + 512);
     out.push_str(declaration);
     out.push_str(
-        "<!--\n  SPDX-License-Identifier: LGPL-2.1-or-later\n  gnc_waypoint.xml: systems/GNCUtilities.xml without its \"Included Angle\n  to Heading\" channel, whose <angle> the port does not load yet.\n  Regenerate with `oracle derive`.\n-->\n",
+        "<!--\n  SPDX-License-Identifier: LGPL-2.1-or-later\n  gnc_waypoint.xml: systems/GNCUtilities.xml without its \"Included Angle\n  to Heading\" channel, so that it holds only the waypoint channel\n  TestWaypoint.py reads. Regenerate with `oracle derive`.\n-->\n",
     );
     out.push_str(&body[..start]);
     out.push_str(&body[end..]);
