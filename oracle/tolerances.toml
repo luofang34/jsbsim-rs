@@ -5155,3 +5155,101 @@ property = "run/guidance/angle-to-heading-rad"
 abs = 6e-13
 rel = 0.0
 reason = "The included angle to the selected waypoint heading carries its geodesic ulps through libm's sin, cos and acos; observed max |diff| 5.2e-14 (rel 1.1e-13); bound 10x that."
+
+[[tolerance]]
+case = "mk82_aero_limits"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the same IEEE operations in JSBSim's order. The stall limits and the hysteresis flag match on every frame, including each frame alpha leaves the hysteresis band and the frame the script lowers aero/alpha-max-rad."
+
+[[tolerance]]
+case = "mk82_aero_limits"
+property = "aero/alpha-rad"
+abs = 6e-14
+rel = 0.0
+reason = "The angle of attack first differs by one ulp at t=0.02 s, as it does for the unmodified mk82, from a last-digit libm difference in the dynamics; it first differs here at t=0.02 s and the propagation carries it; observed max 5.7e-15 (rel 6.3e-13) at t=10.02 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_aero_limits"
+property = "systems/stall-warn-norm"
+abs = 9e-12
+rel = 0.0
+reason = "The angle of attack first differs by one ulp at t=0.02 s, as it does for the unmodified mk82, from a last-digit libm difference in the dynamics; it first differs here at t=1.60 s and the propagation carries it; observed max 8.6e-13 (rel 2.8e-11) at t=9.22 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_aero_limits"
+property = "aero/function/rp-shift"
+abs = 1e-14
+rel = 0.0
+reason = "The angle of attack first differs by one ulp at t=0.02 s, as it does for the unmodified mk82, from a last-digit libm difference in the dynamics; it first differs here at t=0.02 s and the propagation carries it; observed max 9.5e-16 (rel 6.3e-13) at t=9.26 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_aero_limits"
+property = "aero/coefficient/CD-stall-warn"
+abs = 2e-11
+rel = 0.0
+reason = "The angle of attack first differs by one ulp at t=0.02 s, as it does for the unmodified mk82, from a last-digit libm difference in the dynamics; it first differs here at t=1.52 s and the propagation carries it; observed max 1.5e-12 (rel 2.8e-11) at t=9.22 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_aero_limits"
+property = "aero/coefficient/CL-hyst"
+abs = 3e-13
+rel = 0.0
+reason = "The angle of attack first differs by one ulp at t=0.02 s, as it does for the unmodified mk82, from a last-digit libm difference in the dynamics; it first differs here at t=1.44 s and the propagation carries it; observed max 2.1e-14 (rel 1.6e-15) at t=2.72 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_aero_limits"
+property = "aero/cl-squared"
+abs = 2e-14
+rel = 0.0
+reason = "The angle of attack first differs by one ulp at t=0.02 s, as it does for the unmodified mk82, from a last-digit libm difference in the dynamics; it first differs here at t=0.20 s and the propagation carries it; observed max 1.1e-15 (rel 15) at t=9.04 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_aero_limits"
+property = "forces/fbx-aero-lbs"
+abs = 3e-11
+rel = 0.0
+reason = "The angle of attack first differs by one ulp at t=0.02 s, as it does for the unmodified mk82, from a last-digit libm difference in the dynamics; it first differs here at t=0.20 s and the propagation carries it; observed max 2.2e-12 (rel 9e-13) at t=9.20 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_aero_limits"
+property = "forces/fbz-aero-lbs"
+abs = 1e-11
+rel = 0.0
+reason = "The angle of attack first differs by one ulp at t=0.02 s, as it does for the unmodified mk82, from a last-digit libm difference in the dynamics; it first differs here at t=0.02 s and the propagation carries it; observed max 9.9e-13 (rel 8.7e-13) at t=9.10 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_aero_limits"
+property = "forces/fwx-aero-lbs"
+abs = 2e-11
+rel = 0.0
+reason = "The angle of attack first differs by one ulp at t=0.02 s, as it does for the unmodified mk82, from a last-digit libm difference in the dynamics; it first differs here at t=0.20 s and the propagation carries it; observed max 1.5e-12 (rel 6.1e-14) at t=9.20 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_aero_limits"
+property = "forces/fwz-aero-lbs"
+abs = 7e-12
+rel = 0.0
+reason = "The angle of attack first differs by one ulp at t=0.02 s, as it does for the unmodified mk82, from a last-digit libm difference in the dynamics; it first differs here at t=0.54 s and the propagation carries it; observed max 6.9e-13 (rel 3.4) at t=9.10 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_aero_limits"
+property = "moments/m-aero-lbsft"
+abs = 3e-11
+rel = 0.0
+reason = "The angle of attack first differs by one ulp at t=0.02 s, as it does for the unmodified mk82, from a last-digit libm difference in the dynamics; it first differs here at t=0.02 s and the propagation carries it; observed max 2.6e-12 (rel 7.1e-13) at t=9.10 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_aero_limits"
+property = "attitude/theta-rad"
+abs = 4e-14
+rel = 0.0
+reason = "The angle of attack first differs by one ulp at t=0.02 s, as it does for the unmodified mk82, from a last-digit libm difference in the dynamics; it first differs here at t=0.92 s and the propagation carries it; observed max 3.6e-15 (rel 2.5e-15) at t=3.80 s; bound 10x that."
+
+[[tolerance]]
+case = "mk82_aero_limits"
+property = "velocities/q-rad_sec"
+abs = 2e-14
+rel = 0.0
+reason = "The angle of attack first differs by one ulp at t=0.02 s, as it does for the unmodified mk82, from a last-digit libm difference in the dynamics; it first differs here at t=0.18 s and the propagation carries it; observed max 1.9e-15 (rel 2.3e-12) at t=9.34 s; bound 10x that."
