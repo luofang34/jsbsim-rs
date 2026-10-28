@@ -52,6 +52,7 @@ expect fail plus-equals-one "printf '%s\nfn f(id: &mut u32) {\n    *id += 1;\n}\
 expect fail frame-counter "printf '%s\nfn f(s: &mut S) {\n    s.frame += 1;\n}\n' \"$spdx\" > crates/a/src/b.rs"
 expect fail next-id "printf '%s\nfn f(mut next_id: u32) {\n    next_id += 1;\n}\n' \"$spdx\" > crates/a/src/b.rs"
 expect pass cursor-increment "printf '%s\nfn f(mut pos: usize) {\n    pos += 1;\n}\n' \"$spdx\" > crates/a/src/b.rs"
+expect pass ignores-agent-worktrees "mkdir -p .claude/worktrees/x/src && printf 'fn f() {}\n' > .claude/worktrees/x/src/mod.rs"
 expect fail anyhow "printf 'anyhow = \"1\"\n' >> crates/a/Cargo.toml"
 expect fail no-workspace-lints "printf '[package]\nname = \"a\"\n' > crates/a/Cargo.toml"
 expect fail stray-copy "cp crates/a/src/b.rs 'crates/a/src/b 2.rs'"

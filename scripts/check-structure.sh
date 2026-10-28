@@ -17,8 +17,13 @@ fail() {
   failures=$((failures + 1))
 }
 
+# Build output, git data and agent worktrees are not part of the tree.
+find_tree() {
+  find . \( -path ./target -o -path ./.claude -o -path ./.git \) -prune -o "$@" -print
+}
+
 rust_files() {
-  find . -path ./target -prune -o -name '*.rs' -type f -print | sort
+  find_tree -name '*.rs' -type f | sort
 }
 
 # Production sources: everything except unit-test modules and integration tests.
@@ -94,7 +99,7 @@ while IFS= read -r file; do
   fi
 done < <(production_files)
 
-if grep -rn --include='*.rs' --include='Cargo.toml' -E '\banyhow\b' --exclude-dir=target . ; then
+if grep -rn --include='*.rs' --include='Cargo.toml' -E '\banyhow\b' --exclude-dir=target --exclude-dir=.claude . ; then
   fail "anyhow is not used in this workspace; use thiserror"
 fi
 
@@ -102,9 +107,9 @@ while IFS= read -r manifest; do
   if ! grep -A1 '^\[lints\]' "$manifest" | grep -q '^workspace = true'; then
     fail "$manifest: must inherit workspace lints ([lints] workspace = true)"
   fi
-done < <(find . -path ./target -prune -o -name Cargo.toml -type f -print | grep -v '^\./Cargo.toml$')
+done < <(find_tree -name Cargo.toml -type f | grep -v '^\./Cargo.toml$')
 
-if find . -path ./target -prune -o -path ./.git -prune -o \
+if find . -path ./target -prune -o -path ./.git -prune -o -path ./.claude -prune -o \
     \( -name '* 2.*' -o -name '*.bak' -o -name '*.orig' -o -name '*~' \) -print | grep .; then
   fail "stray backup files"
 fi

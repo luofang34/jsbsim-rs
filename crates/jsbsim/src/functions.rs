@@ -82,6 +82,12 @@ impl Function {
     pub fn node(&self) -> Option<NodeId> {
         self.node
     }
+
+    /// The value cached by [`FunctionSet::cache_value`], if any.
+    #[must_use]
+    pub fn cached(&self) -> Option<f64> {
+        self.cached
+    }
 }
 
 /// All functions, tables and templates of a simulation.
@@ -149,9 +155,20 @@ impl FunctionSet {
         cache: bool,
         tree: &mut PropertyTree,
     ) -> Result<(), crate::Error> {
+        self.cache_value_with(id, cache, tree, &NoGetters)
+    }
+
+    /// [`cache_value`](Self::cache_value) reading model getters.
+    pub fn cache_value_with(
+        &mut self,
+        id: FnId,
+        cache: bool,
+        tree: &mut PropertyTree,
+        getters: &dyn GetterSource,
+    ) -> Result<(), crate::Error> {
         self.functions[id.0].cached = None;
         if cache {
-            let value = Evaluator::new(self, tree).function(id)?;
+            let value = Evaluator::with_getters(self, tree, getters).function(id)?;
             self.functions[id.0].cached = Some(value);
         }
         Ok(())

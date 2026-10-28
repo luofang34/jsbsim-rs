@@ -32,3 +32,13 @@ impl MassBalance {
         ColumnVector3::new(k * (x[1] - r[1]), k * (r[2] - x[2]), k * (x[3] - r[3]))
     }
 }
+
+impl MassBalance {
+    /// `Load(<mass_balance>)`; being ported.
+    pub fn load(&mut self, el: &crate::xml::Element) -> Result<(), crate::Error> {
+        Err(crate::Error::Unsupported {
+            construct: "<mass_balance> (FGMassBalance is being ported)".to_owned(),
+            path: el.location().to_string(),
+        })
+    }
+}

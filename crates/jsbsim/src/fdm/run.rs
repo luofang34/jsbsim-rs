@@ -7,6 +7,7 @@
 //! from the others just before it runs.
 
 use super::exec_bind::ExecRequest;
+use super::order::{Model, ORDER};
 use super::{Fdm, Models};
 use crate::Error;
 use crate::math::{ColumnVector3, Location, Quaternion};
@@ -29,46 +30,6 @@ pub struct InitialState {
     /// Steady wind, NED, ft/s.
     pub wind_ned: ColumnVector3,
 }
-
-/// JSBSim's model order (`eModels`).
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum Model {
-    Propagate,
-    Input,
-    Inertial,
-    Atmosphere,
-    Winds,
-    Systems,
-    MassBalance,
-    Auxiliary,
-    Propulsion,
-    Aerodynamics,
-    GroundReactions,
-    ExternalReactions,
-    BuoyantForces,
-    Aircraft,
-    Accelerations,
-    Output,
-}
-
-const ORDER: [Model; 16] = [
-    Model::Propagate,
-    Model::Input,
-    Model::Inertial,
-    Model::Atmosphere,
-    Model::Winds,
-    Model::Systems,
-    Model::MassBalance,
-    Model::Auxiliary,
-    Model::Propulsion,
-    Model::Aerodynamics,
-    Model::GroundReactions,
-    Model::ExternalReactions,
-    Model::BuoyantForces,
-    Model::Aircraft,
-    Model::Accelerations,
-    Model::Output,
-];
 
 impl Models {
     /// `FGFDMExec::SetHoldDown`.
@@ -97,6 +58,17 @@ impl Models {
                 a.altitude_asl = self.propagate.altitude_asl();
                 a.geod_latitude_deg = self.propagate.state.location.geod_latitude_deg();
                 a.longitude_deg = self.propagate.state.location.longitude_deg();
+            }
+            Model::Aerodynamics => {
+                let x = &self.auxiliary;
+                let a = &mut self.aerodynamics.input;
+                a.alpha = x.alpha;
+                a.beta = x.beta;
+                a.qbar = x.qbar;
+                a.vt = x.vt;
+                a.tb2w = x.tb2w;
+                a.tw2b = x.tw2b;
+                a.rp_body = self.mass_balance.structural_to_body(self.aircraft.xyz_rp);
             }
             Model::Accelerations => self.load_accelerations_inputs(),
             _ => {}
@@ -131,10 +103,16 @@ impl Models {
     fn aircraft_inputs(&self) -> aircraft::Inputs {
         let fm = |m: &crate::models::forces::ForceModel| (m.forces, m.moments);
         aircraft::Inputs {
-            aero: fm(&self.aerodynamics),
+            aero: (
+                self.aerodynamics.state.forces,
+                self.aerodynamics.state.moments,
+            ),
             propulsion: fm(&self.propulsion),
-            ground: fm(&self.ground_reactions),
-            external: fm(&self.external_reactions),
+            ground: (self.ground_reactions.forces, self.ground_reactions.moments),
+            external: (
+                self.external_reactions.total_forces,
+                self.external_reactions.total_moments,
+            ),
             buoyant: fm(&self.buoyant_forces),
         }
     }
@@ -150,6 +128,10 @@ impl Models {
             Model::Winds => self.winds.base.init(),
             Model::MassBalance => self.mass_balance.base.init(),
             Model::Auxiliary => self.auxiliary.base.init(),
+            Model::Systems => self.fcs.init_model(),
+            Model::Aerodynamics => self.aerodynamics.init_model(),
+            Model::ExternalReactions => self.external_reactions.init_model(),
+            Model::GroundReactions => self.ground_reactions.base.init(),
             _ => {}
         }
     }
@@ -167,13 +149,22 @@ impl Fdm {
     }
 
     /// `InitializeModels`: every model but input and output.
-    pub(super) fn initialize_models(&mut self) {
+    pub(super) fn initialize_models(&mut self) -> Result<(), Error> {
         for model in ORDER {
             if matches!(model, Model::Input | Model::Output) {
                 continue;
             }
             self.models.load_inputs(model);
             self.models.init_model(model);
+            self.reset_local_properties(model)?;
+        }
+        Ok(())
+    }
+
+    /// `LoadInputs` of every model.
+    pub(super) fn load_all_inputs(&mut self) {
+        for model in ORDER {
+            self.models.load_inputs(model);
         }
     }
 
@@ -190,11 +181,15 @@ impl Fdm {
     /// `Run`: one frame. False once the simulation is to terminate.
     pub fn run(&mut self) -> Result<bool, Error> {
         self.incr_time();
+        let mut success = true;
+        if self.script.is_some() && !self.models.exec.integration_suspended() {
+            success = self.run_script()?;
+        }
         for model in ORDER {
             self.models.load_inputs(model);
             self.run_model(model)?;
         }
-        Ok(!self.models.exec.terminate)
+        Ok(success && !self.models.exec.terminate)
     }
 
     fn run_model(&mut self, model: Model) -> Result<(), Error> {
@@ -206,10 +201,16 @@ impl Fdm {
             Model::Inertial => m.inertial.run(holding),
             Model::Aircraft => {
                 if !m.aircraft.base.skip() && !holding {
-                    let input = m.aircraft_inputs();
-                    m.aircraft.run(&input);
+                    self.run_model_functions(model, true)?;
+                    let input = self.models.aircraft_inputs();
+                    self.models.aircraft.run(&input);
+                    self.run_model_functions(model, false)?;
                 }
             }
+            Model::Systems => self.run_fcs()?,
+            Model::Aerodynamics => self.run_aerodynamics()?,
+            Model::GroundReactions => self.run_ground_reactions()?,
+            Model::ExternalReactions => self.run_external_reactions()?,
             Model::Accelerations => {
                 let (hd, ts) = (m.exec.hold_down, m.exec.trim_status);
                 m.accelerations.run(holding, hd, ts);
@@ -262,9 +263,12 @@ impl Fdm {
 
     /// `ResetToInitialConditions(mode)`.
     pub fn reset_to_initial_conditions(&mut self, mode: i32) -> Result<(), Error> {
-        self.initialize_models();
-        self.models.exec.sim_time = 0.0;
-        self.models.inertial.time = 0.0;
+        self.initialize_models()?;
+        if self.script.is_some() {
+            self.reset_events()?;
+        } else {
+            self.set_sim_time(0.0);
+        }
         if mode & 2 == 0 {
             self.run_ic()?;
         }
@@ -291,5 +295,20 @@ impl Fdm {
             }
         }
         Ok(())
+    }
+}
+
+impl Fdm {
+    /// `FGInitialCondition::Load(file)` for `dir/name.xml`.
+    pub fn load_initial_conditions(
+        &mut self,
+        _resolver: &dyn crate::Resolver,
+        dir: &str,
+        name: &str,
+    ) -> Result<(), Error> {
+        Err(Error::Unsupported {
+            construct: "initial conditions (FGInitialCondition is being ported)".to_owned(),
+            path: format!("{dir}/{name}.xml"),
+        })
     }
 }

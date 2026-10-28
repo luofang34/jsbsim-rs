@@ -31,6 +31,12 @@ pub enum Error {
     /// A table, function or condition that is invalid or fails to evaluate.
     #[error(transparent)]
     Function(#[from] FunctionError),
+    /// A model configuration JSBSim refuses to load.
+    #[error("{message}")]
+    Model {
+        /// What is wrong, with the location.
+        message: String,
+    },
     /// A property path SimGear would reject.
     #[error("invalid property path: {0}")]
     PropertyPath(#[from] PathError),

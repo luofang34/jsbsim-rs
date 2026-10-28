@@ -41,6 +41,10 @@ fn getters_are_live_and_read_only_nodes_reject_writes() {
 #[test]
 fn time_advances_only_when_not_holding() {
     let mut fdm = Fdm::new().unwrap();
+    // No aircraft is loaded, so the aerodynamics have no axis system and
+    // would refuse to run, as in JSBSim.
+    fdm.set_property("simulation/models/FGAerodynamics/enabled", 0.0)
+        .unwrap();
     fdm.set_dt(0.5);
     fdm.run().unwrap();
     assert_eq!(fdm.get_property("simulation/sim-time-sec").unwrap(), 0.5);
@@ -57,4 +61,10 @@ fn model_rates_skip_frames_like_fgmodel() {
     base.rate = 3;
     let runs: Vec<bool> = (0..7).map(|_| !base.skip()).collect();
     assert_eq!(runs, [true, false, false, true, false, false, true]);
+}
+
+#[test]
+fn unloaded_aerodynamics_refuse_to_run() {
+    let mut fdm = Fdm::new().unwrap();
+    assert!(matches!(fdm.run(), Err(Error::Model { .. })));
 }

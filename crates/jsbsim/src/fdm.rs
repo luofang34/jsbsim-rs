@@ -7,12 +7,17 @@
 
 mod bindings;
 mod exec_bind;
+mod load;
+mod models_run;
+mod order;
 mod run;
+mod script;
 
 #[cfg(test)]
 mod tests;
 
 pub use bindings::{Binder, Bindings, Getter, Kind, ModelGetters, Setter, convert_write};
+pub use load::{LoadContext, ModelFunctions};
 pub use run::InitialState;
 
 use crate::Error;
@@ -99,7 +104,7 @@ pub struct Models {
     /// `FGWinds`.
     pub winds: Winds,
     /// `FGFCS`.
-    pub fcs: ForceModel,
+    pub fcs: crate::models::fcs::Fcs,
     /// `FGMassBalance`.
     pub mass_balance: MassBalance,
     /// `FGAuxiliary`.
@@ -107,11 +112,11 @@ pub struct Models {
     /// `FGPropulsion`.
     pub propulsion: ForceModel,
     /// `FGAerodynamics`.
-    pub aerodynamics: ForceModel,
+    pub aerodynamics: crate::models::aerodynamics::Aerodynamics,
     /// `FGGroundReactions`.
-    pub ground_reactions: ForceModel,
+    pub ground_reactions: crate::models::ground_reactions::GroundReactions,
     /// `FGExternalReactions`.
-    pub external_reactions: ForceModel,
+    pub external_reactions: crate::models::external_reactions::ExternalReactions,
     /// `FGBuoyantForces`.
     pub buoyant_forces: ForceModel,
     /// `FGAircraft`.
@@ -132,22 +137,39 @@ pub struct Fdm {
     /// The models.
     pub models: Models,
     initial: InitialState,
+    /// Declarations and pre/post functions of each model, by `Model`.
+    model_functions: Vec<ModelFunctions>,
+    options: crate::LoadOptions,
+    script: Option<crate::script::Script>,
 }
 
 impl Fdm {
-    /// `FGFDMExec()`: allocates the models, binds their properties and
-    /// initialises them.
+    /// `FGFDMExec()` with default load options.
     pub fn new() -> Result<Self, Error> {
+        Self::with_options(crate::LoadOptions::default())
+    }
+
+    /// `FGFDMExec()`: allocates the models, binds their properties and
+    /// initialises them; models load with `options`.
+    pub fn with_options(options: crate::LoadOptions) -> Result<Self, Error> {
         let mut fdm = Self {
             tree: PropertyTree::new(),
             functions: FunctionSet::new(),
             bindings: Bindings::default(),
-            models: Models::default(),
+            models: Models {
+                fcs: crate::models::fcs::Fcs::new(),
+                ..Models::default()
+            },
             initial: InitialState::default(),
+            model_functions: vec![ModelFunctions::default(); order::ORDER.len()],
+            options: crate::LoadOptions::default(),
+            script: None,
         };
+        fdm.options = options;
+        fdm.functions = FunctionSet::with_options(options);
         fdm.bind_all()?;
         fdm.load_planet_constants();
-        fdm.initialize_models();
+        fdm.initialize_models()?;
         Ok(fdm)
     }
 
@@ -171,12 +193,16 @@ impl Fdm {
         enable!("FGAtmosphere", atmosphere);
         enable!("FGWinds", winds);
         enable!("FGFCS", fcs);
+        crate::models::fcs::bind(b)?;
         enable!("FGMassBalance", mass_balance);
         enable!("FGAuxiliary", auxiliary);
         enable!("FGPropulsion", propulsion);
         enable!("FGAerodynamics", aerodynamics);
+        crate::models::aerodynamics::bind(b)?;
         enable!("FGGroundReactions", ground_reactions);
+        crate::models::ground_reactions::bind(b)?;
         enable!("FGExternalReactions", external_reactions);
+        crate::models::external_reactions::bind(b)?;
         enable!("FGBuoyantForces", buoyant_forces);
         enable!("FGAircraft", aircraft);
         aircraft::bind(b)?;
