@@ -23,7 +23,7 @@ pub struct System {
 }
 
 /// Every derived tripod.
-pub const SYSTEMS: [System; 12] = [
+pub const SYSTEMS: [System; 14] = [
     upstream("gain", "gain.xml"),
     upstream("deadband", "deadband.xml"),
     upstream("switch", "switch.xml"),
@@ -39,6 +39,8 @@ pub const SYSTEMS: [System; 12] = [
     scenario("fcs_summer_deadband", "fcs_summer_deadband.xml"),
     scenario("fcs_switch", "fcs_switch.xml"),
     scenario("fcs_filter", "fcs_filter.xml"),
+    derived("waypoint", "gnc_waypoint.xml"),
+    scenario("fcs_waypoint", "fcs_waypoint.xml"),
 ];
 
 /// A tripod including a system of `oracle/derived/systems`

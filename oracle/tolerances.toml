@@ -4805,3 +4805,108 @@ property = "*"
 abs = 0.0
 rel = 0.0
 reason = "Integrators and PIDs use IEEE basic operations in JSBSim's order and read inputs written as decimal strings both sides parse alike, so they must be bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-waypoint"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "The targets are set exactly, and the headings and distances along the equator and to the poles of TestWaypoint.py come out of the geodesic inverse bit-identical; observed max |diff| 0 outside the row below."
+
+[[tolerance]]
+case = "fcs-waypoint"
+property = "runic/guidance/wp-distance"
+abs = 0.0
+rel = 1.2e-15
+reason = "The distance to the antipode follows the accepted libm last-ulp differences of the geodesic inverse (see the geodesic anti/s row) and of the source's derived latitude and longitude; observed max rel 1.14e-16 (1 ulp), bound 10x that."
+
+[[tolerance]]
+case = "fcs-waypoint-units"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Unit factors, negation, clipping and the extra output use IEEE basic operations in JSBSim's order, and coincident points and pole targets on the prime meridian give bit-identical results; observed max |diff| 0 outside the rows below."
+
+[[tolerance]]
+case = "fcs-waypoint-units"
+property = "run/test/distance-ft"
+abs = 2.3e-11
+rel = 7.3e-14
+reason = "Geodesic distances follow the accepted libm last-ulp differences of the geodesic inverse and of the source's derived latitude and longitude (see the geodesic pair/s and tiny/s rows); observed max rel 7.2e-15 (a 63 ft separation near the pole) and, below 1 ft, max |diff| 2.3e-12 ft (a 0.036 ft separation), bounded absolutely as tiny/s is; bounds 10x those."
+
+[[tolerance]]
+case = "fcs-waypoint-units"
+property = "run/test/distance-default"
+abs = 2.3e-11
+rel = 7.3e-14
+reason = "The default unit is feet: the same values as run/test/distance-ft, under the same accepted geodesic libm ulps; observed max rel 7.2e-15 and, below 1 ft, max |diff| 2.3e-12 ft; bounds 10x those."
+
+[[tolerance]]
+case = "fcs-waypoint-units"
+property = "run/test/distance-m"
+abs = 7e-12
+rel = 7.2e-14
+reason = "run/test/distance-ft times 0.3048, under the same accepted geodesic libm ulps; observed max rel 7.1e-15 and, below 1 m, max |diff| 6.9e-13 m; bounds 10x those."
+
+[[tolerance]]
+case = "fcs-waypoint-units"
+property = "run/test/distance-rad-coords"
+abs = 0.0
+rel = 6.2e-15
+reason = "Geodesic distances, in metres, follow the accepted libm last-ulp differences of the geodesic inverse and of the source's derived latitude and longitude (see the geodesic pair/s row); observed max rel 6.1e-16, bound 10x that."
+
+[[tolerance]]
+case = "fcs-waypoint-units"
+property = "run/test/heading-rad"
+abs = 2.3e-14
+rel = 0.0
+reason = "Geodesic headings follow the accepted libm last-ulp differences of the geodesic inverse and of the source's derived latitude and longitude (see the geodesic pair/psi and anti/psi rows); observed max |diff| 2.2e-15 rad, on a 124 km leg across the date line; bound 10x that."
+
+[[tolerance]]
+case = "fcs-waypoint-units"
+property = "run/test/heading-default"
+abs = 2.3e-14
+rel = 0.0
+reason = "The default unit is radians: the same values as run/test/heading-rad, under the same accepted geodesic libm ulps; observed max |diff| 2.2e-15 rad; bound 10x that."
+
+[[tolerance]]
+case = "fcs-waypoint-units"
+property = "run/test/heading-deg"
+abs = 1.3e-12
+rel = 0.0
+reason = "run/test/heading-rad times radtodeg, under the same accepted geodesic libm ulps; observed max |diff| 1.28e-13 deg; bound 10x that."
+
+[[tolerance]]
+case = "fcs-waypoint-units"
+property = "run/test/heading-cyclic"
+abs = 1.2e-12
+rel = 0.0
+reason = "run/test/heading-deg wrapped into [0, 360), under the same accepted geodesic libm ulps; observed max |diff| 1.14e-13 deg; bound 10x that."
+
+[[tolerance]]
+case = "fcs-waypoint-units"
+property = "run/test/heading-reverse"
+abs = 2.2e-13
+rel = 0.0
+reason = "Headings in degrees between the negated points, clipped to +-90, under the accepted geodesic libm ulps (see the geodesic pair/psi and anti/psi rows); observed max |diff| 2.13e-14 deg, on a nearly antipodal pair; bound 10x that."
+
+[[tolerance]]
+case = "fcs-waypoint-units"
+property = "run/test/heading-reverse-out"
+abs = 2.2e-13
+rel = 0.0
+reason = "The extra output of run/test/heading-reverse, which it equals; observed max |diff| 2.13e-14 deg; bound 10x that."
+
+[[tolerance]]
+case = "fcs-waypoint-units"
+property = "run/test/heading-rad-coords"
+abs = 5.6e-16
+rel = 0.0
+reason = "Geodesic headings from radian coordinates, under the accepted geodesic libm ulps (see the geodesic pair/psi row); observed max |diff| 5.6e-17 rad, from an exact-pole source; bound 10x that."
+
+[[tolerance]]
+case = "fcs-waypoint-errors"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "The latitude checks compare the scaled latitudes with pi/2 exactly, so the same runs fail; the frames before them are coincident points, bit-identical; observed max |diff| 0."

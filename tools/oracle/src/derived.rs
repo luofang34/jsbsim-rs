@@ -191,6 +191,11 @@ pub fn expected_blocking(repo_root: &Path) -> Result<Vec<(String, String)>, Orac
         "systems/function_bad_table.xml".to_owned(),
         systems::bad_table(&function)?,
     ));
+    let gnc = read("systems/GNCUtilities.xml")?;
+    files.push((
+        "systems/gnc_waypoint.xml".to_owned(),
+        systems::gnc_waypoint(&gnc)?,
+    ));
     Ok(files)
 }
 

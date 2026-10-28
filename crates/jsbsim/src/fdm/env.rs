@@ -73,6 +73,7 @@ impl Env {
                 bindings: &mut self.bindings,
             },
             options,
+            ic_position: None,
         }
     }
 }

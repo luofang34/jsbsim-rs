@@ -77,6 +77,7 @@ impl Fdm {
         self.upload(loader, el, kind, Model::Systems)?;
         let ctx = &mut self.env.load_context(self.options);
         let exec_dt = self.models.exec.dt;
+        ctx.ic_position = Some(*self.models.ic.position());
         self.models.fcs.load_channels(el, ctx, exec_dt)?;
         self.post_load(el, "", Model::Systems)
     }

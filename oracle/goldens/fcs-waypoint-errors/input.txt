@@ -1,0 +1,58 @@
+# oracle/scenarios/systems/fcs_waypoint.xml on tripod_fcs_waypoint: the
+# latitude checks of FGWaypoint::Run. 90 deg is out of range in DEG,
+# whose factor 0.017453293 exceeds pi/180; each error ends its run.
+# The tripod starts at 10000 ft so that its contacts stay clear of the
+# ground.
+# A target at 90 deg.
+paths ../.. derived/aircraft scenarios/systems
+new
+load tripod_fcs_waypoint
+watch test/src-lat-deg test/src-lon-deg test/tgt-lat-deg test/tgt-lon-deg test/heading-deg test/heading-rad test/heading-default test/distance-ft test/distance-m test/distance-default test/heading-cyclic test/heading-reverse test/heading-reverse-out
+set ic/h-sl-ft 10000
+runic
+set test/src-lat-deg 89.99999
+set test/src-lon-deg 0
+set test/tgt-lat-deg 89.99999
+set test/tgt-lon-deg 0
+run
+set test/src-lat-deg 0
+set test/src-lon-deg 0
+set test/tgt-lat-deg 90
+set test/tgt-lon-deg 0
+run
+# A source at -90 deg.
+paths ../.. derived/aircraft scenarios/systems
+new
+load tripod_fcs_waypoint
+watch test/src-lat-deg test/src-lon-deg test/tgt-lat-deg test/tgt-lon-deg test/heading-deg test/heading-rad test/heading-default test/distance-ft test/distance-m test/distance-default test/heading-cyclic test/heading-reverse test/heading-reverse-out
+set ic/h-sl-ft 10000
+runic
+set test/src-lat-deg -90
+set test/src-lon-deg 0
+set test/tgt-lat-deg 0
+set test/tgt-lon-deg 0
+run
+# A radian target beyond pi/2.
+paths ../.. derived/aircraft scenarios/systems
+new
+load tripod_fcs_waypoint
+watch test/src-lat-rad test/src-lon-rad test/tgt-lat-rad test/tgt-lon-rad test/heading-rad-coords test/distance-rad-coords
+set ic/h-sl-ft 10000
+runic
+set test/src-lat-rad 0.0
+set test/src-lon-rad 0.0
+set test/tgt-lat-rad 1.5707963267948968
+set test/tgt-lon-rad 0.0
+run
+# A source beyond -pi/2, its unit unknown.
+paths ../.. derived/aircraft scenarios/systems
+new
+load tripod_fcs_waypoint
+watch test/src-lat-rad test/src-lon-rad test/tgt-lat-rad test/tgt-lon-rad test/heading-rad-coords test/distance-rad-coords
+set ic/h-sl-ft 10000
+runic
+set test/src-lat-rad -1.6
+set test/src-lon-rad 0.0
+set test/tgt-lat-rad 0.0
+set test/tgt-lon-rad 0.0
+run

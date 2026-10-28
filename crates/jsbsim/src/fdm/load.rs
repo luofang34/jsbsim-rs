@@ -24,6 +24,9 @@ pub struct LoadContext<'a> {
     pub binder: Binder<'a>,
     /// Load options.
     pub options: LoadOptions,
+    /// The initial condition's position (`GetIC()->GetPosition()`), while
+    /// FCS channels load.
+    pub ic_position: Option<crate::math::Location>,
 }
 
 impl LoadContext<'_> {

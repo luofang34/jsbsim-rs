@@ -181,4 +181,6 @@ families! {
         "lag_filter" | "lead_lag_filter" | "second_order_filter" | "washout_filter";
     /// `<pid>` and `<integrator>` (`FGPID`).
     Pid(super::pid::Pid) = "pid" | "integrator";
+    /// `<waypoint_heading>` and `<waypoint_distance>` (`FGWaypoint`).
+    Waypoint(super::waypoint::Waypoint) = "waypoint_heading" | "waypoint_distance";
 }

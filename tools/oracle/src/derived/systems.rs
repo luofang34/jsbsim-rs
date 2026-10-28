@@ -2,7 +2,8 @@
 //! Systems derived from upstream `tests/function.xml`: without the
 //! `<random>` and `<urandom>` components the port does not mirror, and
 //! that again with its table given an unknown type, as
-//! `TestFunctions.test_table_exception` edits it.
+//! `TestFunctions.test_table_exception` edits it; and the waypoint channel
+//! of `systems/GNCUtilities.xml` ([`gnc_waypoint`]).
 
 use crate::OracleError;
 
@@ -60,4 +61,32 @@ pub fn bad_table(text: &str) -> Result<String, OracleError> {
         "function_bad_table.xml",
         "without its random components (see\n  function_no_random.xml) and with its first function table typed\n  \"qsdfghjkl\", as TestFunctions.test_table_exception edits it.",
     ) + &body)
+}
+
+/// `gnc_waypoint.xml`: upstream `systems/GNCUtilities.xml`, which
+/// `TestWaypoint.py` runs through c310, without its "Included Angle to
+/// Heading" channel, whose `<angle>` the port does not load yet; what is
+/// left is the waypoint channel the test reads.
+pub fn gnc_waypoint(text: &str) -> Result<String, OracleError> {
+    let fail =
+        |message: &str| OracleError::Provenance(format!("systems/GNCUtilities.xml: {message}"));
+    let declaration = "<?xml version=\"1.0\"?>\n";
+    let body = text
+        .strip_prefix(declaration)
+        .ok_or_else(|| fail("no XML declaration"))?;
+    let open = "  <channel name=\"Included Angle to Heading\">\n";
+    let close = "  </channel>\n";
+    let start = body.find(open).ok_or_else(|| fail("no angle channel"))?;
+    let end = body[start..]
+        .find(close)
+        .map(|e| start + e + close.len())
+        .ok_or_else(|| fail("angle channel open"))?;
+    let mut out = String::with_capacity(text.len() + 512);
+    out.push_str(declaration);
+    out.push_str(
+        "<!--\n  SPDX-License-Identifier: LGPL-2.1-or-later\n  gnc_waypoint.xml: systems/GNCUtilities.xml without its \"Included Angle\n  to Heading\" channel, whose <angle> the port does not load yet.\n  Regenerate with `oracle derive`.\n-->\n",
+    );
+    out.push_str(&body[..start]);
+    out.push_str(&body[end..]);
+    Ok(out)
 }

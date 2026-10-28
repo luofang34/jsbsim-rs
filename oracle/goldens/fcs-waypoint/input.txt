@@ -1,0 +1,477 @@
+# Upstream tests/TestWaypoint.py test_waypoint, on tripod_waypoint: the
+# waypoint channel of systems/GNCUtilities.xml (which the test reaches
+# through c310) included in tests/tripod.xml. Every assertion of the test
+# reads one of the runic lines below, in the test's order. The test
+# asserts only the distance to the antipode, where the heading is
+# undetermined, so that section watches only the distance.
+# The tripod starts at 10000 ft so that its contacts stay clear of the
+# ground; the waypoint reads only the latitude and longitude.
+paths ../.. derived/aircraft derived/systems
+new
+load tripod_waypoint
+watch guidance/target_wp_latitude_rad guidance/target_wp_longitude_rad guidance/wp-distance guidance/wp-heading-rad guidance/wp-heading-deg
+print
+set ic/h-sl-ft 10000
+set ic/lat-geod-rad 0.0
+set ic/long-gc-rad 0.0
+set guidance/target_wp_latitude_rad 0.0
+set guidance/target_wp_longitude_rad -2.6179938779914944
+runic
+set guidance/target_wp_longitude_rad -2.0943951023931953
+runic
+set guidance/target_wp_longitude_rad -1.5707963267948966
+runic
+set guidance/target_wp_longitude_rad -1.0471975511965976
+runic
+set guidance/target_wp_longitude_rad -0.5235987755982988
+runic
+set guidance/target_wp_longitude_rad 0.0
+runic
+set guidance/target_wp_longitude_rad 0.5235987755982988
+runic
+set guidance/target_wp_longitude_rad 1.0471975511965976
+runic
+set guidance/target_wp_longitude_rad 1.5707963267948966
+runic
+set guidance/target_wp_longitude_rad 2.0943951023931953
+runic
+set guidance/target_wp_longitude_rad 2.6179938779914944
+runic
+set guidance/target_wp_latitude_rad 1.5707963267948966
+set guidance/target_wp_longitude_rad 0.0
+set ic/long-gc-rad -2.6179938779914944
+runic
+set ic/long-gc-rad -2.0943951023931953
+runic
+set ic/long-gc-rad -1.5707963267948966
+runic
+set ic/long-gc-rad -1.0471975511965976
+runic
+set ic/long-gc-rad -0.5235987755982988
+runic
+set ic/long-gc-rad 0.0
+runic
+set ic/long-gc-rad 0.5235987755982988
+runic
+set ic/long-gc-rad 1.0471975511965976
+runic
+set ic/long-gc-rad 1.5707963267948966
+runic
+set ic/long-gc-rad 2.0943951023931953
+runic
+set ic/long-gc-rad 2.6179938779914944
+runic
+set ic/long-gc-rad 3.141592653589793
+runic
+set guidance/target_wp_latitude_rad -1.5707963267948966
+set guidance/target_wp_longitude_rad 0.0
+set ic/long-gc-rad -2.6179938779914944
+runic
+set ic/long-gc-rad -2.0943951023931953
+runic
+set ic/long-gc-rad -1.5707963267948966
+runic
+set ic/long-gc-rad -1.0471975511965976
+runic
+set ic/long-gc-rad -0.5235987755982988
+runic
+set ic/long-gc-rad 0.0
+runic
+set ic/long-gc-rad 0.5235987755982988
+runic
+set ic/long-gc-rad 1.0471975511965976
+runic
+set ic/long-gc-rad 1.5707963267948966
+runic
+set ic/long-gc-rad 2.0943951023931953
+runic
+set ic/long-gc-rad 2.6179938779914944
+runic
+set ic/long-gc-rad 3.141592653589793
+runic
+watch guidance/target_wp_latitude_rad guidance/target_wp_longitude_rad guidance/wp-distance
+set ic/lat-geod-rad -1.3089969389957472
+set guidance/target_wp_latitude_rad 1.3089969389957472
+set ic/long-gc-rad -2.6179938779914944
+set guidance/target_wp_longitude_rad 0.5235987755982987
+runic
+set ic/long-gc-rad -2.0943951023931953
+set guidance/target_wp_longitude_rad 1.0471975511965979
+runic
+set ic/long-gc-rad -1.5707963267948966
+set guidance/target_wp_longitude_rad 1.5707963267948966
+runic
+set ic/long-gc-rad -1.0471975511965976
+set guidance/target_wp_longitude_rad 2.0943951023931957
+runic
+set ic/long-gc-rad -0.5235987755982988
+set guidance/target_wp_longitude_rad 2.6179938779914944
+runic
+set ic/long-gc-rad 0.0
+set guidance/target_wp_longitude_rad 3.141592653589793
+runic
+set ic/long-gc-rad 0.5235987755982988
+set guidance/target_wp_longitude_rad 3.665191429188092
+runic
+set ic/long-gc-rad 1.0471975511965976
+set guidance/target_wp_longitude_rad 4.1887902047863905
+runic
+set ic/long-gc-rad 1.5707963267948966
+set guidance/target_wp_longitude_rad 4.71238898038469
+runic
+set ic/long-gc-rad 2.0943951023931953
+set guidance/target_wp_longitude_rad 5.235987755982988
+runic
+set ic/long-gc-rad 2.6179938779914944
+set guidance/target_wp_longitude_rad 5.759586531581288
+runic
+set ic/lat-geod-rad -1.0471975511965976
+set guidance/target_wp_latitude_rad 1.0471975511965976
+set ic/long-gc-rad -2.6179938779914944
+set guidance/target_wp_longitude_rad 0.5235987755982987
+runic
+set ic/long-gc-rad -2.0943951023931953
+set guidance/target_wp_longitude_rad 1.0471975511965979
+runic
+set ic/long-gc-rad -1.5707963267948966
+set guidance/target_wp_longitude_rad 1.5707963267948966
+runic
+set ic/long-gc-rad -1.0471975511965976
+set guidance/target_wp_longitude_rad 2.0943951023931957
+runic
+set ic/long-gc-rad -0.5235987755982988
+set guidance/target_wp_longitude_rad 2.6179938779914944
+runic
+set ic/long-gc-rad 0.0
+set guidance/target_wp_longitude_rad 3.141592653589793
+runic
+set ic/long-gc-rad 0.5235987755982988
+set guidance/target_wp_longitude_rad 3.665191429188092
+runic
+set ic/long-gc-rad 1.0471975511965976
+set guidance/target_wp_longitude_rad 4.1887902047863905
+runic
+set ic/long-gc-rad 1.5707963267948966
+set guidance/target_wp_longitude_rad 4.71238898038469
+runic
+set ic/long-gc-rad 2.0943951023931953
+set guidance/target_wp_longitude_rad 5.235987755982988
+runic
+set ic/long-gc-rad 2.6179938779914944
+set guidance/target_wp_longitude_rad 5.759586531581288
+runic
+set ic/lat-geod-rad -0.7853981633974483
+set guidance/target_wp_latitude_rad 0.7853981633974483
+set ic/long-gc-rad -2.6179938779914944
+set guidance/target_wp_longitude_rad 0.5235987755982987
+runic
+set ic/long-gc-rad -2.0943951023931953
+set guidance/target_wp_longitude_rad 1.0471975511965979
+runic
+set ic/long-gc-rad -1.5707963267948966
+set guidance/target_wp_longitude_rad 1.5707963267948966
+runic
+set ic/long-gc-rad -1.0471975511965976
+set guidance/target_wp_longitude_rad 2.0943951023931957
+runic
+set ic/long-gc-rad -0.5235987755982988
+set guidance/target_wp_longitude_rad 2.6179938779914944
+runic
+set ic/long-gc-rad 0.0
+set guidance/target_wp_longitude_rad 3.141592653589793
+runic
+set ic/long-gc-rad 0.5235987755982988
+set guidance/target_wp_longitude_rad 3.665191429188092
+runic
+set ic/long-gc-rad 1.0471975511965976
+set guidance/target_wp_longitude_rad 4.1887902047863905
+runic
+set ic/long-gc-rad 1.5707963267948966
+set guidance/target_wp_longitude_rad 4.71238898038469
+runic
+set ic/long-gc-rad 2.0943951023931953
+set guidance/target_wp_longitude_rad 5.235987755982988
+runic
+set ic/long-gc-rad 2.6179938779914944
+set guidance/target_wp_longitude_rad 5.759586531581288
+runic
+set ic/lat-geod-rad -0.5235987755982988
+set guidance/target_wp_latitude_rad 0.5235987755982988
+set ic/long-gc-rad -2.6179938779914944
+set guidance/target_wp_longitude_rad 0.5235987755982987
+runic
+set ic/long-gc-rad -2.0943951023931953
+set guidance/target_wp_longitude_rad 1.0471975511965979
+runic
+set ic/long-gc-rad -1.5707963267948966
+set guidance/target_wp_longitude_rad 1.5707963267948966
+runic
+set ic/long-gc-rad -1.0471975511965976
+set guidance/target_wp_longitude_rad 2.0943951023931957
+runic
+set ic/long-gc-rad -0.5235987755982988
+set guidance/target_wp_longitude_rad 2.6179938779914944
+runic
+set ic/long-gc-rad 0.0
+set guidance/target_wp_longitude_rad 3.141592653589793
+runic
+set ic/long-gc-rad 0.5235987755982988
+set guidance/target_wp_longitude_rad 3.665191429188092
+runic
+set ic/long-gc-rad 1.0471975511965976
+set guidance/target_wp_longitude_rad 4.1887902047863905
+runic
+set ic/long-gc-rad 1.5707963267948966
+set guidance/target_wp_longitude_rad 4.71238898038469
+runic
+set ic/long-gc-rad 2.0943951023931953
+set guidance/target_wp_longitude_rad 5.235987755982988
+runic
+set ic/long-gc-rad 2.6179938779914944
+set guidance/target_wp_longitude_rad 5.759586531581288
+runic
+set ic/lat-geod-rad -0.2617993877991494
+set guidance/target_wp_latitude_rad 0.2617993877991494
+set ic/long-gc-rad -2.6179938779914944
+set guidance/target_wp_longitude_rad 0.5235987755982987
+runic
+set ic/long-gc-rad -2.0943951023931953
+set guidance/target_wp_longitude_rad 1.0471975511965979
+runic
+set ic/long-gc-rad -1.5707963267948966
+set guidance/target_wp_longitude_rad 1.5707963267948966
+runic
+set ic/long-gc-rad -1.0471975511965976
+set guidance/target_wp_longitude_rad 2.0943951023931957
+runic
+set ic/long-gc-rad -0.5235987755982988
+set guidance/target_wp_longitude_rad 2.6179938779914944
+runic
+set ic/long-gc-rad 0.0
+set guidance/target_wp_longitude_rad 3.141592653589793
+runic
+set ic/long-gc-rad 0.5235987755982988
+set guidance/target_wp_longitude_rad 3.665191429188092
+runic
+set ic/long-gc-rad 1.0471975511965976
+set guidance/target_wp_longitude_rad 4.1887902047863905
+runic
+set ic/long-gc-rad 1.5707963267948966
+set guidance/target_wp_longitude_rad 4.71238898038469
+runic
+set ic/long-gc-rad 2.0943951023931953
+set guidance/target_wp_longitude_rad 5.235987755982988
+runic
+set ic/long-gc-rad 2.6179938779914944
+set guidance/target_wp_longitude_rad 5.759586531581288
+runic
+set ic/lat-geod-rad 0.0
+set guidance/target_wp_latitude_rad -0.0
+set ic/long-gc-rad -2.6179938779914944
+set guidance/target_wp_longitude_rad 0.5235987755982987
+runic
+set ic/long-gc-rad -2.0943951023931953
+set guidance/target_wp_longitude_rad 1.0471975511965979
+runic
+set ic/long-gc-rad -1.5707963267948966
+set guidance/target_wp_longitude_rad 1.5707963267948966
+runic
+set ic/long-gc-rad -1.0471975511965976
+set guidance/target_wp_longitude_rad 2.0943951023931957
+runic
+set ic/long-gc-rad -0.5235987755982988
+set guidance/target_wp_longitude_rad 2.6179938779914944
+runic
+set ic/long-gc-rad 0.0
+set guidance/target_wp_longitude_rad 3.141592653589793
+runic
+set ic/long-gc-rad 0.5235987755982988
+set guidance/target_wp_longitude_rad 3.665191429188092
+runic
+set ic/long-gc-rad 1.0471975511965976
+set guidance/target_wp_longitude_rad 4.1887902047863905
+runic
+set ic/long-gc-rad 1.5707963267948966
+set guidance/target_wp_longitude_rad 4.71238898038469
+runic
+set ic/long-gc-rad 2.0943951023931953
+set guidance/target_wp_longitude_rad 5.235987755982988
+runic
+set ic/long-gc-rad 2.6179938779914944
+set guidance/target_wp_longitude_rad 5.759586531581288
+runic
+set ic/lat-geod-rad 0.2617993877991494
+set guidance/target_wp_latitude_rad -0.2617993877991494
+set ic/long-gc-rad -2.6179938779914944
+set guidance/target_wp_longitude_rad 0.5235987755982987
+runic
+set ic/long-gc-rad -2.0943951023931953
+set guidance/target_wp_longitude_rad 1.0471975511965979
+runic
+set ic/long-gc-rad -1.5707963267948966
+set guidance/target_wp_longitude_rad 1.5707963267948966
+runic
+set ic/long-gc-rad -1.0471975511965976
+set guidance/target_wp_longitude_rad 2.0943951023931957
+runic
+set ic/long-gc-rad -0.5235987755982988
+set guidance/target_wp_longitude_rad 2.6179938779914944
+runic
+set ic/long-gc-rad 0.0
+set guidance/target_wp_longitude_rad 3.141592653589793
+runic
+set ic/long-gc-rad 0.5235987755982988
+set guidance/target_wp_longitude_rad 3.665191429188092
+runic
+set ic/long-gc-rad 1.0471975511965976
+set guidance/target_wp_longitude_rad 4.1887902047863905
+runic
+set ic/long-gc-rad 1.5707963267948966
+set guidance/target_wp_longitude_rad 4.71238898038469
+runic
+set ic/long-gc-rad 2.0943951023931953
+set guidance/target_wp_longitude_rad 5.235987755982988
+runic
+set ic/long-gc-rad 2.6179938779914944
+set guidance/target_wp_longitude_rad 5.759586531581288
+runic
+set ic/lat-geod-rad 0.5235987755982988
+set guidance/target_wp_latitude_rad -0.5235987755982988
+set ic/long-gc-rad -2.6179938779914944
+set guidance/target_wp_longitude_rad 0.5235987755982987
+runic
+set ic/long-gc-rad -2.0943951023931953
+set guidance/target_wp_longitude_rad 1.0471975511965979
+runic
+set ic/long-gc-rad -1.5707963267948966
+set guidance/target_wp_longitude_rad 1.5707963267948966
+runic
+set ic/long-gc-rad -1.0471975511965976
+set guidance/target_wp_longitude_rad 2.0943951023931957
+runic
+set ic/long-gc-rad -0.5235987755982988
+set guidance/target_wp_longitude_rad 2.6179938779914944
+runic
+set ic/long-gc-rad 0.0
+set guidance/target_wp_longitude_rad 3.141592653589793
+runic
+set ic/long-gc-rad 0.5235987755982988
+set guidance/target_wp_longitude_rad 3.665191429188092
+runic
+set ic/long-gc-rad 1.0471975511965976
+set guidance/target_wp_longitude_rad 4.1887902047863905
+runic
+set ic/long-gc-rad 1.5707963267948966
+set guidance/target_wp_longitude_rad 4.71238898038469
+runic
+set ic/long-gc-rad 2.0943951023931953
+set guidance/target_wp_longitude_rad 5.235987755982988
+runic
+set ic/long-gc-rad 2.6179938779914944
+set guidance/target_wp_longitude_rad 5.759586531581288
+runic
+set ic/lat-geod-rad 0.7853981633974483
+set guidance/target_wp_latitude_rad -0.7853981633974483
+set ic/long-gc-rad -2.6179938779914944
+set guidance/target_wp_longitude_rad 0.5235987755982987
+runic
+set ic/long-gc-rad -2.0943951023931953
+set guidance/target_wp_longitude_rad 1.0471975511965979
+runic
+set ic/long-gc-rad -1.5707963267948966
+set guidance/target_wp_longitude_rad 1.5707963267948966
+runic
+set ic/long-gc-rad -1.0471975511965976
+set guidance/target_wp_longitude_rad 2.0943951023931957
+runic
+set ic/long-gc-rad -0.5235987755982988
+set guidance/target_wp_longitude_rad 2.6179938779914944
+runic
+set ic/long-gc-rad 0.0
+set guidance/target_wp_longitude_rad 3.141592653589793
+runic
+set ic/long-gc-rad 0.5235987755982988
+set guidance/target_wp_longitude_rad 3.665191429188092
+runic
+set ic/long-gc-rad 1.0471975511965976
+set guidance/target_wp_longitude_rad 4.1887902047863905
+runic
+set ic/long-gc-rad 1.5707963267948966
+set guidance/target_wp_longitude_rad 4.71238898038469
+runic
+set ic/long-gc-rad 2.0943951023931953
+set guidance/target_wp_longitude_rad 5.235987755982988
+runic
+set ic/long-gc-rad 2.6179938779914944
+set guidance/target_wp_longitude_rad 5.759586531581288
+runic
+set ic/lat-geod-rad 1.0471975511965976
+set guidance/target_wp_latitude_rad -1.0471975511965976
+set ic/long-gc-rad -2.6179938779914944
+set guidance/target_wp_longitude_rad 0.5235987755982987
+runic
+set ic/long-gc-rad -2.0943951023931953
+set guidance/target_wp_longitude_rad 1.0471975511965979
+runic
+set ic/long-gc-rad -1.5707963267948966
+set guidance/target_wp_longitude_rad 1.5707963267948966
+runic
+set ic/long-gc-rad -1.0471975511965976
+set guidance/target_wp_longitude_rad 2.0943951023931957
+runic
+set ic/long-gc-rad -0.5235987755982988
+set guidance/target_wp_longitude_rad 2.6179938779914944
+runic
+set ic/long-gc-rad 0.0
+set guidance/target_wp_longitude_rad 3.141592653589793
+runic
+set ic/long-gc-rad 0.5235987755982988
+set guidance/target_wp_longitude_rad 3.665191429188092
+runic
+set ic/long-gc-rad 1.0471975511965976
+set guidance/target_wp_longitude_rad 4.1887902047863905
+runic
+set ic/long-gc-rad 1.5707963267948966
+set guidance/target_wp_longitude_rad 4.71238898038469
+runic
+set ic/long-gc-rad 2.0943951023931953
+set guidance/target_wp_longitude_rad 5.235987755982988
+runic
+set ic/long-gc-rad 2.6179938779914944
+set guidance/target_wp_longitude_rad 5.759586531581288
+runic
+set ic/lat-geod-rad 1.3089969389957472
+set guidance/target_wp_latitude_rad -1.3089969389957472
+set ic/long-gc-rad -2.6179938779914944
+set guidance/target_wp_longitude_rad 0.5235987755982987
+runic
+set ic/long-gc-rad -2.0943951023931953
+set guidance/target_wp_longitude_rad 1.0471975511965979
+runic
+set ic/long-gc-rad -1.5707963267948966
+set guidance/target_wp_longitude_rad 1.5707963267948966
+runic
+set ic/long-gc-rad -1.0471975511965976
+set guidance/target_wp_longitude_rad 2.0943951023931957
+runic
+set ic/long-gc-rad -0.5235987755982988
+set guidance/target_wp_longitude_rad 2.6179938779914944
+runic
+set ic/long-gc-rad 0.0
+set guidance/target_wp_longitude_rad 3.141592653589793
+runic
+set ic/long-gc-rad 0.5235987755982988
+set guidance/target_wp_longitude_rad 3.665191429188092
+runic
+set ic/long-gc-rad 1.0471975511965976
+set guidance/target_wp_longitude_rad 4.1887902047863905
+runic
+set ic/long-gc-rad 1.5707963267948966
+set guidance/target_wp_longitude_rad 4.71238898038469
+runic
+set ic/long-gc-rad 2.0943951023931953
+set guidance/target_wp_longitude_rad 5.235987755982988
+runic
+set ic/long-gc-rad 2.6179938779914944
+set guidance/target_wp_longitude_rad 5.759586531581288
+runic

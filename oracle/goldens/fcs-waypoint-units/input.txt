@@ -1,0 +1,195 @@
+# oracle/scenarios/systems/fcs_waypoint.xml on tripod_fcs_waypoint: every
+# output unit and default, coordinate units, negation, clipping and an
+# extra output, on general points, points near the poles, across the
+# date line, nearly antipodal and coincident, with the targets and
+# sources changed between frames through their properties, then a
+# simulation/reset.
+# The tripod starts at 10000 ft so that its contacts stay clear of the
+# ground; the waypoints read only their own properties.
+# Degree coordinates; the outputs before the first frame are 0.
+paths ../.. derived/aircraft scenarios/systems
+new
+load tripod_fcs_waypoint
+watch test/src-lat-deg test/src-lon-deg test/tgt-lat-deg test/tgt-lon-deg test/heading-deg test/heading-rad test/heading-default test/distance-ft test/distance-m test/distance-default test/heading-cyclic test/heading-reverse test/heading-reverse-out
+print
+set ic/h-sl-ft 10000
+runic
+set test/src-lat-deg 37.6
+set test/src-lon-deg -122.4
+set test/tgt-lat-deg 51.5
+set test/tgt-lon-deg -0.12
+run
+set test/src-lat-deg 51.5
+set test/src-lon-deg -0.12
+set test/tgt-lat-deg 37.6
+set test/tgt-lon-deg -122.4
+run
+set test/src-lat-deg -33.9
+set test/src-lon-deg 151.2
+set test/tgt-lat-deg 35.7
+set test/tgt-lon-deg 139.7
+run
+set test/src-lat-deg 0
+set test/src-lon-deg 0
+set test/tgt-lat-deg 0
+set test/tgt-lon-deg 0
+run
+set test/src-lat-deg 0
+set test/src-lon-deg 180
+set test/tgt-lat-deg 0
+set test/tgt-lon-deg -180
+run
+set test/src-lat-deg 89.9999
+set test/src-lon-deg 0
+set test/tgt-lat-deg 89.9999
+set test/tgt-lon-deg 179
+run
+set test/src-lat-deg 89.99
+set test/src-lon-deg 30
+set test/tgt-lat-deg 89.99
+set test/tgt-lon-deg 31
+run
+set test/src-lat-deg -89.99
+set test/src-lon-deg 45
+set test/tgt-lat-deg -89.99
+set test/tgt-lon-deg -134
+run
+set test/src-lat-deg -89.9999
+set test/src-lon-deg 0
+set test/tgt-lat-deg 0
+set test/tgt-lon-deg 0
+run
+set test/src-lat-deg 10
+set test/src-lon-deg 179.9
+set test/tgt-lat-deg -10
+set test/tgt-lon-deg -179.9
+run
+set test/src-lat-deg 0
+set test/src-lon-deg 179.99
+set test/tgt-lat-deg 0
+set test/tgt-lon-deg -179.99
+run
+set test/src-lat-deg 60
+set test/src-lon-deg -179.5
+set test/tgt-lat-deg 61
+set test/tgt-lon-deg 179.5
+run
+set test/src-lat-deg 30
+set test/src-lon-deg 0
+set test/tgt-lat-deg -30
+set test/tgt-lon-deg 179.99
+run
+set test/src-lat-deg 0
+set test/src-lon-deg 0
+set test/tgt-lat-deg 0
+set test/tgt-lon-deg 179.5
+run
+set test/src-lat-deg 0
+set test/src-lon-deg 0
+set test/tgt-lat-deg 0.5
+set test/tgt-lon-deg 179.7
+run
+set test/src-lat-deg 45
+set test/src-lon-deg 10
+set test/tgt-lat-deg -45.001
+set test/tgt-lon-deg -170
+run
+set test/src-lat-deg 0
+set test/src-lon-deg 0
+set test/tgt-lat-deg 0
+set test/tgt-lon-deg 1e-07
+run
+set test/src-lat-deg 12.5
+set test/src-lon-deg 0
+set test/tgt-lat-deg 12.5000001
+set test/tgt-lon-deg 0
+run
+set test/src-lat-deg 0
+set test/src-lon-deg 0
+set test/tgt-lat-deg 0
+set test/tgt-lon-deg 0
+run
+set test/src-lat-deg 40
+set test/src-lon-deg -75
+set test/tgt-lat-deg 42
+set test/tgt-lon-deg -68
+run
+set test/tgt-lat-deg 44
+set test/tgt-lon-deg -61
+run
+set test/tgt-lat-deg 46
+set test/tgt-lon-deg -54
+run
+set test/tgt-lat-deg 48
+set test/tgt-lon-deg -47
+run
+set test/tgt-lat-deg 50
+set test/tgt-lon-deg -40
+run
+set test/tgt-lat-deg 52
+set test/tgt-lon-deg -33
+run
+set test/src-lon-deg -75
+run
+set test/src-lon-deg -95
+run
+set test/src-lon-deg -115
+run
+set test/src-lon-deg -135
+run
+run
+set simulation/reset 0
+print
+run
+# Radian coordinates, without a unit and with an unknown one; exact poles.
+paths ../.. derived/aircraft scenarios/systems
+new
+load tripod_fcs_waypoint
+watch test/src-lat-rad test/src-lon-rad test/tgt-lat-rad test/tgt-lon-rad test/heading-rad-coords test/distance-rad-coords
+set ic/h-sl-ft 10000
+runic
+set test/src-lat-rad 0.0
+set test/src-lon-rad 0.0
+set test/tgt-lat-rad 1.5707963267948966
+set test/tgt-lon-rad 0.0
+run
+set test/src-lat-rad 0.0
+set test/src-lon-rad 0.0
+set test/tgt-lat-rad -1.5707963267948966
+set test/tgt-lon-rad 0.0
+run
+set test/src-lat-rad 1.5707963267948966
+set test/src-lon-rad 0.0
+set test/tgt-lat-rad -1.5707963267948966
+set test/tgt-lon-rad 0.0
+run
+set test/src-lat-rad 1.5707963267948966
+set test/src-lon-rad 1.0
+set test/tgt-lat-rad 0.3
+set test/tgt-lon-rad -2.0
+run
+set test/src-lat-rad -1.5707963267948966
+set test/src-lon-rad 0.0
+set test/tgt-lat-rad -1.5707963267948966
+set test/tgt-lon-rad 2.0
+run
+set test/src-lat-rad 0.7
+set test/src-lon-rad -2.1
+set test/tgt-lat-rad -0.7
+set test/tgt-lon-rad -1.041592653589793
+run
+set test/src-lat-rad 0.2
+set test/src-lon-rad 3.0
+set test/tgt-lat-rad 0.21
+set test/tgt-lon-rad -3.1
+run
+set test/src-lat-rad 0.0
+set test/src-lon-rad 0.0
+set test/tgt-lat-rad 0.0
+set test/tgt-lon-rad 3.141592653589793
+run
+set test/src-lat-rad 0.0
+set test/src-lon-rad 0.0
+set test/tgt-lat-rad 0.0
+set test/tgt-lon-rad 0.0
+run

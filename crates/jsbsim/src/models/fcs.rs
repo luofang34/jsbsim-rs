@@ -22,6 +22,7 @@ pub mod summer;
 pub mod switch;
 #[cfg(test)]
 mod tests;
+pub mod waypoint;
 
 pub use bind::bind;
 pub use families::{Component, ComponentAt, Kind};

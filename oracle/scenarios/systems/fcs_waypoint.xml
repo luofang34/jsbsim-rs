@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  FGWaypoint beyond upstream TestWaypoint.py: every output unit and its
+  default, coordinates in DEG, RAD, without a unit and with an unknown one
+  (radians), negated coordinates, clipping (saturating and cyclic) and an
+  extra output. The fcs-waypoint-units and fcs-waypoint-errors goldens
+  drive it.
+-->
+<system name="fcs-waypoint">
+  <property>test/src-lat-deg</property>
+  <property>test/src-lon-deg</property>
+  <property>test/tgt-lat-deg</property>
+  <property>test/tgt-lon-deg</property>
+  <property>test/src-lat-rad</property>
+  <property>test/src-lon-rad</property>
+  <property>test/tgt-lat-rad</property>
+  <property>test/tgt-lon-rad</property>
+  <channel name="degrees">
+    <waypoint_heading name="test/heading-deg" unit="DEG">
+      <target_latitude unit="DEG">  test/tgt-lat-deg </target_latitude>
+      <target_longitude unit="DEG"> test/tgt-lon-deg </target_longitude>
+      <source_latitude unit="DEG">  test/src-lat-deg </source_latitude>
+      <source_longitude unit="DEG"> test/src-lon-deg </source_longitude>
+    </waypoint_heading>
+    <waypoint_heading name="test/heading-rad" unit="RAD">
+      <target_latitude unit="DEG">  test/tgt-lat-deg </target_latitude>
+      <target_longitude unit="DEG"> test/tgt-lon-deg </target_longitude>
+      <source_latitude unit="DEG">  test/src-lat-deg </source_latitude>
+      <source_longitude unit="DEG"> test/src-lon-deg </source_longitude>
+    </waypoint_heading>
+    <waypoint_heading name="test/heading-default">
+      <target_latitude unit="DEG">  test/tgt-lat-deg </target_latitude>
+      <target_longitude unit="DEG"> test/tgt-lon-deg </target_longitude>
+      <source_latitude unit="DEG">  test/src-lat-deg </source_latitude>
+      <source_longitude unit="DEG"> test/src-lon-deg </source_longitude>
+    </waypoint_heading>
+    <waypoint_distance name="test/distance-ft" unit="FT">
+      <target_latitude unit="DEG">  test/tgt-lat-deg </target_latitude>
+      <target_longitude unit="DEG"> test/tgt-lon-deg </target_longitude>
+      <source_latitude unit="DEG">  test/src-lat-deg </source_latitude>
+      <source_longitude unit="DEG"> test/src-lon-deg </source_longitude>
+    </waypoint_distance>
+    <waypoint_distance name="test/distance-m" unit="M">
+      <target_latitude unit="DEG">  test/tgt-lat-deg </target_latitude>
+      <target_longitude unit="DEG"> test/tgt-lon-deg </target_longitude>
+      <source_latitude unit="DEG">  test/src-lat-deg </source_latitude>
+      <source_longitude unit="DEG"> test/src-lon-deg </source_longitude>
+    </waypoint_distance>
+    <waypoint_distance name="test/distance-default">
+      <target_latitude unit="DEG">  test/tgt-lat-deg </target_latitude>
+      <target_longitude unit="DEG"> test/tgt-lon-deg </target_longitude>
+      <source_latitude unit="DEG">  test/src-lat-deg </source_latitude>
+      <source_longitude unit="DEG"> test/src-lon-deg </source_longitude>
+    </waypoint_distance>
+    <waypoint_heading name="test/heading-cyclic" unit="DEG">
+      <target_latitude unit="DEG">  test/tgt-lat-deg </target_latitude>
+      <target_longitude unit="DEG"> test/tgt-lon-deg </target_longitude>
+      <source_latitude unit="DEG">  test/src-lat-deg </source_latitude>
+      <source_longitude unit="DEG"> test/src-lon-deg </source_longitude>
+      <clipto type="cyclic">
+        <min> 0 </min>
+        <max> 360 </max>
+      </clipto>
+    </waypoint_heading>
+    <waypoint_heading name="test/heading-reverse" unit="DEG">
+      <target_latitude unit="DEG">  -test/tgt-lat-deg </target_latitude>
+      <target_longitude unit="DEG"> -test/tgt-lon-deg </target_longitude>
+      <source_latitude unit="DEG">  -test/src-lat-deg </source_latitude>
+      <source_longitude unit="DEG"> -test/src-lon-deg </source_longitude>
+      <clipto>
+        <min> -90 </min>
+        <max> 90 </max>
+      </clipto>
+      <output> test/heading-reverse-out </output>
+    </waypoint_heading>
+  </channel>
+  <channel name="radians">
+    <waypoint_heading name="test/heading-rad-coords" unit="RAD">
+      <target_latitude unit="RAD"> test/tgt-lat-rad </target_latitude>
+      <target_longitude> test/tgt-lon-rad </target_longitude>
+      <source_latitude unit="deg"> test/src-lat-rad </source_latitude>
+      <source_longitude unit="RAD"> test/src-lon-rad </source_longitude>
+    </waypoint_heading>
+    <waypoint_distance name="test/distance-rad-coords" unit="M">
+      <target_latitude unit="RAD"> test/tgt-lat-rad </target_latitude>
+      <target_longitude> test/tgt-lon-rad </target_longitude>
+      <source_latitude unit="deg"> test/src-lat-rad </source_latitude>
+      <source_longitude unit="RAD"> test/src-lon-rad </source_longitude>
+    </waypoint_distance>
+  </channel>
+</system>
