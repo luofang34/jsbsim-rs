@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  FGKinemat beyond upstream tests/TestKinematic.py: negative detents with
+  <noscale/>, a zero transition time between two timed intervals, an
+  input beyond the detents (constrained), a negated input, two outputs
+  of which the first is read back each run (and set from outside),
+  clipping, and a name without a slash. The fcs-kinematic-forms golden
+  drives it, resetting it once through simulation/reset.
+-->
+<system name="fcs-kinematic">
+  <property>test/input</property>
+  <channel name="kinematics">
+    <kinematic name="test/noscale">
+      <input>test/input</input>
+      <noscale/>
+      <traverse>
+        <setting> <position>-10</position> <time>0</time> </setting>
+        <setting> <position>-2</position> <time>0.5</time> </setting>
+        <setting> <position>4</position> <time>0</time> </setting>
+        <setting> <position>15</position> <time>2</time> </setting>
+      </traverse>
+    </kinematic>
+    <kinematic name="test/scaled">
+      <input>-test/input</input>
+      <traverse>
+        <setting> <position>0</position> <time>0</time> </setting>
+        <setting> <position>0.5</position> <time>0.25</time> </setting>
+        <setting> <position>2</position> <time>0.1</time> </setting>
+      </traverse>
+      <output>test/scaled-a</output>
+      <output>test/scaled-b</output>
+    </kinematic>
+    <kinematic name="test/clipped">
+      <input>test/input</input>
+      <traverse>
+        <setting> <position>0</position> <time>0</time> </setting>
+        <setting> <position>1</position> <time>0.2</time> </setting>
+      </traverse>
+      <clipto>
+        <min>0.1</min>
+        <max>0.6</max>
+      </clipto>
+    </kinematic>
+    <kinematic name="Spoiler Kinematic">
+      <input>test/input</input>
+      <traverse>
+        <setting> <position>0</position> <time>0</time> </setting>
+        <setting> <position>60</position> <time>0.3</time> </setting>
+      </traverse>
+    </kinematic>
+  </channel>
+</system>

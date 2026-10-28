@@ -19,6 +19,7 @@ pub mod filter;
 pub mod function;
 pub mod gain;
 pub mod gyro;
+pub mod kinematic;
 mod load;
 pub mod magnetometer;
 pub mod pid;

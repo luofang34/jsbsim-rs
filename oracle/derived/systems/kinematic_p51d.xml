@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  kinematic_p51d.xml: channel "Landing Gear" of aircraft/p51d/p51d.xml,
+  copied verbatim, as JSBSim's tests/TestKinematic.py drives it.
+  Regenerate with `oracle derive`.
+-->
+<system name="kinematic_p51d">
+        <channel name="Landing Gear">
+            <kinematic name="Gear Control">
+                <input>gear/gear-cmd-norm</input>
+                <traverse>
+                    <setting>
+                        <position>0</position>
+                        <time>0</time>
+                    </setting>
+                    <setting>
+                        <position>1</position>
+                        <time>12</time>
+                    </setting>
+                </traverse>
+                <output>gear/gear-pos-norm</output>
+            </kinematic>
+        </channel>
+</system>

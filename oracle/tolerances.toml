@@ -5050,3 +5050,31 @@ property = "*"
 abs = 0.0
 rel = 0.0
 reason = "Actuator lag (coefficients recomputed when the property changes), rate limits, deadband, hysteresis, bias, delays, clipping, saturation, malfunctions and the reset use IEEE basic operations in JSBSim's order, so they must be bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-kinematic-timing"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "A kinematic traversing detents in their transition times (rates, Constrain and the per-interval step split) uses IEEE basic operations in JSBSim's order, so it must be bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-kinematic-initial-value"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "A kinematic whose output property is set with its command reads it back and stays, IEEE basic operations only, so it must be bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-kinematic-noscale"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "An unscaled kinematic traverses its detents with IEEE basic operations in JSBSim's order, so it must be bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-kinematic-forms"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Kinematics with negative detents, zero transition times, scaled and negated inputs, outputs read back, clipping and a reset use IEEE basic operations in JSBSim's order, so they must be bit-identical; observed max |diff| 0."

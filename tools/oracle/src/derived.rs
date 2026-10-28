@@ -9,6 +9,7 @@
 
 pub mod accelerometers;
 pub mod actuator;
+pub mod kinematic;
 pub mod systems;
 pub mod tripod;
 
@@ -226,6 +227,12 @@ pub fn expected_blocking(repo_root: &Path) -> Result<Vec<(String, String)>, Orac
         "systems/actuator_c172x.xml".to_owned(),
         actuator::system(&read("aircraft/c172x/c172x.xml")?)?,
     ));
+    for system in &kinematic::SYSTEMS {
+        files.push((
+            format!("systems/{}", system.file),
+            kinematic::derive(&read(system.source)?, system)?,
+        ));
+    }
     Ok(files)
 }
 

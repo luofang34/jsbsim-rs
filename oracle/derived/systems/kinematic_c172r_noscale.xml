@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  kinematic_c172r_noscale.xml: channel "Flaps" of aircraft/c172r/c172r.xml,
+  with <noscale/> appended to its kinematic, as JSBSim's tests/TestKinematic.py drives it.
+  Regenerate with `oracle derive`.
+-->
+<system name="kinematic_c172r_noscale">
+        <channel name="Flaps">
+            <kinematic name="Flaps Control">
+                <input>fcs/flap-cmd-norm</input>
+                <traverse>
+                    <setting>
+                        <position>0</position>
+                        <time>0</time>
+                    </setting>
+                    <setting>
+                        <position>10</position>
+                        <time>2</time>
+                    </setting>
+                    <setting>
+                        <position>20</position>
+                        <time>1</time>
+                    </setting>
+                    <setting>
+                        <position>30</position>
+                        <time>1</time>
+                    </setting>
+                </traverse>
+                <output>fcs/flap-pos-deg</output>
+            <noscale/></kinematic>
+            <aerosurface_scale name="Flap Position Normalizer">
+              <input>fcs/flap-pos-deg</input>
+              <domain>
+                <min>0</min>  <!-- Flaps actual minimum position -->
+                <max>30</max>  <!-- Flaps actual maximum position -->
+              </domain>
+              <range>
+                <min>0</min>  <!-- Flaps normalized minimum position -->
+                <max>1</max>  <!-- Flaps normalized maximum position -->
+              </range>
+              <output>fcs/flap-pos-norm</output>
+            </aerosurface_scale>
+        </channel>
+</system>

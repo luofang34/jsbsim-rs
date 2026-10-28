@@ -204,4 +204,6 @@ families! {
     Waypoint(super::waypoint::Waypoint) = "waypoint_heading" | "waypoint_distance";
     /// `<actuator>` (`FGActuator`).
     Actuator(super::actuator::Actuator) = "actuator";
+    /// `<kinematic>` (`FGKinemat`).
+    Kinematic(super::kinematic::Kinemat) = "kinematic";
 }

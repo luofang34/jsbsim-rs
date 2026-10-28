@@ -22,7 +22,7 @@ L410 unsupported <engine> in <propulsion> (In file aircraft/L410/L410.xml: line 
 MD11 unsupported <engine> in <propulsion> (In file aircraft/MD11/MD11.xml: line 111)
 OV10 unsupported <engine> in <propulsion> (In file aircraft/OV10/OV10.xml: line 111)
 Pterosaur unsupported <engine> in <propulsion> (In file aircraft/Pterosaur/Pterosaur.xml: line 250)
-SGS unsupported <kinematic> FCS component (In file aircraft/SGS/SGS.xml: line 228)
+SGS ok
 Short_S23 unsupported <engine> in <propulsion> (In file aircraft/Short_S23/Short_S23.xml: line 488)
 Shuttle ok
 Submarine_Scout unsupported <buoyant_forces> (In file aircraft/Submarine_Scout/Submarine_Scout.xml: line 616)
@@ -48,15 +48,15 @@ f22 unsupported <engine> in <propulsion> (In file aircraft/f22/f22.xml: line 125
 fokker100 unsupported <engine> in <propulsion> (In file aircraft/fokker100/fokker100.xml: line 213)
 fokker50 unsupported <engine> in <propulsion> (In file aircraft/fokker50/fokker50.xml: line 183)
 global5000 unsupported <engine> in <propulsion> (In file aircraft/global5000/global5000.xml: line 181)
-minisgs unsupported <kinematic> FCS component (In file aircraft/minisgs/minisgs.xml: line 228)
+minisgs ok
 mk82 ok
 p51d unsupported <engine> in <propulsion> (In file aircraft/p51d/p51d.xml: line 396)
 pa28 unsupported <engine> in <propulsion> (In file aircraft/pa28/pa28.xml: line 209)
 paraglider unsupported <engine> in <propulsion> (In file aircraft/paraglider/paraglider.xml: line 129)
 pc7 unsupported <engine> in <propulsion> (In file aircraft/pc7/pc7.xml: line 188)
 pogo-jsbsim unsupported <engine> in <propulsion> (In file aircraft/pogo-jsbsim/pogo-jsbsim.xml: line 216)
-sgs126 unsupported <kinematic> FCS component (In file aircraft/sgs126/sgs126.xml: line 210)
-sgs233 unsupported <kinematic> FCS component (In file aircraft/sgs233/sgs233.xml: line 241)
+sgs126 ok
+sgs233 ok
 t6texan2 unsupported <engine> in <propulsion> (In file aircraft/t6texan2/t6texan2.xml: line 112)
 weather-balloon unsupported <buoyant_forces> (In file aircraft/weather-balloon/weather-balloon.xml: line 135)
 wrightFlyer1903 unsupported <engine> in <propulsion> (In file aircraft/wrightFlyer1903/wrightFlyer1903.xml: line 312)

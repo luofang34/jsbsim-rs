@@ -55,6 +55,10 @@ pub const SYSTEMS: &[System] = &[
     scenario("fcs_waypoint", "fcs_waypoint.xml"),
     derived("actuator_c172x", "actuator_c172x.xml"),
     scenario("fcs_actuator", "fcs_actuator.xml"),
+    derived("kinematic_c172r", "kinematic_c172r.xml"),
+    derived("kinematic_c172r_noscale", "kinematic_c172r_noscale.xml"),
+    derived("kinematic_p51d", "kinematic_p51d.xml"),
+    scenario("fcs_kinematic", "fcs_kinematic.xml"),
 ];
 
 /// A tripod including a system of `oracle/derived/systems`

@@ -1,0 +1,135 @@
+# oracle/derived/systems/kinematic_p51d.xml on tripod_kinematic_p51d:
+# TestKinematic.testKinematicSetInitialValue: a gear position set with its command stays.
+# The p51d of the upstream test does not load in the port (its engine),
+# so the channel holding its kinematic runs in the tripod instead (see
+# tools/oracle/src/derived/kinematic.rs). The tripod starts at 10000 ft so
+# that its contacts stay clear of the ground.
+paths ../.. derived/aircraft derived/systems
+new
+load tripod_kinematic_p51d
+watch simulation/sim-time-sec gear/gear-cmd-norm gear/gear-pos-norm
+set ic/h-sl-ft 10000
+runic
+set gear/gear-cmd-norm 0.5
+set gear/gear-pos-norm 0.5
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
