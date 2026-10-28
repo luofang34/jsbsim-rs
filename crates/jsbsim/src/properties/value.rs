@@ -53,7 +53,7 @@ impl Value {
 impl PropertyTree {
     /// Follows aliases from `id`, returning the node that holds the value,
     /// or `None` when some node on the way is not readable.
-    fn readable_target(&self, mut id: NodeId) -> Option<NodeId> {
+    pub fn read_target(&self, mut id: NodeId) -> Option<NodeId> {
         loop {
             if self.attribute(id, Attribute::TRACE_READ) {
                 info!("TRACE: Read node {}", self.path(id, false));
@@ -69,7 +69,7 @@ impl PropertyTree {
     }
 
     fn read<T>(&self, id: NodeId, default: T, convert: impl Fn(&Value) -> T) -> T {
-        self.readable_target(id)
+        self.read_target(id)
             .map_or(default, |target| convert(&self.node(target).value))
     }
 

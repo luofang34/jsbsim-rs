@@ -1,0 +1,1252 @@
+# 1D/2D/3D/4D tables: breakpoints, between them, clamped beyond both ends.
+load local files/tables.xml
+set t/r -3
+set t/c -20
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r -3
+set t/c -10
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r -3
+set t/c 2.5
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r -3
+set t/c 5
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r -3
+set t/c 20
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r -3
+set t/c 30
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r -2
+set t/c -20
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r -2
+set t/c -10
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r -2
+set t/c 2.5
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r -2
+set t/c 5
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r -2
+set t/c 20
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r -2
+set t/c 30
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 0
+set t/c -20
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 0
+set t/c -10
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 0
+set t/c 2.5
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 0
+set t/c 5
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 0
+set t/c 20
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 0
+set t/c 30
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 0.25
+set t/c -20
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 0.25
+set t/c -10
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 0.25
+set t/c 2.5
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 0.25
+set t/c 5
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 0.25
+set t/c 20
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 0.25
+set t/c 30
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 1.5
+set t/c -20
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 1.5
+set t/c -10
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 1.5
+set t/c 2.5
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 1.5
+set t/c 5
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 1.5
+set t/c 20
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 1.5
+set t/c 30
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 3
+set t/c -20
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 3
+set t/c -10
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 3
+set t/c 2.5
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 3
+set t/c 5
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 3
+set t/c 20
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 3
+set t/c 30
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 10
+set t/c -20
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 10
+set t/c -10
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 10
+set t/c 2.5
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 10
+set t/c 5
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 10
+set t/c 20
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 10
+set t/c 30
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 11
+set t/c -20
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 11
+set t/c -10
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 11
+set t/c 2.5
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 11
+set t/c 5
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 11
+set t/c 20
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+set t/r 11
+set t/c 30
+set t/b -2
+eval
+set t/b -1
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 0.5
+eval
+set t/b 2
+set t/d -1
+eval
+set t/d 0.5
+eval
+set t/d 1
+eval
+set t/d 2
+eval
+set t/b 5
+eval
+get t/two-d-table
+get t/one-d

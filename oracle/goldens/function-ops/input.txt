@@ -1,0 +1,324 @@
+# Every operation of FGFunction over a grid of operand values, plus
+# constant folding, single-argument collapse, templates, copyto and cache.
+load local files/ops.xml
+get o/c1
+get o/c2
+get o/const-chain
+get o/uses-c1
+get o/lonely
+get o/collapse
+get o/pi-product
+set o/x -2.5
+set o/y -3
+set o/g -17.5
+set o/i 1
+set o/m 3
+eval
+set o/x -2.5
+set o/y -1
+set o/g -17.5
+set o/i 1
+set o/m 3
+eval
+set o/x -2.5
+set o/y 0
+set o/g -17.5
+set o/i 1
+set o/m 3
+eval
+set o/x -2.5
+set o/y 0.5
+set o/g -17.5
+set o/i 1
+set o/m 3
+eval
+set o/x -2.5
+set o/y 2
+set o/g -17.5
+set o/i 1
+set o/m 3
+eval
+set o/x -1
+set o/y -3
+set o/g -7.0
+set o/i 2
+set o/m -2
+eval
+set o/x -1
+set o/y -1
+set o/g -7.0
+set o/i 2
+set o/m -2
+eval
+set o/x -1
+set o/y 0
+set o/g -7.0
+set o/i 2
+set o/m -2
+eval
+set o/x -1
+set o/y 0.5
+set o/g -7.0
+set o/i 2
+set o/m -2
+eval
+set o/x -1
+set o/y 2
+set o/g -7.0
+set o/i 2
+set o/m -2
+eval
+set o/x -0.5
+set o/y -3
+set o/g -3.5
+set o/i 3
+set o/m 1.5
+eval
+set o/x -0.5
+set o/y -1
+set o/g -3.5
+set o/i 3
+set o/m 1.5
+eval
+set o/x -0.5
+set o/y 0
+set o/g -3.5
+set o/i 3
+set o/m 1.5
+eval
+set o/x -0.5
+set o/y 0.5
+set o/g -3.5
+set o/i 3
+set o/m 1.5
+eval
+set o/x -0.5
+set o/y 2
+set o/g -3.5
+set o/i 3
+set o/m 1.5
+eval
+set o/x 0
+set o/y -3
+set o/g 0.0
+set o/i 4
+set o/m 7
+eval
+set o/x 0
+set o/y -1
+set o/g 0.0
+set o/i 4
+set o/m 7
+eval
+set o/x 0
+set o/y 0
+set o/g 0.0
+set o/i 4
+set o/m 7
+eval
+set o/x 0
+set o/y 0.5
+set o/g 0.0
+set o/i 4
+set o/m 7
+eval
+set o/x 0
+set o/y 2
+set o/g 0.0
+set o/i 4
+set o/m 7
+eval
+set o/x 1e-12
+set o/y -3
+set o/g 7e-12
+set o/i 1
+set o/m 3
+eval
+set o/x 1e-12
+set o/y -1
+set o/g 7e-12
+set o/i 1
+set o/m 3
+eval
+set o/x 1e-12
+set o/y 0
+set o/g 7e-12
+set o/i 1
+set o/m 3
+eval
+set o/x 1e-12
+set o/y 0.5
+set o/g 7e-12
+set o/i 1
+set o/m 3
+eval
+set o/x 1e-12
+set o/y 2
+set o/g 7e-12
+set o/i 1
+set o/m 3
+eval
+set o/x 0.5
+set o/y -3
+set o/g 3.5
+set o/i 2
+set o/m -2
+eval
+set o/x 0.5
+set o/y -1
+set o/g 3.5
+set o/i 2
+set o/m -2
+eval
+set o/x 0.5
+set o/y 0
+set o/g 3.5
+set o/i 2
+set o/m -2
+eval
+set o/x 0.5
+set o/y 0.5
+set o/g 3.5
+set o/i 2
+set o/m -2
+eval
+set o/x 0.5
+set o/y 2
+set o/g 3.5
+set o/i 2
+set o/m -2
+eval
+set o/x 1
+set o/y -3
+set o/g 7.0
+set o/i 3
+set o/m 1.5
+eval
+set o/x 1
+set o/y -1
+set o/g 7.0
+set o/i 3
+set o/m 1.5
+eval
+set o/x 1
+set o/y 0
+set o/g 7.0
+set o/i 3
+set o/m 1.5
+eval
+set o/x 1
+set o/y 0.5
+set o/g 7.0
+set o/i 3
+set o/m 1.5
+eval
+set o/x 1
+set o/y 2
+set o/g 7.0
+set o/i 3
+set o/m 1.5
+eval
+set o/x 2
+set o/y -3
+set o/g 14.0
+set o/i 4
+set o/m 7
+eval
+set o/x 2
+set o/y -1
+set o/g 14.0
+set o/i 4
+set o/m 7
+eval
+set o/x 2
+set o/y 0
+set o/g 14.0
+set o/i 4
+set o/m 7
+eval
+set o/x 2
+set o/y 0.5
+set o/g 14.0
+set o/i 4
+set o/m 7
+eval
+set o/x 2
+set o/y 2
+set o/g 14.0
+set o/i 4
+set o/m 7
+eval
+set o/x 3.7
+set o/y -3
+set o/g 25.900000000000002
+set o/i 1
+set o/m 3
+eval
+set o/x 3.7
+set o/y -1
+set o/g 25.900000000000002
+set o/i 1
+set o/m 3
+eval
+set o/x 3.7
+set o/y 0
+set o/g 25.900000000000002
+set o/i 1
+set o/m 3
+eval
+set o/x 3.7
+set o/y 0.5
+set o/g 25.900000000000002
+set o/i 1
+set o/m 3
+eval
+set o/x 3.7
+set o/y 2
+set o/g 25.900000000000002
+set o/i 1
+set o/m 3
+eval
+set o/x 100
+set o/y -3
+set o/g 700.0
+set o/i 2
+set o/m -2
+eval
+set o/x 100
+set o/y -1
+set o/g 700.0
+set o/i 2
+set o/m -2
+eval
+set o/x 100
+set o/y 0
+set o/g 700.0
+set o/i 2
+set o/m -2
+eval
+set o/x 100
+set o/y 0.5
+set o/g 700.0
+set o/i 2
+set o/m -2
+eval
+set o/x 100
+set o/y 2
+set o/g 700.0
+set o/i 2
+set o/m -2
+eval
+get o/copy-target
+set o/x 0.25
+cache o/sin 1
+set o/x 1.25
+eval o/sin
+cache o/sin 0
+eval o/sin
+get o/sin
+# JSBSim re-reads every bound function while unbinding it at teardown, and a
+# throwing operation then terminates the process: leave valid operands.
+set o/x 0
+set o/y 1
+set o/i 1
+eval

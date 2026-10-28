@@ -1,0 +1,110 @@
+# TestFunctions.test_wf_to_bf: every frame transform on the unit vectors.
+skip test/random
+skip test/random2
+skip test/urandom
+load local ../../inputs/tests/function.xml
+set test/alpha 10.5
+set test/beta 0
+set test/gamma 0
+set test/rx 1
+set test/ry 0
+set test/rz 0
+eval test/bf_to_wf/x test/bf_to_wf/y test/bf_to_wf/z test/wf_to_bf/x test/wf_to_bf/y test/wf_to_bf/z
+set test/rx 0
+set test/ry 1
+set test/rz 0
+eval test/bf_to_wf/x test/bf_to_wf/y test/bf_to_wf/z test/wf_to_bf/x test/wf_to_bf/y test/wf_to_bf/z
+set test/rx 0
+set test/ry 0
+set test/rz 1
+eval test/bf_to_wf/x test/bf_to_wf/y test/bf_to_wf/z test/wf_to_bf/x test/wf_to_bf/y test/wf_to_bf/z
+set test/alpha 0
+set test/beta -8.6
+set test/gamma 0
+set test/rx 1
+set test/ry 0
+set test/rz 0
+eval test/bf_to_wf/x test/bf_to_wf/y test/bf_to_wf/z test/wf_to_bf/x test/wf_to_bf/y test/wf_to_bf/z
+set test/rx 0
+set test/ry 1
+set test/rz 0
+eval test/bf_to_wf/x test/bf_to_wf/y test/bf_to_wf/z test/wf_to_bf/x test/wf_to_bf/y test/wf_to_bf/z
+set test/rx 0
+set test/ry 0
+set test/rz 1
+eval test/bf_to_wf/x test/bf_to_wf/y test/bf_to_wf/z test/wf_to_bf/x test/wf_to_bf/y test/wf_to_bf/z
+set test/alpha 0
+set test/beta 0
+set test/gamma 45
+set test/rx 1
+set test/ry 0
+set test/rz 0
+eval test/bf_to_wf/x test/bf_to_wf/y test/bf_to_wf/z test/wf_to_bf/x test/wf_to_bf/y test/wf_to_bf/z
+set test/rx 0
+set test/ry 1
+set test/rz 0
+eval test/bf_to_wf/x test/bf_to_wf/y test/bf_to_wf/z test/wf_to_bf/x test/wf_to_bf/y test/wf_to_bf/z
+set test/rx 0
+set test/ry 0
+set test/rz 1
+eval test/bf_to_wf/x test/bf_to_wf/y test/bf_to_wf/z test/wf_to_bf/x test/wf_to_bf/y test/wf_to_bf/z
+set test/alpha 10.5
+set test/beta -8.6
+set test/gamma 0
+set test/rx 1
+set test/ry 0
+set test/rz 0
+eval test/bf_to_wf/x test/bf_to_wf/y test/bf_to_wf/z test/wf_to_bf/x test/wf_to_bf/y test/wf_to_bf/z
+set test/rx 0
+set test/ry 1
+set test/rz 0
+eval test/bf_to_wf/x test/bf_to_wf/y test/bf_to_wf/z test/wf_to_bf/x test/wf_to_bf/y test/wf_to_bf/z
+set test/rx 0
+set test/ry 0
+set test/rz 1
+eval test/bf_to_wf/x test/bf_to_wf/y test/bf_to_wf/z test/wf_to_bf/x test/wf_to_bf/y test/wf_to_bf/z
+set test/alpha 10.5
+set test/beta 0
+set test/gamma 45
+set test/rx 1
+set test/ry 0
+set test/rz 0
+eval test/bf_to_wf/x test/bf_to_wf/y test/bf_to_wf/z test/wf_to_bf/x test/wf_to_bf/y test/wf_to_bf/z
+set test/rx 0
+set test/ry 1
+set test/rz 0
+eval test/bf_to_wf/x test/bf_to_wf/y test/bf_to_wf/z test/wf_to_bf/x test/wf_to_bf/y test/wf_to_bf/z
+set test/rx 0
+set test/ry 0
+set test/rz 1
+eval test/bf_to_wf/x test/bf_to_wf/y test/bf_to_wf/z test/wf_to_bf/x test/wf_to_bf/y test/wf_to_bf/z
+set test/alpha 0
+set test/beta -8.6
+set test/gamma 45
+set test/rx 1
+set test/ry 0
+set test/rz 0
+eval test/bf_to_wf/x test/bf_to_wf/y test/bf_to_wf/z test/wf_to_bf/x test/wf_to_bf/y test/wf_to_bf/z
+set test/rx 0
+set test/ry 1
+set test/rz 0
+eval test/bf_to_wf/x test/bf_to_wf/y test/bf_to_wf/z test/wf_to_bf/x test/wf_to_bf/y test/wf_to_bf/z
+set test/rx 0
+set test/ry 0
+set test/rz 1
+eval test/bf_to_wf/x test/bf_to_wf/y test/bf_to_wf/z test/wf_to_bf/x test/wf_to_bf/y test/wf_to_bf/z
+set test/alpha 10.5
+set test/beta -8.6
+set test/gamma 45
+set test/rx 1
+set test/ry 0
+set test/rz 0
+eval test/bf_to_wf/x test/bf_to_wf/y test/bf_to_wf/z test/wf_to_bf/x test/wf_to_bf/y test/wf_to_bf/z
+set test/rx 0
+set test/ry 1
+set test/rz 0
+eval test/bf_to_wf/x test/bf_to_wf/y test/bf_to_wf/z test/wf_to_bf/x test/wf_to_bf/y test/wf_to_bf/z
+set test/rx 0
+set test/ry 0
+set test/rz 1
+eval test/bf_to_wf/x test/bf_to_wf/y test/bf_to_wf/z test/wf_to_bf/x test/wf_to_bf/y test/wf_to_bf/z

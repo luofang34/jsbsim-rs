@@ -33,33 +33,15 @@ fn transcript_parity(case: &str) {
 }
 
 #[test]
-fn every_transcript_case_has_a_parity_test() {
-    let tested = ["math", "properties", "units", "xml"];
+fn every_transcript_case_matches_its_cpp_reference() {
     let cases = manifest::list_cases_blocking(&goldens()).unwrap();
+    let mut checked = 0;
     for case in cases {
         let manifest = Manifest::read_blocking(&goldens().join(&case)).unwrap();
         if matches!(manifest.case, CaseSpec::Transcript(_)) {
-            assert!(tested.contains(&case.as_str()), "no parity test for {case}");
+            transcript_parity(&case);
+            checked += 1;
         }
     }
-}
-
-#[test]
-fn properties() {
-    transcript_parity("properties");
-}
-
-#[test]
-fn units() {
-    transcript_parity("units");
-}
-
-#[test]
-fn xml() {
-    transcript_parity("xml");
-}
-
-#[test]
-fn math() {
-    transcript_parity("math");
+    assert!(checked >= 10, "only {checked} transcript cases found");
 }

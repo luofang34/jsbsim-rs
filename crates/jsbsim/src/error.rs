@@ -3,6 +3,7 @@
 
 use thiserror::Error as ThisError;
 
+use crate::functions::FunctionError;
 use crate::properties::PathError;
 use crate::xml::XmlError;
 
@@ -27,6 +28,9 @@ pub enum Error {
     /// Malformed XML or an invalid value in it.
     #[error(transparent)]
     Xml(#[from] XmlError),
+    /// A table, function or condition that is invalid or fails to evaluate.
+    #[error(transparent)]
+    Function(#[from] FunctionError),
     /// A property path SimGear would reject.
     #[error("invalid property path: {0}")]
     PropertyPath(#[from] PathError),

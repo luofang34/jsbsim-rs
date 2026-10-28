@@ -1,0 +1,17 @@
+load local files/bad-axis.xml => load-error
+load local files/bad-value.xml => load-error
+load local files/duplicate.xml => load-error
+load local files/empty-function.xml => load-error
+load local files/even-interpolate.xml => load-error
+load local files/hash.xml => load-error
+load local files/illegal-char.xml => load-error
+load local files/internal-table.xml => load-error
+load local files/missing-axis.xml => load-error
+load local files/missing-data.xml => load-error
+load local files/no-vars.xml => load-error
+load local files/non-monotonic.xml => load-error
+load local files/ok.xml => 2 functions
+load local files/table-type.xml => load-error
+load local files/too-few.xml => load-error
+load local files/too-many.xml => load-error
+eval => e/dup 0 e/fine 1.4142135623730951

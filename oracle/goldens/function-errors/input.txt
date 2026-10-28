@@ -1,0 +1,18 @@
+# Each file holds one invalid function; both sides must refuse to load it.
+load local files/bad-axis.xml
+load local files/bad-value.xml
+load local files/duplicate.xml
+load local files/empty-function.xml
+load local files/even-interpolate.xml
+load local files/hash.xml
+load local files/illegal-char.xml
+load local files/internal-table.xml
+load local files/missing-axis.xml
+load local files/missing-data.xml
+load local files/no-vars.xml
+load local files/non-monotonic.xml
+load local files/ok.xml
+load local files/table-type.xml
+load local files/too-few.xml
+load local files/too-many.xml
+eval

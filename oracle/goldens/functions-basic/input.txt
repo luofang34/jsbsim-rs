@@ -1,0 +1,33 @@
+# Upstream tests/function.xml (vendored in oracle/inputs) with the input sequence of TestFunctions.test_functions;
+# <random>/<urandom> are not ported yet.
+skip test/random
+skip test/random2
+skip test/urandom
+load local ../../inputs/tests/function.xml
+eval
+set test/reference 1.5
+eval
+set test/input -1.0
+eval
+set test/input 0.0
+eval
+set test/input 0.5
+eval
+set test/input 1.0
+eval
+set test/input 1.5
+eval
+set test/input 3.0
+eval
+set test/input 3.5
+eval
+set test/input 4.0
+eval
+set test/input 5.0
+eval
+get test/sum-values
+get test/product-values
+get test/table
+get test/interpolate1d
+get test/sin-property
+get test/reference

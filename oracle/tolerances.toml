@@ -125,3 +125,150 @@ property = "mat/euler"
 abs = 1e-14
 rel = 1e-14
 reason = "GetEuler uses asin and atan2 (libm last-ulp differences); observed max |diff| 8.9e-16."
+
+[[tolerance]]
+case = "functions-basic"
+property = "eval/*"
+abs = 0.0
+rel = 0.0
+reason = "Arithmetic and table lookups use IEEE basic operations in JSBSim's order and must be bit-identical."
+
+[[tolerance]]
+case = "functions-basic"
+property = "get/*"
+abs = 0.0
+rel = 0.0
+reason = "Arithmetic and table lookups use IEEE basic operations in JSBSim's order and must be bit-identical."
+
+[[tolerance]]
+case = "function-ops"
+property = "eval/*"
+abs = 0.0
+rel = 0.0
+reason = "Arithmetic and table lookups use IEEE basic operations in JSBSim's order and must be bit-identical."
+
+[[tolerance]]
+case = "function-ops"
+property = "get/*"
+abs = 0.0
+rel = 0.0
+reason = "Arithmetic and table lookups use IEEE basic operations in JSBSim's order and must be bit-identical."
+
+[[tolerance]]
+case = "functions-basic"
+property = "eval/test/sin-property"
+abs = 1e-15
+rel = 1e-15
+reason = "Evaluated with sin, where Rust's libm and the platform libm used by C++ may differ in the last ulp; observed 1 ulp (1.1e-16)."
+
+[[tolerance]]
+case = "rotations"
+property = "*"
+abs = 1e-15
+rel = 1e-15
+reason = "Evaluated with sin, cos and atan2 through FGQuaternion, where Rust's libm and the platform libm used by C++ may differ in the last ulp; observed max rel 2.4e-16, max |diff| 1.4e-14 on angles near 60 deg."
+
+[[tolerance]]
+case = "function-ops"
+property = "eval/o/acos"
+abs = 1e-15
+rel = 1e-15
+reason = "Evaluated with acos, where Rust's libm and the platform libm used by C++ may differ in the last ulp; observed max |diff| 2.2e-16."
+
+[[tolerance]]
+case = "function-ops"
+property = "eval/o/asin"
+abs = 1e-15
+rel = 1e-15
+reason = "Evaluated with asin, where Rust's libm and the platform libm used by C++ may differ in the last ulp; observed max |diff| 1.1e-16."
+
+[[tolerance]]
+case = "function-ops"
+property = "eval/o/atan"
+abs = 1e-15
+rel = 1e-15
+reason = "Evaluated with atan, where Rust's libm and the platform libm used by C++ may differ in the last ulp; observed max |diff| 2.2e-16."
+
+[[tolerance]]
+case = "function-ops"
+property = "eval/o/atan2"
+abs = 1e-15
+rel = 1e-15
+reason = "Evaluated with atan2, where Rust's libm and the platform libm used by C++ may differ in the last ulp; observed max |diff| 4.4e-16."
+
+[[tolerance]]
+case = "function-ops"
+property = "eval/o/exp"
+abs = 1e-15
+rel = 1e-15
+reason = "Evaluated with exp, where Rust's libm and the platform libm used by C++ may differ in the last ulp; observed max |diff| 4.4e-16 (libm's exp(1) is 1 ulp from the correctly rounded value)."
+
+[[tolerance]]
+case = "function-ops"
+property = "eval/o/pow"
+abs = 1e-15
+rel = 1e-15
+reason = "Evaluated with pow, where Rust's libm and the platform libm used by C++ may differ in the last ulp; observed max |diff| 3.5e-18."
+
+[[tolerance]]
+case = "function-ops"
+property = "eval/o/tan"
+abs = 1e-15
+rel = 1e-15
+reason = "Evaluated with tan, where Rust's libm and the platform libm used by C++ may differ in the last ulp; observed max |diff| 2.2e-16."
+
+[[tolerance]]
+case = "function-ops"
+property = "eval/o/rotation_alpha_local"
+abs = 1e-14
+rel = 1e-15
+reason = "Evaluated with sin, cos and atan2, where Rust's libm and the platform libm used by C++ may differ in the last ulp; observed max |diff| 1.8e-15."
+
+[[tolerance]]
+case = "function-ops"
+property = "eval/o/rotation_beta_local"
+abs = 1e-14
+rel = 1e-15
+reason = "Evaluated with sin, cos and atan2, where Rust's libm and the platform libm used by C++ may differ in the last ulp; observed max |diff| 3.6e-15."
+
+[[tolerance]]
+case = "function-ops"
+property = "eval/o/rotation_gamma_local"
+abs = 1e-14
+rel = 1e-15
+reason = "Evaluated with sin, cos and atan2, where Rust's libm and the platform libm used by C++ may differ in the last ulp; observed max |diff| 7.1e-15."
+
+[[tolerance]]
+case = "function-ops"
+property = "eval/o/sin"
+abs = 1e-15
+rel = 1e-15
+reason = "Evaluated with sin, where Rust's libm and the platform libm used by C++ may differ in the last ulp; observed max |diff| none yet."
+
+[[tolerance]]
+case = "function-ops"
+property = "eval/o/cos"
+abs = 1e-15
+rel = 1e-15
+reason = "Evaluated with cos, where Rust's libm and the platform libm used by C++ may differ in the last ulp; observed max |diff| none yet."
+
+[[tolerance]]
+case = "function-ops"
+property = "eval/o/ln"
+abs = 1e-15
+rel = 1e-15
+reason = "Evaluated with ln, where Rust's libm and the platform libm used by C++ may differ in the last ulp; observed max |diff| none yet."
+
+[[tolerance]]
+case = "function-ops"
+property = "eval/o/log2"
+abs = 1e-15
+rel = 1e-15
+reason = "Evaluated with log2, where Rust's libm and the platform libm used by C++ may differ in the last ulp; observed max |diff| none yet."
+
+[[tolerance]]
+case = "function-ops"
+property = "eval/o/log10"
+abs = 1e-15
+rel = 1e-15
+reason = "Evaluated with log10, where Rust's libm and the platform libm used by C++ may differ in the last ulp; observed max |diff| none yet."

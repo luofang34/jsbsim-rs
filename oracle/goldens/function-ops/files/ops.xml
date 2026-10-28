@@ -1,0 +1,183 @@
+<?xml version="1.0"?>
+<system>
+  <property>o/x</property>
+  <property>o/y</property>
+  <property>o/g</property>
+  <property>o/i</property>
+  <property value="3">o/m</property>
+  <property>o/copy-target</property>
+  <function name="o/product">
+    <product><p>o/x</p><p>o/y</p><v>1.5</v></product>
+  </function>
+  <function name="o/sum">
+    <sum><p>o/x</p><p>o/y</p><v>1.5</v></sum>
+  </function>
+  <function name="o/avg">
+    <avg><p>o/x</p><p>o/y</p><v>1.5</v></avg>
+  </function>
+  <function name="o/difference">
+    <difference><p>o/x</p><p>o/y</p><v>1.5</v></difference>
+  </function>
+  <function name="o/min">
+    <min><p>o/x</p><p>o/y</p><v>1.5</v></min>
+  </function>
+  <function name="o/max">
+    <max><p>o/x</p><p>o/y</p><v>1.5</v></max>
+  </function>
+  <function name="o/and">
+    <and><p>o/x</p><p>o/y</p></and>
+  </function>
+  <function name="o/or">
+    <or><p>o/x</p><p>o/y</p></or>
+  </function>
+  <function name="o/not">
+    <not><p>o/x</p></not>
+  </function>
+  <function name="o/ifthen">
+    <ifthen><p>o/x</p><p>o/y</p><v>-7</v></ifthen>
+  </function>
+  <function name="o/quotient">
+    <quotient><p>o/x</p><p>o/y</p></quotient>
+  </function>
+  <function name="o/pow">
+    <pow><p>o/x</p><p>o/y</p></pow>
+  </function>
+  <function name="o/fmod">
+    <fmod><p>o/x</p><p>o/y</p></fmod>
+  </function>
+  <function name="o/atan2">
+    <atan2><p>o/x</p><p>o/y</p></atan2>
+  </function>
+  <function name="o/lt">
+    <lt><p>o/x</p><p>o/y</p></lt>
+  </function>
+  <function name="o/le">
+    <le><p>o/x</p><p>o/y</p></le>
+  </function>
+  <function name="o/gt">
+    <gt><p>o/x</p><p>o/y</p></gt>
+  </function>
+  <function name="o/ge">
+    <ge><p>o/x</p><p>o/y</p></ge>
+  </function>
+  <function name="o/eq">
+    <eq><p>o/x</p><p>o/y</p></eq>
+  </function>
+  <function name="o/nq">
+    <nq><p>o/x</p><p>o/y</p></nq>
+  </function>
+  <function name="o/toradians">
+    <toradians><p>o/x</p></toradians>
+  </function>
+  <function name="o/todegrees">
+    <todegrees><p>o/x</p></todegrees>
+  </function>
+  <function name="o/sqrt">
+    <sqrt><p>o/x</p></sqrt>
+  </function>
+  <function name="o/log2">
+    <log2><p>o/x</p></log2>
+  </function>
+  <function name="o/ln">
+    <ln><p>o/x</p></ln>
+  </function>
+  <function name="o/log10">
+    <log10><p>o/x</p></log10>
+  </function>
+  <function name="o/sign">
+    <sign><p>o/x</p></sign>
+  </function>
+  <function name="o/exp">
+    <exp><p>o/x</p></exp>
+  </function>
+  <function name="o/abs">
+    <abs><p>o/x</p></abs>
+  </function>
+  <function name="o/sin">
+    <sin><p>o/x</p></sin>
+  </function>
+  <function name="o/cos">
+    <cos><p>o/x</p></cos>
+  </function>
+  <function name="o/tan">
+    <tan><p>o/x</p></tan>
+  </function>
+  <function name="o/asin">
+    <asin><p>o/x</p></asin>
+  </function>
+  <function name="o/acos">
+    <acos><p>o/x</p></acos>
+  </function>
+  <function name="o/atan">
+    <atan><p>o/x</p></atan>
+  </function>
+  <function name="o/floor">
+    <floor><p>o/x</p></floor>
+  </function>
+  <function name="o/ceil">
+    <ceil><p>o/x</p></ceil>
+  </function>
+  <function name="o/fraction">
+    <fraction><p>o/x</p></fraction>
+  </function>
+  <function name="o/integer">
+    <integer><p>o/x</p></integer>
+  </function>
+  <function name="o/round">
+    <roundmultiple><p>o/x</p></roundmultiple>
+  </function>
+  <function name="o/roundmultiple">
+    <roundmultiple><p>o/x</p><p>o/y</p></roundmultiple>
+  </function>
+  <function name="o/mod">
+    <mod><p>o/x</p><p>o/m</p></mod>
+  </function>
+  <function name="o/switch">
+    <switch><p>o/x</p><v>10</v><v>20</v><v>30</v></switch>
+  </function>
+  <function name="o/interpolate1d">
+    <interpolate1d><p>o/x</p><v>-1</v><v>5</v><v>0</v><v>1</v><v>0.5</v><v>-2</v><v>3</v><v>8</v></interpolate1d>
+  </function>
+  <function name="o/rotation_alpha_local">
+    <rotation_alpha_local><p>o/x</p><p>o/y</p><p>o/g</p><v>5</v><v>-10</v><v>20</v></rotation_alpha_local>
+  </function>
+  <function name="o/rotation_beta_local">
+    <rotation_beta_local><p>o/x</p><p>o/y</p><p>o/g</p><v>5</v><v>-10</v><v>20</v></rotation_beta_local>
+  </function>
+  <function name="o/rotation_gamma_local">
+    <rotation_gamma_local><p>o/x</p><p>o/y</p><p>o/g</p><v>5</v><v>-10</v><v>20</v></rotation_gamma_local>
+  </function>
+  <function name="o/rotation_bf_to_wf">
+    <rotation_bf_to_wf><v>0.3</v><v>-0.4</v><v>0.5</v><p>o/x</p><p>o/y</p><p>o/g</p><p>o/i</p></rotation_bf_to_wf>
+  </function>
+  <function name="o/rotation_wf_to_bf">
+    <rotation_wf_to_bf><v>0.3</v><v>-0.4</v><v>0.5</v><p>o/x</p><p>o/y</p><p>o/g</p><p>o/i</p></rotation_wf_to_bf>
+  </function>
+  <function name="o/pi-product">
+    <product><pi/><description>constant</description><v>2</v></product>
+  </function>
+  <function name="o/const-chain">
+    <product name="o/c1"><v>2</v><v>3</v></product>
+  </function>
+  <function name="o/uses-c1">
+    <sum name="o/c2"><p>o/c1</p><v>1</v></sum>
+  </function>
+  <function name="o/collapse">
+    <sum name="o/lonely"><p>o/x</p></sum>
+  </function>
+  <function type="template" name="twice">
+    <product><p>#</p><v>2</v></product>
+  </function>
+  <function name="o/applied">
+    <sum><p apply="twice">o/x</p><v>1</v></sum>
+  </function>
+  <function name="o/copied" copyto="o/copy-target">
+    <product><p>o/x</p><v>-1</v></product>
+  </function>
+  <function name="o/bogus">
+    <sum><frobnicate/><p>o/x</p><v>1</v></sum>
+  </function>
+  <function name="o/negated">
+    <product><p>-o/x</p><p>-o/y</p></product>
+  </function>
+</system>

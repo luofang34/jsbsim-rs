@@ -1,0 +1,1421 @@
+# TestFunctions.test_rotations loops at 20 degree steps.
+skip test/random
+skip test/random2
+skip test/urandom
+load local ../../inputs/tests/function.xml
+set test/alpha -170
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/alpha -150
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/alpha -130
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/alpha -110
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/alpha -90
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/alpha -70
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/alpha -50
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/alpha -30
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/alpha -10
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/alpha 10
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/alpha 30
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/alpha 50
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/alpha 70
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/alpha 90
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/alpha 110
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/alpha 130
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/alpha 150
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/alpha 170
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/alpha 0
+set test/beta -80
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/beta -60
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/beta -40
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/beta -20
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/beta 0
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/beta 20
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/beta 40
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/beta 60
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/beta 80
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/alpha 10
+set test/beta 0
+set test/theta -10
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/alpha 0
+set test/beta 10
+set test/theta 0
+set test/psi 10
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/alpha 10
+set test/beta 5
+set test/phi 0
+set test/psi 0
+set test/theta -80
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/theta -60
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/theta -40
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/theta -20
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/theta 0
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/theta 20
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/theta 40
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/theta 60
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/theta 80
+set test/gamma -170
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma -10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 10
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 30
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 50
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 70
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 90
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 110
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 130
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 150
+eval test/alpha_local test/beta_local test/gamma_local
+set test/gamma 170
+eval test/alpha_local test/beta_local test/gamma_local

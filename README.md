@@ -40,11 +40,15 @@ live in `oracle/`:
   the driver (for example `properties`, which exercises the property tree) and
   stores its output in `reference.txt`; the Rust port must reproduce it line
   for line.
+- `oracle/inputs/`: copies of JSBSim files that cases read, at their upstream
+  paths, so `cargo test` needs no checkout; `check-xml` fails if they drift.
 - `tools/oracle/cpp/`: the C++ driver, one `probe_*.cpp` per probe mode, with
   Rust twins in `tools/oracle/src/probe/`.
 - `oracle/tolerances.toml`: per case and property, the accepted difference
   `abs + rel * |reference|`, optionally for a time window `[t_start, t_end)`,
-  with a mandatory reason. A logged property without a row is an error.
+  with a mandatory reason. A logged property without a row is an error. A
+  transcript case with rows is compared number by number under the row for
+  `<op>/<tag>`, then `<op>/*`, then `*`; without rows it must match exactly.
 
 `cargo test` uses the committed goldens and needs no C++ build. Regenerating
 needs a JSBSim checkout with no tracked changes, CMake, Ninja and a C++
@@ -56,7 +60,8 @@ export JSBSIM_ROOT=~/jsbsim
 cargo run -p oracle -- build               # configure and build C++ JSBSim, compile the driver
 cargo run -p oracle -- generate ball       # rewrite oracle/goldens/ball/{reference.csv,manifest.toml}
 cargo run -p oracle -- check-drift         # regenerate all cases and compare with the goldens
-cargo run -p oracle -- check-xml           # parse every JSBSim XML file in C++ and Rust, compare trees
+cargo run -p oracle -- check-xml           # parse every JSBSim XML file and load its functions in C++ and Rust
+cargo run -p oracle -- port function-ops   # run the Rust side of a transcript case and report differences
 scripts/oracle-ci.sh                       # check-drift and check-xml, as run by CI
 cargo run -p oracle -- compare --case ball oracle/goldens/ball/reference.csv candidate.csv
 ```
