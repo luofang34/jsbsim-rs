@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later AND MIT
 // Derived from GeographicLib src/Geodesic.{hpp,cpp}, as bundled with JSBSim
 // in src/GeographicLib: Copyright (c) Charles Karney (2009-2021)
 // <charles@karney.com>, licensed under the MIT/X11 License, whose notice

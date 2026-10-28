@@ -33,6 +33,20 @@ expect() {
 }
 
 expect pass clean-tree true
+
+# GeographicLib ports: LGPL-2.1-or-later AND MIT, its notice, and its origin.
+notice="$here/../LICENSES/GeographicLib-MIT.txt"
+mit_file() { # mit_file <spdx> <with-derived-line:yes|no> <with-notice:yes|no>
+  echo "// SPDX-License-Identifier: $1"
+  [ "$2" = yes ] && echo '// Derived from GeographicLib src/Geodesic.cpp: Copyright (c) Charles Karney.'
+  [ "$3" = yes ] && sed 's#^#//   #' "$notice"
+  echo '//! Module m.'
+}
+mit_case="mkdir -p LICENSES && cp \"$notice\" LICENSES/GeographicLib-MIT.txt"
+expect pass mit-port "$mit_case && mit_file 'LGPL-2.1-or-later AND MIT' yes yes > crates/a/src/m.rs"
+expect fail mit-notice-without-and "$mit_case && mit_file 'LGPL-2.1-or-later' yes yes > crates/a/src/m.rs"
+expect fail mit-and-without-notice "$mit_case && mit_file 'LGPL-2.1-or-later AND MIT' yes no > crates/a/src/m.rs"
+expect fail mit-and-without-origin "$mit_case && mit_file 'LGPL-2.1-or-later AND MIT' no yes > crates/a/src/m.rs"
 expect fail mod-rs "printf '%s\n' \"$spdx\" > crates/a/src/mod.rs"
 expect fail utils-rs "printf '%s\n' \"$spdx\" > crates/a/src/utils.rs"
 expect fail long-file "{ echo \"$spdx\"; for i in \$(seq 500); do echo '// x'; done; } > crates/a/src/long.rs"

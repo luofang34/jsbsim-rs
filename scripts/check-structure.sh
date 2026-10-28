@@ -22,6 +22,39 @@ find_tree() {
   find . \( -path ./target -o -path ./.claude -o -path ./.git \) -prune -o "$@" -print
 }
 
+# Files ported from GeographicLib (MIT) declare both licences and carry its
+# notice, LICENSES/GeographicLib-MIT.txt, line for line in their header.
+mit_notice=LICENSES/GeographicLib-MIT.txt
+spdx_lgpl='// SPDX-License-Identifier: LGPL-2.1-or-later'
+spdx_lgpl_mit='// SPDX-License-Identifier: LGPL-2.1-or-later AND MIT'
+
+check_licence() {
+  local file="$1"
+  if grep -qxF "$spdx_lgpl_mit" "$file"; then
+    if ! grep -q 'Derived from GeographicLib' "$file" || ! grep -q 'Charles Karney' "$file"; then
+      fail "$file: LGPL-2.1-or-later AND MIT without a 'Derived from GeographicLib' line and Charles Karney's copyright"
+    fi
+    if [ ! -f "$mit_notice" ]; then
+      fail "$file: LGPL-2.1-or-later AND MIT, but $mit_notice is missing"
+      return
+    fi
+    local text missing
+    text=$(sed -n 's#^//[[:space:]]*##p' "$file")
+    missing=$(grep -v '^[[:space:]]*$' "$mit_notice" | while IFS= read -r line; do
+      printf '%s\n' "$text" | grep -qxF "$line" || echo "$line"
+    done)
+    if [ -n "$missing" ]; then
+      fail "$file: LGPL-2.1-or-later AND MIT without the full MIT notice (first missing line: $(echo "$missing" | head -n 1))"
+    fi
+  elif grep -qxF "$spdx_lgpl" "$file"; then
+    if grep -q 'Permission is hereby granted, free of charge' "$file"; then
+      fail "$file: carries the MIT notice, so its SPDX line must be 'LGPL-2.1-or-later AND MIT'"
+    fi
+  else
+    fail "$file: missing SPDX-License-Identifier line"
+  fi
+}
+
 rust_files() {
   find_tree -name '*.rs' -type f | sort
 }
@@ -41,9 +74,7 @@ while IFS= read -r file; do
   if [ "$lines" -gt "$max_file_lines" ]; then
     fail "$file: $lines lines (max $max_file_lines)"
   fi
-  if ! grep -q '^// SPDX-License-Identifier: LGPL-2.1-or-later$' "$file"; then
-    fail "$file: missing SPDX-License-Identifier line"
-  fi
+  check_licence "$file"
   if grep -q 'Derived from JSBSim' "$file" && ! grep -q -E 'Copyright|Public Domain' "$file"; then
     fail "$file: derived from JSBSim but carries no copyright or public-domain line"
   fi

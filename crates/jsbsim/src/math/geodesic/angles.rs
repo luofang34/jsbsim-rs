@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later AND MIT
 // Derived from GeographicLib src/Math.{hpp,cpp}, as bundled with JSBSim in
 // src/GeographicLib: Math.hpp Copyright (c) Charles Karney (2008-2020),
 // Math.cpp Copyright (c) Charles Karney (2015-2021)
