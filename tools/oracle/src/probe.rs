@@ -5,6 +5,7 @@
 
 mod atmosphere;
 mod auxiliary;
+mod fcs;
 mod functions;
 mod geodesic;
 mod initial_condition;
@@ -51,6 +52,7 @@ pub fn run(name: &str, input: &str, context: &ProbeContext) -> Result<String, Or
             source,
         }),
         "winds" => Ok(winds::run(input)),
+        "fcs" => Ok(fcs::run(input, context)),
         "geodesic" => Ok(geodesic::run(input, context)),
         other => Err(OracleError::Provenance(format!("unknown probe {other}"))),
     }

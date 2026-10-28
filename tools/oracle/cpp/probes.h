@@ -14,6 +14,7 @@ int RunTableProbe(const char* ops_file, const char* out_file);
 int RunUnitsProbe(const char* ops_file, const char* out_file);
 int RunAtmosphereProbe(const char* ops_file, const char* out_file);
 int RunWindsProbe(const char* ops_file, const char* out_file);
+int RunFcsProbe(const char* ops_file, const char* out_file);
 int RunAuxiliaryProbe(const char* ops_file, const char* out_file);
 int RunGeodesicProbe(const char* ops_file, const char* out_file);
 int RunInitialConditionProbe(const char* ops_file, const char* out_file);

@@ -4707,3 +4707,10 @@ property = "tiny/psi"
 abs = 8e-6
 rel = 0.0
 reason = "The heading between points 1e-10 to 1e-6 rad apart is ill-conditioned: one ulp of either position (about 2e-9 ft) over a separation down to a few thousandths of a foot turns the direction by up to about 1e-6 rad, and C++'s own inputs are only determined to those ulps, so no tighter absolute bound is meaningful; observed max 8.0e-7 rad, bound 10x that."
+
+[[tolerance]]
+case = "fcs-base"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "fcs_function products, clipping (Constrain and the cyclic fmod), execrate, the execute switch and simulation/channel-dt use only IEEE basic operations and fmod in JSBSim's order, so they must be bit-identical; observed max |diff| 0."

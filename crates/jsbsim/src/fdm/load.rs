@@ -184,7 +184,8 @@ impl Fdm {
         model: &str,
     ) -> Result<(), Error> {
         let dir = format!("{aircraft_path}/{model}");
-        let mut loader = DocumentLoader::new(resolver, dir.clone());
+        let mut loader =
+            DocumentLoader::new(resolver, dir.clone()).with_systems_dir(self.systems_path.clone());
         let document = loader.load_document(&format!("{dir}/{model}.xml"))?;
         self.load_document(&mut loader, document)
     }

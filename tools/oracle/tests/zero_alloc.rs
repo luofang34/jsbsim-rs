@@ -87,6 +87,23 @@ fn steady_state_frames_allocate_nothing() {
         ));
     }
 
+    // The derived tripods run every ported FCS component family.
+    let oracle_resolver = FileResolver::new(oracle_dir());
+    for system in &oracle::derived::tripod::SYSTEMS {
+        let name = format!("tripod_{}", system.suffix);
+        let mut fdm = Fdm::new().unwrap();
+        fdm.set_systems_path(system.systems_path);
+        fdm.load_model(&oracle_resolver, "derived/aircraft", &name)
+            .unwrap();
+        fdm.set_property("ic/h-sl-ft", 10000.0).unwrap();
+        fdm.run_ic().unwrap();
+        report.push((
+            format!("aircraft {name}"),
+            FRAMES,
+            measure(&mut fdm, FRAMES),
+        ));
+    }
+
     // (script, measured frames): ball_orbit_phase's window covers its
     // undock burn ramps at 10 s and 12 s; mk82's ends before touchdown.
     for (script, frames) in [

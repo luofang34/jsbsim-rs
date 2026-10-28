@@ -1,23 +1,27 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // FGFCS: Copyright (C) 1999 Jon S. Berndt (jon@jsbsim.org).
 // FGFCSComponent, FGFCSFunction: Copyright (C) 2000-2005 Jon S. Berndt.
-// Derived from JSBSim src/models/FGFCS.{h,cpp},
-// src/models/flight_control/FGFCSChannel.h, FGFCSComponent.{h,cpp} and
-// FGFCSFunction.{h,cpp}.
+// Derived from JSBSim src/models/FGFCS.{h,cpp} and
+// src/models/flight_control/FGFCSChannel.h.
 //
-//! Flight control, autopilot and system channels. Channels run
-//! `<fcs_function>` components; every other component is refused with
-//! [`Error::Unsupported`](crate::Error::Unsupported) until it is ported.
+//! Flight control, autopilot and system channels and their components.
+//! [`families`] says how component families are registered; a component
+//! no family registers yet is refused with
+//! [`Error::Unsupported`](crate::Error::Unsupported).
 
 mod bind;
+pub mod component;
+pub mod families;
+pub mod function;
 mod load;
+#[cfg(test)]
+mod tests;
 
 pub use bind::bind;
+pub use families::{Component, ComponentAt, Kind};
 
 use super::base::ModelBase;
-use crate::functions::{FnId, Parameter, PropertyValue};
 use crate::properties::NodeId;
-
 /// Surface position forms (`OutputForm`): radians, degrees, normalised,
 /// and the magnitude in radians.
 pub const NFORMS: usize = 4;
@@ -50,34 +54,6 @@ impl Surface {
     }
 }
 
-/// `clipto` limits.
-#[derive(Debug, Clone)]
-pub struct Clip {
-    /// Lower bound.
-    pub min: Parameter,
-    /// Upper bound.
-    pub max: Parameter,
-    /// Wrap into the range instead of saturating.
-    pub cyclic: bool,
-}
-
-/// An `<fcs_function>` component.
-#[derive(Debug, Clone)]
-pub struct FcsFunction {
-    /// Component name.
-    pub name: String,
-    /// `<input>` operands; the first scales the function value.
-    pub inputs: Vec<PropertyValue>,
-    /// Output nodes: the `<output>` elements, then the component's own.
-    pub outputs: Vec<NodeId>,
-    /// The function.
-    pub function: FnId,
-    /// Optional clipping.
-    pub clip: Option<Clip>,
-    /// Last output.
-    pub output: f64,
-}
-
 /// A channel of components (`FGFCSChannel`).
 #[derive(Debug, Clone)]
 pub struct Channel {
@@ -90,7 +66,7 @@ pub struct Channel {
     /// Property that switches the channel on and off.
     pub on_off: Option<NodeId>,
     /// Components in execution order.
-    pub components: Vec<FcsFunction>,
+    pub components: Vec<Component>,
 }
 
 impl Channel {
@@ -117,8 +93,12 @@ impl Channel {
         trim_status || self.frames_since_run >= self.exec_rate
     }
 
-    /// `Reset`.
+    /// `Reset`: every component's past states, and the frame count so the
+    /// components run on the next frame.
     pub fn reset(&mut self) {
+        for component in &mut self.components {
+            component.reset();
+        }
         self.frames_since_run = self.exec_rate;
     }
 }

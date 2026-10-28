@@ -153,6 +153,7 @@ int main(int argc, char** argv)
     if (mode == "geodesic") return RunGeodesicProbe(argv[2], argv[3]);
     if (mode == "initial-condition") return RunInitialConditionProbe(argv[2], argv[3]);
     if (mode == "winds") return RunWindsProbe(argv[2], argv[3]);
+    if (mode == "fcs") return RunFcsProbe(argv[2], argv[3]);
   }
   std::fprintf(stderr, "usage: %s script|bench|properties|units|xml|math|functions|table|mass-balance|atmosphere|winds|models|auxiliary|geodesic|initial-condition ...\n", argv[0]);
   return 2;

@@ -12,13 +12,13 @@
 use super::Fdm;
 use super::order::Model;
 use crate::Error;
-use crate::functions::Evaluator;
+
 use crate::math::{Axis, ColumnVector3};
 use crate::models::aerodynamics::Values;
 use crate::models::external_reactions::{Magnitude, Transforms};
-use crate::models::fcs::{Fcs, FcsFunction};
+use crate::models::fcs::{ComponentAt, Fcs, families};
 use crate::properties::{Attribute, NodeId};
-use crate::units::constrain;
+
 use crate::xml::{DocumentLoader, Element, IncludeKind};
 
 impl Fdm {
@@ -76,7 +76,8 @@ impl Fdm {
     ) -> Result<(), Error> {
         self.upload(loader, el, kind, Model::Systems)?;
         let ctx = &mut self.env.load_context(self.options);
-        self.models.fcs.load_channels(el, ctx)?;
+        let exec_dt = self.models.exec.dt;
+        self.models.fcs.load_channels(el, ctx, exec_dt)?;
         self.post_load(el, "", Model::Systems)
     }
 
@@ -130,24 +131,20 @@ impl Fdm {
         {
             return Ok(());
         }
-        // Looked up by position each time: the writes below need `&mut self`.
-        let mut i = 0;
-        while let Some(component) = fcs_component(&self.models.fcs, c, i) {
-            let output = self
-                .env
-                .eval(&self.models, |ev| evaluate_fcs_function(ev, component))?;
-            if let Some(component) = fcs_component_mut(&mut self.models.fcs, c, i) {
-                component.output = output;
-            }
-            // A setter may reach any model, and its request may reset the
-            // executive, so each output node is looked up afresh instead of
-            // being borrowed across the write.
+        let mut at = ComponentAt {
+            channel: c,
+            index: 0,
+        };
+        while families::run(&mut self.env, &mut self.models, at)? {
+            // `SetOutput`. A setter may reach any model, and its request may
+            // reset the executive, so each output node is looked up afresh
+            // instead of being borrowed across the write.
             let mut k = 0;
-            while let Some(node) = output_node(&self.models.fcs, c, i, k) {
+            while let Some((node, output)) = output_node(&self.models.fcs, at, k) {
                 self.write_node(node, output)?;
                 k += 1;
             }
-            i += 1;
+            at.index += 1;
         }
         Ok(())
     }
@@ -257,44 +254,9 @@ impl Fdm {
     }
 }
 
-/// Component `i` of channel `c`.
-fn fcs_component(fcs: &Fcs, c: usize, i: usize) -> Option<&FcsFunction> {
-    fcs.channels.get(c)?.components.get(i)
-}
-
-fn fcs_component_mut(fcs: &mut Fcs, c: usize, i: usize) -> Option<&mut FcsFunction> {
-    fcs.channels.get_mut(c)?.components.get_mut(i)
-}
-
-/// Output node `k` of component `i` of channel `c`.
-fn output_node(fcs: &Fcs, c: usize, i: usize, k: usize) -> Option<NodeId> {
-    let component = fcs.channels.get(c)?.components.get(i)?;
-    component.outputs.get(k).copied()
-}
-
-/// `FGFCSFunction::Run` up to `SetOutput`.
-fn evaluate_fcs_function(ev: &mut Evaluator<'_>, component: &FcsFunction) -> Result<f64, Error> {
-    let mut output = ev.function(component.function)?;
-    if let Some(input) = component.inputs.first() {
-        output *= ev.property(input)?;
-    }
-    if let Some(clip) = &component.clip {
-        let vmin = ev.parameter(&clip.min)?;
-        let vmax = ev.parameter(&clip.max)?;
-        let range = vmax - vmin;
-        if range < 0.0 {
-            tracing::error!(
-                "Trying to clip {} with a max value lower than the min value. Clipping is ignored.",
-                component.name
-            );
-        } else if clip.cyclic && range != 0.0 {
-            output = libm::fmod(output - vmin, range) + vmin;
-            if output < vmin {
-                output += range;
-            }
-        } else {
-            output = constrain(vmin, output, vmax);
-        }
-    }
-    Ok(output)
+/// Output node `k` of the component at `at`, with the component's output.
+fn output_node(fcs: &Fcs, at: ComponentAt, k: usize) -> Option<(NodeId, f64)> {
+    let component = fcs.channels.get(at.channel)?.components.get(at.index)?;
+    let node = component.base.outputs.get(k).copied()?;
+    Some((node, component.base.output))
 }

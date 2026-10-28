@@ -50,6 +50,13 @@ impl<'r> DocumentLoader<'r> {
         }
     }
 
+    /// The loader with `dir` as the systems directory (`SetSystemsPath`).
+    #[must_use]
+    pub fn with_systems_dir(mut self, dir: impl Into<String>) -> Self {
+        self.systems_dir = dir.into();
+        self
+    }
+
     /// `FGXMLFileRead::LoadXMLDocument`: reads and parses `path`, adding
     /// `.xml` when it has no extension.
     pub fn load_document(&self, path: &str) -> Result<Element, Error> {

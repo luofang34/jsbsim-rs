@@ -1,0 +1,39 @@
+# oracle/scenarios/systems/fcs_base.xml on the upstream tests/tripod.xml
+# (vendored in oracle/inputs), included as the Python FCS tests include
+# their systems (see oracle/derived/aircraft/tripod_fcs_base). The tripod
+# starts at 10000 ft so that its contacts stay clear of the ground.
+paths ../.. derived/aircraft scenarios/systems
+new
+load tripod_fcs_base
+watch test/scaled test/scaled-copy test/scaled-copy2 fcs/mixed-case-name test/clipped test/clipped-negated-limit test/cyclic test/cyclic-zero-range test/reversed-clip test/half-clip test/dt-every-frame test/slow-counter test/dt-slow test/zero-rate-counter test/switched-counter simulation/channel-dt
+print
+set ic/h-sl-ft 10000
+runic
+run
+run
+run
+run
+run
+set test/input 2.0
+run
+run
+run
+set test/input -0.7
+set test/enable 0
+run
+run
+run
+run
+set test/enable 1
+set test/max 0.5
+run
+run
+run
+set test/input 0.0
+run
+set test/input 0.36
+run
+set test/input -0.36
+run
+set test/input 181
+run

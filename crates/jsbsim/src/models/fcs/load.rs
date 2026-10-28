@@ -1,22 +1,19 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
-// FGFCS: Copyright (C) 1999 Jon S. Berndt (jon@jsbsim.org).
-// FGFCSComponent, FGFCSFunction: Copyright (C) 2000-2005 Jon S. Berndt.
-// Derived from JSBSim src/models/FGFCS.cpp (Load),
-// src/models/flight_control/FGFCSComponent.cpp (constructor, bind) and
-// FGFCSFunction.cpp.
+// Copyright (C) 1999 Jon S. Berndt (jon@jsbsim.org).
+// Derived from JSBSim src/models/FGFCS.cpp (Load).
 //
 //! Loading channels and their components.
 
-use super::{Channel, Clip, Fcs, FcsFunction};
+use super::component::{Base, model_error};
+use super::families::{self, Component, ComponentAt};
+use super::{Channel, Fcs};
 use crate::Error;
 use crate::fdm::LoadContext;
-use crate::functions::{Parameter, PropertyValue};
-use crate::properties::mk_property_name;
 use crate::xml::Element;
 
-/// Component element names JSBSim knows; all but `fcs_function` are
-/// still to be ported.
-const COMPONENTS: &[&str] = &[
+/// Component element names `FGFCS::Load` knows. A name a family registers
+/// loads that family; the others are refused as not ported yet.
+const KNOWN: &[&str] = &[
     "lag_filter",
     "lead_lag_filter",
     "washout_filter",
@@ -28,6 +25,7 @@ const COMPONENTS: &[&str] = &[
     "deadband",
     "switch",
     "kinematic",
+    "fcs_function",
     "pid",
     "integrator",
     "actuator",
@@ -42,34 +40,15 @@ const COMPONENTS: &[&str] = &[
     "linear_actuator",
 ];
 
-fn model_error(el: &Element, message: impl std::fmt::Display) -> Error {
-    Error::Model {
-        message: format!("{}: {message}", el.location()),
-    }
-}
-
-/// `FGParameterValue(el)`: exactly one non-empty data line.
-fn parameter_value(el: &Element, ctx: &mut LoadContext<'_>) -> Result<Parameter, Error> {
-    let value = el.data_line(0);
-    if el.data_lines().len() != 1 || value.is_empty() {
-        return Err(model_error(
-            el,
-            format!(
-                "The element <{}> must either contain a value number or a property name.",
-                el.name()
-            ),
-        ));
-    }
-    Parameter::number_or_property(value, ctx.tree(), el.location())
-}
-
 impl Fcs {
     /// The channels of one `<flight_control>`, `<autopilot>` or `<system>`
-    /// document, after the executive's `Upload`.
+    /// document, after the executive's `Upload`; `exec_dt` is the
+    /// executive's step at load.
     pub fn load_channels(
         &mut self,
         document: &Element,
         ctx: &mut LoadContext<'_>,
+        exec_dt: f64,
     ) -> Result<(), Error> {
         for channel_el in document.find_elements("channel") {
             self.channel_rate = match channel_el.attribute("execrate") {
@@ -93,24 +72,15 @@ impl Fcs {
                 self.channel_rate,
                 on_off,
             );
-            for component in channel_el.children() {
-                match component.name() {
-                    "fcs_function" => channel.components.push(load_fcs_function(component, ctx)?),
-                    name if COMPONENTS.contains(&name) => {
-                        return Err(Error::Unsupported {
-                            construct: format!("<{name}> FCS component"),
-                            path: component.location().to_string(),
-                        });
-                    }
-                    name => {
-                        if ctx.options.strict {
-                            return Err(Error::Unsupported {
-                                construct: format!("unknown FCS component <{name}>"),
-                                path: component.location().to_string(),
-                            });
-                        }
-                        tracing::error!("{}: Unknown FCS component: {name}", component.location());
-                    }
+            let dt = self.channel_delta_t(exec_dt);
+            let at = self.channels.len();
+            for el in channel_el.children() {
+                let at = ComponentAt {
+                    channel: at,
+                    index: channel.components.len(),
+                };
+                if let Some(component) = load_component(el, ctx, dt, at)? {
+                    channel.components.push(component);
                 }
             }
             self.channels.push(channel);
@@ -119,77 +89,32 @@ impl Fcs {
     }
 }
 
-/// `FGFCSComponent(fcs, el)` followed by `FGFCSFunction`'s constructor.
-fn load_fcs_function(el: &Element, ctx: &mut LoadContext<'_>) -> Result<FcsFunction, Error> {
-    let name = el.attribute("name").to_owned();
-    for init in el.find_elements("init") {
-        PropertyValue::new(init.data_line(0), ctx.tree(), init.location())?;
-    }
-    let mut inputs = Vec::new();
-    for input in el.find_elements("input") {
-        inputs.push(PropertyValue::new(
-            input.data_line(0),
-            ctx.tree(),
-            input.location(),
-        )?);
-    }
-    let mut outputs = Vec::new();
-    for out in el.find_elements("output") {
-        outputs.push(output_node(out.data_line(0), ctx)?);
-    }
-    let clip = load_clip(el, ctx)?;
-    let Some(function_el) = el.find_element("function") else {
-        return Err(model_error(
-            el,
-            "FCS Function should contain a \"function\" element",
-        ));
-    };
-    let function = ctx
-        .functions
-        .load_function(ctx.binder.tree, function_el, "")?;
-    let own = if name.contains('/') {
-        name.clone()
-    } else {
-        format!("fcs/{}", mk_property_name(&name, true))
-    };
-    outputs.push(output_node(&own, ctx)?);
-    Ok(FcsFunction {
-        name,
-        inputs,
-        outputs,
-        function,
-        clip,
-        output: 0.0,
-    })
-}
-
-/// An output node; a new node starts at the component's output, 0.
-fn output_node(path: &str, ctx: &mut LoadContext<'_>) -> Result<crate::properties::NodeId, Error> {
-    let tree = ctx.tree();
-    let existed = tree.has_node(path)?;
-    let node = tree.get_or_create(tree.root(), path)?;
-    if !existed {
-        tree.set_double(node, 0.0);
-    }
-    Ok(node)
-}
-
-/// `<clipto>`: both limits are needed for clipping to apply.
-fn load_clip(el: &Element, ctx: &mut LoadContext<'_>) -> Result<Option<Clip>, Error> {
-    let Some(clip_el) = el.find_element("clipto") else {
+/// One child of a channel: its component, or `None` for an unknown
+/// element JSBSim logs and skips.
+fn load_component(
+    el: &Element,
+    ctx: &mut LoadContext<'_>,
+    dt: f64,
+    at: ComponentAt,
+) -> Result<Option<Component>, Error> {
+    let name = el.name();
+    if !KNOWN.contains(&name) {
+        if ctx.options.strict {
+            return Err(Error::Unsupported {
+                construct: format!("unknown FCS component <{name}>"),
+                path: el.location().to_string(),
+            });
+        }
+        tracing::error!("{}: Unknown FCS component: {name}", el.location());
         return Ok(None);
-    };
-    let Some(min_el) = clip_el.find_element("min") else {
-        return Ok(None);
-    };
-    let min = parameter_value(min_el, ctx)?;
-    let Some(max_el) = clip_el.find_element("max") else {
-        return Ok(None);
-    };
-    let max = parameter_value(max_el, ctx)?;
-    Ok(Some(Clip {
-        min,
-        max,
-        cyclic: clip_el.attribute("type") == "cyclic",
-    }))
+    }
+    if !families::registers(name) {
+        return Err(Error::Unsupported {
+            construct: format!("<{name}> FCS component"),
+            path: el.location().to_string(),
+        });
+    }
+    let mut base = Base::load(el, ctx, dt)?;
+    let kind = families::load(el, &mut base, ctx, at)?;
+    Ok(Some(Component { base, kind }))
 }

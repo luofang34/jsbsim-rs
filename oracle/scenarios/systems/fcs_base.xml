@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  What every FCS component shares (FGFCSComponent) and how FGFCS runs its
+  channels: negated inputs, several outputs, the naming of a component's
+  own property, <clipto> with and without type="cyclic" and with
+  reversed limits, execrate, the execute on/off property and
+  simulation/channel-dt. The fcs-base golden drives it.
+-->
+<system name="fcs-base">
+  <property value="0.5">test/input</property>
+  <property value="1">test/enable</property>
+  <property value="2.0">test/max</property>
+  <channel name="every frame">
+    <fcs_function name="test/scaled">
+      <input>-test/input</input>
+      <function>
+        <value>3.0</value>
+      </function>
+      <output>test/scaled-copy</output>
+      <output>test/scaled-copy2</output>
+    </fcs_function>
+    <fcs_function name="Mixed Case Name">
+      <function>
+        <sum>
+          <property>test/input</property>
+          <value>1.0</value>
+        </sum>
+      </function>
+    </fcs_function>
+    <fcs_function name="test/clipped">
+      <input>test/input</input>
+      <function>
+        <value>10.0</value>
+      </function>
+      <clipto>
+        <min>-1.0</min>
+        <max>test/max</max>
+      </clipto>
+    </fcs_function>
+    <fcs_function name="test/clipped-negated-limit">
+      <input>test/input</input>
+      <function>
+        <value>10.0</value>
+      </function>
+      <clipto>
+        <min>-test/max</min>
+        <max>1.5</max>
+      </clipto>
+    </fcs_function>
+    <fcs_function name="test/cyclic">
+      <input>test/input</input>
+      <function>
+        <value>1000.0</value>
+      </function>
+      <clipto type="cyclic">
+        <min>-180</min>
+        <max>180</max>
+      </clipto>
+    </fcs_function>
+    <fcs_function name="test/cyclic-zero-range">
+      <input>test/input</input>
+      <function>
+        <value>1000.0</value>
+      </function>
+      <clipto type="cyclic">
+        <min>5</min>
+        <max>5</max>
+      </clipto>
+    </fcs_function>
+    <fcs_function name="test/reversed-clip">
+      <input>test/input</input>
+      <function>
+        <value>10.0</value>
+      </function>
+      <clipto>
+        <min>1.0</min>
+        <max>-1.0</max>
+      </clipto>
+    </fcs_function>
+    <fcs_function name="test/half-clip">
+      <input>test/input</input>
+      <function>
+        <value>10.0</value>
+      </function>
+      <clipto>
+        <min>1.0</min>
+      </clipto>
+    </fcs_function>
+    <fcs_function name="test/dt-every-frame">
+      <function>
+        <property>simulation/channel-dt</property>
+      </function>
+    </fcs_function>
+  </channel>
+  <channel name="slow" execrate="3">
+    <fcs_function name="test/slow-counter">
+      <function>
+        <sum>
+          <property>test/slow-counter</property>
+          <value>1.0</value>
+        </sum>
+      </function>
+    </fcs_function>
+    <fcs_function name="test/dt-slow">
+      <function>
+        <property>simulation/channel-dt</property>
+      </function>
+    </fcs_function>
+  </channel>
+  <channel name="zero rate" execrate="0">
+    <fcs_function name="test/zero-rate-counter">
+      <function>
+        <sum>
+          <property>test/zero-rate-counter</property>
+          <value>1.0</value>
+        </sum>
+      </function>
+    </fcs_function>
+  </channel>
+  <channel name="switched" execute="test/enable">
+    <fcs_function name="test/switched-counter">
+      <function>
+        <sum>
+          <property>test/switched-counter</property>
+          <value>1.0</value>
+        </sum>
+      </function>
+    </fcs_function>
+  </channel>
+</system>

@@ -7,6 +7,7 @@
 
 mod bindings;
 mod env;
+pub(crate) use env::Env;
 mod exec_bind;
 mod load;
 mod models_run;
@@ -142,6 +143,7 @@ pub struct Fdm {
     options: crate::LoadOptions,
     script: Option<crate::script::Script>,
     aircraft_path: String,
+    systems_path: String,
 }
 
 impl Fdm {
@@ -167,6 +169,7 @@ impl Fdm {
             options: crate::LoadOptions::default(),
             script: None,
             aircraft_path: "aircraft".to_owned(),
+            systems_path: "systems".to_owned(),
         };
         fdm.options = options;
         fdm.env.functions = FunctionSet::with_options(options);
@@ -233,6 +236,13 @@ impl Fdm {
     /// the resolver's root.
     pub fn set_aircraft_path(&mut self, path: &str) {
         self.aircraft_path = path.to_owned();
+    }
+
+    /// `SetSystemsPath`: where `<system file="...">` includes are found
+    /// after the aircraft's own directories, relative to the resolver's
+    /// root.
+    pub fn set_systems_path(&mut self, path: &str) {
+        self.systems_path = path.to_owned();
     }
 
     /// The property tree.
