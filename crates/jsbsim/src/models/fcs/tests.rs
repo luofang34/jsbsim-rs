@@ -258,3 +258,41 @@ fn a_switch_reports_a_missing_property_on_its_first_run() {
     let err = fdm.run_ic().unwrap_err();
     assert!(err.to_string().contains("test/never"), "{err}");
 }
+
+#[test]
+fn filters_and_integrators_refuse_missing_coefficients() {
+    for (body, expected) in [
+        (
+            "<lead_lag_filter name=\"f\"><input>x</input><c1>1</c1><c2>1</c2><c4>1</c4></lead_lag_filter>",
+            "Filter f has no <c3>",
+        ),
+        ("<lag_filter name=\"f\"/>", "Not enough <input> nodes"),
+        (
+            "<integrator name=\"i\"><input>x</input></integrator>",
+            "INTEGRATOR component i does not provide the parameter <c1>",
+        ),
+    ] {
+        let message = component_error(body);
+        assert!(message.contains(expected), "{body}: {message}");
+    }
+}
+
+#[test]
+fn an_integrator_takes_its_initial_value_through_a_write_only_property() {
+    let system = r#"<system><channel name="c">
+  <integrator name="Pitch Integrator"> <input>test/x</input> <c1>2</c1> </integrator>
+</channel></system>"#;
+    let mut fdm = load_system(system, LoadOptions::default()).unwrap();
+    let path = "fcs/pitch-integrator/initial-integrator-value";
+    assert!(fdm.set_property(path, 0.75).unwrap());
+    assert_eq!(fdm.get_property(path).unwrap(), 0.0, "write-only");
+    let super::Kind::Pid(pid) = &fdm.models.fcs.channels[0].components[0].kind else {
+        panic!("not a PID");
+    };
+    assert_eq!(pid.i_out_total, 0.75);
+    assert_eq!(pid.integration, super::pid::Integration::Trapezoidal);
+    // With a zero input the trapezoid adds nothing to the initial value.
+    fdm.set_property("test/x", 0.0).unwrap();
+    fdm.run_ic().unwrap();
+    assert_eq!(fdm.get_property("fcs/pitch-integrator").unwrap(), 0.75);
+}

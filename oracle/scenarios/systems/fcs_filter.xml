@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  FGFilter and FGPID beyond the upstream tests: lead-lag, second order and
+  washout filters with constant and property coefficients, a lag filter
+  with an unused property coefficient and clipping, filters in a channel
+  run every other frame (so their step doubles), integrators with and
+  without a scheme and with a trigger, and a standard PID with a
+  process-variable derivative and a clip. The fcs-filter-forms golden
+  drives it, resetting it once through simulation/reset.
+-->
+<system name="fcs-filter">
+  <property>test/input</property>
+  <property value="2.0">test/c</property>
+  <property>test/trigger</property>
+  <property value="0.5">test/rate</property>
+  <channel name="filters">
+    <lead_lag_filter name="test/lead-lag">
+      <input>test/input</input>
+      <c1>1.0</c1>
+      <c2>2.0</c2>
+      <c3>0.5</c3>
+      <c4>3.0</c4>
+    </lead_lag_filter>
+    <lead_lag_filter name="test/lead-lag-dynamic">
+      <input>-test/input</input>
+      <c1>test/c</c1>
+      <c2>2.0</c2>
+      <c3>0.5</c3>
+      <c4>-test/c</c4>
+    </lead_lag_filter>
+    <second_order_filter name="test/second-order">
+      <input>test/input</input>
+      <c1>0.0</c1>
+      <c2>0.0</c2>
+      <c3>25.0</c3>
+      <c4>1.0</c4>
+      <c5>3.0</c5>
+      <c6>25.0</c6>
+    </second_order_filter>
+    <second_order_filter name="test/second-order-dynamic">
+      <input>test/input</input>
+      <c1>1.0</c1>
+      <c2>test/c</c2>
+      <c3>4.0</c3>
+      <c4>0.5</c4>
+      <c5>test/c</c5>
+      <c6>9.0</c6>
+    </second_order_filter>
+    <washout_filter name="test/washout">
+      <input>test/input</input>
+      <c1>4.0</c1>
+    </washout_filter>
+    <washout_filter name="test/washout-dynamic">
+      <input>test/input</input>
+      <c1>test/c</c1>
+    </washout_filter>
+    <lag_filter name="test/lag-clipped">
+      <input>test/input</input>
+      <c1>10.0</c1>
+      <c3>test/not-declared</c3>
+      <clipto>
+        <min>-0.3</min>
+        <max>0.4</max>
+      </clipto>
+    </lag_filter>
+    <integrator name="test/integrator-rect">
+      <input>test/input</input>
+      <c1 type="rect">test/c</c1>
+    </integrator>
+    <integrator name="test/integrator-ab3">
+      <input>test/input</input>
+      <c1 type="ab3">1.5</c1>
+      <trigger>test/trigger</trigger>
+    </integrator>
+    <integrator name="test/integrator-unknown-type">
+      <input>test/input</input>
+      <c1 type="simpson">1.0</c1>
+    </integrator>
+    <pid name="test/pid-standard" type="standard">
+      <input>test/input</input>
+      <kp>2.0</kp>
+      <ki>0.5</ki>
+      <kd>test/c</kd>
+      <pvdot>test/rate</pvdot>
+      <clipto>
+        <min>-1.0</min>
+        <max>1.0</max>
+      </clipto>
+    </pid>
+    <pid name="test/pid-default-scheme">
+      <input>test/input</input>
+      <ki>1.0</ki>
+    </pid>
+  </channel>
+  <channel name="every other frame" execrate="2">
+    <lag_filter name="test/lag-slow">
+      <input>test/input</input>
+      <c1>5.0</c1>
+    </lag_filter>
+    <washout_filter name="test/washout-slow">
+      <input>test/input</input>
+      <c1>test/c</c1>
+    </washout_filter>
+    <integrator name="test/integrator-slow">
+      <input>test/input</input>
+      <c1>1.0</c1>
+    </integrator>
+  </channel>
+</system>

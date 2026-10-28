@@ -13,9 +13,11 @@ mod bind;
 pub mod component;
 pub mod deadband;
 pub mod families;
+pub mod filter;
 pub mod function;
 pub mod gain;
 mod load;
+pub mod pid;
 pub mod summer;
 pub mod switch;
 #[cfg(test)]

@@ -4784,3 +4784,24 @@ property = "*"
 abs = 0.0
 rel = 0.0
 reason = "Switch values, defaults, clipping and the transport delay buffer only compare and copy values, so they must be bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-filter"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Lag filters with constant and property coefficients evaluate CalculateDynamicFilters and the difference equation with IEEE basic operations in JSBSim's order, so they must be bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-filter-forms"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Lead-lag, second order and washout filters, integrators and PIDs use IEEE basic operations in JSBSim's order (coefficients, difference equations, rect/trap/ab2/ab3 schemes), so they must be bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "fcs-integrators"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Integrators and PIDs use IEEE basic operations in JSBSim's order and read inputs written as decimal strings both sides parse alike, so they must be bit-identical; observed max |diff| 0."

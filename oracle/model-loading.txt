@@ -24,7 +24,7 @@ OV10 unsupported <engine> in <propulsion> (In file aircraft/OV10/OV10.xml: line 
 Pterosaur unsupported <engine> in <propulsion> (In file aircraft/Pterosaur/Pterosaur.xml: line 250)
 SGS unsupported <kinematic> FCS component (In file aircraft/SGS/SGS.xml: line 228)
 Short_S23 unsupported <engine> in <propulsion> (In file aircraft/Short_S23/Short_S23.xml: line 488)
-Shuttle unsupported <lag_filter> FCS component (In file aircraft/Shuttle/Shuttle.xml: line 186)
+Shuttle ok
 Submarine_Scout unsupported <buoyant_forces> (In file aircraft/Submarine_Scout/Submarine_Scout.xml: line 616)
 T37 unsupported <engine> in <propulsion> (In file aircraft/T37/T37.xml: line 139)
 T38 unsupported <engine> in <propulsion> (In file aircraft/T38/T38.xml: line 202)

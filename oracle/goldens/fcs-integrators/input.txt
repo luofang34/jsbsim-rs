@@ -1,0 +1,578 @@
+# Upstream tests/integrators.xml (vendored in oracle/inputs) driven as
+# TestIntegrators.test_integrators and test_pid (with dt = 0.005) drives it, on tripod_integrators (tests/tripod.xml with
+# the system appended, as the test includes it).
+# The tripod starts at 10000 ft so that its contacts stay clear of the
+# ground; nothing else differs from the upstream test.
+# The inputs are sin(k t) at the simulation time t of each frame,
+# accumulated as JSBSim accumulates it, printed with Python's repr.
+paths ../.. derived/aircraft inputs/tests
+new
+dt 0.005
+load tripod_integrators
+watch simulation/sim-time-sec test/input test/trigger test/output-pid-rect test/output-pid-trap test/output-pid-ab2 test/output-pid-ab3 test/output-integrator pid/negative-combined test/output pid/kp-alone pid/ki-alone pid/kd-alone pid/kp-alone-inverted-input-sign pid/ki-alone-inverted-input-sign pid/kd-alone-inverted-input-sign
+set ic/h-sl-ft 10000
+runic
+set test/input 0.0
+run
+set test/input 0.12533323356430426
+run
+set test/input 0.2486898871648548
+run
+set test/input 0.3681245526846779
+run
+set test/input 0.4817536741017153
+run
+set test/input 0.5877852522924731
+run
+set test/input 0.6845471059286887
+run
+set test/input 0.7705132427757893
+run
+set test/input 0.8443279255020151
+run
+set test/input 0.9048270524660196
+run
+set test/input 0.9510565162951535
+run
+set test/input 0.9822872507286886
+run
+set test/input 0.9980267284282716
+run
+set test/input 0.9980267284282716
+run
+set test/input 0.9822872507286887
+run
+set test/input 0.9510565162951536
+run
+set test/input 0.9048270524660195
+run
+set test/input 0.844327925502015
+run
+set test/input 0.7705132427757893
+run
+set test/input 0.6845471059286885
+run
+set test/input 0.5877852522924728
+run
+set test/input 0.4817536741017148
+run
+set test/input 0.3681245526846773
+run
+set test/input 0.24868988716485396
+run
+set test/input 0.1253332335643032
+run
+set test/input -7.657137397853899e-16
+run
+set test/input -0.12533323356430473
+run
+set test/input -0.24868988716485543
+run
+set test/input -0.36812455268467875
+run
+set test/input -0.48175367410171616
+run
+set test/input -0.587785252292474
+run
+set test/input -0.6845471059286896
+run
+set test/input -0.7705132427757899
+run
+set test/input -0.8443279255020157
+run
+set test/input -0.9048270524660201
+run
+set test/input -0.9510565162951541
+run
+set test/input -0.982287250728689
+run
+set test/input -0.9980267284282717
+run
+set test/input -0.9980267284282714
+run
+set test/input -0.9822872507286883
+run
+set test/input -0.9510565162951528
+run
+set test/input -0.9048270524660184
+run
+set test/input -0.8443279255020135
+run
+set test/input -0.7705132427757879
+run
+set test/input -0.6845471059286871
+run
+set test/input -0.5877852522924711
+run
+set test/input -0.481753674101713
+run
+set test/input -0.36812455268467537
+run
+set test/input -0.2486898871648519
+run
+set test/input -0.12533323356430112
+run
+set test/input 2.419605899270905e-15
+run
+set test/input 0.1253332335643068
+run
+set test/input 0.24868988716485746
+run
+set test/input 0.3681245526846807
+run
+set test/input 0.481753674101718
+run
+set test/input 0.5877852522924758
+run
+set test/input 0.6845471059286912
+run
+set test/input 0.7705132427757916
+run
+set test/input 0.8443279255020171
+run
+set test/input 0.9048270524660208
+run
+set test/input 0.9510565162951545
+run
+set test/input 0.9822872507286893
+run
+set test/input 0.9980267284282718
+run
+set test/input 0.9980267284282713
+run
+set test/input 0.9822872507286879
+run
+set test/input 0.951056516295152
+run
+set test/input 0.9048270524660177
+run
+set test/input 0.8443279255020132
+run
+set test/input 0.7705132427757863
+run
+set test/input 0.6845471059286858
+run
+set test/input 0.5877852522924691
+run
+set test/input 0.48175367410171155
+run
+set test/input 0.368124552684673
+run
+set test/input 0.24868988716485033
+run
+set test/input 0.12533323356429862
+run
+set test/input -4.961676478456545e-15
+run
+set test/input -0.12533323356431023
+run
+set test/input -0.24868988716485993
+run
+set test/input -0.36812455268468386
+run
+set test/input -0.4817536741017202
+run
+set test/input -0.5877852522924771
+run
+set test/input -0.6845471059286931
+run
+set test/input -0.7705132427757926
+run
+set test/input -0.8443279255020185
+run
+set test/input -0.9048270524660219
+run
+set test/input -0.9510565162951556
+run
+set test/input -0.9822872507286898
+run
+set test/input -0.998026728428272
+run
+set test/input -0.9980267284282711
+run
+set test/input -0.9822872507286873
+run
+set test/input -0.9510565162951515
+run
+set test/input -0.9048270524660162
+run
+set test/input -0.8443279255020113
+run
+set test/input -0.7705132427757853
+run
+set test/input -0.6845471059286833
+run
+set test/input -0.5877852522924678
+run
+set test/input -0.48175367410170855
+run
+set test/input -0.3681245526846715
+run
+set test/input -0.248689887164847
+run
+set test/input -0.125333233564297
+run
+set test/trigger 1.0
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+set test/trigger -1.0
+set test/input 0.0
+run
+set test/trigger 0.0
+set test/input 0.0
+run
+set test/input 0.12533323356430437
+run
+set test/input 0.24868988716485502
+run
+set test/input 0.36812455268467825
+run
+set test/input 0.4817536741017157
+run
+set test/input 0.5877852522924736
+run
+set test/input 0.6845471059286891
+run
+set test/input 0.7705132427757897
+run
+set test/input 0.8443279255020156
+run
+set test/input 0.9048270524660199
+run
+set test/input 0.9510565162951539
+run
+set test/input 0.9822872507286889
+run
+set test/input 0.9980267284282717
+run
+set test/input 0.9980267284282714
+run
+set test/input 0.9822872507286884
+run
+set test/input 0.9510565162951531
+run
+set test/input 0.9048270524660187
+run
+set test/input 0.8443279255020142
+run
+set test/input 0.7705132427757881
+run
+set test/input 0.6845471059286873
+run
+set test/input 0.5877852522924714
+run
+set test/input 0.48175367410171327
+run
+set test/input 0.36812455268467564
+run
+set test/input 0.24868988716485224
+run
+set test/input 0.1253332335643019
+run
+set test/input -2.5420705791856405e-15
+run
+set test/input -0.12533323356430695
+run
+set test/input -0.24868988716485757
+run
+set test/input -0.3681245526846808
+run
+set test/input -0.4817536741017181
+run
+set test/input -0.5877852522924759
+run
+set test/input -0.684547105928691
+run
+set test/input -0.7705132427757916
+run
+set test/input -0.8443279255020172
+run
+set test/input -0.9048270524660209
+run
+set test/input -0.9510565162951546
+run
+set test/input -0.9822872507286894
+run
+set test/input -0.9980267284282718
+run
+set test/input -0.9980267284282713
+run
+set test/input -0.9822872507286879
+run
+set test/input -0.9510565162951523
+run
+set test/input -0.9048270524660177
+run
+set test/input -0.8443279255020126
+run
+set test/input -0.7705132427757861
+run
+set test/input -0.6845471059286851
+run
+set test/input -0.587785252292469
+run
+set test/input -0.48175367410171066
+run
+set test/input -0.36812455268467287
+run
+set test/input -0.2486898871648502
+run
+set test/input -0.12533323356429937
+run
+paths ../.. derived/aircraft inputs/tests
+new
+dt 0.005
+load tripod_integrators
+watch simulation/sim-time-sec test/input test/trigger test/output-pid-rect test/output-pid-trap test/output-pid-ab2 test/output-pid-ab3 test/output-integrator pid/negative-combined test/output pid/kp-alone pid/ki-alone pid/kd-alone pid/kp-alone-inverted-input-sign pid/ki-alone-inverted-input-sign pid/kd-alone-inverted-input-sign
+set ic/h-sl-ft 10000
+runic
+set test/kp 2.0
+set test/ki 0.5
+set test/kd -1.5
+set test/input 0.0
+run
+set test/input 0.03141075907812829
+run
+set test/input 0.06279051952931337
+run
+set test/input 0.09410831331851431
+run
+set test/input 0.12533323356430426
+run
+set test/input 0.15643446504023087
+run
+set test/input 0.18738131458572463
+run
+set test/input 0.21814324139654256
+run
+set test/input 0.2486898871648548
+run
+set test/input 0.2789911060392293
+run
+set test/input 0.3090169943749474
+run
+set test/input 0.3387379202452913
+run
+set test/input 0.36812455268467786
+run
+set test/input 0.3971478906347805
+run
+set test/input 0.4257792915650726
+run
+set test/input 0.4539904997395468
+run
+set test/input 0.4817536741017153
+run
+set test/input 0.5090414157503713
+run
+set test/input 0.5358267949789967
+run
+set test/input 0.5620833778521306
+run
+set test/input 0.5877852522924732
+run
+set test/input 0.6129070536529766
+run
+set test/input 0.6374239897486899
+run
+set test/input 0.661311865323652
+run
+set test/input 0.6845471059286888
+run
+set test/input 0.7071067811865477
+run
+set test/input 0.7289686274214117
+run
+set test/input 0.7501110696304596
+run
+set test/input 0.7705132427757894
+run
+set test/input 0.7901550123756905
+run
+set test/input 0.8090169943749476
+run
+set test/input 0.827080574274562
+run
+set test/input 0.8443279255020152
+run
+set test/input 0.8607420270039438
+run
+set test/input 0.8763066800438638
+run
+set test/input 0.891006524188368
+run
+set test/input 0.9048270524660197
+run
+set test/input 0.9177546256839814
+run
+set test/input 0.9297764858882516
+run
+set test/input 0.9408807689542257
+run
+set test/input 0.9510565162951538
+run
+set test/input 0.9602936856769433
+run
+set test/input 0.9685831611286313
+run
+set test/input 0.9759167619387475
+run
+set test/input 0.9822872507286888
+run
+set test/input 0.9876883405951378
+run
+set test/input 0.9921147013144779
+run
+set test/input 0.9955619646030801
+run
+set test/input 0.9980267284282716
+run
+set test/input 0.9995065603657316
+run
+set test/input 1.0
+run
+set test/input 0.9995065603657315
+run
+set test/input 0.9980267284282716
+run
+set test/input 0.99556196460308
+run
+set test/input 0.9921147013144778
+run
+set test/input 0.9876883405951375
+run
+set test/input 0.9822872507286885
+run
+set test/input 0.9759167619387472
+run
+set test/input 0.9685831611286309
+run
+set test/input 0.9602936856769428
+run
+set test/input 0.9510565162951533
+run
+set test/input 0.9408807689542252
+run
+set test/input 0.9297764858882511
+run
+set test/input 0.9177546256839808
+run
+set test/input 0.9048270524660191
+run
+set test/input 0.8910065241883673
+run
+set test/input 0.876306680043863
+run
+set test/input 0.8607420270039432
+run
+set test/input 0.8443279255020144
+run
+set test/input 0.8270805742745613
+run
+set test/input 0.8090169943749467
+run
+set test/input 0.7901550123756897
+run
+set test/input 0.7705132427757884
+run
+set test/input 0.7501110696304588
+run
+set test/input 0.7289686274214106
+run
+set test/input 0.7071067811865467
+run
+set test/input 0.6845471059286876
+run
+set test/input 0.6613118653236509
+run
+set test/input 0.6374239897486885
+run
+set test/input 0.6129070536529754
+run
+set test/input 0.5877852522924721
+run
+set test/input 0.5620833778521294
+run
+set test/input 0.5358267949789955
+run
+set test/input 0.50904141575037
+run
+set test/input 0.48175367410171405
+run
+set test/input 0.4539904997395453
+run
+set test/input 0.4257792915650713
+run
+set test/input 0.397147890634779
+run
+set test/input 0.3681245526846765
+run
+set test/input 0.33873792024528965
+run
+set test/input 0.30901699437494584
+run
+set test/input 0.2789911060392274
+run
+set test/input 0.2486898871648531
+run
+set test/input 0.218143241396541
+run
+set test/input 0.18738131458572282
+run
+set test/input 0.15643446504022923
+run
+set test/input 0.12533323356430234
+run
+set test/input 0.09410831331851258
+run
+set test/input 0.06279051952931136
+run
+set test/input 0.03141075907812646
+run

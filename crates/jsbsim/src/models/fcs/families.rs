@@ -91,7 +91,8 @@ fn component(fcs: &Fcs, at: ComponentAt) -> Option<&Component> {
     fcs.channels.get(at.channel)?.components.get(at.index)
 }
 
-fn component_mut(fcs: &mut Fcs, at: ComponentAt) -> Option<&mut Component> {
+/// The component at `at`, for a tied setter that reaches its state.
+pub fn component_mut(fcs: &mut Fcs, at: ComponentAt) -> Option<&mut Component> {
     fcs.channels
         .get_mut(at.channel)?
         .components
@@ -174,4 +175,10 @@ families! {
     DeadBand(super::deadband::DeadBand) = "deadband";
     /// `<switch>` (`FGSwitch`).
     Switch(super::switch::Switch) = "switch";
+    /// `<lag_filter>`, `<lead_lag_filter>`, `<second_order_filter>` and
+    /// `<washout_filter>` (`FGFilter`).
+    Filter(super::filter::Filter) =
+        "lag_filter" | "lead_lag_filter" | "second_order_filter" | "washout_filter";
+    /// `<pid>` and `<integrator>` (`FGPID`).
+    Pid(super::pid::Pid) = "pid" | "integrator";
 }
