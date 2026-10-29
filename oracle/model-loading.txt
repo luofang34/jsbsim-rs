@@ -15,7 +15,7 @@ DHC6 ok
 F450 ok
 F4N ok
 F80C ok
-J246 unsupported <rocket_engine> (In file engine/SRB.xml: line 2)
+J246 ok
 J3Cub ok
 L17 ok
 L410 ok
@@ -28,7 +28,7 @@ Shuttle ok
 Submarine_Scout unsupported <buoyant_forces> (In file aircraft/Submarine_Scout/Submarine_Scout.xml: line 616)
 T37 ok
 T38 ok
-X15 unsupported <rocket_engine> (In file engine/XLR99.xml: line 2)
+X15 ok
 XB-70 ok
 ZLT-NT unsupported <buoyant_forces> (In file aircraft/ZLT-NT/ZLT-NT.xml: line 672)
 ah1s unsupported <rotor> (In file aircraft/ah1s/Engines/ah1s_rotor.xml: line 3)
@@ -60,4 +60,4 @@ sgs233 ok
 t6texan2 ok
 weather-balloon unsupported <buoyant_forces> (In file aircraft/weather-balloon/weather-balloon.xml: line 135)
 wrightFlyer1903 ok
-x24b unsupported <rocket_engine> (In file engine/XLR99.xml: line 2)
+x24b ok

@@ -44,6 +44,13 @@ impl EngineLoad<'_> {
         self.fdm.env.load_context(options)
     }
 
+    /// The value of function `id` (`GetValue()`), read against the models
+    /// as loaded so far.
+    pub fn function_value(&mut self, id: crate::functions::FnId) -> Result<f64, Error> {
+        let fdm = &mut *self.fdm;
+        fdm.env.eval(&fdm.models, |ev| ev.function(id))
+    }
+
     /// The propulsion's engine inputs, as the engine's constructor sees
     /// them.
     #[must_use]

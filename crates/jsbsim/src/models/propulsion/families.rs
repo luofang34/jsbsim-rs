@@ -98,6 +98,10 @@ pub trait EngineFamily: Sized {
     const TYPE: EngineType;
     /// What one `Calculate` reads from the property tree.
     type Sample;
+    /// Whether `Calculate` does nothing, not even its pre- and
+    /// post-functions, while integration is suspended (`FGRocket`, so that
+    /// neither `RunIC` nor a trim ignites it).
+    const IDLE_WHILE_SUSPENDED: bool = false;
 
     /// The type's constructor on its element `el`.
     fn load(el: &Element, cx: &mut EngineLoad<'_>) -> Result<Self, Error>;
@@ -191,6 +195,15 @@ macro_rules! engines {
             pub fn engine_type(&self) -> EngineType {
                 match *self {
                     $($(#[$cfg])* Self::$variant(_) => <$ty as EngineFamily>::TYPE,)*
+                }
+            }
+
+            /// Whether `Calculate` does nothing while integration is
+            /// suspended.
+            #[must_use]
+            pub fn idle_while_suspended(&self) -> bool {
+                match *self {
+                    $($(#[$cfg])* Self::$variant(_) => <$ty as EngineFamily>::IDLE_WHILE_SUSPENDED,)*
                 }
             }
 
@@ -312,6 +325,7 @@ engines! {
     Piston(super::piston::Piston) = "piston_engine";
     Turbine(super::turbine::Turbine) = "turbine_engine";
     TurboProp(super::turboprop::TurboProp) = "turboprop_engine";
+    Rocket(super::rocket::Rocket) = "rocket_engine";
     Electric(super::electric::Electric) = "electric_engine";
     BrushLessDcMotor(super::brushless::BrushLessDcMotor) = "brushless_dc_motor";
     #[cfg(test)]

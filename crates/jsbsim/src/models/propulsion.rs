@@ -20,6 +20,7 @@ mod fuel;
 pub mod nozzle;
 pub mod piston;
 pub mod propeller;
+pub mod rocket;
 pub mod tank;
 #[cfg(test)]
 mod test_engine;

@@ -149,8 +149,15 @@ impl Fdm {
     }
 
     /// The engine's `Calculate`: its pre-functions, its type's reads and
-    /// update, then its post-functions.
+    /// update, then its post-functions; nothing for a type idle while
+    /// integration is suspended.
     pub(super) fn calculate_engine(&mut self, i: usize) -> Result<(), Error> {
+        let idle = |e: &propulsion::Engine| e.kind.idle_while_suspended();
+        if self.models.exec.integration_suspended()
+            && self.models.propulsion.engines.get(i).is_some_and(idle)
+        {
+            return Ok(());
+        }
         self.run_engine_functions(i, true)?;
         families::calculate(&mut self.env, &mut self.models, i)?;
         self.run_engine_functions(i, false)
