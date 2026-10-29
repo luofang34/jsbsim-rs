@@ -52,12 +52,11 @@ warm_up = 100
 frames = 2000
 repeats = 15
 
-# A piston single: the c172x with its autopilot's sensor noise set to 0
-# (oracle/derived/aircraft/c172x_noise0), its engine off.
+# A piston single: the c172x, its autopilot's roll sensor noisy, its
+# engine off.
 [[case]]
 name = "c172x"
-aircraft = "c172x_noise0"
-inputs = "oracle/derived"
+aircraft = "c172x"
 warm_up = 100
 frames = 2000
 repeats = 15

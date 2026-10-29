@@ -3,8 +3,7 @@
 <!--
   SPDX-License-Identifier: LGPL-2.1-or-later
   c172x_elevator_delay: aircraft/c172x/c172x.xml with a 0.1 s <delay> on its elevator
-  actuator, as JSBSim's tests/CheckTrim.py derives it; its autopilot
-  c172ap.xml has its sensor noise set to 0. Regenerate with `oracle derive`.
+  actuator, as JSBSim's tests/CheckTrim.py derives it. Regenerate with `oracle derive`.
 -->
 <fdm_config name="Cessna C-172 Skyhawk II"  version="2.0" release="BETA"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

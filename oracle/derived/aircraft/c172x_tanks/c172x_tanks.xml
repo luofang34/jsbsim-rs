@@ -2,8 +2,7 @@
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
 <!--
   SPDX-License-Identifier: LGPL-2.1-or-later
-  c172x_tanks: aircraft/c172x/c172x.xml without its engines, and an <inertia_factor> of 1.0 appended to its first tank, and
-  without its autopilot.
+  c172x_tanks: aircraft/c172x/c172x.xml without its engines, and an <inertia_factor> of 1.0 appended to its first tank.
   Regenerate with `oracle derive`.
 -->
 <fdm_config name="Cessna C-172 Skyhawk II"  version="2.0" release="BETA"
@@ -238,9 +237,6 @@
         </contact>
     </ground_reactions>
     <propulsion>
-      <property>ap/elevator_cmd</property>
-      <property>ap/aileron_cmd</property>
-      <property>ap/roll-cmd-norm-output</property>
         <tank type="FUEL">    <!-- Tank number 0 -->
             <location unit="IN">
                 <x>48.0</x>
@@ -327,6 +323,7 @@
       <property value="0.174"> guidance/roll-rate-limit </property>
     </system>
 
+    <autopilot file="c172ap"/>
 
     <flight_control name="c172">
         <channel name="Pitch">

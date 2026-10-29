@@ -53,11 +53,11 @@ fn loading_aircraft() -> Vec<String> {
 /// `simulation/do_simple_trim`.
 #[cfg(test)]
 const TRIMMED: [(&str, &str); 10] = [
-    ("derived", "scripts/c1722.xml"),
-    ("derived", "scripts/c172_cruise_8K.xml"),
-    ("derived", "scripts/c172_cross_wind.xml"),
-    ("derived", "scripts/c172_head_wind.xml"),
-    ("derived", "scripts/c172_elevator_doublet.xml"),
+    ("inputs", "scripts/c1722.xml"),
+    ("inputs", "scripts/c172_cruise_8K.xml"),
+    ("inputs", "scripts/c172_cross_wind.xml"),
+    ("inputs", "scripts/c172_head_wind.xml"),
+    ("inputs", "scripts/c172_elevator_doublet.xml"),
     ("inputs", "scripts/p51d_tail_wind.xml"),
     ("inputs", "scripts/Short_S23_2.xml"),
     ("inputs", "scripts/Short_S23_3.xml"),
@@ -120,7 +120,7 @@ fn steady_state_frames_read_only_cached_derived_values() {
             (&resolver, "scripts/ball_orbit_phase.xml", 3000),
             (&resolver, "scripts/ball.xml", FRAMES),
             (&resolver, "scripts/mk82_script.xml", FRAMES),
-            (&derived, "scripts/c1724.xml", FRAMES),
+            (&resolver, "scripts/c1724.xml", FRAMES),
             (&derived, "scripts/piston_start_c310.xml", 3000),
             (&derived, "scripts/piston_governor_c310.xml", 5000),
             (&derived, "scripts/c1722_inertia.xml", 12000),

@@ -20,11 +20,6 @@
           ap/heading_setpoint
 
 -->
-<!--
-  SPDX-License-Identifier: LGPL-2.1-or-later
-  aircraft/c172x/c172ap.xml with its sensor <noise> set to 0, which the port
-  refuses until sensor noise is ported. Regenerate with `oracle derive`.
--->
 <autopilot name="C-172X Autopilot">
 
 <!-- INTERFACE PROPERTIES -->
@@ -61,7 +56,7 @@ ROLL CHANNEL
     <input> attitude/phi-rad </input>
     <lag> 0.5 </lag>
     <delay> 2 </delay>
-    <noise variation="PERCENT" distribution="GAUSSIAN"> 0 </noise>
+    <noise variation="PERCENT" distribution="GAUSSIAN"> 0.05 </noise>
     <quantization name="attitude/sensor/quantized/phi-rad">
       <bits> 12 </bits>
       <min> -3.1416 </min>

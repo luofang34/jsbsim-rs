@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 //! Piston aircraft and scripts derived from upstream ones:
 //!
-//! - [`NOISE0`]: the c172x with its autopilot's sensor noise set to 0,
-//!   which the port refuses until noise is ported, with the upstream
-//!   scripts that fly the c172x renamed onto it; the `piston_takeoff`
-//!   check case gets the same edit;
+//! - [`C172X`]: the c172x copied unchanged, so that the derived scripts
+//!   flying it ([`piston_fuel`](super::piston_fuel)) find it under
+//!   `oracle/derived`;
 //! - [`ACCELEROMETERS`]: the c172r with `systems/accelerometers.xml`, and
 //!   `scripts/c1721.xml` on it with what `TestAccelerometer.testOnGround`
 //!   sets before `RunIC`;
@@ -15,33 +14,15 @@
 
 use crate::OracleError;
 
-/// The c172x without sensor noise.
-pub const NOISE0: &str = "c172x_noise0";
+/// The c172x, unchanged.
+pub const C172X: &str = "c172x";
 
 /// The c172r with accelerometers.
 pub const ACCELEROMETERS: &str = "c172r_accelerometers";
 
-/// Upstream scripts flying the c172x, untrimmed or trimmed through
-/// `simulation/do_simple_trim`.
-pub const NOISE0_SCRIPTS: [&str; 9] = [
-    "c1723",
-    "c1724",
-    "c172_elevation_test",
-    "c172_runway_at_rest_cg_shift",
-    "c1722",
-    "c172_cruise_8K",
-    "c172_cross_wind",
-    "c172_head_wind",
-    "c172_elevator_doublet",
-];
-
-/// The c172x files besides the aircraft and its autopilot.
-pub const C172X_FILES: [&str; 4] = [
-    "reset00.xml",
-    "reset01.xml",
-    "reset_at_rest.xml",
-    "elevator_doublet_init.xml",
-];
+/// The c172x files besides the aircraft: its autopilot and the
+/// initial conditions the derived scripts start from.
+pub const C172X_FILES: [&str; 2] = ["c172ap.xml", "reset01.xml"];
 
 /// One Short S.23 variant of `TestEngineIndexedProps`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -114,31 +95,6 @@ pub(super) fn replace_once(
         return Err(fail(source, &format!("expected one {from}")));
     }
     Ok(text.replacen(from, to, 1))
-}
-
-/// An autopilot (`c172ap.xml`) with its sensor noise set to 0.
-pub fn quiet_autopilot(text: &str, source: &str) -> Result<String, OracleError> {
-    let body = replace_once(text, "> 0.05 </noise>", "> 0 </noise>", source)?;
-    with_header(
-        &body,
-        "autopilot",
-        &format!(
-            "{source} with its sensor <noise> set to 0, which the port\n  refuses until sensor noise is ported."
-        ),
-        source,
-    )
-}
-
-/// The [`NOISE0`] aircraft from the upstream c172x.
-pub fn noise0_aircraft(text: &str) -> Result<String, OracleError> {
-    with_header(
-        text,
-        "fdm_config",
-        &format!(
-            "{NOISE0}: aircraft/c172x/c172x.xml, unchanged; its autopilot\n  c172ap.xml has its sensor noise set to 0."
-        ),
-        "aircraft/c172x/c172x.xml",
-    )
 }
 
 /// Upstream script `name` flying `from`, renamed onto `to`.
@@ -280,20 +236,14 @@ fn copies(
     Ok(())
 }
 
-/// The [`NOISE0`] aircraft, its engine and systems, and its scripts.
-fn noise0_files(read: Read<'_>, files: &mut Vec<(String, String)>) -> Result<(), OracleError> {
-    let dir = format!("aircraft/{NOISE0}");
-    files.push((
-        format!("{dir}/{NOISE0}.xml"),
-        noise0_aircraft(&read("aircraft/c172x/c172x.xml")?)?,
-    ));
-    let ap = "aircraft/c172x/c172ap.xml";
-    files.push((
-        format!("{dir}/c172ap.xml"),
-        quiet_autopilot(&read(ap)?, ap)?,
-    ));
-    for f in C172X_FILES {
-        files.push((format!("{dir}/{f}"), read(&format!("aircraft/c172x/{f}"))?));
+/// The [`C172X`] aircraft, and the engine and systems every derived
+/// c172x shares.
+fn c172x_files(read: Read<'_>, files: &mut Vec<(String, String)>) -> Result<(), OracleError> {
+    for f in std::iter::once("c172x.xml").chain(C172X_FILES) {
+        files.push((
+            format!("aircraft/{C172X}/{f}"),
+            read(&format!("aircraft/c172x/{f}"))?,
+        ));
     }
     copies(
         read,
@@ -304,35 +254,7 @@ fn noise0_files(read: Read<'_>, files: &mut Vec<(String, String)>) -> Result<(),
             "systems/GNCUtilities.xml",
             "systems/Autopilot.xml",
         ],
-    )?;
-    for name in NOISE0_SCRIPTS {
-        let text = read(&format!("scripts/{name}.xml"))?;
-        files.push((
-            format!("scripts/{name}.xml"),
-            renamed_script(&text, name, "c172x", NOISE0)?,
-        ));
-    }
-    Ok(())
-}
-
-/// The `piston_takeoff` check case, its autopilot without noise.
-fn takeoff_files(read: Read<'_>, files: &mut Vec<(String, String)>) -> Result<(), OracleError> {
-    let root = "check_cases/piston_takeoff";
-    for rel in [
-        "aircraft/c172x/c172x.xml",
-        "aircraft/c172x/reset00.xml",
-        "engine/eng_io320.xml",
-        "engine/prop_Clark_Y7570.xml",
-        "systems/GNCUtilities.xml",
-        "systems/Autopilot.xml",
-        "scripts/c1723.xml",
-    ] {
-        let path = format!("{root}/{rel}");
-        files.push((path.clone(), read(&path)?));
-    }
-    let ap = format!("{root}/aircraft/c172x/c172ap.xml");
-    files.push((ap.clone(), quiet_autopilot(&read(&ap)?, &ap)?));
-    Ok(())
+    )
 }
 
 /// The [`ACCELEROMETERS`] aircraft and its script, and the Short S.23
@@ -393,8 +315,7 @@ fn test_files(read: Read<'_>, files: &mut Vec<(String, String)>) -> Result<(), O
 /// Every file of this module, by its path under `oracle/derived`.
 pub fn files(read: Read<'_>) -> Result<Vec<(String, String)>, OracleError> {
     let mut files = Vec::new();
-    noise0_files(read, &mut files)?;
-    takeoff_files(read, &mut files)?;
+    c172x_files(read, &mut files)?;
     test_files(read, &mut files)?;
     super::piston_fuel::files(read, &mut files)?;
     super::trim_tests::files(read, &mut files)?;

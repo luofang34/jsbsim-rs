@@ -1,12 +1,11 @@
 # FGTrim on every corpus script that trims through
-# simulation/do_simple_trim and whose aircraft loads (the c172x ones on the
-# noise-free c172x of oracle/derived), and on JSBSim's Python trim tests
-# driven as they drive the FDM. Each trim prints its result, cycles and,
-# per axis, its control and state, solver runs, successful cycles and
-# frames; then the watched state as the frame ends.
+# simulation/do_simple_trim and whose aircraft loads, and on JSBSim's
+# Python trim tests driven as they drive the FDM. Each trim prints its
+# result, cycles and, per axis, its control and state, solver runs,
+# successful cycles and frames; then the watched state as the frame ends.
 #
 # The scripts, run past their trims.
-paths ../../derived aircraft systems
+paths ../../inputs aircraft systems
 new
 watch simulation/sim-time-sec position/h-agl-ft attitude/phi-rad attitude/theta-rad attitude/psi-rad velocities/u-fps velocities/v-fps velocities/w-fps velocities/p-rad_sec velocities/q-rad_sec velocities/r-rad_sec accelerations/udot-ft_sec2 accelerations/vdot-ft_sec2 accelerations/wdot-ft_sec2 accelerations/pdot-rad_sec2 accelerations/qdot-rad_sec2 accelerations/rdot-rad_sec2 aero/alpha-rad aero/beta-rad fcs/elevator-cmd-norm fcs/aileron-cmd-norm fcs/rudder-cmd-norm fcs/pitch-trim-cmd-norm fcs/throttle-cmd-norm simulation/trim-completed ic/h-agl-ft ic/theta-rad ic/alpha-rad
 script scripts/c1722.xml
@@ -28,6 +27,7 @@ new
 script scripts/c172_elevator_doublet.xml
 runic
 until 1.5
+paths ../../derived aircraft systems
 new
 script scripts/c1722_inertia.xml
 runic
@@ -82,7 +82,7 @@ run 1
 # as they are now, not as RunIC found them; the trimmed c172x stays still.
 new
 watch simulation/sim-time-sec velocities/u-fps velocities/v-fps velocities/w-fps velocities/p-rad_sec velocities/q-rad_sec velocities/r-rad_sec attitude/theta-rad attitude/phi-rad position/h-agl-ft
-model c172x_noise0
+model c172x
 set ic/theta-deg 90
 runic
 set ic/theta-deg 0
@@ -110,7 +110,7 @@ set simulation/do_simple_trim 1
 # reset after it goes back to 0.
 new
 watch simulation/sim-time-sec simulation/trim-completed fcs/throttle-cmd-norm attitude/theta-rad
-model c172x_noise0
+model c172x
 ic reset01
 runic
 until 5
@@ -118,7 +118,7 @@ set simulation/do_simple_trim 1
 set simulation/reset 1
 # Modes through the property: out of range, none and custom (no axes).
 new
-model c172x_noise0
+model c172x
 ic reset01
 runic
 set simulation/do_simple_trim 7
@@ -129,7 +129,7 @@ set simulation/do_simple_trim 4
 # commands back.
 new
 watch simulation/trim-completed fcs/elevator-cmd-norm fcs/pitch-trim-cmd-norm fcs/throttle-cmd-norm attitude/theta-rad position/h-agl-ft
-model c172x_noise0
+model c172x
 ic reset00
 set fcs/elevator-cmd-norm 0.1
 runic

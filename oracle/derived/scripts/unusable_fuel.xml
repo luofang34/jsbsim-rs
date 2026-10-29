@@ -2,13 +2,13 @@
 <!--
   SPDX-License-Identifier: LGPL-2.1-or-later
   unusable_fuel.xml: JSBSim's tests/TestUnusableFuel.py as a script: the
-  c172x (c172x_noise0) from reset01, whose engine runs, with 1.5 gal of
+  c172x from reset01, whose engine runs, with 1.5 gal of
   unusable fuel and 10 lbs in each tank, set before RunIC, run until the
   engine starves; at full throttle, so that it starves within the run.
   Regenerate with `oracle derive`.
 -->
 <runscript name="unusable fuel">
-  <use aircraft="c172x_noise0" initialize="reset01"/>
+  <use aircraft="c172x" initialize="reset01"/>
   <run start="0.0" end="30" dt="0.008333333333333333">
     <property value="1"> fcs/throttle-cmd-norm </property>
     <property value="1.5"> propulsion/tank[0]/unusable-volume-gal </property>

@@ -53,15 +53,9 @@ pub const AIRCRAFT: &[Tanks] = &[
         // `test_fuel_tanks_inertia` appends <inertia_factor>1.0 to the
         // first tank.
         edits: &[("</tank>", "<inertia_factor>1.0</inertia_factor></tank>")],
-        // The port refuses the sensor noise of its autopilot, which flies
-        // nothing the test reads.
-        drop_lines: &["<autopilot file=\"c172ap\"/>"],
-        declares: &[
-            "ap/elevator_cmd",
-            "ap/aileron_cmd",
-            "ap/roll-cmd-norm-output",
-        ],
-        summary: "an <inertia_factor> of 1.0 appended to its first tank, and\n  without its autopilot",
+        drop_lines: &[],
+        declares: &[],
+        summary: "an <inertia_factor> of 1.0 appended to its first tank",
     },
     Tanks {
         name: "J246_tanks",
@@ -116,6 +110,7 @@ pub fn includes(source: &str) -> &'static [&'static str] {
             "Systems/J246SecondStageEffectors.xml",
         ],
         "f16" => &["Systems/pushback.xml", "Systems/hook.xml"],
+        "c172x" => &["c172ap.xml"],
         _ => &[],
     }
 }

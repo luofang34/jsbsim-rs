@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
-//! The noise-free c172x variants of JSBSim's trim tests, each with
+//! The c172x variants of JSBSim's trim tests, each with
 //! `scripts/c1722.xml` renamed onto it:
 //!
 //! - [`ACCELEROMETERS`]: with `<system file="accelerometers"/>` appended,
@@ -10,7 +10,7 @@
 //! and `tests/tripod.xml` unchanged as `aircraft/tripod/tripod.xml`, where
 //! `LoadModel` finds it as `TestGndReactions` loads it.
 
-use super::piston::{Read, fail, quiet_autopilot, renamed_script, with_header};
+use super::piston::{Read, fail, renamed_script, with_header};
 use crate::OracleError;
 
 /// The c172x with accelerometers.
@@ -32,7 +32,7 @@ pub fn accelerometers_aircraft(text: &str) -> Result<String, OracleError> {
         &body,
         "fdm_config",
         &format!(
-            "{ACCELEROMETERS}: {SOURCE} with <system file=\"accelerometers\"/>\n  appended, as JSBSim's tests/TestAccelerometer.py derives it; its\n  autopilot c172ap.xml has its sensor noise set to 0."
+            "{ACCELEROMETERS}: {SOURCE} with <system file=\"accelerometers\"/>\n  appended, as JSBSim's tests/TestAccelerometer.py derives it."
         ),
         SOURCE,
     )
@@ -53,7 +53,7 @@ pub fn elevator_delay_aircraft(text: &str) -> Result<String, OracleError> {
         &body,
         "fdm_config",
         &format!(
-            "{ELEVATOR_DELAY}: {SOURCE} with a 0.1 s <delay> on its elevator\n  actuator, as JSBSim's tests/CheckTrim.py derives it; its autopilot\n  c172ap.xml has its sensor noise set to 0."
+            "{ELEVATOR_DELAY}: {SOURCE} with a 0.1 s <delay> on its elevator\n  actuator, as JSBSim's tests/CheckTrim.py derives it."
         ),
         SOURCE,
     )
@@ -75,10 +75,7 @@ pub fn files(read: Read<'_>, files: &mut Vec<(String, String)>) -> Result<(), Or
     ] {
         let dir = format!("aircraft/{name}");
         files.push((format!("{dir}/{name}.xml"), aircraft));
-        files.push((
-            format!("{dir}/c172ap.xml"),
-            quiet_autopilot(&read(ap)?, ap)?,
-        ));
+        files.push((format!("{dir}/c172ap.xml"), read(ap)?));
         files.push((
             format!("{dir}/reset01.xml"),
             read("aircraft/c172x/reset01.xml")?,

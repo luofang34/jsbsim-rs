@@ -62,11 +62,11 @@ fn measure(fdm: &mut Fdm, frames: u32) -> (u64, u64) {
 /// `simulation/do_simple_trim`.
 #[cfg(test)]
 const TRIMMED: [(&str, &str); 10] = [
-    ("derived", "scripts/c1722.xml"),
-    ("derived", "scripts/c172_cruise_8K.xml"),
-    ("derived", "scripts/c172_cross_wind.xml"),
-    ("derived", "scripts/c172_head_wind.xml"),
-    ("derived", "scripts/c172_elevator_doublet.xml"),
+    ("inputs", "scripts/c1722.xml"),
+    ("inputs", "scripts/c172_cruise_8K.xml"),
+    ("inputs", "scripts/c172_cross_wind.xml"),
+    ("inputs", "scripts/c172_head_wind.xml"),
+    ("inputs", "scripts/c172_elevator_doublet.xml"),
     ("inputs", "scripts/p51d_tail_wind.xml"),
     ("inputs", "scripts/Short_S23_2.xml"),
     ("inputs", "scripts/Short_S23_3.xml"),
@@ -166,18 +166,6 @@ fn measure_scripts(resolver: &FileResolver, report: &mut Vec<(String, u32, (u64,
     // Test_F450_Launch's brushless motors lift the quadcopter off.
     let scenarios = FileResolver::new(oracle_dir().join("scenarios"));
     let derived = FileResolver::new(oracle_dir().join("derived"));
-    let mut fdm = Fdm::new().unwrap();
-    fdm.load_model(&derived, "aircraft", oracle::derived::piston::NOISE0)
-        .unwrap();
-    for (property, value) in oracle::bench::AIRBORNE_IC {
-        fdm.set_property(property, value).unwrap();
-    }
-    fdm.run_ic().unwrap();
-    report.push((
-        format!("aircraft {}", oracle::derived::piston::NOISE0),
-        FRAMES,
-        measure(&mut fdm, FRAMES),
-    ));
     for (resolver, script, frames) in [
         (resolver, "scripts/ball_orbit_phase.xml", 3000),
         (resolver, "scripts/ball.xml", FRAMES),
