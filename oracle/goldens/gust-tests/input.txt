@@ -1,0 +1,230 @@
+# JSBSim's gust tests, driven as their Python counterparts drive them.
+#
+# TestGustReset.test_gust_reset: c172_cruise_8K (the c172x, its
+# autopilot's roll sensor noisy) to 15.5 s with the executive seeded 0,
+# then reseeded 0 and reset (mode 1) and run to 15.5 s again: both
+# halves must match. The test compares output.xml's CSV files; here the
+# watched properties stand for them, velocities/pi-deg_sec being the
+# c172x output directive's function, cached when it would print.
+paths ../../inputs aircraft systems
+new
+watch simulation/sim-time-sec simulation/run_id atmosphere/total-wind-north-fps atmosphere/total-wind-east-fps atmosphere/total-wind-down-fps fcs/attitude/sensor/phi-rad attitude/phi-rad attitude/theta-rad position/h-sl-ft velocities/vc-kts velocities/pi-deg_sec propulsion/engine/propeller-rpm
+script scripts/c172_cruise_8K.xml
+set simulation/randomseed 0
+runic
+until 0.5
+until 1
+until 1.5
+until 2
+until 2.5
+until 3
+until 3.5
+until 4
+until 4.5
+until 5
+until 5.5
+until 6
+until 6.5
+until 7
+until 7.5
+until 8
+until 8.5
+until 9
+until 9.5
+until 10
+until 10.5
+until 11
+until 11.5
+until 12
+until 12.5
+until 13
+until 13.5
+until 14
+until 14.5
+until 15
+until 15.5
+set simulation/randomseed 0
+set simulation/reset 1
+until 0.5
+until 1
+until 1.5
+until 2
+until 2.5
+until 3
+until 3.5
+until 4
+until 4.5
+until 5
+until 5.5
+until 6
+until 6.5
+until 7
+until 7.5
+until 8
+until 8.5
+until 9
+until 9.5
+until 10
+until 10.5
+until 11
+until 11.5
+until 12
+until 12.5
+until 13
+until 13.5
+until 14
+until 14.5
+until 15
+until 15.5
+#
+# TestTurbulenceGustStop: a steady wind of (5, 6, 7) ft/s, then a cosine
+# gust, a user gust or Milspec turbulence that stops; the total wind must
+# return to the steady wind, on the A4 trimmed at 20000 ft and 250 kt.
+# testCosineGust
+new
+watch simulation/sim-time-sec atmosphere/total-wind-north-fps atmosphere/total-wind-east-fps atmosphere/total-wind-down-fps atmosphere/turb-north-fps atmosphere/turb-east-fps atmosphere/turb-down-fps atmosphere/p-turb-rad_sec atmosphere/q-turb-rad_sec atmosphere/r-turb-rad_sec position/h-sl-ft velocities/vc-kts
+model A4
+set propulsion/engine[0]/set-running 1
+set ic/h-sl-ft 20000
+set ic/vc-kts 250
+set ic/gamma-deg 0
+runic
+set simulation/do_simple_trim 1
+set atmosphere/wind-north-fps 5
+set atmosphere/wind-east-fps 6
+set atmosphere/wind-down-fps 7
+set atmosphere/cosine-gust/startup-duration-sec 5
+set atmosphere/cosine-gust/steady-duration-sec 1
+set atmosphere/cosine-gust/end-duration-sec 5
+set atmosphere/cosine-gust/magnitude-ft_sec 30
+set atmosphere/cosine-gust/frame 2
+set atmosphere/cosine-gust/X-velocity-ft_sec -1
+set atmosphere/cosine-gust/Y-velocity-ft_sec -0.5
+set atmosphere/cosine-gust/Z-velocity-ft_sec 0
+set atmosphere/cosine-gust/start 1
+run 121
+run 120
+run 120
+run 120
+run 119
+run 120
+run 120
+run 120
+run 120
+run 120
+run 120
+run 121
+run 120
+run 120
+run 120
+# testGust
+new
+watch simulation/sim-time-sec atmosphere/total-wind-north-fps atmosphere/total-wind-east-fps atmosphere/total-wind-down-fps atmosphere/turb-north-fps atmosphere/turb-east-fps atmosphere/turb-down-fps atmosphere/p-turb-rad_sec atmosphere/q-turb-rad_sec atmosphere/r-turb-rad_sec position/h-sl-ft velocities/vc-kts
+model A4
+set propulsion/engine[0]/set-running 1
+set ic/h-sl-ft 20000
+set ic/vc-kts 250
+set ic/gamma-deg 0
+runic
+set simulation/do_simple_trim 1
+set atmosphere/wind-north-fps 5
+set atmosphere/wind-east-fps 6
+set atmosphere/wind-down-fps 7
+set atmosphere/gust-north-fps 7
+set atmosphere/gust-east-fps 8
+set atmosphere/gust-down-fps 9
+run 1801
+set atmosphere/gust-north-fps 0
+set atmosphere/gust-east-fps 0
+set atmosphere/gust-down-fps 0
+run 1
+# testTurbulence
+new
+watch simulation/sim-time-sec atmosphere/total-wind-north-fps atmosphere/total-wind-east-fps atmosphere/total-wind-down-fps atmosphere/turb-north-fps atmosphere/turb-east-fps atmosphere/turb-down-fps atmosphere/p-turb-rad_sec atmosphere/q-turb-rad_sec atmosphere/r-turb-rad_sec position/h-sl-ft velocities/vc-kts
+model A4
+set propulsion/engine[0]/set-running 1
+set ic/h-sl-ft 20000
+set ic/vc-kts 250
+set ic/gamma-deg 0
+runic
+set simulation/do_simple_trim 1
+set atmosphere/wind-north-fps 5
+set atmosphere/wind-east-fps 6
+set atmosphere/wind-down-fps 7
+set atmosphere/turb-type 3
+set atmosphere/turbulence/milspec/windspeed_at_20ft_AGL-fps 75
+set atmosphere/turbulence/milspec/severity 6
+run 121
+run 120
+run 120
+run 120
+run 119
+run 120
+run 120
+run 120
+run 120
+run 120
+run 120
+run 121
+run 120
+run 120
+run 120
+set atmosphere/turb-type 0
+run 1
+# testTurbulenceRates
+new
+watch simulation/sim-time-sec atmosphere/total-wind-north-fps atmosphere/total-wind-east-fps atmosphere/total-wind-down-fps atmosphere/turb-north-fps atmosphere/turb-east-fps atmosphere/turb-down-fps atmosphere/p-turb-rad_sec atmosphere/q-turb-rad_sec atmosphere/r-turb-rad_sec position/h-sl-ft velocities/vc-kts
+model A4
+set propulsion/engine[0]/set-running 1
+set ic/h-sl-ft 20000
+set ic/vc-kts 250
+set ic/gamma-deg 0
+runic
+set simulation/do_simple_trim 1
+set atmosphere/wind-north-fps 5
+set atmosphere/wind-east-fps 6
+set atmosphere/wind-down-fps 7
+set atmosphere/turb-type 3
+set atmosphere/turbulence/milspec/windspeed_at_20ft_AGL-fps 75
+set atmosphere/turbulence/milspec/severity 6
+run 121
+set atmosphere/turb-type 2
+run 1
+set atmosphere/turb-type 3
+set atmosphere/turbulence/milspec/windspeed_at_20ft_AGL-fps 75
+set atmosphere/turbulence/milspec/severity 6
+run 121
+set atmosphere/turb-gain 0
+set atmosphere/turb-type 2
+run 1
+set atmosphere/turb-type 3
+set atmosphere/turbulence/milspec/windspeed_at_20ft_AGL-fps 75
+set atmosphere/turbulence/milspec/severity 6
+run 121
+set atmosphere/turb-type 0
+run 1
+set atmosphere/turb-type 3
+set atmosphere/turbulence/milspec/windspeed_at_20ft_AGL-fps 75
+set atmosphere/turbulence/milspec/severity 6
+run 121
+set atmosphere/turb-type 1
+run 1
+# testTurbulenceReset
+new
+watch simulation/sim-time-sec atmosphere/total-wind-north-fps atmosphere/total-wind-east-fps atmosphere/total-wind-down-fps atmosphere/turb-north-fps atmosphere/turb-east-fps atmosphere/turb-down-fps atmosphere/p-turb-rad_sec atmosphere/q-turb-rad_sec atmosphere/r-turb-rad_sec position/h-sl-ft velocities/vc-kts
+model A4
+set propulsion/engine[0]/set-running 1
+set ic/h-sl-ft 20000
+set ic/vc-kts 250
+set ic/gamma-deg 0
+runic
+set simulation/do_simple_trim 1
+set atmosphere/wind-north-fps 5
+set atmosphere/wind-east-fps 6
+set atmosphere/wind-down-fps 7
+set atmosphere/turb-type 3
+set atmosphere/turbulence/milspec/windspeed_at_20ft_AGL-fps 75
+set atmosphere/turbulence/milspec/severity 6
+run 121
+set simulation/reset 2
+print

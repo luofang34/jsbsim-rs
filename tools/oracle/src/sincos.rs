@@ -136,6 +136,7 @@ pub const CASES: &[&str] = &[
     "gear_rover_retract",
     "gear_rover_taxi",
     "geodesic",
+    "gust-tests",
     "initial-condition",
     "mass-balance",
     "math",

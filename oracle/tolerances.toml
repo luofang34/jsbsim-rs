@@ -4860,7 +4860,6 @@ property = "tiny/s"
 abs = 3.2e-8
 rel = 0.0
 reason = "Distances of 1e-10 to 1e-6 rad (up to 13.5 ft): a last-ulp difference of libm's sin, cos, hypot and atan2 in the ported inverse, or of the start point's derived longitude and latitude, moves a near-zero distance by a few ulps of the ECEF position; bounded absolutely, as a relative bound overstates it near zero; observed max 3.1e-9 ft (9.6e-10 m), bound 10x that."
-
 [[tolerance]]
 case = "geodesic"
 property = "tiny/psi"
@@ -30611,3 +30610,129 @@ property = "*/velocities/vc-kts"
 abs = 0.044
 rel = 0.0
 reason = "velocities/vc-kts: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret); 60 s of free flight in turbulence, whose filters take their time constants from the airspeed, and the A4's trim carry those digits into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical, trim iterations included. Observed max 0.0044; bound 10x that."
+
+[[tolerance]]
+case = "gust-tests"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: seeds, trim iteration counts and every value not listed below; the tags listed differ."
+
+[[tolerance]]
+case = "gust-tests"
+property = "*/atmosphere/p-turb-rad_sec"
+abs = 2.8e-06
+rel = 0.0
+reason = "atmosphere/p-turb-rad_sec: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret): the cosine gust profile, the Dryden filters and the normal deviates of the c172x roll sensor's noise, carried through the trims and the closed loops into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 2.8e-07; bound 10x that."
+
+[[tolerance]]
+case = "gust-tests"
+property = "*/atmosphere/q-turb-rad_sec"
+abs = 3.5e-06
+rel = 0.0
+reason = "atmosphere/q-turb-rad_sec: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret): the cosine gust profile, the Dryden filters and the normal deviates of the c172x roll sensor's noise, carried through the trims and the closed loops into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 3.5e-07; bound 10x that."
+
+[[tolerance]]
+case = "gust-tests"
+property = "*/atmosphere/r-turb-rad_sec"
+abs = 5.8e-06
+rel = 0.0
+reason = "atmosphere/r-turb-rad_sec: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret): the cosine gust profile, the Dryden filters and the normal deviates of the c172x roll sensor's noise, carried through the trims and the closed loops into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 5.8e-07; bound 10x that."
+
+[[tolerance]]
+case = "gust-tests"
+property = "*/atmosphere/total-wind-down-fps"
+abs = 1.6e-05
+rel = 0.0
+reason = "atmosphere/total-wind-down-fps: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret): the cosine gust profile, the Dryden filters and the normal deviates of the c172x roll sensor's noise, carried through the trims and the closed loops into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 1.6e-06; bound 10x that."
+
+[[tolerance]]
+case = "gust-tests"
+property = "*/atmosphere/total-wind-east-fps"
+abs = 1.7e-05
+rel = 0.0
+reason = "atmosphere/total-wind-east-fps: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret): the cosine gust profile, the Dryden filters and the normal deviates of the c172x roll sensor's noise, carried through the trims and the closed loops into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 1.7e-06; bound 10x that."
+
+[[tolerance]]
+case = "gust-tests"
+property = "*/atmosphere/total-wind-north-fps"
+abs = 5.3e-06
+rel = 0.0
+reason = "atmosphere/total-wind-north-fps: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret): the cosine gust profile, the Dryden filters and the normal deviates of the c172x roll sensor's noise, carried through the trims and the closed loops into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 5.3e-07; bound 10x that."
+
+[[tolerance]]
+case = "gust-tests"
+property = "*/atmosphere/turb-down-fps"
+abs = 1.6e-05
+rel = 0.0
+reason = "atmosphere/turb-down-fps: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret): the cosine gust profile, the Dryden filters and the normal deviates of the c172x roll sensor's noise, carried through the trims and the closed loops into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 1.6e-06; bound 10x that."
+
+[[tolerance]]
+case = "gust-tests"
+property = "*/atmosphere/turb-east-fps"
+abs = 1.7e-05
+rel = 0.0
+reason = "atmosphere/turb-east-fps: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret): the cosine gust profile, the Dryden filters and the normal deviates of the c172x roll sensor's noise, carried through the trims and the closed loops into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 1.7e-06; bound 10x that."
+
+[[tolerance]]
+case = "gust-tests"
+property = "*/atmosphere/turb-north-fps"
+abs = 5.3e-06
+rel = 0.0
+reason = "atmosphere/turb-north-fps: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret): the cosine gust profile, the Dryden filters and the normal deviates of the c172x roll sensor's noise, carried through the trims and the closed loops into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 5.3e-07; bound 10x that."
+
+[[tolerance]]
+case = "gust-tests"
+property = "*/attitude/phi-rad"
+abs = 1.3e-13
+rel = 0.0
+reason = "attitude/phi-rad: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret): the cosine gust profile, the Dryden filters and the normal deviates of the c172x roll sensor's noise, carried through the trims and the closed loops into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 1.3e-14; bound 10x that."
+
+[[tolerance]]
+case = "gust-tests"
+property = "*/attitude/theta-rad"
+abs = 1.3e-14
+rel = 0.0
+reason = "attitude/theta-rad: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret): the cosine gust profile, the Dryden filters and the normal deviates of the c172x roll sensor's noise, carried through the trims and the closed loops into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 1.3e-15; bound 10x that."
+
+[[tolerance]]
+case = "gust-tests"
+property = "*/control"
+abs = 3.3e-14
+rel = 0.0
+reason = "control: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret): the cosine gust profile, the Dryden filters and the normal deviates of the c172x roll sensor's noise, carried through the trims and the closed loops into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 3.3e-15; bound 10x that."
+
+[[tolerance]]
+case = "gust-tests"
+property = "*/position/h-sl-ft"
+abs = 0.009
+rel = 0.0
+reason = "position/h-sl-ft: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret): the cosine gust profile, the Dryden filters and the normal deviates of the c172x roll sensor's noise, carried through the trims and the closed loops into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 0.0009; bound 10x that."
+
+[[tolerance]]
+case = "gust-tests"
+property = "*/propulsion/engine/propeller-rpm"
+abs = 4.5e-11
+rel = 0.0
+reason = "propulsion/engine/propeller-rpm: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret): the cosine gust profile, the Dryden filters and the normal deviates of the c172x roll sensor's noise, carried through the trims and the closed loops into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 4.5e-12; bound 10x that."
+
+[[tolerance]]
+case = "gust-tests"
+property = "*/state"
+abs = 5e-13
+rel = 0.0
+reason = "state: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret): the cosine gust profile, the Dryden filters and the normal deviates of the c172x roll sensor's noise, carried through the trims and the closed loops into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 5e-14; bound 10x that."
+
+[[tolerance]]
+case = "gust-tests"
+property = "*/velocities/pi-deg_sec"
+abs = 1.8e-11
+rel = 0.0
+reason = "velocities/pi-deg_sec: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret): the cosine gust profile, the Dryden filters and the normal deviates of the c172x roll sensor's noise, carried through the trims and the closed loops into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 1.8e-12; bound 10x that."
+
+[[tolerance]]
+case = "gust-tests"
+property = "*/velocities/vc-kts"
+abs = 0.00031
+rel = 0.0
+reason = "velocities/vc-kts: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret): the cosine gust profile, the Dryden filters and the normal deviates of the c172x roll sensor's noise, carried through the trims and the closed loops into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 3.1e-05; bound 10x that."
