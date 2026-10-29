@@ -61,7 +61,7 @@ pub(super) fn ccor2(alt: f64, r: f64, h1: f64, zh: f64, h2: f64) -> f64 {
 
 /// `scalh`: scale height at `alt` of molecular weight `xm` at `temp`.
 pub(super) fn scalh(alt: f64, xm: f64, temp: f64, grav: Gravity) -> f64 {
-    let mut g = grav.gsurf / (libm::pow(1.0 + alt / grav.re, 2.0));
+    let mut g = grav.gsurf / (crate::elementary::pow(1.0 + alt / grav.re, 2.0));
     g = RGAS * temp / (g * xm);
     g
 }
@@ -91,7 +91,7 @@ pub(super) fn dnet(mut dd: f64, dm: f64, zhm: f64, xmm: f64, xm: f64) -> f64 {
     if ylog > 10.0 {
         return dm;
     }
-    dd * libm::pow(1.0 + crate::elementary::exp(ylog), 1.0 / a)
+    dd * crate::elementary::pow(1.0 + crate::elementary::exp(ylog), 1.0 / a)
 }
 
 /// `zeta`: geopotential altitude difference of `zz` from `zl`.
@@ -125,7 +125,8 @@ fn densm_segment<const N: usize>(
         *y = 1.0 / tn;
     }
     let yd1 = -nodes.tg[0] / (t1 * t1) * zgdif;
-    let yd2 = -nodes.tg[1] / (t2 * t2) * zgdif * (libm::pow((re + z2) / (re + z1), 2.0));
+    let yd2 =
+        -nodes.tg[1] / (t2 * t2) * zgdif * (crate::elementary::pow((re + z2) / (re + z1), 2.0));
 
     // Spline coefficients, then temperature at altitude.
     let y2out = spline(&xs, &ys, yd1, yd2);
@@ -135,7 +136,7 @@ fn densm_segment<const N: usize>(
     if xm == 0.0 {
         return density;
     }
-    let glb = grav.gsurf / (libm::pow(1.0 + z1 / re, 2.0));
+    let glb = grav.gsurf / (crate::elementary::pow(1.0 + z1 / re, 2.0));
     let gamm = xm * glb * zgdif / RGAS;
 
     // Integrated temperature profile, then density at altitude.
@@ -212,7 +213,7 @@ fn densu_below_za(th: &Thermo, alt: f64, ta: f64, tz: &mut f64) -> BelowZa {
     let re = th.grav.re;
     let za = th.nodes.z[0];
     // Temperature gradient at za from the Bates profile.
-    let dta = (th.tinf - ta) * th.s2 * libm::pow((re + th.zlb) / (re + za), 2.0);
+    let dta = (th.tinf - ta) * th.s2 * crate::elementary::pow((re + th.zlb) / (re + za), 2.0);
     let mut tn1 = th.nodes.t;
     let mut tgn1 = th.nodes.tg;
     tgn1[0] = dta;
@@ -234,7 +235,7 @@ fn densu_below_za(th: &Thermo, alt: f64, ta: f64, tz: &mut f64) -> BelowZa {
     }
     // End node derivatives.
     let yd1 = -tgn1[0] / (t1 * t1) * zgdif;
-    let yd2 = -tgn1[1] / (t2 * t2) * zgdif * libm::pow((re + z2) / (re + z1), 2.0);
+    let yd2 = -tgn1[1] / (t2 * t2) * zgdif * crate::elementary::pow((re + z2) / (re + z1), 2.0);
     let y2out = spline(&xs, &ys, yd1, yd2);
     let x = zg / zgdif;
     let y = splint(&xs, &ys, &y2out, x);
@@ -278,7 +279,7 @@ pub(super) fn densu(th: &Thermo, alt: f64, dlb: f64, xm: f64, alpha: f64, tz: &m
     }
 
     // Density above za.
-    let mut glb = th.grav.gsurf / libm::pow(1.0 + th.zlb / re, 2.0);
+    let mut glb = th.grav.gsurf / crate::elementary::pow(1.0 + th.zlb / re, 2.0);
     let gamma = xm * glb / (s2 * RGAS * tinf);
     let mut expl = crate::elementary::exp(-s2 * gamma * zg2);
     if expl > 50.0 {
@@ -287,7 +288,7 @@ pub(super) fn densu(th: &Thermo, alt: f64, dlb: f64, xm: f64, alpha: f64, tz: &m
     if tt <= 0.0 {
         expl = 50.0;
     }
-    let densa = dlb * libm::pow(tlb / tt, 1.0 + alpha + gamma) * expl;
+    let densa = dlb * crate::elementary::pow(tlb / tt, 1.0 + alpha + gamma) * expl;
     densu_temp = densa;
     if alt >= za {
         return densu_temp;
@@ -298,7 +299,7 @@ pub(super) fn densu(th: &Thermo, alt: f64, dlb: f64, xm: f64, alpha: f64, tz: &m
     let (z1, zgdif, t1) = below
         .as_ref()
         .map_or((0.0, 0.0, 0.0), |b| (b.z1, b.zgdif, b.t1));
-    glb = th.grav.gsurf / libm::pow(1.0 + z1 / re, 2.0);
+    glb = th.grav.gsurf / crate::elementary::pow(1.0 + z1 / re, 2.0);
     let gamm = xm * glb * zgdif / RGAS;
     // Integrated spline temperatures.
     let yi = below
@@ -311,5 +312,5 @@ pub(super) fn densu(th: &Thermo, alt: f64, dlb: f64, xm: f64, alpha: f64, tz: &m
     if *tz <= 0.0 {
         expl = 50.0;
     }
-    densu_temp * libm::pow(t1 / *tz, 1.0 + alpha) * crate::elementary::exp(-expl)
+    densu_temp * crate::elementary::pow(t1 / *tz, 1.0 + alpha) * crate::elementary::exp(-expl)
 }

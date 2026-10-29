@@ -239,7 +239,7 @@ fn libm_sincos_is_sin_and_cos_bit_for_bit() {
         neighbours(f64::from(k) * core::f64::consts::FRAC_PI_2, 16);
     }
     for e in 0..=300 {
-        let x = libm::pow(10.0, f64::from(e));
+        let x = crate::elementary::pow(10.0, f64::from(e));
         neighbours(x, 8);
         neighbours(-x, 8);
     }

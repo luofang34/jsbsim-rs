@@ -127,9 +127,9 @@ fn sqr(x: f64) -> f64 {
 /// blended between 1000 and 2000 ft into the high altitude model).
 fn scales(h: f64, windspeed_20ft: f64, sigma: impl Fn() -> f64) -> [f64; 4] {
     if h <= 1000.0 {
-        let l_u = h / libm::pow(0.177 + 0.000823 * h, 1.2);
+        let l_u = h / crate::elementary::pow(0.177 + 0.000823 * h, 1.2);
         let sig_w = 0.1 * windspeed_20ft;
-        let sig_u = sig_w / libm::pow(0.177 + 0.000823 * h, 0.4);
+        let sig_u = sig_w / crate::elementary::pow(0.177 + 0.000823 * h, 0.4);
         [l_u, h, sig_u, sig_w]
     } else if h <= 2000.0 {
         let l = 1000.0 + (h - 1000.0) / 1000.0 * 750.0;

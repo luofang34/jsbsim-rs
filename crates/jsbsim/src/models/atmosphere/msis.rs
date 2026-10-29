@@ -161,8 +161,8 @@ impl Atmosphere {
         self.sound_speed = (SH_RATIO * self.reng * self.temperature).sqrt();
         self.pressure_altitude = self.calculate_pressure_altitude(self.pressure, altitude);
         self.density_altitude = self.calculate_density_altitude(self.density, altitude);
-        self.viscosity =
-            BETA * libm::pow(self.temperature, 1.5) / (SUTHERLAND_CONSTANT + self.temperature);
+        self.viscosity = BETA * crate::elementary::pow(self.temperature, 1.5)
+            / (SUTHERLAND_CONSTANT + self.temperature);
         self.kinematic_viscosity = self.viscosity / self.density;
     }
 

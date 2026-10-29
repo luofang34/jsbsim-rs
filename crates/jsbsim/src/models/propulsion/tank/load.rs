@@ -47,7 +47,7 @@ impl Tank {
             tank.temperature = fahrenheit_to_celsius(tank.temperature);
             tank.initial.temperature = tank.temperature;
         }
-        tank.area = 40.0 * libm::pow(tank.capacity / 1975.0, 0.666666667);
+        tank.area = 40.0 * crate::elementary::pow(tank.capacity / 1975.0, 0.666666667);
         if el.find_element("type").is_some() {
             let name = el.find_element_value("type");
             if !name.is_empty() {

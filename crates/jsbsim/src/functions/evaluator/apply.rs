@@ -133,7 +133,7 @@ impl<G: GetterSource> Evaluator<'_, G> {
             }
             Op::Pow => {
                 let x = self.p(f, 0)?;
-                libm::pow(x, self.p(f, 1)?)
+                crate::elementary::pow(x, self.p(f, 1)?)
             }
             Op::Atan2 => {
                 let y = self.p(f, 0)?;

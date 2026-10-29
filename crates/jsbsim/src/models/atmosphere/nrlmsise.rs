@@ -181,7 +181,7 @@ fn middle_nodes(input: &Input, ctx: &mut Context) {
         * (1.0 + sw[20] * sw[22] * globe::glob7s(&PMA[9], input, ctx))
         * ctx.n2.t[3]
         * ctx.n2.t[3]
-        / (libm::pow(PMA[2][0] * PAVGM[2], 2.0));
+        / (crate::elementary::pow(PMA[2][0] * PAVGM[2], 2.0));
     ctx.n3.t[0] = ctx.n2.t[3];
 
     if input.alt <= ZN3[0] {
@@ -195,7 +195,7 @@ fn middle_nodes(input: &Input, ctx: &mut Context) {
             * (1.0 + sw[22] * globe::glob7s(&PMA[7], input, ctx))
             * ctx.n3.t[4]
             * ctx.n3.t[4]
-            / (libm::pow(PMA[6][0] * PAVGM[6], 2.0));
+            / (crate::elementary::pow(PMA[6][0] * PAVGM[6], 2.0));
     }
 }
 

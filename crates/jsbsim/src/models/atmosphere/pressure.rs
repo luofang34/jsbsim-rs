@@ -22,7 +22,7 @@ fn layer_pressure(pb: f64, tmb: f64, lmb: f64, delta_h: f64) -> f64 {
     if lmb != 0.0 {
         let exp = G0 / (RDRY * lmb);
         let factor = tmb / (tmb + lmb * delta_h);
-        pb * libm::pow(factor, exp)
+        pb * crate::elementary::pow(factor, exp)
     } else {
         pb * crate::elementary::exp(-G0 * delta_h / (RDRY * tmb))
     }
@@ -158,7 +158,7 @@ impl Atmosphere {
         // The barometric formula for density, solved for H.
         let density_altitude = if lmb != 0.0 {
             let exp = -1.0 / (1.0 + G0 / (RDRY * lmb));
-            hb + (tmb / lmb) * (libm::pow(density / pb, exp) - 1.0)
+            hb + (tmb / lmb) * (crate::elementary::pow(density / pb, exp) - 1.0)
         } else {
             let factor = -RDRY * tmb / G0;
             hb + factor * libm::log(density / pb)
@@ -188,7 +188,7 @@ impl Atmosphere {
         // Equations 33(a) and 33(b) solved for H.
         let pressure_altitude = if lmb != 0.00 {
             let exp = -RDRY * lmb / G0;
-            hb + (tmb / lmb) * (libm::pow(pressure / pb, exp) - 1.0)
+            hb + (tmb / lmb) * (crate::elementary::pow(pressure / pb, exp) - 1.0)
         } else {
             let factor = -RDRY * tmb / G0;
             hb + factor * libm::log(pressure / pb)

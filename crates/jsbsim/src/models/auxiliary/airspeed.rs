@@ -44,11 +44,12 @@ pub fn pitot_total_pressure(mach: f64, pressure: f64) -> f64 {
         return pressure;
     }
     if mach < 1.0 {
-        pressure * libm::pow(1.0 + a * mach * mach, b)
+        pressure * crate::elementary::pow(1.0 + a * mach * mach, b)
     } else {
         // The denominator vanishes near Mach 0.38, well inside the
         // subsonic branch.
-        pressure * PITOT_COEFF * libm::pow(mach, c) / libm::pow(c * mach * mach - 1.0, d)
+        pressure * PITOT_COEFF * crate::elementary::pow(mach, c)
+            / crate::elementary::pow(c * mach * mach - 1.0, d)
     }
 }
 
@@ -62,10 +63,11 @@ pub fn mach_from_impact_pressure(qc: f64, pressure: f64) -> f64 {
     let d = 0.5 * a;
 
     let big_a = qc / pressure + 1.0;
-    let mut m = (a * (libm::pow(big_a, b) - 1.0)).sqrt();
+    let mut m = (a * (crate::elementary::pow(big_a, b) - 1.0)).sqrt();
     if m > 1.0 {
         for _ in 0..10 {
-            m = RAYLEIGH_COEFF * (big_a * libm::pow(1.0 - 1.0 / (c * m * m), d)).sqrt();
+            m = RAYLEIGH_COEFF
+                * (big_a * crate::elementary::pow(1.0 - 1.0 / (c * m * m), d)).sqrt();
         }
     }
     m

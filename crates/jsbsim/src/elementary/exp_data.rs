@@ -29,7 +29,7 @@
 //   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //   SOFTWARE.
 //
-//! The constants and the 2^(k/N) table of `exp`
+//! The constants and the 2^(k/N) table that `exp` and `pow` share
 //! (optimized-routines' `__exp_data` for N = 128, `EXP_POLY_ORDER` 5, not
 //! `EXP_POLY_WIDE`, not `EXP_USE_TOINT_NARROW`), each written as its bits.
 

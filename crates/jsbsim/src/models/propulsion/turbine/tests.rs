@@ -69,7 +69,10 @@ fn the_engine_functions_are_renamed_under_the_engine_and_looked_up() {
             .unwrap()
             .is_some()
     );
-    assert_eq!(t.config.idle_ff, libm::pow(10000.0, 0.2) * 107.0);
+    assert_eq!(
+        t.config.idle_ff,
+        crate::elementary::pow(10000.0, 0.2) * 107.0
+    );
 }
 
 #[test]

@@ -33,7 +33,7 @@ fn g0(a: f64, p24: f64, p25: f64) -> f64 {
 
 /// Eq. A24c, `sumex`.
 fn sumex(ex: f64) -> f64 {
-    1.0 + (1.0 - libm::pow(ex, 19.0)) / (1.0 - ex) * libm::pow(ex, 0.5)
+    1.0 + (1.0 - crate::elementary::pow(ex, 19.0)) / (1.0 - ex) * crate::elementary::pow(ex, 0.5)
 }
 
 /// Eq. A24a, `sg0`: the weighted 3-hour ap history.
@@ -42,9 +42,10 @@ fn sg0(ex: f64, p24: f64, p25: f64, ap: &[f64; 7]) -> f64 {
     (g(ap[1])
         + (g(ap[2]) * ex
             + g(ap[3]) * ex * ex
-            + g(ap[4]) * libm::pow(ex, 3.0)
-            + (g(ap[5]) * libm::pow(ex, 4.0) + g(ap[6]) * libm::pow(ex, 12.0))
-                * (1.0 - libm::pow(ex, 8.0))
+            + g(ap[4]) * crate::elementary::pow(ex, 3.0)
+            + (g(ap[5]) * crate::elementary::pow(ex, 4.0)
+                + g(ap[6]) * crate::elementary::pow(ex, 12.0))
+                * (1.0 - crate::elementary::pow(ex, 8.0))
                 / (1.0 - ex)))
         / sumex(ex)
 }
@@ -136,7 +137,7 @@ pub(super) fn globe7(p: &[f64; 150], input: &Input, ctx: &mut Context) -> f64 {
     t[0] = p[19] * df * (1.0 + p[59] * dfa)
         + p[20] * df * df
         + p[21] * dfa
-        + p[29] * libm::pow(dfa, 2.0);
+        + p[29] * crate::elementary::pow(dfa, 2.0);
     let f1 = 1.0 + (p[47] * dfa + p[19] * df + p[20] * df * df) * swc[1];
     let f2 = 1.0 + (p[49] * dfa + p[19] * df + p[20] * df * df) * swc[1];
 

@@ -156,14 +156,14 @@ fn lower_thermosphere_nodes(input: &Input, ctx: &mut Context) {
             * (1.0 + sw[18] * sw[20] * glob7s(&PMA[8], input, ctx))
             * ctx.n1.t[4]
             * ctx.n1.t[4]
-            / (libm::pow(PTM[4] * PTL[3][0], 2.0));
+            / (crate::elementary::pow(PTM[4] * PTL[3][0], 2.0));
     } else {
         ctx.n1.t[1] = PTM[6] * PTL[0][0];
         ctx.n1.t[2] = PTM[2] * PTL[1][0];
         ctx.n1.t[3] = PTM[7] * PTL[2][0];
         ctx.n1.t[4] = PTM[4] * PTL[3][0];
-        ctx.n1.tg[1] =
-            PTM[8] * PMA[8][0] * ctx.n1.t[4] * ctx.n1.t[4] / (libm::pow(PTM[4] * PTL[3][0], 2.0));
+        ctx.n1.tg[1] = PTM[8] * PMA[8][0] * ctx.n1.t[4] * ctx.n1.t[4]
+            / (crate::elementary::pow(PTM[4] * PTL[3][0], 2.0));
     }
 }
 

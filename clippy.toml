@@ -9,6 +9,7 @@ disallowed-types = [
 ]
 disallowed-methods = [
     { path = "libm::exp", reason = "use jsbsim::elementary::exp, which matches the platform libraries' speed" },
+    { path = "libm::pow", reason = "use jsbsim::elementary::pow, which matches the platform libraries' speed" },
 ]
 disallowed-macros = [
     { path = "std::println", reason = "use tracing" },

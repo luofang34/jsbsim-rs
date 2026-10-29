@@ -104,7 +104,7 @@ fn read_config(el: &Element) -> Result<TurbineConfig, Error> {
         injected: int("injected")?,
         injection_time: get("injection-time", 30.0)?,
         disable_windmill,
-        idle_ff: libm::pow(mil_thrust, 0.2) * 107.0,
+        idle_ff: crate::elementary::pow(mil_thrust, 0.2) * 107.0,
     })
 }
 

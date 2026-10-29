@@ -147,7 +147,7 @@ impl Piston {
             let gamma = 1.414;
             let n_stage = 1.0;
             b.loss_hp = ((n_stage * s.tmap * s.v_dot_air * gamma) / (gamma - 1.0))
-                * (libm::pow(s.map / s.tmap, (gamma - 1.0) / (n_stage * gamma)) - 1.0)
+                * (crate::elementary::pow(s.map / s.tmap, (gamma - 1.0) / (n_stage * gamma)) - 1.0)
                 * b.loss_factor
                 / 745.7;
         } else {

@@ -17,6 +17,10 @@
 mod exp;
 #[cfg(not(feature = "platform-libm"))]
 mod exp_data;
+#[cfg(not(feature = "platform-libm"))]
+mod pow;
+#[cfg(not(feature = "platform-libm"))]
+mod pow_log_data;
 
 #[cfg(all(test, not(feature = "platform-libm")))]
 mod tests;
@@ -41,6 +45,24 @@ pub fn exp(x: f64) -> f64 {
 #[must_use]
 pub fn exp(x: f64) -> f64 {
     libm::exp(x)
+}
+
+/// x^y, within 0.54 ulp.
+#[cfg(not(feature = "platform-libm"))]
+#[inline]
+#[must_use]
+pub fn pow(x: f64, y: f64) -> f64 {
+    pow::pow(x, y)
+}
+
+/// x^y from the `libm` crate.
+#[cfg(feature = "platform-libm")]
+// Reason: forwarding to `libm` is what the platform-libm feature is for.
+#[allow(clippy::disallowed_methods)]
+#[inline]
+#[must_use]
+pub fn pow(x: f64, y: f64) -> f64 {
+    libm::pow(x, y)
 }
 
 /// Sign and exponent bits of `x`.

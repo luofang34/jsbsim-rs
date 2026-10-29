@@ -54,7 +54,7 @@ impl Propagate {
         o.periapsis_radius = o.h * o.h / (gm * (1.0 + o.eccentricity));
         o.period = if o.eccentricity < 1.0 {
             let semimajor = 0.5 * (o.apoapsis_radius + o.periapsis_radius);
-            2. * PI * libm::pow(semimajor, 1.5) / gm.sqrt()
+            2. * PI * crate::elementary::pow(semimajor, 1.5) / gm.sqrt()
         } else {
             0.0
         };
