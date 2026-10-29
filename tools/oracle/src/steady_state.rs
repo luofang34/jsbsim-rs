@@ -85,6 +85,9 @@ pub const TRIMMED: &[ScriptRun] = &[
     run("inputs", "scripts/Short_S23_3.xml", FRAMES),
     run("inputs", "scripts/Short_S23_4.xml", FRAMES),
     run("inputs", "scripts/737_cruise.xml", FRAMES),
+    // Its script ends 1.5 s after the trim, with its <input> functions
+    // running.
+    run("derived", "scripts/tripod_input.xml", 60),
 ];
 
 /// Directory under `oracle/` of the planet tripods.

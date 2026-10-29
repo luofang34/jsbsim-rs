@@ -5,8 +5,8 @@
 
 use std::path::Path;
 
-use jsbsim::FileResolver;
 use jsbsim::fdm::Fdm;
+use jsbsim::{FileResolver, LoadOptions};
 
 use crate::manifest::ScriptSpec;
 use crate::series::TIME_COLUMN;
@@ -38,19 +38,33 @@ fn port_error(e: jsbsim::Error) -> Stop {
 /// subset in `oracle/inputs`). An error part-way returns the rows sampled
 /// so far together with the error.
 pub fn run_script(root: &Path, spec: &ScriptSpec) -> (Series, Option<Stop>) {
+    run_script_with(root, spec, LoadOptions::default())
+}
+
+/// [`run_script`] with the port loading with `options`.
+pub fn run_script_with(
+    root: &Path,
+    spec: &ScriptSpec,
+    options: LoadOptions,
+) -> (Series, Option<Stop>) {
     let mut series = Series {
         columns: std::iter::once(TIME_COLUMN.to_owned())
             .chain(spec.properties.iter().cloned())
             .collect(),
         rows: Vec::new(),
     };
-    let error = sample(root, spec, &mut series).err();
+    let error = sample(root, spec, options, &mut series).err();
     (series, error)
 }
 
-fn sample(root: &Path, spec: &ScriptSpec, series: &mut Series) -> Result<(), Stop> {
+fn sample(
+    root: &Path,
+    spec: &ScriptSpec,
+    options: LoadOptions,
+    series: &mut Series,
+) -> Result<(), Stop> {
     let resolver = FileResolver::new(root);
-    let mut fdm = Fdm::new().map_err(port_error)?;
+    let mut fdm = Fdm::with_options(options).map_err(port_error)?;
     if let Some(path) = &spec.aircraft_path {
         fdm.set_aircraft_path(path);
     }

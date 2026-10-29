@@ -31,6 +31,15 @@ pub enum Error {
     /// A table, function or condition that is invalid or fails to evaluate.
     #[error(transparent)]
     Function(#[from] FunctionError),
+    /// An `<input>` whose `type` JSBSim has no input class for (`NONE`
+    /// among them), which fails the whole load in JSBSim.
+    #[error("no input type for <input type=\"{kind}\"> in {path}")]
+    UnknownInputType {
+        /// The `type` attribute as written.
+        kind: String,
+        /// Resource in which it appeared, with its line when known.
+        path: String,
+    },
     /// A model configuration JSBSim refuses to load.
     #[error("{message}")]
     Model {

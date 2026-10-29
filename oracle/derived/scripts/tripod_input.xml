@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  tripod_input.xml: the tripod standing at the North pole with its <input>
+  functions running, FGInput disabled from 0.5 s to 1 s, the input's
+  declared gain written at 1.25 s, and a ground trim at 1.5 s, whose frames
+  the inputs skip. Regenerate with `oracle derive`.
+-->
+<runscript name="tripod_input">
+  <use aircraft="tripod_input" initialize="north_pole"/>
+  <run start="0.0" end="3.0" dt="0.008333333333333333">
+    <event name="Disable">
+      <condition> simulation/sim-time-sec ge 0.5 </condition>
+      <set name="simulation/models/FGInput/enabled" value="0"/>
+    </event>
+    <event name="Enable">
+      <condition> simulation/sim-time-sec ge 1.0 </condition>
+      <set name="simulation/models/FGInput/enabled" value="1"/>
+    </event>
+    <event name="Gain">
+      <condition> simulation/sim-time-sec ge 1.25 </condition>
+      <set name="test/input/gain" value="-1.0"/>
+    </event>
+    <event name="Trim">
+      <condition> simulation/sim-time-sec ge 1.5 </condition>
+      <set name="simulation/do_simple_trim" value="2"/>
+    </event>
+  </run>
+</runscript>

@@ -167,31 +167,3 @@ fn a_reset_from_a_script_event_rearms_the_events() {
     // The third run fired the first event again.
     assert_eq!(fdm.get_property("test/fired").unwrap(), 1.0);
 }
-
-/// An `<input>` socket is refused with a typed Unsupported when loading
-/// strictly; otherwise the aircraft loads and no socket opens, as an
-/// input server nobody connects to changes nothing.
-#[test]
-fn an_input_socket_is_a_typed_unsupported_when_strict() {
-    let aircraft = r#"<fdm_config name="box">
-  <metrics/>
-  <mass_balance>
-    <ixx>10</ixx><iyy>10</iyy><izz>10</izz><emptywt>100</emptywt>
-    <location name="CG" unit="IN"><x>0</x><y>0</y><z>0</z></location>
-  </mass_balance>
-  <ground_reactions/>
-  <input port="1137"/>
-</fdm_config>"#;
-    let mut r = crate::MemoryResolver::new();
-    r.insert("aircraft/box/box.xml", aircraft);
-    let mut strict = Fdm::with_options(crate::LoadOptions { strict: true }).unwrap();
-    match strict.load_model(&r, "aircraft", "box") {
-        Err(Error::Unsupported { construct, path }) => {
-            assert_eq!(construct, "<input> (file and socket I/O)");
-            assert!(path.contains("box.xml"), "{path}");
-        }
-        other => panic!("expected Unsupported, got {other:?}"),
-    }
-    let mut lenient = Fdm::new().unwrap();
-    lenient.load_model(&r, "aircraft", "box").unwrap();
-}

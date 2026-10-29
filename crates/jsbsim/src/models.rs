@@ -14,6 +14,7 @@ pub mod fcs;
 pub mod forces;
 pub mod ground_reactions;
 pub mod inertial;
+pub mod input;
 pub mod mass_balance;
 pub mod output;
 pub mod propagate;

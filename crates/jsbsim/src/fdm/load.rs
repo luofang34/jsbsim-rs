@@ -102,6 +102,16 @@ impl Fdm {
         slot: Model,
     ) -> Result<(), Error> {
         self.read_properties(el, false, slot)?;
+        self.pre_load(el, prefix, slot)
+    }
+
+    /// `FGModelFunctions::PreLoad`: the pre-functions and templates.
+    pub(super) fn pre_load(
+        &mut self,
+        el: &Element,
+        prefix: &str,
+        slot: Model,
+    ) -> Result<(), Error> {
         for f in el.find_elements("function") {
             match f.attribute("type") {
                 "" | "pre" => {
@@ -287,32 +297,27 @@ impl Fdm {
 
     /// The `<input>` and then the `<output>` children of `document`.
     /// They describe sockets and files, which the core does not open; the
-    /// harness logs properties itself. Each `<output>` still makes its
-    /// output type and that type's properties, as `FGOutput::Load` does;
-    /// an output's `file` is looked for in `include_dir` (the script's
+    /// harness logs properties itself. Everything else they do is loaded
+    /// and run as in JSBSim, strict or not: each `<input>` makes an input
+    /// type with its declarations and functions, each `<output>` an output
+    /// type and that type's properties, as `FGOutput::Load` does. An
+    /// output's `file` is looked for in `include_dir` (the script's
     /// directory, for a script's outputs), then in the aircraft directory.
     pub(super) fn io_directives(
         &mut self,
         document: &Element,
-        loader: &DocumentLoader<'_>,
+        loader: &mut DocumentLoader<'_>,
         include_dir: Option<&str>,
     ) -> Result<(), Error> {
-        for name in ["input", "output"] {
-            for el in document.find_elements(name) {
-                if self.options.strict {
-                    return Err(Error::Unsupported {
-                        construct: format!("<{name}> (file and socket I/O)"),
-                        path: el.location().to_string(),
-                    });
-                }
-                tracing::warn!(
-                    "{}: <{name}> writes nothing: the core does no file or socket I/O",
-                    el.location()
-                );
-                if name == "output" {
-                    self.load_output(el, loader, include_dir)?;
-                }
-            }
+        for el in document.find_elements("input") {
+            self.load_input(el, loader)?;
+        }
+        for el in document.find_elements("output") {
+            tracing::info!(
+                "{}: <output> writes nothing: the core does no file or socket I/O",
+                el.location()
+            );
+            self.load_output(el, loader, include_dir)?;
         }
         Ok(())
     }

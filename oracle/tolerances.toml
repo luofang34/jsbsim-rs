@@ -34060,3 +34060,24 @@ property = "metrics/radius-ft"
 abs = 4e-12
 rel = 0.0
 reason = "metrics/radius-ft: State-affecting: Rust libm and Apple libm differ in the last digit of exp, log, pow, sin, cos and the geodetic conversions (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. Here the balloon's gas law and drag carry them into the climb; observed max 3.5e-13 (rel 8.4e-14) at t=1536.0 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_input"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the <input> functions, the frames FGInput runs and skips, and the standing tripod use the same IEEE operations in JSBSim's order; properties listed differ."
+
+[[tolerance]]
+case = "tripod_input"
+property = "attitude/phi-rad"
+abs = 2e-24
+rel = 0.0
+reason = "Output only, the listed state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm on the tripod's near-zero angles; observed max 2.0e-25 (rel 2.8e-11) at t=1.48 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_input"
+property = "attitude/theta-rad"
+abs = 7e-23
+rel = 0.0
+reason = "Output only, the listed state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm on the tripod's near-zero angles; observed max 6.6e-24 (rel 4.0e-16) at t=1.55 s; bound 10x that."

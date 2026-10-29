@@ -139,6 +139,11 @@ impl FunctionSet {
         self.exec_rng = rng;
     }
 
+    /// Loads with `options` from now on; the options it loaded with.
+    pub(crate) fn replace_options(&mut self, options: LoadOptions) -> LoadOptions {
+        std::mem::replace(&mut self.options, options)
+    }
+
     /// Something JSBSim logs and ignores: logged, or refused when strict.
     fn lenient(&self, at: &Location, message: String) -> Result<(), crate::Error> {
         if self.options.strict {

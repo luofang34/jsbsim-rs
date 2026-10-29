@@ -177,6 +177,7 @@ pub const CASES: &[&str] = &[
     "trim_westward_737",
     "tripod_ground_centered",
     "tripod_ground_eccentric",
+    "tripod_input",
     "tripod_mass_change",
     "turbine_spool_N1SpoolDown",
     "turbine_spool_N1SpoolUp",

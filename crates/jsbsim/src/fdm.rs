@@ -14,6 +14,7 @@ mod env;
 pub(crate) use env::Env;
 mod buoyancy;
 mod exec_bind;
+mod input;
 mod load;
 mod models_run;
 mod order;
@@ -39,7 +40,6 @@ use crate::models::accelerations::{self, Accelerations};
 use crate::models::aircraft::{self, Aircraft};
 use crate::models::atmosphere::Atmosphere;
 use crate::models::auxiliary::Auxiliary;
-use crate::models::forces::ForceModel;
 use crate::models::inertial::Inertial;
 use crate::models::mass_balance::MassBalance;
 use crate::models::propagate::{self, Propagate};
@@ -146,8 +146,8 @@ pub struct Models {
     pub aircraft: Aircraft,
     /// `FGAccelerations`.
     pub accelerations: Accelerations,
-    /// `FGInput`, which has no inputs in the core.
-    pub input: ForceModel,
+    /// `FGInput`, which opens no sockets in the core.
+    pub input: crate::models::input::Input,
     /// `FGOutput`, which writes no files in the core.
     pub output: crate::models::output::Output,
     /// `FGInitialCondition`, which `run_ic` applies.

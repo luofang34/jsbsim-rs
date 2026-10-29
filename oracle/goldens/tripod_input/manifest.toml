@@ -1,0 +1,14 @@
+[case]
+kind = "script"
+script = "scripts/tripod_input.xml"
+rate_hz = 120.0
+properties = ["test/input/gain", "test/input/counter", "test/input/sum", "test/input/post", "test/input/udp-counter", "simulation/models/FGInput/enabled", "simulation/trim-completed", "position/h-sl-ft", "position/h-agl-ft", "attitude/phi-rad", "attitude/theta-rad", "forces/fbz-gear-lbs", "contact/unit[0]/compression-ft", "contact/unit[1]/compression-ft", "contact/unit[2]/compression-ft"]
+inputs = "oracle/derived"
+
+[provenance]
+upstream_commit = "66f7fafc07fe13e7ede9db20873030fed2881713"
+driver = "tools/oracle/cpp"
+cxx_flags = "-ffp-contract=off"
+dt = 0.008333333333333333
+every_n_frames = 1
+rows = 362
