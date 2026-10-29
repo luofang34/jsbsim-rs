@@ -1,0 +1,84 @@
+# JSBSim's tests/TestPlanet.py, driven as it drives the FDM: the tripod
+# with a planet file included (FlightModel.include_planet_test_file) or
+# loaded afterwards (load_planet), each started with run_ic as
+# FlightModel.start does, then flown from its initial conditions; and the
+# planet radii GeographicLib refuses.
+paths ../../derived aircraft systems
+watch simulation/sim-time-sec metrics/terrain-radius accelerations/gravity-ft_sec2 atmosphere/T-R atmosphere/P-psf atmosphere/rho-slugs_ft3 atmosphere/a-fps atmosphere/T-sl-R atmosphere/P-sl-psf atmosphere/delta-T atmosphere/RH atmosphere/density-altitude atmosphere/pressure-altitude atmosphere/kinematic-viscosity-ft2_sec position/h-sl-ft position/h-agl-ft position/lat-geod-deg position/long-gc-deg velocities/u-fps velocities/w-fps velocities/vc-kts gear/wow
+# test_moon
+new
+model tripod_moon
+runic
+set ic/h-agl-ft 0.2
+set ic/long-gc-deg 0.0
+set ic/lat-geod-deg 0.0
+runic
+set ic/lat-geod-deg 90.0
+runic
+run 240
+# test_load_planet
+new
+model tripod
+runic
+planet aircraft/tripod_moon/moon.xml 0
+set ic/h-agl-ft 0.2
+set ic/long-gc-deg 0.0
+set ic/lat-geod-deg 0.0
+runic
+set ic/lat-geod-deg 90.0
+runic
+run 240
+# test_load_MSIS_atmosphere
+new
+model tripod
+runic
+planet aircraft/tripod_msis/MSIS.xml 0
+set ic/h-sl-ft 0.0
+set ic/long-gc-deg -70.0
+set ic/lat-geod-deg 60.0
+runic
+run 240
+set ic/h-sl-ft 30000.0
+set ic/vc-kts 200.0
+runic
+run 240
+# The MSIS planet included in the aircraft.
+new
+model tripod_msis
+runic
+set ic/h-sl-ft 5000.0
+set ic/long-gc-deg 2.0
+set ic/lat-geod-deg 45.0
+runic
+run 240
+# test_mars_atmosphere
+new
+model tripod_mars
+runic
+set ic/h-agl-ft 0.0
+set ic/long-gc-deg 0.0
+set ic/lat-geod-deg 0.0
+runic
+run 240
+set ic/h-agl-ft 30000.0
+set ic/vc-kts 100.0
+runic
+run 240
+# test_load_Mars_atmosphere
+new
+model tripod
+runic
+planet aircraft/tripod_mars/mars.xml 0
+set ic/h-agl-ft 0.0
+set ic/long-gc-deg 0.0
+set ic/lat-geod-deg 0.0
+runic
+run 240
+# A standard atmosphere property untied by the Mars atmosphere.
+set atmosphere/delta-T 10.0
+run 10
+# test_planet_geographic_error1 and 2
+new
+model tripod_moon_negative_equatorial
+new
+model tripod_moon_negative_polar

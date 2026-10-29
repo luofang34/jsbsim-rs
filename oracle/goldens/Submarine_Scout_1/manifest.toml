@@ -1,0 +1,13 @@
+[case]
+kind = "script"
+script = "scripts/Submarine_Scout_1.xml"
+rate_hz = 5.0
+properties = ["position/h-sl-ft", "position/h-agl-ft", "position/lat-geod-deg", "position/long-gc-deg", "velocities/u-fps", "velocities/v-fps", "velocities/w-fps", "velocities/p-rad_sec", "velocities/q-rad_sec", "velocities/r-rad_sec", "attitude/phi-rad", "attitude/theta-rad", "attitude/psi-rad", "accelerations/udot-ft_sec2", "accelerations/vdot-ft_sec2", "accelerations/wdot-ft_sec2", "accelerations/pdot-rad_sec2", "accelerations/qdot-rad_sec2", "accelerations/rdot-rad_sec2", "forces/fbx-total-lbs", "forces/fby-total-lbs", "forces/fbz-total-lbs", "moments/l-total-lbsft", "moments/m-total-lbsft", "moments/n-total-lbsft", "forces/fbx-buoyancy-lbs", "forces/fby-buoyancy-lbs", "forces/fbz-buoyancy-lbs", "moments/l-buoyancy-lbsft", "moments/m-buoyancy-lbsft", "moments/n-buoyancy-lbsft", "inertia/weight-lbs", "inertia/cg-x-in", "inertia/cg-z-in", "inertia/ixx-slugs_ft2", "inertia/iyy-slugs_ft2", "inertia/izz-slugs_ft2", "inertia/ixz-slugs_ft2", "atmosphere/T-R", "atmosphere/P-psf", "atmosphere/rho-slugs_ft3", "buoyant_forces/gas-cell/temp-R", "buoyant_forces/gas-cell/pressure-psf", "buoyant_forces/gas-cell/volume-ft3", "buoyant_forces/gas-cell/buoyancy-lbs", "buoyant_forces/gas-cell/contents-mol", "buoyant_forces/gas-cell/valve_open", "buoyant_forces/gas-cell/ballonet[0]/temp-R", "buoyant_forces/gas-cell/ballonet[0]/pressure-psf", "buoyant_forces/gas-cell/ballonet[0]/volume-ft3", "buoyant_forces/gas-cell/ballonet[0]/contents-mol", "buoyant_forces/gas-cell/ballonet[1]/temp-R", "buoyant_forces/gas-cell/ballonet[1]/pressure-psf", "buoyant_forces/gas-cell/ballonet[1]/volume-ft3", "buoyant_forces/gas-cell/ballonet[1]/contents-mol"]
+
+[provenance]
+upstream_commit = "66f7fafc07fe13e7ede9db20873030fed2881713"
+driver = "tools/oracle/cpp"
+cxx_flags = "-ffp-contract=off"
+dt = 0.0020833333
+every_n_frames = 96
+rows = 2401

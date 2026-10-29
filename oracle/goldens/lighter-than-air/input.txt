@@ -1,0 +1,12 @@
+# JSBSim's tests/TestLighterThanAir.py, driven as it drives the FDM: the
+# weather balloon burst right after run_ic, flown to t = 10 s through the
+# script's burst event that empties the gas cell.
+paths ../../inputs aircraft systems
+watch simulation/sim-time-sec position/h-agl-ft velocities/vt-fps metrics/radius-ft buoyant_forces/gas-cell/burst buoyant_forces/gas-cell/contents-mol buoyant_forces/gas-cell/volume-ft3 buoyant_forces/gas-cell/temp-R buoyant_forces/gas-cell/pressure-psf buoyant_forces/gas-cell/buoyancy-lbs forces/fbz-buoyancy-lbs inertia/weight-lbs
+new
+script scripts/weather-balloon.xml
+runic
+set buoyant_forces/gas-cell/burst 1.0
+run 1
+until 1
+until 10

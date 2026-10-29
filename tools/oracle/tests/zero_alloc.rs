@@ -167,7 +167,9 @@ fn measure_scripts(resolver: &FileResolver, report: &mut Vec<(String, u32, (u64,
     // main engines start and its solid boosters ignite and burn; x153's
     // XLR-99 lights and throttles up; and sim_primer's engine spins the
     // ah1s's rotors up through the transmission and its governor takes
-    // over.
+    // over; the airships' and the weather balloon's gas cells, ballonets
+    // and their heat and blower functions run in Submarine_Scout_1,
+    // ZLT-NT-moored-1 and weather-balloon.
     let scenarios = FileResolver::new(oracle_dir().join("scenarios"));
     let derived = FileResolver::new(oracle_dir().join("derived"));
     for (resolver, script, frames) in [
@@ -185,6 +187,9 @@ fn measure_scripts(resolver: &FileResolver, report: &mut Vec<(String, u32, (u64,
         (resolver, "scripts/J2461.xml", 2400),
         (resolver, "scripts/x153.xml", 3000),
         (resolver, "scripts/sim_primer.xml", 3000),
+        (resolver, "scripts/Submarine_Scout_1.xml", 3000),
+        (resolver, "scripts/ZLT-NT-moored-1.xml", 3000),
+        (resolver, "scripts/weather-balloon.xml", 3000),
     ] {
         let mut fdm = Fdm::new().unwrap();
         fdm.load_script(resolver, script).unwrap();
@@ -213,6 +218,20 @@ fn steady_state_frames_allocate_nothing() {
         let mut fdm = Fdm::new().unwrap();
         fdm.set_systems_path(system.systems_path);
         fdm.load_model(&oracle_resolver, "derived/aircraft", &name)
+            .unwrap();
+        fdm.set_property("ic/h-sl-ft", 10000.0).unwrap();
+        fdm.run_ic().unwrap();
+        report.push((
+            format!("aircraft {name}"),
+            FRAMES,
+            measure(&mut fdm, FRAMES),
+        ));
+    }
+
+    // The planet tripods fly the Martian and NRLMSISE-00 atmospheres.
+    for name in ["tripod_mars", "tripod_msis"] {
+        let mut fdm = Fdm::new().unwrap();
+        fdm.load_model(&oracle_resolver, "derived/aircraft", name)
             .unwrap();
         fdm.set_property("ic/h-sl-ft", 10000.0).unwrap();
         fdm.run_ic().unwrap();

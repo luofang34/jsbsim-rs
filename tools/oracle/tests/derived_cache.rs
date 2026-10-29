@@ -127,6 +127,9 @@ fn steady_state_frames_read_only_cached_derived_values() {
             (&resolver, "scripts/f16_test.xml", 3000),
             (&resolver, "scripts/L4102.xml", 3000),
             (&resolver, "scripts/Test_F450_Launch.xml", 3000),
+            (&resolver, "scripts/Submarine_Scout_1.xml", 3000),
+            (&resolver, "scripts/ZLT-NT-moored-1.xml", 3000),
+            (&resolver, "scripts/weather-balloon.xml", 3000),
             (&resolver, "scripts/J2461.xml", 2400),
             (&resolver, "scripts/x153.xml", 3000),
             (&resolver, "scripts/sim_primer.xml", 3000),
@@ -135,6 +138,16 @@ fn steady_state_frames_read_only_cached_derived_values() {
             fdm.load_script(resolver, script).unwrap();
             fdm.run_ic().unwrap();
             report.push((format!("script {script}"), misses(&mut fdm, &count, frames)));
+        }
+        // The planet tripods, in the Martian and NRLMSISE-00 atmospheres.
+        let oracle_resolver = FileResolver::new(oracle_dir());
+        for name in ["tripod_mars", "tripod_msis"] {
+            let mut fdm = Fdm::new().unwrap();
+            fdm.load_model(&oracle_resolver, "derived/aircraft", name)
+                .unwrap();
+            fdm.set_property("ic/h-sl-ft", 10000.0).unwrap();
+            fdm.run_ic().unwrap();
+            report.push((format!("aircraft {name}"), misses(&mut fdm, &count, FRAMES)));
         }
         // The trimming scripts, from their first frame after the trim.
         for (root, script) in TRIMMED {

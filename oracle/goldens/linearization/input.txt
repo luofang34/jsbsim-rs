@@ -1,0 +1,18 @@
+# JSBSim's tests/TestLinearization.py, driven as it drives the FDM: the
+# 737 cruise script started, its engines set running, one frame, the
+# trim, then FGLinearization, which leaves the time step at zero. Before
+# it, simulation/do_linearization linearizes and restores the time step,
+# and the flight goes on.
+paths ../../inputs aircraft systems
+watch simulation/sim-time-sec simulation/dt simulation/trim-completed velocities/vt-fps aero/alpha-rad attitude/theta-rad position/h-sl-ft fcs/throttle-cmd-norm fcs/elevator-cmd-norm propulsion/engine[0]/thrust-lbs
+new
+script scripts/737_cruise.xml
+runic
+set propulsion/engine[0]/set-running 1
+set propulsion/engine[1]/set-running 1
+run 1
+set simulation/do_simple_trim 1
+set simulation/do_linearization 1
+run 120
+linearize
+run 120
