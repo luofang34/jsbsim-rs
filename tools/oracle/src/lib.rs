@@ -18,6 +18,7 @@ pub mod nasa;
 pub mod port_script;
 pub mod probe;
 pub mod series;
+pub mod sincos;
 pub mod stats;
 pub mod tolerance;
 pub mod transcript;

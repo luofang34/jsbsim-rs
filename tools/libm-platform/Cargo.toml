@@ -1,0 +1,35 @@
+# Stands in for the `libm` crate only in scripts/oracle-sincos.sh, through
+# `cargo --config patch.crates-io.libm.path=...`; nothing depends on it by
+# default, and the workspace excludes it. The version matches the locked
+# `libm` so the patch replaces it.
+[package]
+name = "libm"
+version = "0.2.16"
+description = "The libm crate's functions used by the port, forwarded to the platform maths library"
+edition = "2024"
+license = "LGPL-2.1-or-later"
+publish = false
+
+# The workspace table, repeated: this crate is outside the workspace.
+# unsafe_code is deny, not forbid, because calling the platform's C maths
+# functions is FFI; the one module that does it allows it.
+[lints.rust]
+unsafe_code = "deny"
+missing_docs = "deny"
+
+[lints.clippy]
+unwrap_used = "forbid"
+expect_used = "forbid"
+panic = "forbid"
+todo = "forbid"
+unimplemented = "forbid"
+unreachable = "forbid"
+exit = "forbid"
+mem_forget = "forbid"
+get_unwrap = "forbid"
+indexing_slicing = "deny"
+let_underscore_must_use = "deny"
+let_underscore_future = "deny"
+await_holding_lock = "deny"
+disallowed_types = "deny"
+disallowed_macros = "deny"

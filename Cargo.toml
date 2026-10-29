@@ -1,6 +1,8 @@
 [workspace]
 resolver = "3"
 members = ["crates/jsbsim", "tools/oracle"]
+# Patched in for scripts/oracle-sincos.sh only.
+exclude = ["tools/libm-platform"]
 
 [workspace.package]
 edition = "2024"

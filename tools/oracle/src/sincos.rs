@@ -1,0 +1,327 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+//! The `check-sincos` diagnostic, run by scripts/oracle-sincos.sh.
+//!
+//! The committed references come from C++ as Clang compiles it, which on
+//! Apple platforms fuses each `sin(x)`/`cos(x)` pair into
+//! `__sincos_stret`, and the port uses the `libm` crate; their last-digit
+//! differences are what the tolerance rows of these cases cover. Here C++
+//! is rebuilt with [`SEPARATE_SINCOS_CXX_FLAGS`] in its own directory, its
+//! references are written under that directory, and the port, linked with
+//! the platform maths library in place of the `libm` crate, must
+//! reproduce them bit for bit.
+//!
+//! GeographicLib's `Math::sincosd` (Math.cpp) still calls `__sincos_stret`
+//! under these flags, through libc++'s `std::sin` and `std::cos`. A case
+//! whose output that changes belongs in [`EXCEPTIONS`], citing it; the
+//! geodesic and waypoint cases are listed in [`CASES`] because it does not
+//! change theirs.
+//!
+//! [`SEPARATE_SINCOS_CXX_FLAGS`]: crate::upstream::SEPARATE_SINCOS_CXX_FLAGS
+
+use std::path::PathBuf;
+use std::process::ExitCode;
+
+use tracing::{error, info, warn};
+
+use crate::cases::{self, Fresh, report_transcript};
+use crate::manifest::{self, CaseSpec, INPUT_FILE, Manifest, REFERENCE_FILE, TRANSCRIPT_FILE};
+use crate::transcript::compare_transcript_declaring;
+use crate::upstream::{self, Paths};
+use crate::{OracleError, Series, ToleranceTable};
+
+#[cfg(test)]
+mod tests;
+
+/// Golden cases that must be bit-identical: the piston, gear and trim
+/// cases this diagnostic was made for, and every other golden, since all
+/// of them are.
+pub const CASES: &[&str] = &[
+    "Short_S23_1",
+    "Short_S23_2",
+    "Short_S23_3",
+    "Short_S23_4",
+    "accelerometer_on_ground",
+    "atmosphere",
+    "auxiliary",
+    "b171",
+    "ball",
+    "ball-60s",
+    "ball_chute",
+    "ball_chute-60s",
+    "ball_orbit",
+    "ball_orbit-60s",
+    "ball_orbit_accelerometers",
+    "ball_orbit_g_torque",
+    "ball_orbit_g_torque-60s",
+    "ball_orbit_phase",
+    "ball_orbit_phase-60s",
+    "ball_spin_accelerometers",
+    "c1721",
+    "c1722_inertia",
+    "c1722_noise0",
+    "c1723_noise0",
+    "c1724_noise0",
+    "c172_cross_wind_noise0",
+    "c172_cruise_8K_noise0",
+    "c172_elevation_test_noise0",
+    "c172_elevator_doublet_noise0",
+    "c172_head_wind_noise0",
+    "c172_runway_at_rest_cg_shift_noise0",
+    "c3101",
+    "c3104",
+    "c3105",
+    "cannonball",
+    "cannonball-60s",
+    "engine_indexed_props_post",
+    "engine_indexed_props_table",
+    "fcs-absolute-paths",
+    "fcs-accelerometer",
+    "fcs-actuator-bug1503",
+    "fcs-actuator-clipto",
+    "fcs-actuator-forms",
+    "fcs-actuator-hardover",
+    "fcs-actuator-rate-linear",
+    "fcs-actuator-rate-property",
+    "fcs-angles",
+    "fcs-angles-gnc",
+    "fcs-base",
+    "fcs-deadband",
+    "fcs-distributor",
+    "fcs-distributor-forms",
+    "fcs-filter",
+    "fcs-filter-forms",
+    "fcs-function",
+    "fcs-gain",
+    "fcs-gain-types",
+    "fcs-gyro",
+    "fcs-integrators",
+    "fcs-kinematic-forms",
+    "fcs-kinematic-initial-value",
+    "fcs-kinematic-noscale",
+    "fcs-kinematic-timing",
+    "fcs-linear-actuator-forms",
+    "fcs-linear-actuator-gh485",
+    "fcs-linear-actuator-rotations",
+    "fcs-magnetometer",
+    "fcs-magnetometer-upstream",
+    "fcs-sensor",
+    "fcs-summer-deadband",
+    "fcs-switch",
+    "fcs-switch-forms",
+    "fcs-waypoint",
+    "fcs-waypoint-errors",
+    "fcs-waypoint-units",
+    "function-errors",
+    "function-ops",
+    "functions-basic",
+    "gear_rover_drop",
+    "gear_rover_retract",
+    "gear_rover_taxi",
+    "geodesic",
+    "initial-condition",
+    "mass-balance",
+    "math",
+    "mk82",
+    "mk82_aero_limits",
+    "mk82_atmosphere_override",
+    "mk82_axial",
+    "mk82_body",
+    "mk82_stability",
+    "mk82_wind",
+    "nasa-atmos-02",
+    "p51_start_test",
+    "p51d_tail_wind",
+    "paraglider_rotate_test",
+    "piston_boost_boeing314",
+    "piston_governor_c310",
+    "piston_start_c310",
+    "piston_takeoff_noise0",
+    "properties",
+    "propulsion-tanks",
+    "rotations",
+    "table-unit-tests",
+    "tables",
+    "trim",
+    "tripod_ground_centered",
+    "tripod_ground_eccentric",
+    "tripod_mass_change",
+    "units",
+    "unusable_fuel",
+    "wf-to-bf",
+    "winds",
+    "xml",
+];
+
+/// A golden case left out, and why.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Exception {
+    /// Golden case name.
+    pub case: &'static str,
+    /// Why it cannot be bit-identical here.
+    pub reason: &'static str,
+}
+
+/// Golden cases that cannot be bit-identical even with these flags.
+pub const EXCEPTIONS: &[Exception] = &[];
+
+/// Runs `names`, or [`CASES`] when empty, and fails unless every one is
+/// bit-identical. `paths.build` must be [`upstream::Build::SeparateSincos`].
+pub fn check_blocking(paths: &Paths, names: &[String]) -> Result<ExitCode, OracleError> {
+    if paths.build != upstream::Build::SeparateSincos {
+        return Err(OracleError::Sincos(format!(
+            "needs the separate-sincos build, not {:?}",
+            paths.build
+        )));
+    }
+    if !platform_libm_linked() {
+        return Err(OracleError::Sincos(
+            "the port is linked with the libm crate, not the platform maths library; \
+             run scripts/oracle-sincos.sh"
+                .to_owned(),
+        ));
+    }
+    upstream::build_blocking(paths)?;
+    let names: Vec<String> = if names.is_empty() {
+        warn_unlisted_blocking(paths)?;
+        CASES.iter().map(|&c| c.to_owned()).collect()
+    } else {
+        names.to_vec()
+    };
+    let mut identical = 0usize;
+    for case in &names {
+        if check_case_blocking(paths, case)? {
+            identical = identical.wrapping_add(1);
+        }
+    }
+    for exception in EXCEPTIONS {
+        warn!("{}: not checked: {}", exception.case, exception.reason);
+    }
+    let summary = format!(
+        "{identical} of {} cases bit-identical, {} excepted",
+        names.len(),
+        EXCEPTIONS.len()
+    );
+    if identical == names.len() {
+        info!("check-sincos: {summary}");
+        Ok(ExitCode::SUCCESS)
+    } else {
+        error!("check-sincos: {summary}");
+        Ok(ExitCode::FAILURE)
+    }
+}
+
+/// Logs goldens neither in [`CASES`] nor in [`EXCEPTIONS`], which the
+/// diagnostic does not run.
+fn warn_unlisted_blocking(paths: &Paths) -> Result<(), OracleError> {
+    for case in manifest::list_cases_blocking(&paths.goldens_dir())? {
+        let listed = CASES.contains(&case.as_str()) || EXCEPTIONS.iter().any(|e| e.case == case);
+        if !listed {
+            warn!("{case}: golden not listed in tools/oracle/src/sincos.rs; not checked");
+        }
+    }
+    Ok(())
+}
+
+/// Whether the `libm` crate the port calls answers as the platform maths
+/// library does, as it does under the scripts/oracle-sincos.sh patch. The
+/// `libm` crate's `exp(1)` alone is 1 ulp from the platform's.
+fn platform_libm_linked() -> bool {
+    (0..64).all(|i| {
+        let x = std::hint::black_box(f64::from(i) / 16.0);
+        libm::exp(x).to_bits() == x.exp().to_bits()
+            && libm::pow(x, 0.3).to_bits() == x.powf(0.3).to_bits()
+            && libm::sin(x).to_bits() == x.sin().to_bits()
+    })
+}
+
+fn reference_dir(paths: &Paths, case: &str) -> PathBuf {
+    paths.work_dir().join("references").join(case)
+}
+
+/// Regenerates `case` with the separate-sincos C++ build, runs the port
+/// on it and logs the outcome; returns whether they are bit-identical.
+fn check_case_blocking(paths: &Paths, case: &str) -> Result<bool, OracleError> {
+    let golden = manifest::case_dir(&paths.goldens_dir(), case);
+    let manifest = Manifest::read_blocking(&golden)?;
+    let (fresh, _) = cases::run_fresh_blocking(paths, case, &manifest)?;
+    let dir = reference_dir(paths, case);
+    std::fs::create_dir_all(&dir).map_err(|e| OracleError::io("creating", &dir, e))?;
+    match (&manifest.case, fresh) {
+        (CaseSpec::Script(spec), Fresh::Series(reference)) => {
+            reference.write_blocking(&dir.join(REFERENCE_FILE))?;
+            let (candidate, stop) =
+                crate::port_script::run_script(&spec.rust_root(&paths.repo_root), spec);
+            if let Some(stop) = stop {
+                error!("{case}: the Rust run stopped: {stop}");
+                return Ok(false);
+            }
+            Ok(match first_difference(&reference, &candidate) {
+                None => {
+                    info!(
+                        "{case}: bit-identical, {} rows x {} columns",
+                        reference.rows.len(),
+                        reference.columns.len()
+                    );
+                    true
+                }
+                Some(difference) => {
+                    error!("{case}: FIRST DIFFERENCE {difference}");
+                    false
+                }
+            })
+        }
+        (CaseSpec::Transcript(spec), Fresh::Transcript(reference)) => {
+            let path = dir.join(TRANSCRIPT_FILE);
+            std::fs::write(&path, &reference).map_err(|e| OracleError::io("writing", &path, e))?;
+            let context = crate::probe::ProbeContext {
+                input_dir: golden.clone(),
+                jsbsim_root: None,
+            };
+            let input_path = golden.join(INPUT_FILE);
+            let input = std::fs::read_to_string(&input_path)
+                .map_err(|e| OracleError::io("reading", &input_path, e))?;
+            let candidate = crate::probe::run(&spec.probe, &input, &context)?;
+            // No rows: every line must match byte for byte.
+            let outcome = compare_transcript_declaring(
+                case,
+                &reference,
+                &candidate,
+                &ToleranceTable::default(),
+                &spec.unsupported,
+            )?;
+            Ok(report_transcript(case, &outcome))
+        }
+        _ => Err(OracleError::Sincos(format!(
+            "{case}: the C++ run produced the wrong kind of output"
+        ))),
+    }
+}
+
+/// The first value of `candidate` whose bits differ from `reference`'s
+/// (any two NaNs agree), or a difference in shape.
+#[must_use]
+pub fn first_difference(reference: &Series, candidate: &Series) -> Option<String> {
+    if reference.columns != candidate.columns {
+        return Some(format!(
+            "columns: reference {:?}, candidate {:?}",
+            reference.columns, candidate.columns
+        ));
+    }
+    for (ref_row, cand_row) in reference.rows.iter().zip(&candidate.rows) {
+        let time = ref_row.first().copied().unwrap_or(f64::NAN);
+        for ((property, &r), &c) in reference.columns.iter().zip(ref_row).zip(cand_row) {
+            if r.to_bits() != c.to_bits() && !(r.is_nan() && c.is_nan()) {
+                return Some(format!(
+                    "t={time} {property}: reference={r:?} candidate={c:?}"
+                ));
+            }
+        }
+    }
+    (reference.rows.len() != candidate.rows.len()).then(|| {
+        format!(
+            "reference has {} rows, candidate has {}",
+            reference.rows.len(),
+            candidate.rows.len()
+        )
+    })
+}

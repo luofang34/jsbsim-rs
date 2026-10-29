@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 //! Command-line interface: `build`, `generate`, `check-drift`, `check-xml`,
-//! `check-models`, `derive`, `port`, `compare`, `nasa` and `bench`.
+//! `check-models`, `check-sincos`, `derive`, `port`, `compare`, `nasa` and
+//! `bench`.
 
 use std::ffi::OsString;
 use std::path::{Path, PathBuf};
@@ -72,6 +73,7 @@ pub fn command() -> Command {
                 )
                 .arg(jsbsim_root.clone()),
         )
+        .subcommand(sincos_command(jsbsim_root.clone()))
         .subcommand(bench_command(jsbsim_root.clone()))
         .subcommand(nasa_command(jsbsim_root))
         .subcommand(
@@ -94,6 +96,20 @@ pub fn command() -> Command {
                         .value_parser(value_parser!(f64))
                         .help("Compare rows up to this time, s"),
                 ),
+        )
+}
+
+fn sincos_command(jsbsim_root: Arg) -> Command {
+    Command::new("check-sincos")
+        .about(
+            "Build C++ without sin/cos builtins and require the port, linked with the \
+             platform libm, to match it bit for bit (scripts/oracle-sincos.sh)",
+        )
+        .arg(jsbsim_root)
+        .arg(
+            Arg::new("case")
+                .action(ArgAction::Append)
+                .help("Golden case names; the diagnostic's list when omitted"),
         )
 }
 
@@ -204,9 +220,18 @@ where
     if name == "nasa" {
         return run_nasa(repo_root, sub);
     }
+    if name == "check-sincos" {
+        let paths = Paths {
+            repo_root,
+            jsbsim_root: path(sub, "jsbsim-root"),
+            build: upstream::Build::SeparateSincos,
+        };
+        return crate::sincos::check_blocking(&paths, &case_names(sub));
+    }
     let paths = Paths {
         repo_root,
         jsbsim_root: path(sub, "jsbsim-root"),
+        build: upstream::Build::Gate,
     };
     upstream::build_blocking(&paths)?;
     match name {
@@ -237,6 +262,7 @@ fn run_nasa(repo_root: PathBuf, sub: &ArgMatches) -> Result<ExitCode, OracleErro
     let paths = Paths {
         repo_root,
         jsbsim_root,
+        build: upstream::Build::Gate,
     };
     if name == "fetch" {
         return nasa::fetch_blocking(&paths).map(|()| ExitCode::SUCCESS);

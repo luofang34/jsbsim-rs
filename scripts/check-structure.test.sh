@@ -69,6 +69,14 @@ expect pass cursor-increment "printf '%s\nfn f(mut pos: usize) {\n    pos += 1;\
 expect pass ignores-agent-worktrees "mkdir -p .claude/worktrees/x/src && printf 'fn f() {}\n' > .claude/worktrees/x/src/mod.rs"
 expect fail anyhow "printf 'anyhow = \"1\"\n' >> crates/a/Cargo.toml"
 expect fail no-workspace-lints "printf '[package]\nname = \"a\"\n' > crates/a/Cargo.toml"
+# A crate the workspace excludes repeats its lints; unsafe_code may be deny.
+root_lints='[workspace.lints.rust]\nunsafe_code = \"forbid\"\n\n[workspace.lints.clippy]\npanic = \"forbid\"\n'
+excluded="printf '[workspace]\nexclude = [\"crates/a\"]\n\n$root_lints' > Cargo.toml"
+own_lints() { printf '[package]\nname = "a"\n\n[lints.rust]\nunsafe_code = "%s"\n\n[lints.clippy]\npanic = "%s"\n' "$1" "$2"; }
+expect pass excluded-repeats-lints "$excluded && own_lints deny forbid > crates/a/Cargo.toml"
+expect fail excluded-relaxes-clippy "$excluded && own_lints forbid deny > crates/a/Cargo.toml"
+expect fail excluded-allows-unsafe "$excluded && own_lints allow forbid > crates/a/Cargo.toml"
+expect fail member-repeats-lints "printf '[workspace]\n\n$root_lints' > Cargo.toml && own_lints forbid forbid > crates/a/Cargo.toml"
 expect fail stray-copy "cp crates/a/src/b.rs 'crates/a/src/b 2.rs'"
 
 echo "check-structure.test: ok"

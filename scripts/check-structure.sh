@@ -134,9 +134,33 @@ if grep -rn --include='*.rs' --include='Cargo.toml' -E '\banyhow\b' --exclude-di
   fail "anyhow is not used in this workspace; use thiserror"
 fi
 
+# `<table>.<lint>="<level>"`, one per line, from the [<prefix>rust] and
+# [<prefix>clippy] sections of a manifest.
+lint_levels() {
+  awk -v pre="$2" '
+    /^\[/ { section = $0; next }
+    section == "[" pre "rust]" || section == "[" pre "clippy]" {
+      gsub(/[[:space:]]/, "")
+      if ($0 ~ /=/) print substr(section, length(pre) + 2, length(section) - length(pre) - 2) "." $0
+    }
+  ' "$1" | sort
+}
+
+# A crate outside the workspace (in its `exclude`) repeats the workspace
+# lint table at the same levels; only unsafe_code may drop to deny, for FFI.
 while IFS= read -r manifest; do
-  if ! grep -A1 '^\[lints\]' "$manifest" | grep -q '^workspace = true'; then
+  if grep -A1 '^\[lints\]' "$manifest" | grep -q '^workspace = true'; then
+    continue
+  fi
+  dir=$(dirname "${manifest#./}")
+  if [ ! -f Cargo.toml ] || ! grep -E '^exclude = ' Cargo.toml | grep -qF "\"$dir\""; then
     fail "$manifest: must inherit workspace lints ([lints] workspace = true)"
+    continue
+  fi
+  missing=$(LC_ALL=C comm -23 <(lint_levels Cargo.toml workspace.lints.) \
+    <(lint_levels "$manifest" lints. | sed 's/^rust\.unsafe_code="deny"$/rust.unsafe_code="forbid"/'))
+  if [ -n "$missing" ]; then
+    fail "$manifest: outside the workspace, so it must repeat the workspace lints; missing $(echo "$missing" | tr '\n' ' ')"
   fi
 done < <(find_tree -name Cargo.toml -type f | grep -v '^\./Cargo.toml$')
 

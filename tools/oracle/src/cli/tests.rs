@@ -46,6 +46,7 @@ fn every_subcommand_parses_without_a_case_argument() {
         let paths = Paths {
             repo_root: PathBuf::from("/nonexistent"),
             jsbsim_root: PathBuf::from("/nonexistent"),
+            build: crate::upstream::Build::Gate,
         };
         // Must not panic on subcommands that define no case argument.
         selected_cases(&paths, sub_matches).ok();

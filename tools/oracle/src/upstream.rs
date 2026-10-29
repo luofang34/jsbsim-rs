@@ -17,11 +17,50 @@ use crate::{OracleError, Series};
 #[cfg(test)]
 mod tests;
 
-/// Extra compiler flags for libJSBSim and the driver. Clang contracts
-/// `a * b + c` into fused multiply-adds on targets that have them (arm64)
-/// unless told not to; Rust never does, and neither does an x86-64 build
-/// without `-march`, so references are built without contraction.
+/// Extra compiler flags for libJSBSim and the driver, separated by spaces.
+/// Clang contracts `a * b + c` into fused multiply-adds on targets that have
+/// them (arm64) unless told not to; Rust never does, and neither does an
+/// x86-64 build without `-march`, so references are built without
+/// contraction.
 pub const CXX_FLAGS: &str = "-ffp-contract=off";
+
+/// [`CXX_FLAGS`] without the sin and cos builtins. Clang otherwise merges
+/// `sin(x)` and `cos(x)` of one argument into one `sincos` call
+/// (`__sincos_stret` on Apple platforms), whose sine can differ in the last
+/// digit from `sin`'s, while the port calls `sin` and `cos` as JSBSim's
+/// source does. Only the `check-sincos` diagnostic builds with these; the
+/// committed references keep C++ as it is normally compiled.
+pub const SEPARATE_SINCOS_CXX_FLAGS: &str = "-ffp-contract=off -fno-builtin-sin -fno-builtin-cos";
+
+/// Which build of the C++ JSBSim and the driver to use.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum Build {
+    /// [`CXX_FLAGS`], under `target/oracle`: the build the committed
+    /// references come from.
+    #[default]
+    Gate,
+    /// [`SEPARATE_SINCOS_CXX_FLAGS`], under `target/oracle-sincos`, so the
+    /// gate's build is left alone.
+    SeparateSincos,
+}
+
+impl Build {
+    /// Extra compiler flags of this build, separated by spaces.
+    #[must_use]
+    pub fn cxx_flags(self) -> &'static str {
+        match self {
+            Self::Gate => CXX_FLAGS,
+            Self::SeparateSincos => SEPARATE_SINCOS_CXX_FLAGS,
+        }
+    }
+
+    fn dir_name(self) -> &'static str {
+        match self {
+            Self::Gate => "oracle",
+            Self::SeparateSincos => "oracle-sincos",
+        }
+    }
+}
 
 /// Driver sources, relative to the repository root.
 pub const DRIVER_DIR: &str = "tools/oracle/cpp";
@@ -48,13 +87,15 @@ pub struct Paths {
     pub repo_root: PathBuf,
     /// Read-only JSBSim checkout.
     pub jsbsim_root: PathBuf,
+    /// Which C++ build to make and run.
+    pub build: Build,
 }
 
 impl Paths {
     /// Scratch area for everything the oracle builds or writes.
     #[must_use]
     pub fn work_dir(&self) -> PathBuf {
-        self.repo_root.join("target").join("oracle")
+        self.repo_root.join("target").join(self.build.dir_name())
     }
 
     /// CMake build directory of the C++ JSBSim.
@@ -134,8 +175,8 @@ pub fn build_blocking(paths: &Paths) -> Result<(), OracleError> {
             .arg(&build_dir)
             .args(["-G", "Ninja", "-DCMAKE_BUILD_TYPE=Release"])
             .args(["-DBUILD_DOCS=OFF", "-DBUILD_PYTHON_MODULE=OFF"])
-            .arg(format!("-DCMAKE_CXX_FLAGS={CXX_FLAGS}"))
-            .arg(format!("-DCMAKE_C_FLAGS={CXX_FLAGS}")),
+            .arg(format!("-DCMAKE_CXX_FLAGS={}", paths.build.cxx_flags()))
+            .arg(format!("-DCMAKE_C_FLAGS={}", paths.build.cxx_flags())),
     )?;
     info!("building libJSBSim");
     run_blocking(
@@ -148,7 +189,9 @@ pub fn build_blocking(paths: &Paths) -> Result<(), OracleError> {
     let sources = driver_sources_blocking(&paths.repo_root.join(DRIVER_DIR))?;
     run_blocking(
         Command::new("c++")
-            .args(["-std=c++17", "-O2", CXX_FLAGS, "-I"])
+            .args(["-std=c++17", "-O2"])
+            .args(paths.build.cxx_flags().split(' '))
+            .arg("-I")
             .arg(paths.jsbsim_root.join("src"))
             .arg("-I")
             .arg(build_dir.join("src"))
@@ -226,7 +269,7 @@ pub fn run_script_in_blocking(
         provenance: Provenance {
             upstream_commit,
             driver: DRIVER_DIR.to_owned(),
-            cxx_flags: CXX_FLAGS.to_owned(),
+            cxx_flags: paths.build.cxx_flags().to_owned(),
             dt: Some(dt),
             every_n_frames: Some(every_n_frames),
             rows,
@@ -267,7 +310,7 @@ pub fn run_transcript_blocking(
         provenance: Provenance {
             upstream_commit,
             driver: DRIVER_DIR.to_owned(),
-            cxx_flags: CXX_FLAGS.to_owned(),
+            cxx_flags: paths.build.cxx_flags().to_owned(),
             dt: None,
             every_n_frames: None,
             rows: text.lines().count(),
