@@ -122,6 +122,13 @@ fn bench_command(jsbsim_root: Arg) -> Command {
                 .action(ArgAction::Append)
                 .help("Bench case names; all cases when omitted"),
         )
+        .arg(
+            Arg::new("max-ratio")
+                .long("max-ratio")
+                .action(ArgAction::Append)
+                .value_name("CASE=RATIO")
+                .help("Fail when the case's median Rust/C++ ratio is over RATIO"),
+        )
 }
 
 fn nasa_command(jsbsim_root: Arg) -> Command {
@@ -238,7 +245,9 @@ where
         "build" => return Ok(ExitCode::SUCCESS),
         "check-xml" => return corpus::check_xml_blocking(&paths),
         "check-models" => return corpus::models::check_models_blocking(&paths),
-        "bench" => return crate::bench::run_blocking(&paths, &case_names(sub)),
+        "bench" => {
+            return crate::bench::run_blocking(&paths, &case_names(sub), &ratio_guards(sub)?);
+        }
         _ => {}
     }
     let cases = selected_cases(&paths, sub)?;
@@ -269,6 +278,17 @@ fn run_nasa(repo_root: PathBuf, sub: &ArgMatches) -> Result<ExitCode, OracleErro
     }
     upstream::build_blocking(&paths)?;
     nasa::compare_blocking(&paths, &case_names(sub))
+}
+
+/// The `--max-ratio` ceilings of `sub`.
+fn ratio_guards(sub: &ArgMatches) -> Result<Vec<crate::bench::guard::Guard>, OracleError> {
+    sub.try_get_many::<String>("max-ratio")
+        .ok()
+        .flatten()
+        .into_iter()
+        .flatten()
+        .map(|g| crate::bench::guard::Guard::parse(g))
+        .collect()
 }
 
 /// The positional case names of `sub`; empty when it has none or takes

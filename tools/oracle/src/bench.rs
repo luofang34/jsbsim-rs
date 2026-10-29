@@ -7,9 +7,9 @@
 //! simulation, `RunIC`, run the warm-up frames, then time the measured
 //! frames with a monotonic clock. C++ reads the JSBSim checkout and Rust the
 //! byte-identical vendored copies in `oracle/inputs`. Repeats alternate
-//! between the sides so that machine load lands on both alike. The numbers
-//! are for reports: timing is noisy, so no ratio fails the run, only a case
-//! that cannot run.
+//! between the sides so that machine load lands on both alike. A case that
+//! cannot run fails the run, and so does a case over a ratio ceiling given
+//! with `--max-ratio` ([`guard`]); otherwise the numbers are for reports.
 
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
@@ -21,6 +21,7 @@ use crate::OracleError;
 use crate::upstream::Paths;
 
 mod cpp;
+pub mod guard;
 mod rust;
 mod summary;
 
@@ -197,7 +198,12 @@ impl BenchCase {
 
 /// Runs the selected cases and logs a table. A case that cannot run is
 /// logged and makes the result [`ExitCode::FAILURE`]; the others still run.
-pub fn run_blocking(paths: &Paths, names: &[String]) -> Result<ExitCode, OracleError> {
+/// So does a case of `guards` whose ratio is over its ceiling.
+pub fn run_blocking(
+    paths: &Paths,
+    names: &[String],
+    guards: &[guard::Guard],
+) -> Result<ExitCode, OracleError> {
     let file = BenchFile::read_blocking(&paths.repo_root.join(CASES_FILE))?;
     let cases = file.select(names)?;
     let mut results = Vec::new();
@@ -217,6 +223,18 @@ pub fn run_blocking(paths: &Paths, names: &[String]) -> Result<ExitCode, OracleE
     info!("{}", format_header());
     for result in &results {
         info!("{}", format_row(result));
+    }
+    for g in guards {
+        match guard::check(g, &results) {
+            guard::Verdict::Within { ratio } => {
+                info!("guard {}: Rust/C++ {ratio:.3} <= {}", g.case, g.max_ratio);
+            }
+            guard::Verdict::Over { ratio } => {
+                error!("guard {}: Rust/C++ {ratio:.3} > {}", g.case, g.max_ratio);
+                code = ExitCode::FAILURE;
+            }
+            guard::Verdict::NotRun => info!("guard {}: not run", g.case),
+        }
     }
     Ok(code)
 }

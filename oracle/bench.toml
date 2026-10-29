@@ -61,3 +61,21 @@ inputs = "oracle/derived"
 warm_up = 100
 frames = 2000
 repeats = 15
+
+# A twin-turbine airliner: the 737 trimmed in a steady turn with its
+# engines running (scripts/737_cruise_steady_turn.xml), timed from 1.7 s.
+[[case]]
+name = "737"
+script = "scripts/737_cruise_steady_turn.xml"
+warm_up = 200
+frames = 2000
+repeats = 15
+
+# A turbine fighter on its gear: the F-16 starting its engine and
+# spooling up (scripts/f16_test.xml), timed from 0.8 s to 17.5 s.
+[[case]]
+name = "f16"
+script = "scripts/f16_test.xml"
+warm_up = 100
+frames = 2000
+repeats = 15

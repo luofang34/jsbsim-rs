@@ -151,3 +151,37 @@ fn every_case_runs_its_frames_in_the_port() {
         rust::time(&case.rust_root(&repo_root()), case).unwrap();
     }
 }
+
+#[test]
+fn a_ratio_ceiling_is_case_equals_a_positive_ratio() {
+    let g = guard::Guard::parse("c172x=1.05").unwrap();
+    assert_eq!((g.case.as_str(), g.max_ratio), ("c172x", 1.05));
+    for bad in [
+        "c172x",
+        "=1.05",
+        "c172x=",
+        "c172x=fast",
+        "c172x=0",
+        "c172x=-1",
+        "c172x=NaN",
+    ] {
+        assert!(guard::Guard::parse(bad).is_err(), "{bad}");
+    }
+}
+
+#[test]
+fn a_ceiling_holds_the_median_ratio_and_skips_cases_not_run() {
+    let result = |rust: &[f64]| CaseResult {
+        name: "c172x".to_owned(),
+        frames: 100,
+        cpp: Summary::of(&[1000.0, 2000.0, 1000.0]).unwrap(),
+        rust: Summary::of(rust).unwrap(),
+    };
+    let g = guard::Guard::parse("c172x=1.05").unwrap();
+    // Medians 1050 over 1000: exactly at the ceiling.
+    let within = guard::check(&g, &[result(&[1050.0, 900.0, 5000.0])]);
+    assert_eq!(within, guard::Verdict::Within { ratio: 1.05 });
+    let over = guard::check(&g, &[result(&[1060.0, 1060.0, 900.0])]);
+    assert_eq!(over, guard::Verdict::Over { ratio: 1.06 });
+    assert_eq!(guard::check(&g, &[]), guard::Verdict::NotRun);
+}
