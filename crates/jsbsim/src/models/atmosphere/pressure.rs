@@ -51,8 +51,10 @@ impl Atmosphere {
     /// psf.
     #[must_use]
     pub fn get_pressure(&self, altitude: f64) -> f64 {
-        if self.model == AtmosphereModel::Mars {
-            return self.pressure;
+        match self.model {
+            AtmosphereModel::Mars => return self.pressure,
+            AtmosphereModel::Msis => return self.msis_compute(altitude).pressure,
+            AtmosphereModel::Standard => {}
         }
         let geo_pot_alt = self.geopotential_altitude(altitude);
         let (b, base_alt) = self.layer_of(geo_pot_alt);
@@ -85,6 +87,10 @@ impl Atmosphere {
     /// `SetPressureSL`: rescales the pressure profile. The sea-level speed
     /// of sound is left as it is.
     pub fn set_pressure_sl(&mut self, unit: PressureUnit, pressure: f64) {
+        // `FGMSIS` overrides it with a no-op.
+        if self.model == AtmosphereModel::Msis {
+            return;
+        }
         let p = Self::convert_to_psf(pressure, unit);
         self.sl_pressure = Self::validate_pressure(p, "Sea Level pressure", false);
         self.calculate_sl_density();

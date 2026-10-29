@@ -107,8 +107,10 @@ impl Atmosphere {
     /// ASL), °R, with the bias and graded delta.
     #[must_use]
     pub fn get_temperature(&self, altitude: f64) -> f64 {
-        if self.model == AtmosphereModel::Mars {
-            return self.temperature;
+        match self.model {
+            AtmosphereModel::Mars => return self.temperature,
+            AtmosphereModel::Msis => return self.msis_compute(altitude).temperature,
+            AtmosphereModel::Standard => {}
         }
         let p = &self.profile;
         let geo_pot_alt = self.geopotential_altitude(altitude);
@@ -187,7 +189,7 @@ impl Atmosphere {
     /// `SetTemperature`: biases the profile so altitude `h` (ft ASL) is at
     /// `t`.
     pub fn set_temperature(&mut self, t: f64, h: f64, unit: TemperatureUnit) {
-        if self.model == AtmosphereModel::Mars {
+        if self.model != AtmosphereModel::Standard {
             return;
         }
         let target_temp = Self::convert_to_rankine(t, unit);

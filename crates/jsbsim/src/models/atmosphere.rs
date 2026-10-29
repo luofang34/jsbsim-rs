@@ -4,17 +4,20 @@
 // src/models/atmosphere/FGStandardAtmosphere.{h,cpp}.
 //
 //! The atmosphere: `FGAtmosphere`'s common state and unit handling, with
-//! the 1976 U.S. Standard Atmosphere (`FGStandardAtmosphere`) that the
-//! executive always instantiates.
+//! the 1976 U.S. Standard Atmosphere (`FGStandardAtmosphere`) the
+//! executive constructs, and the Martian (`FGMars`) and NRLMSISE-00
+//! (`FGMSIS`) atmospheres a planet may replace it with.
 //!
-//! JSBSim splits this into a base class and a derived class; the executive
-//! only ever builds the derived one, so here both live in one type and the
-//! base-class versions of the overridden methods (which nothing can reach)
-//! are not ported.
+//! JSBSim splits these into a base class and derived classes; here they
+//! share one type, whose [`AtmosphereModel`] selects the overrides of the
+//! virtual methods. The base-class versions that no model reaches are not
+//! ported.
 
 mod bind;
 mod humidity;
 mod mars;
+mod msis;
+pub mod nrlmsise;
 mod override_nodes;
 mod pressure;
 mod standard;
@@ -23,6 +26,7 @@ mod tests;
 
 pub use bind::{STANDARD_PROPERTIES, bind};
 pub use mars::MMARS;
+pub use msis::Msis;
 pub use override_nodes::OverrideNodes;
 
 use super::base::ModelBase;
@@ -47,9 +51,9 @@ pub const RENG0: f64 = RSTAR / MAIR;
 /// `StdDaySLdensity`, slug/ft^3.
 pub const STD_DAY_SL_DENSITY: f64 = STD_DAY_SL_PRESSURE / (RENG0 * STD_DAY_SL_TEMPERATURE);
 /// `SutherlandConstant`, °R.
-const SUTHERLAND_CONSTANT: f64 = 198.72;
+pub(crate) const SUTHERLAND_CONSTANT: f64 = 198.72;
 /// `Beta`, slug/(s·ft·R^0.5).
-const BETA: f64 = 2.269690E-08;
+pub(crate) const BETA: f64 = 2.269690E-08;
 
 /// `eTemperature`. JSBSim's `eNoTempUnit` only exists to make the
 /// conversions throw, so it has no counterpart.
@@ -146,6 +150,8 @@ pub enum AtmosphereModel {
     Standard,
     /// `FGMars`.
     Mars,
+    /// `FGMSIS`.
+    Msis,
 }
 
 /// The atmosphere.
@@ -197,6 +203,10 @@ pub struct Atmosphere {
     /// has replaced the atmosphere: the flag stays tied to the replaced
     /// model, so it no longer enables or disables this one.
     pub orphaned_enabled: Option<bool>,
+    /// `FGMSIS`'s date and activity, used by [`AtmosphereModel::Msis`].
+    pub msis: Msis,
+    /// The simulation time, s, which `FGMSIS` reads for the time of day.
+    pub sim_time: f64,
 }
 
 impl Default for Atmosphere {
@@ -225,6 +235,8 @@ impl Default for Atmosphere {
             profile: StandardProfile::new(),
             override_nodes: OverrideNodes::default(),
             orphaned_enabled: None,
+            msis: Msis::default(),
+            sim_time: 0.0,
         };
         atmosphere.construct_profile();
         atmosphere
@@ -253,14 +265,20 @@ impl Atmosphere {
         self.sl_density = p.std_sl_density;
         self.sl_soundspeed = p.std_sl_soundspeed;
         self.calculate(0.0, overrides);
+        // `FGMSIS::InitModel` calculates once more after the standard
+        // atmosphere's.
+        if self.model == AtmosphereModel::Msis {
+            self.msis_calculate(0.0);
+        }
     }
 
     /// `Calculate`: the atmosphere at `altitude` (ft ASL), then, for the
     /// standard atmosphere, the humidity limits there.
     pub fn calculate(&mut self, altitude: f64, overrides: &Overrides) {
-        if self.model == AtmosphereModel::Mars {
-            self.mars_calculate(altitude);
-            return;
+        match self.model {
+            AtmosphereModel::Mars => return self.mars_calculate(altitude),
+            AtmosphereModel::Msis => return self.msis_calculate(altitude),
+            AtmosphereModel::Standard => {}
         }
         self.calculate_base(altitude, overrides);
         self.saturated_vapor_pressure = Self::calculate_vapor_pressure(self.temperature);
@@ -403,8 +421,10 @@ impl Atmosphere {
     /// `GetDensity(altitude)`, slug/ft^3, with the current gas constant.
     #[must_use]
     pub fn get_density(&self, altitude: f64) -> f64 {
-        if self.model == AtmosphereModel::Mars {
-            return self.pressure / (self.reng * self.temperature);
+        match self.model {
+            AtmosphereModel::Mars => return self.pressure / (self.reng * self.temperature),
+            AtmosphereModel::Msis => return self.msis_compute(altitude).density,
+            AtmosphereModel::Standard => {}
         }
         self.get_pressure(altitude) / (self.reng * self.get_temperature(altitude))
     }
@@ -424,8 +444,10 @@ impl Atmosphere {
     /// `GetSoundSpeed(altitude)`, ft/s.
     #[must_use]
     pub fn get_sound_speed(&self, altitude: f64) -> f64 {
-        if self.model == AtmosphereModel::Mars {
-            return self.mars_sound_speed();
+        match self.model {
+            AtmosphereModel::Mars => return self.mars_sound_speed(),
+            AtmosphereModel::Msis => return self.msis_sound_speed(altitude),
+            AtmosphereModel::Standard => {}
         }
         (SH_RATIO * self.reng * self.get_temperature(altitude)).sqrt()
     }

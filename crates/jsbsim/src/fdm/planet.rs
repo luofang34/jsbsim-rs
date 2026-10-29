@@ -63,11 +63,11 @@ impl Fdm {
             return Ok(());
         }
         match atm.attribute("model").to_ascii_lowercase().as_str() {
-            "mars" => self.replace_atmosphere(Atmosphere::mars()),
-            "msis" => Err(Error::Unsupported {
-                construct: "<atmosphere model=\"msis\">".to_owned(),
-                path: atm.location().to_string(),
-            }),
+            "mars" => self.replace_atmosphere(Atmosphere::mars(), None),
+            "msis" => {
+                let atm = atm.clone();
+                self.replace_atmosphere(Atmosphere::msis(), Some((loader, atm)))
+            }
             _ => Ok(()),
         }
     }
@@ -76,10 +76,15 @@ impl Fdm {
     /// (its properties untied, keeping their values) and the new one
     /// binds `FGAtmosphere`'s properties again, and the standard
     /// atmosphere's only if it is one; it is initialised, loads its
-    /// element (which `FGMars` ignores), and the models are initialised
-    /// again.
-    fn replace_atmosphere(&mut self, mut atmosphere: Atmosphere) -> Result<(), Error> {
-        if atmosphere.model != AtmosphereModel::Standard {
+    /// element (`FGMSIS` its date, `FGMars` nothing), and the models are
+    /// initialised again.
+    fn replace_atmosphere(
+        &mut self,
+        mut atmosphere: Atmosphere,
+        msis: Option<(&mut DocumentLoader<'_>, Element)>,
+    ) -> Result<(), Error> {
+        // `FGMSIS` is a standard atmosphere and binds them again.
+        if atmosphere.model == AtmosphereModel::Mars {
             for path in STANDARD_PROPERTIES {
                 self.untie_property(path)?;
             }
@@ -92,10 +97,15 @@ impl Fdm {
         tracing::error!(
             "Failed to tie property simulation/models/FGAtmosphere/enabled to a pointer"
         );
+        atmosphere.sim_time = self.models.exec.sim_time;
         self.models.atmosphere = atmosphere;
         self.model_functions[Model::Atmosphere] = ModelFunctions::default();
         self.models.load_inputs(Model::Atmosphere);
         self.init_atmosphere()?;
+        if let Some((loader, mut el)) = msis {
+            self.upload(loader, &mut el, IncludeKind::Model, Model::Atmosphere)?;
+            self.models.atmosphere.load_msis(&el)?;
+        }
         self.initialize_models()
     }
 

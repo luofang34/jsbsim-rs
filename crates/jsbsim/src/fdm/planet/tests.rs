@@ -154,3 +154,36 @@ fn a_file_that_is_not_a_planet_is_refused() {
         Err(Error::Model { .. })
     ));
 }
+
+const MSIS: &str = r#"<planet name="Earth">
+  <atmosphere model="MSIS">
+    <day>172</day>
+    <utc>29000</utc>
+  </atmosphere>
+</planet>"#;
+
+/// `TestPlanet.test_load_MSIS_atmosphere`.
+#[test]
+fn load_planet_file_with_msis_gives_the_upstream_test_values() {
+    let mut r = resolver("");
+    r.insert("planets/MSIS.xml", MSIS);
+    let mut fdm = fdm();
+    fdm.load_model(&r, "aircraft", "box").unwrap();
+    fdm.load_planet_file(&r, "planets/MSIS.xml", false).unwrap();
+    assert_eq!(fdm.models.atmosphere.model, AtmosphereModel::Msis);
+    assert_eq!(fdm.models.atmosphere.msis.day_of_year, 172.0);
+    assert_eq!(fdm.models.atmosphere.msis.seconds_in_day, 29000.0);
+    fdm.set_property("ic/h-sl-ft", 0.0).unwrap();
+    fdm.set_property("ic/long-gc-deg", -70.0).unwrap();
+    fdm.set_property("ic/lat-geod-deg", 60.0).unwrap();
+    fdm.run_ic().unwrap();
+    let t = fdm.get_property("atmosphere/T-R").unwrap() * 5.0 / 9.0;
+    assert!((t - 281.46476).abs() < 1e-5, "{t}");
+    let rho = fdm.get_property("atmosphere/rho-slugs_ft3").unwrap() / 0.001940318;
+    assert!((rho - 1.263428).abs() < 1e-6, "{rho}");
+    let p = fdm.get_property("atmosphere/P-psf").unwrap();
+    assert!((p - 2132.294).abs() < 1e-3, "{p}");
+    // FGMSIS is a standard atmosphere: its own properties stay bound.
+    let sl = fdm.models.atmosphere.sl_pressure;
+    assert_eq!(fdm.get_property("atmosphere/P-sl-psf").unwrap(), sl);
+}

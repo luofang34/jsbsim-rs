@@ -261,7 +261,7 @@ impl Fdm {
                 self.init_atmosphere()?;
                 // Only `FGAtmosphere::InitModel` chains to
                 // `FGModel::InitModel`; the standard atmosphere's does not.
-                if self.models.atmosphere.model == AtmosphereModel::Standard {
+                if self.models.atmosphere.model != AtmosphereModel::Mars {
                     continue;
                 }
             } else {
@@ -321,6 +321,7 @@ impl Fdm {
         if !e.holding && !e.integration_suspended() {
             e.sim_time += e.dt;
             self.models.inertial.time = e.sim_time;
+            self.models.atmosphere.sim_time = e.sim_time;
             e.frame = e.frame.wrapping_add(1);
         }
     }
