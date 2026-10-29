@@ -6,17 +6,31 @@
 // (getDoubleValue of tied nodes).
 //
 //! Evaluation of parameters, functions and tables against a property tree.
+//!
+//! Inside the evaluator an operand's value is an [`Eval`], whose error
+//! carries nothing: the error itself waits in the evaluator until the
+//! public method that started the evaluation returns it. A `Result<f64,
+//! Error>` is returned through memory and an `Eval` in two registers, on
+//! every operand of every function.
 
 mod apply;
 
 use super::{
-    Bound, FnId, FunctionError, FunctionSet, Parameter, PropertyValue, Table, TableId, TableKind,
+    Bound, FnId, Function, FunctionError, FunctionSet, Parameter, PropertyValue, Table, TableId,
+    TableKind,
 };
 use crate::Error;
 use crate::properties::{NodeId, PropertyTree};
 
 /// Deeper nesting than this means a property reads itself.
 const MAX_DEPTH: u32 = 256;
+
+/// An evaluation failed; the evaluator holds the error.
+#[derive(Debug)]
+struct Failed;
+
+/// An operand's value inside the evaluator.
+type Eval = Result<f64, Failed>;
 
 /// Values of nodes tied to model getters, which JSBSim evaluates on every
 /// read of the node.
@@ -45,6 +59,8 @@ pub struct Evaluator<'a, G = NoGetters> {
     getters: G,
     depth: u32,
     template_argument: Option<NodeId>,
+    /// The error of the evaluation that returned [`Failed`].
+    failure: Option<Error>,
 }
 
 impl<'a> Evaluator<'a> {
@@ -63,6 +79,7 @@ impl<'a, G: GetterSource> Evaluator<'a, G> {
             getters,
             depth: 0,
             template_argument: None,
+            failure: None,
         }
     }
 
@@ -76,6 +93,64 @@ impl<'a, G: GetterSource> Evaluator<'a, G> {
     /// and stores the result.
     #[inline]
     pub fn read_node(&mut self, node: NodeId) -> Result<f64, Error> {
+        let value = self.eval_node(node);
+        self.finish(value)
+    }
+
+    /// `FGPropertyValue::GetValue()`: the node's value times the sign.
+    #[inline]
+    pub fn property(&mut self, value: &PropertyValue) -> Result<f64, Error> {
+        let value = self.eval_property(value);
+        self.finish(value)
+    }
+
+    /// The value of one operand.
+    #[inline]
+    pub fn parameter(&mut self, parameter: &Parameter) -> Result<f64, Error> {
+        let value = self.eval_parameter(parameter);
+        self.finish(value)
+    }
+
+    /// `GetValue()` of function `id`.
+    #[inline]
+    pub fn function(&mut self, id: FnId) -> Result<f64, Error> {
+        let value = self.eval_function(id);
+        self.finish(value)
+    }
+
+    /// `GetValue()` of table `id`: looks up the values of its properties.
+    /// The keys are read in axis order (row, column, table, ...) before
+    /// the table interpolates.
+    #[inline]
+    pub fn table(&mut self, id: TableId) -> Result<f64, Error> {
+        let value = self.eval_table(id);
+        self.finish(value)
+    }
+
+    /// `value` with the error that made it fail.
+    #[inline]
+    fn finish(&mut self, value: Eval) -> Result<f64, Error> {
+        value.map_err(|Failed| self.take_failure())
+    }
+
+    #[cold]
+    #[inline(never)]
+    fn take_failure(&mut self) -> Error {
+        // Only `fail` makes a `Failed`, so the error is there.
+        self.failure.take().unwrap_or_else(|| Error::Model {
+            message: "a function evaluation failed without recording why".to_owned(),
+        })
+    }
+
+    /// Records `error` as the evaluation's.
+    #[cold]
+    #[inline(never)]
+    fn fail(&mut self, error: impl Into<Error>) -> Failed {
+        self.failure = Some(error.into());
+        Failed
+    }
+
+    fn eval_node(&mut self, node: NodeId) -> Eval {
         let Some(target) = self.tree.read_target(node) else {
             return Ok(0.0);
         };
@@ -86,23 +161,17 @@ impl<'a, G: GetterSource> Evaluator<'a, G> {
             return Ok(self.tree.target_double(target));
         };
         let value = self.nested(target, |e| match bound {
-            Bound::Function(id) => e.function(id),
-            Bound::Table(id) => e.table(id),
+            Bound::Function(id) => e.eval_function(id),
+            Bound::Table(id) => e.eval_table(id),
         })?;
         self.tree.store(target, value);
         Ok(value)
     }
 
-    fn nested(
-        &mut self,
-        node: NodeId,
-        f: impl FnOnce(&mut Self) -> Result<f64, Error>,
-    ) -> Result<f64, Error> {
+    fn nested(&mut self, node: NodeId, f: impl FnOnce(&mut Self) -> Eval) -> Eval {
         if self.depth >= MAX_DEPTH {
-            return Err(FunctionError::Recursion {
-                property: self.tree.fully_qualified_name(node),
-            }
-            .into());
+            let property = self.tree.fully_qualified_name(node);
+            return Err(self.fail(FunctionError::Recursion { property }));
         }
         self.depth += 1;
         let result = f(self);
@@ -110,41 +179,45 @@ impl<'a, G: GetterSource> Evaluator<'a, G> {
         result
     }
 
-    /// `FGPropertyValue::GetValue()`: the node's value times the sign.
+    /// The node of `value`, binding it now if needed.
     #[inline]
-    pub fn property(&mut self, value: &PropertyValue) -> Result<f64, Error> {
-        let node = value.node(self.tree)?;
-        Ok(self.read_node(node)? * value.sign())
+    fn value_node(&mut self, value: &PropertyValue) -> Result<NodeId, Failed> {
+        value.node(self.tree).map_err(|e| self.fail(e))
     }
 
-    /// The value of one operand.
-    pub fn parameter(&mut self, parameter: &Parameter) -> Result<f64, Error> {
+    #[inline]
+    fn eval_property(&mut self, value: &PropertyValue) -> Eval {
+        let node = self.value_node(value)?;
+        Ok(self.eval_node(node)? * value.sign())
+    }
+
+    fn eval_parameter(&mut self, parameter: &Parameter) -> Eval {
         match parameter {
             Parameter::Real(v) => Ok(*v),
-            Parameter::Property(p) => self.property(p),
-            Parameter::Function(id) => self.function(*id),
-            Parameter::Table(id) => self.table(*id),
+            Parameter::Property(p) => self.eval_property(p),
+            Parameter::Function(id) => self.eval_function(*id),
+            Parameter::Table(id) => self.eval_table(*id),
             Parameter::Template { template, property } => {
-                let node = property.node(self.tree)?;
+                let node = self.value_node(property)?;
                 let saved = self.template_argument.replace(node);
-                let result = self.function(*template);
+                let result = self.eval_function(*template);
                 self.template_argument = saved;
                 result
             }
             Parameter::TemplateArgument(at) => {
-                let node = self
-                    .template_argument
-                    .ok_or_else(|| FunctionError::UnboundTemplateParameter { at: at.clone() })?;
-                self.read_node(node)
+                let Some(node) = self.template_argument else {
+                    let at = at.clone();
+                    return Err(self.fail(FunctionError::UnboundTemplateParameter { at }));
+                };
+                self.eval_node(node)
             }
         }
     }
 
-    /// `GetValue()` of function `id`.
     #[inline]
-    pub fn function(&mut self, id: FnId) -> Result<f64, Error> {
+    fn eval_function(&mut self, id: FnId) -> Eval {
         let set = self.set;
-        let function = set.function(id)?;
+        let function = set.function(id).map_err(|e| self.fail(e))?;
         if let Some(cached) = function.cached {
             return Ok(cached);
         }
@@ -154,7 +227,7 @@ impl<'a, G: GetterSource> Evaluator<'a, G> {
     /// `GetValue()` of an uncached function. Out of line, so that a cached
     /// read does not pay for the registers and stack its operations take.
     #[inline(never)]
-    fn evaluate(&mut self, function: &super::Function) -> Result<f64, Error> {
+    fn evaluate(&mut self, function: &Function) -> Eval {
         let value = self.apply(function)?;
         if let Some(node) = function.copy_to {
             self.tree.set_double(node, value);
@@ -162,12 +235,9 @@ impl<'a, G: GetterSource> Evaluator<'a, G> {
         Ok(value)
     }
 
-    /// `GetValue()` of table `id`: looks up the values of its properties.
-    /// The keys are read in axis order (row, column, table, ...) before
-    /// the table interpolates.
-    pub fn table(&mut self, id: TableId) -> Result<f64, Error> {
+    fn eval_table(&mut self, id: TableId) -> Eval {
         let set = self.set;
-        let table = set.table(id)?;
+        let table = set.table(id).map_err(|e| self.fail(e))?;
         match table.kind() {
             TableKind::OneD => Ok(table.value_1d(self.table_key(table, 0)?)),
             TableKind::TwoD => {
@@ -186,9 +256,9 @@ impl<'a, G: GetterSource> Evaluator<'a, G> {
     }
 
     /// The value of lookup property `axis` of `table`; NaN without one.
-    fn table_key(&mut self, table: &Table, axis: usize) -> Result<f64, Error> {
+    fn table_key(&mut self, table: &Table, axis: usize) -> Eval {
         match table.lookup_properties().get(axis) {
-            Some(Some(p)) => self.property(p),
+            Some(Some(p)) => self.eval_property(p),
             _ => Ok(f64::NAN),
         }
     }

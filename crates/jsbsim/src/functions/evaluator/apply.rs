@@ -10,8 +10,7 @@
 
 use std::f64::consts::PI;
 
-use super::{Evaluator, GetterSource};
-use crate::Error;
+use super::{Eval, Evaluator, GetterSource};
 use crate::functions::{Function, FunctionError, Op, Parameter};
 use crate::math::{Axis, ColumnVector3, E_X, E_Y, E_Z, Quaternion};
 use crate::units::{DEGTORAD, RADTODEG};
@@ -25,39 +24,39 @@ const INV_LOG10_2: f64 = 1.0 / std::f64::consts::LOG10_2;
 
 /// `GetBinary`: |v| < 1e-9 is false, |v| - 1 < 1e-9 is true (so 0.5 is
 /// true), anything else is an error.
-fn binary(v: f64, at: &Location) -> Result<bool, Error> {
+fn binary(v: f64, at: &Location) -> Result<bool, FunctionError> {
     let v = v.abs();
     if v < 1e-9 {
         Ok(false)
     } else if v - 1.0 < 1e-9 {
         Ok(true)
     } else {
-        Err(FunctionError::NotBinary { at: at.clone() }.into())
+        Err(FunctionError::NotBinary { at: at.clone() })
     }
 }
 
 impl<G: GetterSource> Evaluator<'_, G> {
-    fn p(&mut self, f: &Function, i: usize) -> Result<f64, Error> {
+    /// [`binary`] of `v`, failing the evaluation when it is not binary.
+    fn binary(&mut self, v: f64, at: &Location) -> Result<bool, super::Failed> {
+        binary(v, at).map_err(|e| self.fail(e))
+    }
+
+    fn p(&mut self, f: &Function, i: usize) -> Eval {
         match f.params.get(i) {
-            Some(param) => self.parameter(param),
+            Some(param) => self.eval_parameter(param),
             None => Ok(f64::NAN),
         }
     }
 
     /// Folds the operands' values with `step`, evaluating them in order and
     /// stopping at the first error.
-    fn fold(
-        &mut self,
-        params: &[Parameter],
-        init: f64,
-        step: impl Fn(f64, f64) -> f64,
-    ) -> Result<f64, Error> {
+    fn fold(&mut self, params: &[Parameter], init: f64, step: impl Fn(f64, f64) -> f64) -> Eval {
         params
             .iter()
-            .try_fold(init, |acc, p| Ok(step(acc, self.parameter(p)?)))
+            .try_fold(init, |acc, p| Ok(step(acc, self.eval_parameter(p)?)))
     }
 
-    pub(super) fn apply(&mut self, f: &Function) -> Result<f64, Error> {
+    pub(super) fn apply(&mut self, f: &Function) -> Eval {
         let at = &f.at;
         Ok(match f.op {
             Op::Identity => self.p(f, 0)?,
@@ -81,9 +80,13 @@ impl<G: GetterSource> Evaluator<'_, G> {
                 },
             )?,
             Op::And | Op::Or => self.logical(f)?,
-            Op::Not => f64::from(u8::from(!binary(self.p(f, 0)?, at)?)),
+            Op::Not => {
+                let v = self.p(f, 0)?;
+                f64::from(u8::from(!self.binary(v, at)?))
+            }
             Op::IfThen => {
-                if binary(self.p(f, 0)?, at)? {
+                let v = self.p(f, 0)?;
+                if self.binary(v, at)? {
                     self.p(f, 1)?
                 } else {
                     self.p(f, 2)?
@@ -104,7 +107,7 @@ impl<G: GetterSource> Evaluator<'_, G> {
         })
     }
 
-    fn arithmetic(&mut self, f: &Function) -> Result<f64, Error> {
+    fn arithmetic(&mut self, f: &Function) -> Eval {
         let at = &f.at;
         Ok(match f.op {
             Op::Quotient => {
@@ -139,10 +142,10 @@ impl<G: GetterSource> Evaluator<'_, G> {
             Op::Mod => {
                 let a = self.p(f, 0)? as i32;
                 let b = self.p(f, 1)? as i32;
-                f64::from(
-                    a.checked_rem(b)
-                        .ok_or_else(|| FunctionError::ModByZero { at: at.clone() })?,
-                )
+                match a.checked_rem(b) {
+                    Some(r) => f64::from(r),
+                    None => return Err(self.fail(FunctionError::ModByZero { at: at.clone() })),
+                }
             }
             _ => unary(f.op, self.p(f, 0)?),
         })
@@ -206,17 +209,18 @@ fn unary(op: Op, x: f64) -> f64 {
 
 impl<G: GetterSource> Evaluator<'_, G> {
     #[inline(never)]
-    fn logical(&mut self, f: &Function) -> Result<f64, Error> {
+    fn logical(&mut self, f: &Function) -> Eval {
         let short = f.op == Op::Or;
         for param in &f.params {
-            if binary(self.parameter(param)?, &f.at)? == short {
+            let v = self.eval_parameter(param)?;
+            if self.binary(v, &f.at)? == short {
                 return Ok(f64::from(u8::from(short)));
             }
         }
         Ok(f64::from(u8::from(!short)))
     }
 
-    fn compare(&mut self, f: &Function) -> Result<f64, Error> {
+    fn compare(&mut self, f: &Function) -> Eval {
         let a = self.p(f, 0)?;
         let b = self.p(f, 1)?;
         let pass = match f.op {
@@ -231,35 +235,31 @@ impl<G: GetterSource> Evaluator<'_, G> {
     }
 
     #[inline(never)]
-    fn switch(&mut self, f: &Function) -> Result<f64, Error> {
+    fn switch(&mut self, f: &Function) -> Eval {
         let temp = self.p(f, 0)?;
         if temp < 0.0 {
-            return Err(FunctionError::Index {
-                at: f.at.clone(),
-                message: format!("The switch function index ({temp}) is negative."),
-            }
-            .into());
+            let message = format!("The switch function index ({temp}) is negative.");
+            let at = f.at.clone();
+            return Err(self.fail(FunctionError::Index { at, message }));
         }
         let values = f.params.split_first().map_or(&[][..], |(_, values)| values);
         let i = (temp + 0.5) as usize;
         if let Some(value) = values.get(i) {
-            return self.parameter(value);
+            return self.eval_parameter(value);
         }
         // Load-time arity gives at least one value, so the bound is exact.
-        Err(FunctionError::Index {
-            at: f.at.clone(),
-            message: format!(
-                "The switch function index ({temp}) selected a value above the range of supplied values[0:{}] - not enough values were supplied.",
-                values.len().saturating_sub(1)
-            ),
-        }
-        .into())
+        let message = format!(
+            "The switch function index ({temp}) selected a value above the range of supplied values[0:{}] - not enough values were supplied.",
+            values.len().saturating_sub(1)
+        );
+        let at = f.at.clone();
+        Err(self.fail(FunctionError::Index { at, message }))
     }
 
     /// Bisection over `x, x1, y1, x2, y2, ...`, evaluating each operand
     /// at most once.
     #[inline(never)]
-    fn interpolate1d(&mut self, f: &Function) -> Result<f64, Error> {
+    fn interpolate1d(&mut self, f: &Function) -> Eval {
         let n = f.params.len();
         let x = self.p(f, 0)?;
         let mut xmin = self.p(f, 1)?;
@@ -294,7 +294,7 @@ impl<G: GetterSource> Evaluator<'_, G> {
     }
 
     #[inline(never)]
-    fn rotation_local(&mut self, f: &Function) -> Result<f64, Error> {
+    fn rotation_local(&mut self, f: &Function) -> Eval {
         let alpha = self.p(f, 0)? * DEGTORAD;
         let beta = self.p(f, 1)? * DEGTORAD;
         let gamma = if f.op == Op::RotationGammaLocal {
@@ -319,7 +319,7 @@ impl<G: GetterSource> Evaluator<'_, G> {
     }
 
     #[inline(never)]
-    fn rotation_frame(&mut self, f: &Function) -> Result<f64, Error> {
+    fn rotation_frame(&mut self, f: &Function) -> Eval {
         let rx = self.p(f, 0)?;
         let ry = self.p(f, 1)?;
         let rz = self.p(f, 2)?;
@@ -329,11 +329,9 @@ impl<G: GetterSource> Evaluator<'_, G> {
         let idx = self.p(f, 6)? as i32;
         let axis = usize::try_from(idx).ok().and_then(Axis::from_index1);
         let Some(axis) = axis else {
-            return Err(FunctionError::Index {
-                at: f.at.clone(),
-                message: "The index must be one of the integer value 1, 2 or 3.".to_owned(),
-            }
-            .into());
+            let message = "The index must be one of the integer value 1, 2 or 3.".to_owned();
+            let at = f.at.clone();
+            return Err(self.fail(FunctionError::Index { at, message }));
         };
         let qa = Quaternion::from_axis_index(E_Y, -alpha);
         let qb = Quaternion::from_axis_index(E_Z, beta);
