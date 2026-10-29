@@ -67,6 +67,7 @@ cargo run -p oracle -- port function-ops   # run the Rust side of a transcript c
 scripts/oracle-ci.sh                       # check-drift and check-xml, as run by CI
 scripts/oracle-bench.sh                    # ns/frame of Rust vs C++ on the oracle/bench.toml cases
 scripts/oracle-sincos.sh                   # C++ without sin/cos fusion vs the port on the platform libm, bit for bit
+scripts/wasm-determinism.sh                # the port natively vs as wasm32-wasip1 under Node, bit for bit (oracle/determinism.toml)
 cargo run -p oracle -- compare --case ball oracle/goldens/ball/reference.csv candidate.csv
 ```
 

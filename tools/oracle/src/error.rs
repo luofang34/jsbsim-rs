@@ -125,6 +125,14 @@ pub enum OracleError {
         /// What is wrong.
         message: String,
     },
+    /// A `determinism` case could not be run, recorded or read back.
+    #[error("determinism case {case}: {message}")]
+    Determinism {
+        /// Case name from `oracle/determinism.toml`.
+        case: String,
+        /// What is wrong.
+        message: String,
+    },
     /// The `check-sincos` diagnostic cannot run as built.
     #[error("check-sincos: {0}")]
     Sincos(String),

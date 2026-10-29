@@ -12,6 +12,7 @@ pub mod cli;
 pub mod compare;
 pub mod corpus;
 pub mod derived;
+pub mod determinism;
 pub mod error;
 pub mod manifest;
 pub mod nasa;

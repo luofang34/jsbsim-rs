@@ -1,0 +1,18 @@
+# Golden cases of `oracle determinism` (scripts/wasm-determinism.sh): the
+# Rust port runs each natively and as wasm32-wasip1, and every sampled value
+# (script cases) or transcript byte (transcript cases) must be identical.
+# c1722 and c1724 fly the c172x with its sensor noise on; random, winds,
+# turbulence-tests and sensor-random-seed draw from the shared generator.
+cases = [
+    "ball",
+    "mk82",
+    "c1722",
+    "c1724",
+    "737_cruise",
+    "f16_test",
+    "geodesic",
+    "random",
+    "winds",
+    "turbulence-tests",
+    "sensor-random-seed",
+]
