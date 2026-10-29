@@ -21,6 +21,7 @@ int RunAuxiliaryProbe(const char* ops_file, const char* out_file);
 int RunGeodesicProbe(const char* ops_file, const char* out_file);
 int RunInitialConditionProbe(const char* ops_file, const char* out_file);
 int RunTrimProbe(const char* ops_file, const char* out_file);
+int RunRandomProbe(const char* ops_file, const char* out_file);
 int RunXmlProbe(const char* list_file, const char* out_file);
 
 #endif

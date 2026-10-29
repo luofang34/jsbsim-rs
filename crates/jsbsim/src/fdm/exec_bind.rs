@@ -59,8 +59,11 @@ pub fn bind_exec(b: &mut Binder<'_>) -> Result<(), Error> {
         "simulation/randomseed",
         Kind::Int,
         |m| f64::from(m.exec.random_seed),
+        // `SRand(int)`: `RandomSeed` is unsigned, and the shared
+        // generator is reseeded in place.
         |m, v| {
             m.exec.random_seed = v as i32;
+            m.exec.rng.seed(m.exec.random_seed as u32);
         },
     )?;
     b.property(

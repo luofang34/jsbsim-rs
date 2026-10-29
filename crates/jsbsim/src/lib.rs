@@ -14,6 +14,7 @@ pub mod math;
 pub mod models;
 pub mod options;
 pub mod properties;
+pub mod random;
 pub mod resolver;
 pub mod script;
 pub mod trim;

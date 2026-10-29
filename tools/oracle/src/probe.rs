@@ -14,6 +14,7 @@ mod math;
 pub mod models;
 mod properties;
 mod propulsion;
+mod random;
 mod table;
 mod trim;
 mod units;
@@ -58,6 +59,7 @@ pub fn run(name: &str, input: &str, context: &ProbeContext) -> Result<String, Or
         "propulsion" => Ok(propulsion::run(input, context)),
         "geodesic" => Ok(geodesic::run(input, context)),
         "trim" => Ok(trim::run(input, context)),
+        "random" => Ok(random::run(input)),
         other => Err(OracleError::Provenance(format!("unknown probe {other}"))),
     }
 }

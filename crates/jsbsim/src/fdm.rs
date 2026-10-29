@@ -67,6 +67,10 @@ pub struct ExecState {
     pub trim_completed: i32,
     /// `simulation/randomseed`.
     pub random_seed: i32,
+    /// `RandomGenerator`, seeded with [`random_seed`](Self::random_seed):
+    /// the generator of every sensor, function and wind model without a
+    /// seed of its own.
+    pub rng: crate::random::SharedGenerator,
     /// `simulation/jsbsim-debug`.
     pub debug_level: i32,
     /// Seconds since the Unix epoch, UTC, standing for the wall clock
@@ -90,6 +94,7 @@ impl Default for ExecState {
             trim_status: false,
             trim_completed: 0,
             random_seed: 0,
+            rng: crate::random::SharedGenerator::default(),
             debug_level: 0,
             wall_clock: 0,
             requests: Vec::new(),

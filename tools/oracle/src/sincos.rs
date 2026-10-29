@@ -155,6 +155,7 @@ pub const CASES: &[&str] = &[
     "piston_takeoff_noise0",
     "properties",
     "propulsion-tanks",
+    "random",
     "rotations",
     "rudder_kick",
     "table-unit-tests",

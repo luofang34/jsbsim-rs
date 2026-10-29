@@ -21821,6 +21821,7 @@ property = "*/velocities/w-fps"
 abs = 2e-07
 rel = 0.0
 reason = "velocities/w-fps: Rust libm and Apple libm differ in the last digit of sin, cos, atan2 and the geodetic conversions (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical, iteration counts included. The trim's regula falsi and the closed loops after it carry those digits into the state; observed max 1.8e-08; bound 10x that."
+
 [[tolerance]]
 case = "737_cruise"
 property = "*"
@@ -30350,3 +30351,24 @@ abs = 3e-08
 rel = 0.0
 reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, exp, pow and the geodetic conversions (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The stiff gear springs and the friction solve carry those digits into the state; observed max 2.4e-09 (rel 5.1e-09) at t=11.05 s; bound 10x that."
 
+
+[[tolerance]]
+case = "random"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: minstd_rand, generate_canonical and uniform_real_distribution are integer and IEEE operations in libc++'s order; the tags listed differ."
+
+[[tolerance]]
+case = "random"
+property = "normal/=>"
+abs = 0.0
+rel = 4e-15
+reason = "Polar method: sqrt(-2 log(s) / s) takes log from Rust libm, which differs from Apple libm in the last digit of some logarithms; with Apple libm (scripts/oracle-sincos.sh) the case is bit-identical. Observed max rel 3.3e-16 (102 of the normal deviates); bound 10x that."
+
+[[tolerance]]
+case = "random"
+property = "draws/=>"
+abs = 0.0
+rel = 4e-15
+reason = "Polar method: sqrt(-2 log(s) / s) takes log from Rust libm, which differs from Apple libm in the last digit of some logarithms; with Apple libm (scripts/oracle-sincos.sh) the case is bit-identical. Observed max rel 3.3e-16 (102 of the normal deviates); bound 10x that."
