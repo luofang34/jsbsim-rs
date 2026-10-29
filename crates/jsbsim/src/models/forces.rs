@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
-//! Force-producing models not ported yet (aerodynamics, propulsion, ground
-//! and external reactions, buoyancy, FCS). Each contributes no force; its
-//! XML is refused with [`Error::Unsupported`](crate::Error::Unsupported)
-//! unless empty.
+//! The state of a model slot with no model of its own (`FGInput`, whose
+//! sockets the core does not open): scheduling, and a force and moment
+//! that stay zero.
 
 use super::base::ModelBase;
 use crate::math::ColumnVector3;

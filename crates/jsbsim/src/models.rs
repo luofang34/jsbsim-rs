@@ -8,6 +8,7 @@ pub mod aircraft;
 pub mod atmosphere;
 pub mod auxiliary;
 pub mod base;
+pub mod buoyant_forces;
 pub mod external_reactions;
 pub mod fcs;
 pub mod forces;

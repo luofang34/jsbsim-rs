@@ -251,7 +251,9 @@ impl Fdm {
         loader: &mut DocumentLoader<'_>,
         document: &Element,
     ) -> Result<(), Error> {
-        unsupported_if_present(document, "buoyant_forces")?;
+        if let Some(mut buoyant) = document.find_element("buoyant_forces").cloned() {
+            self.load_buoyant_forces(loader, &mut buoyant)?;
+        }
         if let Some(mut propulsion) = document.find_element("propulsion").cloned() {
             self.load_propulsion(loader, &mut propulsion)?;
         }

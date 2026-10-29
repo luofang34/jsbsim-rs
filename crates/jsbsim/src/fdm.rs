@@ -12,6 +12,7 @@ mod engine_run;
 pub use engine_load::EngineLoad;
 mod env;
 pub(crate) use env::Env;
+mod buoyancy;
 mod exec_bind;
 mod load;
 mod models_run;
@@ -139,7 +140,7 @@ pub struct Models {
     /// `FGExternalReactions`.
     pub external_reactions: crate::models::external_reactions::ExternalReactions,
     /// `FGBuoyantForces`.
-    pub buoyant_forces: ForceModel,
+    pub buoyant_forces: crate::models::buoyant_forces::BuoyantForces,
     /// `FGAircraft`.
     pub aircraft: Aircraft,
     /// `FGAccelerations`.

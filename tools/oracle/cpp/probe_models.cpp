@@ -29,7 +29,7 @@ const char* const kPrefixes[] = {
   "inertia/", "metrics/", "position/", "velocities/", "attitude/",
   "accelerations/", "forces/", "moments/", "aero/", "atmosphere/",
   "external_reactions/", "fcs/", "systems/", "simulation/", "contact/", "gear/",
-  "propulsion/",
+  "propulsion/", "buoyant_forces/",
 };
 
 // Contact properties tied to FGLGear members the constructor leaves

@@ -10,7 +10,7 @@
 //! accelerations solver.
 
 mod contact;
-mod contact_bind;
+pub(crate) mod contact_bind;
 mod force;
 mod frame;
 mod friction;

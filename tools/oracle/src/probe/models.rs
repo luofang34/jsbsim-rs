@@ -12,7 +12,7 @@ use super::ProbeContext;
 
 /// Property subtrees of the models the port covers; keep in step with
 /// `kPrefixes` in the C++ probe.
-pub const PREFIXES: [&str; 17] = [
+pub const PREFIXES: [&str; 18] = [
     "inertia/",
     "metrics/",
     "position/",
@@ -30,6 +30,7 @@ pub const PREFIXES: [&str; 17] = [
     "contact/",
     "gear/",
     "propulsion/",
+    "buoyant_forces/",
 ];
 
 /// Contact properties tied to `FGLGear` members its constructor leaves

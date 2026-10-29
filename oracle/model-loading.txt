@@ -25,12 +25,12 @@ Pterosaur ok
 SGS ok
 Short_S23 ok
 Shuttle ok
-Submarine_Scout unsupported <buoyant_forces> (In file aircraft/Submarine_Scout/Submarine_Scout.xml: line 616)
+Submarine_Scout ok
 T37 ok
 T38 ok
 X15 ok
 XB-70 ok
-ZLT-NT unsupported <buoyant_forces> (In file aircraft/ZLT-NT/ZLT-NT.xml: line 672)
+ZLT-NT ok
 ah1s ok
 ball ok
 ballx ok
@@ -58,6 +58,6 @@ pogo-jsbsim ok
 sgs126 ok
 sgs233 ok
 t6texan2 ok
-weather-balloon unsupported <buoyant_forces> (In file aircraft/weather-balloon/weather-balloon.xml: line 135)
+weather-balloon ok
 wrightFlyer1903 ok
 x24b ok

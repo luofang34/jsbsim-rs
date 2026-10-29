@@ -10,7 +10,7 @@ use super::exec_bind::ExecRequest;
 use super::order::{Model, ORDER};
 use super::{Fdm, Models};
 use crate::Error;
-use crate::math::{ColumnVector3, E_PHI, E_THT, Location, Matrix33, Quaternion};
+use crate::math::{ColumnVector3, E_PHI, E_THT, Location, Quaternion};
 use crate::models::aircraft;
 use crate::models::atmosphere::Overrides;
 use crate::properties::NodeId;
@@ -83,6 +83,13 @@ impl Models {
                 a.rp_body = self.mass_balance.structural_to_body(self.aircraft.xyz_rp);
             }
             Model::GroundReactions => self.load_ground_reactions_inputs(),
+            Model::BuoyantForces => {
+                let b = &mut self.buoyant_forces.input;
+                b.density = self.atmosphere.density;
+                b.pressure = self.atmosphere.pressure;
+                b.temperature = self.atmosphere.temperature;
+                b.gravity = self.inertial.grav_accel.magnitude();
+            }
             Model::MassBalance => self.load_mass_balance_inputs(),
             Model::Propulsion => self.load_propulsion_inputs(),
             Model::Accelerations => self.load_accelerations_inputs(),
@@ -120,14 +127,12 @@ impl Models {
         g.xyz_cg = self.mass_balance.xyz_cg;
     }
 
-    /// The executive supplies no lifting gas inputs, so they contribute
-    /// nothing.
     fn load_mass_balance_inputs(&mut self) {
         let tank_inertia = self.propulsion.calculate_tank_inertias(&self.mass_balance);
         let i = &mut self.mass_balance.input;
-        i.gas_inertia = Matrix33::zero();
-        i.gas_mass = 0.0;
-        i.gas_moment = ColumnVector3::zero();
+        i.gas_inertia = self.buoyant_forces.gas_mass_inertia();
+        i.gas_mass = self.buoyant_forces.gas_mass();
+        i.gas_moment = self.buoyant_forces.gas_mass_moment();
         i.tanks_weight = self.propulsion.tanks_weight();
         i.tanks_moment = self.propulsion.tanks_moment();
         i.tank_inertia = tank_inertia;
@@ -195,7 +200,6 @@ impl Models {
     }
 
     fn aircraft_inputs(&self) -> aircraft::Inputs {
-        let fm = |m: &crate::models::forces::ForceModel| (m.forces, m.moments);
         aircraft::Inputs {
             aero: (
                 self.aerodynamics.state.forces,
@@ -207,7 +211,7 @@ impl Models {
                 self.external_reactions.total_forces,
                 self.external_reactions.total_moments,
             ),
-            buoyant: fm(&self.buoyant_forces),
+            buoyant: (self.buoyant_forces.forces, self.buoyant_forces.moments),
         }
     }
 
@@ -226,6 +230,7 @@ impl Models {
             Model::ExternalReactions => self.external_reactions.init_model(),
             Model::GroundReactions => self.ground_reactions.init_model(),
             Model::Propulsion => self.propulsion.init_model(),
+            Model::BuoyantForces => self.buoyant_forces.init_model(),
             _ => {}
         }
     }
@@ -357,6 +362,7 @@ impl Fdm {
             Model::GroundReactions => self.run_ground_reactions()?,
             Model::ExternalReactions => self.run_external_reactions()?,
             Model::Propulsion => self.run_propulsion()?,
+            Model::BuoyantForces => self.run_buoyant_forces()?,
             Model::Accelerations => {
                 let (hd, ts) = (m.exec.hold_down, m.exec.trim_status);
                 m.accelerations.run(holding, hd, ts);
