@@ -11,6 +11,8 @@
 //   dt <s>                 in.totalDeltaT
 //   alt <asl> <agl> <span> in.AltitudeASL, in.DistanceAGL, in.wingspan
 //   rate <n>               SetRate(n)
+//   time <s>               Setsim_time(s) of the executive, which Culp
+//                          turbulence reads
 //   windned <n> <e> <d>    SetWindNED(n, e, d), the initial-condition path;
 //                          print
 //   run | hold             Run(false) | Run(true), print
@@ -117,6 +119,12 @@ std::string Probe::Run(const std::string& op, std::istringstream& args)
   }
   if (op == "alt") {
     args >> in.AltitudeASL >> in.DistanceAGL >> in.wingspan;
+    return " ok";
+  }
+  if (op == "time") {
+    double t = 0.0;
+    args >> t;
+    exec->Setsim_time(t);
     return " ok";
   }
   if (op == "rate") {

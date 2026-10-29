@@ -291,44 +291,100 @@ reason = "Gust and turbulence components, turbulence parameters, seeds and every
 [[tolerance]]
 case = "winds"
 property = "*/atmosphere/wind-north-fps"
-abs = 0.0
-rel = 1e-15
-reason = "SetWindspeed scales cos(psiw) (libm last-ulp differences); observed max rel 4.5e-16."
+abs = 3.6e-14
+rel = 0.0
+reason = "atmosphere/wind-north-fps: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow and log (and Clang fuses each sin/cos pair into __sincos_stret); the Dryden filters scale normal deviates whose polar method takes log, and their coefficients take pow and tan. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 3.6e-15; bound 10x that."
 
 [[tolerance]]
 case = "winds"
 property = "*/atmosphere/wind-east-fps"
-abs = 0.0
-rel = 1e-15
-reason = "SetWindspeed scales sin(psiw) (libm last-ulp differences); observed max rel 3.9e-16."
+abs = 3.6e-14
+rel = 0.0
+reason = "atmosphere/wind-east-fps: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow and log (and Clang fuses each sin/cos pair into __sincos_stret); the Dryden filters scale normal deviates whose polar method takes log, and their coefficients take pow and tan. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 3.6e-15; bound 10x that."
 
 [[tolerance]]
 case = "winds"
 property = "*/atmosphere/psiw-rad"
-abs = 0.0
-rel = 1e-15
-reason = "Run takes atan2 of the steady wind (libm last-ulp differences); observed max rel 1.1e-16."
+abs = 4.4e-15
+rel = 0.0
+reason = "atmosphere/psiw-rad: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow and log (and Clang fuses each sin/cos pair into __sincos_stret); the Dryden filters scale normal deviates whose polar method takes log, and their coefficients take pow and tan. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 4.4e-16; bound 10x that."
 
 [[tolerance]]
 case = "winds"
 property = "*/atmosphere/total-wind-north-fps"
-abs = 0.0
-rel = 1e-15
-reason = "Sums the cos(psiw)-scaled steady wind and the cosine-shaped gust (libm last-ulp differences); observed max rel 4.5e-16."
+abs = 3.6e-14
+rel = 0.0
+reason = "atmosphere/total-wind-north-fps: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow and log (and Clang fuses each sin/cos pair into __sincos_stret); the Dryden filters scale normal deviates whose polar method takes log, and their coefficients take pow and tan. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 3.6e-15; bound 10x that."
 
 [[tolerance]]
 case = "winds"
 property = "*/atmosphere/total-wind-east-fps"
-abs = 0.0
-rel = 1e-15
-reason = "Sums the sin(psiw)-scaled steady wind and the cosine-shaped gust (libm last-ulp differences); observed max rel 3.9e-16."
+abs = 7.1e-14
+rel = 0.0
+reason = "atmosphere/total-wind-east-fps: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow and log (and Clang fuses each sin/cos pair into __sincos_stret); the Dryden filters scale normal deviates whose polar method takes log, and their coefficients take pow and tan. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 7.1e-15; bound 10x that."
 
 [[tolerance]]
 case = "winds"
 property = "*/atmosphere/total-wind-down-fps"
-abs = 0.0
-rel = 1e-15
-reason = "Includes the one-minus-cosine gust profile (libm last-ulp differences in cos); observed max rel 8.3e-16."
+abs = 1.4e-13
+rel = 0.0
+reason = "atmosphere/total-wind-down-fps: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow and log (and Clang fuses each sin/cos pair into __sincos_stret); the Dryden filters scale normal deviates whose polar method takes log, and their coefficients take pow and tan. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 1.4e-14; bound 10x that."
+
+[[tolerance]]
+case = "winds"
+property = "*/atmosphere/p-turb-rad_sec"
+abs = 1.1e-15
+rel = 0.0
+reason = "atmosphere/p-turb-rad_sec: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow and log (and Clang fuses each sin/cos pair into __sincos_stret); the Dryden filters scale normal deviates whose polar method takes log, and their coefficients take pow and tan. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 1.1e-16; bound 10x that."
+
+[[tolerance]]
+case = "winds"
+property = "*/atmosphere/q-turb-rad_sec"
+abs = 3.3e-15
+rel = 0.0
+reason = "atmosphere/q-turb-rad_sec: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow and log (and Clang fuses each sin/cos pair into __sincos_stret); the Dryden filters scale normal deviates whose polar method takes log, and their coefficients take pow and tan. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 3.3e-16; bound 10x that."
+
+[[tolerance]]
+case = "winds"
+property = "*/atmosphere/r-turb-rad_sec"
+abs = 1.8e-15
+rel = 0.0
+reason = "atmosphere/r-turb-rad_sec: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow and log (and Clang fuses each sin/cos pair into __sincos_stret); the Dryden filters scale normal deviates whose polar method takes log, and their coefficients take pow and tan. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 1.8e-16; bound 10x that."
+
+[[tolerance]]
+case = "winds"
+property = "*/atmosphere/turb-down-fps"
+abs = 1.4e-13
+rel = 0.0
+reason = "atmosphere/turb-down-fps: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow and log (and Clang fuses each sin/cos pair into __sincos_stret); the Dryden filters scale normal deviates whose polar method takes log, and their coefficients take pow and tan. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 1.4e-14; bound 10x that."
+
+[[tolerance]]
+case = "winds"
+property = "*/atmosphere/turb-east-fps"
+abs = 7.1e-14
+rel = 0.0
+reason = "atmosphere/turb-east-fps: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow and log (and Clang fuses each sin/cos pair into __sincos_stret); the Dryden filters scale normal deviates whose polar method takes log, and their coefficients take pow and tan. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 7.1e-15; bound 10x that."
+
+[[tolerance]]
+case = "winds"
+property = "*/atmosphere/turb-north-fps"
+abs = 3.6e-14
+rel = 0.0
+reason = "atmosphere/turb-north-fps: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow and log (and Clang fuses each sin/cos pair into __sincos_stret); the Dryden filters scale normal deviates whose polar method takes log, and their coefficients take pow and tan. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 3.6e-15; bound 10x that."
+
+[[tolerance]]
+case = "winds"
+property = "*/turb-direction"
+abs = 1.1e-12
+rel = 0.0
+reason = "turb-direction: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow and log (and Clang fuses each sin/cos pair into __sincos_stret); the Dryden filters scale normal deviates whose polar method takes log, and their coefficients take pow and tan. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 1.1e-13; bound 10x that."
+
+[[tolerance]]
+case = "winds"
+property = "*/turb-magnitude"
+abs = 9.8e-14
+rel = 0.0
+reason = "turb-magnitude: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow and log (and Clang fuses each sin/cos pair into __sincos_stret); the Dryden filters scale normal deviates whose polar method takes log, and their coefficients take pow and tan. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 9.8e-15; bound 10x that."
 
 [[tolerance]]
 case = "auxiliary"
@@ -4804,6 +4860,7 @@ property = "tiny/s"
 abs = 3.2e-8
 rel = 0.0
 reason = "Distances of 1e-10 to 1e-6 rad (up to 13.5 ft): a last-ulp difference of libm's sin, cos, hypot and atan2 in the ported inverse, or of the start point's derived longitude and latitude, moves a near-zero distance by a few ulps of the ECEF position; bounded absolutely, as a relative bound overstates it near zero; observed max 3.1e-9 ft (9.6e-10 m), bound 10x that."
+
 [[tolerance]]
 case = "geodesic"
 property = "tiny/psi"
@@ -30442,3 +30499,115 @@ property = "*/test/random2"
 abs = 5.6e-16
 rel = 0.0
 reason = "The normal deviate's polar method takes log from Rust libm, which differs from Apple libm in the last digit of some logarithms; with Apple libm (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 5.6e-17; bound 10x that."
+
+[[tolerance]]
+case = "turbulence-tests"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: seeds, trim iteration counts and every value not listed below; the tags listed differ."
+
+[[tolerance]]
+case = "turbulence-tests"
+property = "*/atmosphere/p-turb-rad_sec"
+abs = 0.0048
+rel = 0.0
+reason = "atmosphere/p-turb-rad_sec: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret); 60 s of free flight in turbulence, whose filters take their time constants from the airspeed, and the A4's trim carry those digits into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical, trim iterations included. Observed max 0.00048; bound 10x that."
+
+[[tolerance]]
+case = "turbulence-tests"
+property = "*/atmosphere/q-turb-rad_sec"
+abs = 0.0051
+rel = 0.0
+reason = "atmosphere/q-turb-rad_sec: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret); 60 s of free flight in turbulence, whose filters take their time constants from the airspeed, and the A4's trim carry those digits into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical, trim iterations included. Observed max 0.00051; bound 10x that."
+
+[[tolerance]]
+case = "turbulence-tests"
+property = "*/atmosphere/r-turb-rad_sec"
+abs = 0.00024
+rel = 0.0
+reason = "atmosphere/r-turb-rad_sec: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret); 60 s of free flight in turbulence, whose filters take their time constants from the airspeed, and the A4's trim carry those digits into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical, trim iterations included. Observed max 2.4e-05; bound 10x that."
+
+[[tolerance]]
+case = "turbulence-tests"
+property = "*/atmosphere/total-wind-down-fps"
+abs = 4.2e-07
+rel = 0.0
+reason = "atmosphere/total-wind-down-fps: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret); 60 s of free flight in turbulence, whose filters take their time constants from the airspeed, and the A4's trim carry those digits into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical, trim iterations included. Observed max 4.2e-08; bound 10x that."
+
+[[tolerance]]
+case = "turbulence-tests"
+property = "*/atmosphere/total-wind-east-fps"
+abs = 0.12
+rel = 0.0
+reason = "atmosphere/total-wind-east-fps: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret); 60 s of free flight in turbulence, whose filters take their time constants from the airspeed, and the A4's trim carry those digits into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical, trim iterations included. Observed max 0.012; bound 10x that."
+
+[[tolerance]]
+case = "turbulence-tests"
+property = "*/atmosphere/total-wind-north-fps"
+abs = 0.097
+rel = 0.0
+reason = "atmosphere/total-wind-north-fps: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret); 60 s of free flight in turbulence, whose filters take their time constants from the airspeed, and the A4's trim carry those digits into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical, trim iterations included. Observed max 0.0097; bound 10x that."
+
+[[tolerance]]
+case = "turbulence-tests"
+property = "*/atmosphere/turb-down-fps"
+abs = 4.2e-07
+rel = 0.0
+reason = "atmosphere/turb-down-fps: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret); 60 s of free flight in turbulence, whose filters take their time constants from the airspeed, and the A4's trim carry those digits into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical, trim iterations included. Observed max 4.2e-08; bound 10x that."
+
+[[tolerance]]
+case = "turbulence-tests"
+property = "*/atmosphere/turb-east-fps"
+abs = 0.12
+rel = 0.0
+reason = "atmosphere/turb-east-fps: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret); 60 s of free flight in turbulence, whose filters take their time constants from the airspeed, and the A4's trim carry those digits into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical, trim iterations included. Observed max 0.012; bound 10x that."
+
+[[tolerance]]
+case = "turbulence-tests"
+property = "*/atmosphere/turb-north-fps"
+abs = 0.097
+rel = 0.0
+reason = "atmosphere/turb-north-fps: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret); 60 s of free flight in turbulence, whose filters take their time constants from the airspeed, and the A4's trim carry those digits into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical, trim iterations included. Observed max 0.0097; bound 10x that."
+
+[[tolerance]]
+case = "turbulence-tests"
+property = "*/attitude/phi-rad"
+abs = 3.1e-05
+rel = 0.0
+reason = "attitude/phi-rad: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret); 60 s of free flight in turbulence, whose filters take their time constants from the airspeed, and the A4's trim carry those digits into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical, trim iterations included. Observed max 3.1e-06; bound 10x that."
+
+[[tolerance]]
+case = "turbulence-tests"
+property = "*/attitude/theta-rad"
+abs = 5.3e-06
+rel = 0.0
+reason = "attitude/theta-rad: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret); 60 s of free flight in turbulence, whose filters take their time constants from the airspeed, and the A4's trim carry those digits into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical, trim iterations included. Observed max 5.3e-07; bound 10x that."
+
+[[tolerance]]
+case = "turbulence-tests"
+property = "*/control"
+abs = 2e-14
+rel = 0.0
+reason = "control: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret); 60 s of free flight in turbulence, whose filters take their time constants from the airspeed, and the A4's trim carry those digits into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical, trim iterations included. Observed max 2e-15; bound 10x that."
+
+[[tolerance]]
+case = "turbulence-tests"
+property = "*/position/h-sl-ft"
+abs = 2.2e-05
+rel = 0.0
+reason = "position/h-sl-ft: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret); 60 s of free flight in turbulence, whose filters take their time constants from the airspeed, and the A4's trim carry those digits into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical, trim iterations included. Observed max 2.2e-06; bound 10x that."
+
+[[tolerance]]
+case = "turbulence-tests"
+property = "*/state"
+abs = 7.1e-14
+rel = 0.0
+reason = "state: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret); 60 s of free flight in turbulence, whose filters take their time constants from the airspeed, and the A4's trim carry those digits into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical, trim iterations included. Observed max 7.1e-15; bound 10x that."
+
+[[tolerance]]
+case = "turbulence-tests"
+property = "*/velocities/vc-kts"
+abs = 0.044
+rel = 0.0
+reason = "velocities/vc-kts: Rust libm and Apple libm differ in the last digit of sin, cos, tan, atan2, pow, log and the geodetic conversions (and Clang fuses each sin/cos pair into __sincos_stret); 60 s of free flight in turbulence, whose filters take their time constants from the airspeed, and the A4's trim carry those digits into the state. With Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos (scripts/oracle-sincos.sh) the case is bit-identical, trim iterations included. Observed max 0.0044; bound 10x that."

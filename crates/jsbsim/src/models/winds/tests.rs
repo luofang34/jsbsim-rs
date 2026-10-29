@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 use super::*;
 use crate::fdm::Fdm;
+use crate::random::RandomNumberGenerator;
+
+fn run(w: &mut Winds) {
+    w.run(false, &RandomNumberGenerator::default(), 0.0);
+}
 
 fn identity() -> Matrix33 {
     Matrix33::new(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0)
@@ -74,12 +79,12 @@ fn run_sums_the_total_and_wraps_psi() {
     w.turbulence.turb_type = TurbulenceType::None.code();
     w.set_wind_ned(ColumnVector3::new(10.0, -10.0, 1.0));
     w.gust_ned = ColumnVector3::new(1.0, 2.0, 3.0);
-    w.run(false).unwrap();
+    run(&mut w);
     assert_eq!(w.total_wind_ned, ColumnVector3::new(11.0, -8.0, 4.0));
     assert!((w.psiw - 1.75 * PI).abs() < 1e-12);
     // A zero north component leaves psi alone.
     w.set_wind_ned(ColumnVector3::new(0.0, 10.0, 0.0));
-    w.run(false).unwrap();
+    run(&mut w);
     assert!((w.psiw - 1.75 * PI).abs() < 1e-12);
 }
 
@@ -87,7 +92,7 @@ fn run_sums_the_total_and_wraps_psi() {
 fn holding_leaves_the_state_alone() {
     let mut w = winds();
     w.set_wind_ned(ColumnVector3::new(10.0, 0.0, 0.0));
-    w.run(true).unwrap();
+    w.run(true, &RandomNumberGenerator::default(), 0.0);
     assert_eq!(w.total_wind_ned, ColumnVector3::zero());
 }
 
@@ -106,7 +111,7 @@ fn cosine_gust_rises_holds_falls_and_resets() {
     };
     let mut downs = Vec::new();
     while w.cosine_gust.profile.running {
-        w.run(false).unwrap();
+        run(&mut w);
         downs.push(w.total_wind_ned[E_DOWN]);
     }
     // Elapsed 0, 0.5, 1 (peak), 1.5, 2, 2.5; the step from 3 to 3.5 ends
@@ -131,11 +136,11 @@ fn body_gust_direction_is_fixed_in_the_local_frame_at_start() {
     g.direction = ColumnVector3::new(1.0, 0.0, 0.0);
     g.profile.running = true;
     g.profile.elapsed_time = 3.0;
-    w.run(false).unwrap();
+    run(&mut w);
     assert_eq!(w.cosine_gust_ned, ColumnVector3::new(0.0, 1.0, 0.0));
     // Turning the aircraft does not turn the running gust.
     w.input.tl2b = identity();
-    w.run(false).unwrap();
+    run(&mut w);
     assert_eq!(w.cosine_gust_ned, ColumnVector3::new(0.0, 1.0, 0.0));
 }
 
@@ -146,7 +151,7 @@ fn an_unknown_gust_frame_blows_nothing() {
     w.cosine_gust.direction = ColumnVector3::new(1.0, 0.0, 0.0);
     w.cosine_gust.profile.running = true;
     w.cosine_gust.profile.elapsed_time = 3.0;
-    w.run(false).unwrap();
+    run(&mut w);
     assert_eq!(w.cosine_gust_ned, ColumnVector3::zero());
 }
 
@@ -166,50 +171,66 @@ fn init_resets_gusts_but_not_the_steady_wind() {
     assert_eq!(w.cosine_gust.profile.elapsed_time, 0.0);
 }
 
-fn turbulence_construct(w: &mut Winds) -> Option<String> {
-    match w.run(false) {
-        Err(Error::Unsupported { construct, path }) => {
-            assert_eq!(path, "winds");
-            Some(construct)
-        }
-        Err(e) => panic!("{e}"),
-        Ok(()) => None,
-    }
-}
-
 #[test]
-fn deterministic_turbulence_branches_run() {
+fn turbulence_free_branches_skip_the_generator() {
     let mut w = winds();
+    let rng = RandomNumberGenerator::new(1);
     w.turbulence_ned = ColumnVector3::new(1.0, 1.0, 1.0);
-    assert_eq!(turbulence_construct(&mut w), None);
+    w.run(false, &rng, 0.0);
     assert_eq!(w.turbulence_ned, ColumnVector3::zero());
     for code in [0, 1, 7, -1] {
         w.turbulence.turb_type = code;
-        assert_eq!(turbulence_construct(&mut w), None, "type {code}");
+        w.run(false, &rng, 0.0);
     }
     w.turbulence.turb_type = TurbulenceType::Culp.code();
     w.turbulence.gain = 0.0;
-    assert_eq!(turbulence_construct(&mut w), None);
+    w.run(false, &rng, 0.0);
     // Severity set but no airspeed relative to the air mass.
     w.turbulence.turb_type = TurbulenceType::Tustin.code();
     w.turbulence.severity = 3;
     w.set_wind_ned(ColumnVector3::new(100.0, 0.0, 0.0));
-    assert_eq!(turbulence_construct(&mut w), None);
+    w.run(false, &rng, 0.0);
+    assert_eq!(w.turbulence_ned, ColumnVector3::zero());
+    // Nothing was drawn.
+    assert_eq!(rng.uniform(), RandomNumberGenerator::new(1).uniform());
 }
 
 #[test]
-fn random_turbulence_is_unsupported() {
+fn dryden_draws_four_normals_per_frame_from_its_own_seed_once_set() {
     let mut w = winds();
-    w.turbulence.severity = 3;
-    assert_eq!(
-        turbulence_construct(&mut w).as_deref(),
-        Some("atmosphere/turb-type 3 (FGWinds turbulence)")
-    );
+    w.input.altitude_asl = 5000.0;
+    w.input.wingspan = 35.0;
+    w.turbulence.severity = 4;
+    let exec = RandomNumberGenerator::new(1);
+    w.run(false, &exec, 0.0);
+    let expected = RandomNumberGenerator::new(1);
+    for _ in 0..4 {
+        assert!(expected.normal().is_finite());
+    }
+    assert_eq!(exec.normal().to_bits(), expected.normal().to_bits());
+    assert_ne!(w.turbulence_ned, ColumnVector3::zero());
+    // With a seed of its own, the executive's generator is left alone.
+    w.set_random_seed(2);
+    w.run(false, &exec, 0.0);
+    assert_eq!(exec.normal().to_bits(), expected.normal().to_bits());
+    w.init_model();
+    assert_eq!(w.dryden, DrydenState::default());
+}
+
+#[test]
+fn culp_draws_a_pulse_when_none_is_pending() {
+    let mut w = winds();
+    w.input.distance_agl = 1000.0;
+    w.input.wingspan = 35.0;
     w.turbulence.turb_type = TurbulenceType::Culp.code();
-    assert_eq!(
-        turbulence_construct(&mut w).as_deref(),
-        Some("atmosphere/turb-type 2 (FGWinds turbulence)")
-    );
+    w.turbulence.gain = 2.0;
+    let rng = RandomNumberGenerator::new(3);
+    w.run(false, &rng, 1.0);
+    let strength = RandomNumberGenerator::new(3).uniform();
+    assert_eq!(w.culp.strength, strength);
+    assert_eq!(w.culp.target_time, 1.0 + 0.71 + strength * 0.5);
+    // The gain is clamped in place.
+    assert_eq!(w.turbulence.gain, 1.0);
 }
 
 #[test]

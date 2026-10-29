@@ -1,0 +1,378 @@
+# JSBSim's turbulence tests, driven as their Python counterparts drive
+# them.
+#
+# TestTurbulenceTustin.testFreeFlightIntensity: Milspec and Tustin
+# turbulence of severity 4 on the untrimmed c172p descending from
+# 2800 ft, at 120 Hz and 1000 Hz, every second for 60 s.
+paths ../../inputs aircraft systems
+new
+watch simulation/sim-time-sec atmosphere/turb-north-fps atmosphere/turb-east-fps atmosphere/turb-down-fps atmosphere/p-turb-rad_sec atmosphere/q-turb-rad_sec atmosphere/r-turb-rad_sec atmosphere/total-wind-north-fps atmosphere/total-wind-east-fps atmosphere/total-wind-down-fps atmosphere/randomseed position/h-sl-ft velocities/vc-kts attitude/phi-rad attitude/theta-rad
+set simulation/randomseed 1
+model c172p
+dt 0.0083333333333333332
+set ic/h-sl-ft 2800
+set ic/vc-kts 74
+set ic/gamma-deg 0
+set propulsion/engine[0]/set-running 1
+runic
+set fcs/throttle-cmd-norm 0.7
+set fcs/mixture-cmd-norm 1.0
+set atmosphere/turbulence/milspec/severity 4
+set atmosphere/turb-type 3
+until 1
+until 2
+until 3
+until 4
+until 5
+until 6
+until 7
+until 8
+until 9
+until 10
+until 11
+until 12
+until 13
+until 14
+until 15
+until 16
+until 17
+until 18
+until 19
+until 20
+until 21
+until 22
+until 23
+until 24
+until 25
+until 26
+until 27
+until 28
+until 29
+until 30
+until 31
+until 32
+until 33
+until 34
+until 35
+until 36
+until 37
+until 38
+until 39
+until 40
+until 41
+until 42
+until 43
+until 44
+until 45
+until 46
+until 47
+until 48
+until 49
+until 50
+until 51
+until 52
+until 53
+until 54
+until 55
+until 56
+until 57
+until 58
+until 59
+until 60
+new
+watch simulation/sim-time-sec atmosphere/turb-north-fps atmosphere/turb-east-fps atmosphere/turb-down-fps atmosphere/p-turb-rad_sec atmosphere/q-turb-rad_sec atmosphere/r-turb-rad_sec atmosphere/total-wind-north-fps atmosphere/total-wind-east-fps atmosphere/total-wind-down-fps atmosphere/randomseed position/h-sl-ft velocities/vc-kts attitude/phi-rad attitude/theta-rad
+set simulation/randomseed 1
+model c172p
+dt 0.001
+set ic/h-sl-ft 2800
+set ic/vc-kts 74
+set ic/gamma-deg 0
+set propulsion/engine[0]/set-running 1
+runic
+set fcs/throttle-cmd-norm 0.7
+set fcs/mixture-cmd-norm 1.0
+set atmosphere/turbulence/milspec/severity 4
+set atmosphere/turb-type 3
+until 1
+until 2
+until 3
+until 4
+until 5
+until 6
+until 7
+until 8
+until 9
+until 10
+until 11
+until 12
+until 13
+until 14
+until 15
+until 16
+until 17
+until 18
+until 19
+until 20
+until 21
+until 22
+until 23
+until 24
+until 25
+until 26
+until 27
+until 28
+until 29
+until 30
+until 31
+until 32
+until 33
+until 34
+until 35
+until 36
+until 37
+until 38
+until 39
+until 40
+until 41
+until 42
+until 43
+until 44
+until 45
+until 46
+until 47
+until 48
+until 49
+until 50
+until 51
+until 52
+until 53
+until 54
+until 55
+until 56
+until 57
+until 58
+until 59
+until 60
+new
+watch simulation/sim-time-sec atmosphere/turb-north-fps atmosphere/turb-east-fps atmosphere/turb-down-fps atmosphere/p-turb-rad_sec atmosphere/q-turb-rad_sec atmosphere/r-turb-rad_sec atmosphere/total-wind-north-fps atmosphere/total-wind-east-fps atmosphere/total-wind-down-fps atmosphere/randomseed position/h-sl-ft velocities/vc-kts attitude/phi-rad attitude/theta-rad
+set simulation/randomseed 1
+model c172p
+dt 0.0083333333333333332
+set ic/h-sl-ft 2800
+set ic/vc-kts 74
+set ic/gamma-deg 0
+set propulsion/engine[0]/set-running 1
+runic
+set fcs/throttle-cmd-norm 0.7
+set fcs/mixture-cmd-norm 1.0
+set atmosphere/turbulence/milspec/severity 4
+set atmosphere/turb-type 4
+until 1
+until 2
+until 3
+until 4
+until 5
+until 6
+until 7
+until 8
+until 9
+until 10
+until 11
+until 12
+until 13
+until 14
+until 15
+until 16
+until 17
+until 18
+until 19
+until 20
+until 21
+until 22
+until 23
+until 24
+until 25
+until 26
+until 27
+until 28
+until 29
+until 30
+until 31
+until 32
+until 33
+until 34
+until 35
+until 36
+until 37
+until 38
+until 39
+until 40
+until 41
+until 42
+until 43
+until 44
+until 45
+until 46
+until 47
+until 48
+until 49
+until 50
+until 51
+until 52
+until 53
+until 54
+until 55
+until 56
+until 57
+until 58
+until 59
+until 60
+new
+watch simulation/sim-time-sec atmosphere/turb-north-fps atmosphere/turb-east-fps atmosphere/turb-down-fps atmosphere/p-turb-rad_sec atmosphere/q-turb-rad_sec atmosphere/r-turb-rad_sec atmosphere/total-wind-north-fps atmosphere/total-wind-east-fps atmosphere/total-wind-down-fps atmosphere/randomseed position/h-sl-ft velocities/vc-kts attitude/phi-rad attitude/theta-rad
+set simulation/randomseed 1
+model c172p
+dt 0.001
+set ic/h-sl-ft 2800
+set ic/vc-kts 74
+set ic/gamma-deg 0
+set propulsion/engine[0]/set-running 1
+runic
+set fcs/throttle-cmd-norm 0.7
+set fcs/mixture-cmd-norm 1.0
+set atmosphere/turbulence/milspec/severity 4
+set atmosphere/turb-type 4
+until 1
+until 2
+until 3
+until 4
+until 5
+until 6
+until 7
+until 8
+until 9
+until 10
+until 11
+until 12
+until 13
+until 14
+until 15
+until 16
+until 17
+until 18
+until 19
+until 20
+until 21
+until 22
+until 23
+until 24
+until 25
+until 26
+until 27
+until 28
+until 29
+until 30
+until 31
+until 32
+until 33
+until 34
+until 35
+until 36
+until 37
+until 38
+until 39
+until 40
+until 41
+until 42
+until 43
+until 44
+until 45
+until 46
+until 47
+until 48
+until 49
+until 50
+until 51
+until 52
+until 53
+until 54
+until 55
+until 56
+until 57
+until 58
+until 59
+until 60
+#
+# TestTurbulenceRandomSeed.testTurbulenceRandomSeed: the winds seeded 2
+# under executive seeds 4 and 5 must blow the same turbulence, on the A4
+# trimmed at 20000 ft and 250 kt.
+new
+watch simulation/sim-time-sec atmosphere/turb-north-fps atmosphere/turb-east-fps atmosphere/turb-down-fps atmosphere/p-turb-rad_sec atmosphere/q-turb-rad_sec atmosphere/r-turb-rad_sec atmosphere/total-wind-north-fps atmosphere/total-wind-east-fps atmosphere/total-wind-down-fps atmosphere/randomseed position/h-sl-ft velocities/vc-kts attitude/phi-rad attitude/theta-rad
+set simulation/randomseed 4
+set atmosphere/randomseed 2
+model A4
+set propulsion/engine[0]/set-running 1
+set ic/h-sl-ft 20000
+set ic/vc-kts 250
+set ic/gamma-deg 0
+runic
+set simulation/do_simple_trim 1
+set atmosphere/turb-type 3
+set atmosphere/turbulence/milspec/windspeed_at_20ft_AGL-fps 75
+set atmosphere/turbulence/milspec/severity 6
+run 1
+run 1
+run 1
+run 1
+run 1
+run 1
+run 1
+run 1
+run 1
+run 1
+run 1
+run 1
+run 1
+run 1
+run 1
+run 1
+run 1
+run 1
+new
+watch simulation/sim-time-sec atmosphere/turb-north-fps atmosphere/turb-east-fps atmosphere/turb-down-fps atmosphere/p-turb-rad_sec atmosphere/q-turb-rad_sec atmosphere/r-turb-rad_sec atmosphere/total-wind-north-fps atmosphere/total-wind-east-fps atmosphere/total-wind-down-fps atmosphere/randomseed position/h-sl-ft velocities/vc-kts attitude/phi-rad attitude/theta-rad
+set simulation/randomseed 5
+set atmosphere/randomseed 2
+model A4
+set propulsion/engine[0]/set-running 1
+set ic/h-sl-ft 20000
+set ic/vc-kts 250
+set ic/gamma-deg 0
+runic
+set simulation/do_simple_trim 1
+set atmosphere/turb-type 3
+set atmosphere/turbulence/milspec/windspeed_at_20ft_AGL-fps 75
+set atmosphere/turbulence/milspec/severity 6
+run 1
+run 1
+run 1
+run 1
+run 1
+run 1
+run 1
+run 1
+run 1
+run 1
+run 1
+run 1
+run 1
+run 1
+run 1
+run 1
+run 1
+run 1
+#
+# TestTurbulenceRandomSeed.testUnassignedSeed: without a seed of their
+# own the winds report the executive's.
+new
+watch simulation/randomseed atmosphere/randomseed
+set simulation/randomseed 47
+print

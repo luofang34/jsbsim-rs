@@ -207,3 +207,176 @@ run
 rate 1
 hold
 run
+# Dryden turbulence on the winds' own generator (atmosphere/randomseed 3
+# above): four normal deviates per run, the wind azimuth rotating them.
+init
+rate 1
+set atmosphere/cosine-gust/start 0
+uvw 180 4 -6
+tl2b 0.7495962650805187 0.6313762241158432 -0.19866933079506122 -0.6258295260508243 0.7737984714229248 0.09784339500725571 0.21550601778218983 0.05099008967207086 0.975170327201816
+dt 0.0083333333333333332
+set atmosphere/wind-north-fps 10
+set atmosphere/wind-east-fps -5
+set atmosphere/wind-down-fps 0
+set atmosphere/turbulence/milspec/windspeed_at_20ft_AGL-fps 30
+set atmosphere/turbulence/milspec/severity 4
+# Above 2000 ft: the high altitude model, sigma from the POE table.
+alt 5000 4900 35.8
+set atmosphere/turb-type 3
+run
+run
+run
+run
+run
+run
+run
+run
+set atmosphere/turb-type 4
+run
+run
+run
+run
+run
+run
+run
+run
+# Between 1000 and 2000 ft: blended with the low altitude model.
+alt 1500 1400 35.8
+run
+run
+run
+run
+set atmosphere/turb-type 3
+run
+run
+run
+run
+# Below 1000 ft: the low altitude model.
+alt 600 500 35.8
+run
+run
+run
+run
+set atmosphere/turb-type 4
+run
+run
+run
+run
+# Clipped at 10 ft, and a zero wing span taken as 30 ft.
+alt 4 0 0
+run
+run
+run
+set atmosphere/turb-type 3
+run
+run
+run
+# Severities and altitudes beyond the table's edges.
+alt 30000 29000 35.8
+set atmosphere/turbulence/milspec/severity 7
+run
+set atmosphere/turbulence/milspec/severity 8
+run
+set atmosphere/turbulence/milspec/severity -2
+run
+set atmosphere/turbulence/milspec/severity 1
+run
+set atmosphere/turbulence/milspec/severity 2
+run
+set atmosphere/turbulence/milspec/severity 3
+run
+set atmosphere/turbulence/milspec/severity 5
+run
+set atmosphere/turbulence/milspec/severity 6
+run
+alt 90000 89000 35.8
+run
+run
+alt 52000 51000 35.8
+set atmosphere/turb-type 4
+run
+run
+run
+# A new seed for the winds restarts their sequence; InitModel clears
+# the filters' history.
+set atmosphere/randomseed 5
+run
+run
+run
+init
+run
+run
+run
+set atmosphere/randomseed 5
+init
+run
+run
+run
+# A model rate of 3: the filters step every third call, over dt.
+rate 3
+dt 0.025
+run
+run
+run
+run
+run
+run
+run
+rate 1
+dt 0.0083333333333333332
+# Culp: limits clamped in place, a sine at the turbulence rate, and a
+# pulse drawn whenever none is pending, which fires and decays.
+set atmosphere/turb-type 2
+set atmosphere/turb-gain 1.7
+set atmosphere/turb-rate 40
+set atmosphere/turb-rhythmicity -0.5
+alt 5000 4900 35.8
+time 0
+run
+time 0.3
+run
+time 0.6
+run
+time 0.9
+run
+time 1.2
+run
+time 1.25
+run
+time 1.3
+run
+time 1.5
+run
+time 2.0
+run
+time 2.4
+run
+time 2.9
+run
+set atmosphere/turb-gain 0.6
+set atmosphere/turb-rate 2.5
+set atmosphere/turb-rhythmicity 0.35
+# Close to the ground the vertical part fades.
+alt 5000 50 35.8
+time 3.1
+run
+time 3.4
+run
+time 3.9
+run
+time 4.3
+run
+time 4.8
+run
+time 5.2
+run
+time 5.9
+run
+set atmosphere/turb-gain -1
+set atmosphere/turb-rate -3
+set atmosphere/turb-rhythmicity 1.5
+time 6.5
+run
+run
+set atmosphere/turb-gain 0
+run

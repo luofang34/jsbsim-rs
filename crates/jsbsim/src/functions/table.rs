@@ -71,6 +71,33 @@ impl Table {
         }
     }
 
+    /// `FGTable(NRows, NCols)` filled with `<<`: the column keys, then each
+    /// row's key and values, built in code rather than loaded. A row with
+    /// fewer values than columns is padded with NaN.
+    #[must_use]
+    pub fn two_d(col_keys: &[f64], rows: &[(f64, &[f64])]) -> Self {
+        let n_cols = col_keys.len();
+        let mut data = Vec::with_capacity((rows.len() + 1) * (n_cols + 1));
+        data.push(f64::NAN);
+        data.extend_from_slice(col_keys);
+        for &(key, values) in rows {
+            data.push(key);
+            data.extend((0..n_cols).map(|c| values.get(c).copied().unwrap_or(f64::NAN)));
+        }
+        Self {
+            kind: TableKind::TwoD,
+            n_rows: rows.len(),
+            n_cols,
+            n_dims: 2,
+            data,
+            tables: Vec::new(),
+            lookup: vec![None, None],
+            internal: false,
+            name: String::new(),
+            keys: key_slots(2),
+        }
+    }
+
     /// `GetNumRows()`.
     #[must_use]
     pub fn num_rows(&self) -> usize {

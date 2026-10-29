@@ -96,6 +96,10 @@ fn run_op(fdm: &mut Fdm, words: &[&str]) -> String {
             [input.altitude_asl, input.distance_agl, input.wingspan] = numbers(words);
             " ok".to_owned()
         }
+        "time" => {
+            [fdm.models.exec.sim_time] = numbers(words);
+            " ok".to_owned()
+        }
         "rate" => {
             let rate = words.get(1).and_then(|w| w.parse().ok()).unwrap_or(1);
             fdm.models.winds.base.rate = rate;
@@ -106,13 +110,11 @@ fn run_op(fdm: &mut Fdm, words: &[&str]) -> String {
             fdm.models.winds.set_wind_ned(ColumnVector3::new(n, e, d));
             print(fdm)
         }
-        "run" | "hold" => match fdm.models.winds.run(op == "hold") {
-            Ok(()) => print(fdm),
-            Err(jsbsim::Error::Unsupported { construct, .. }) => {
-                format!(" unsupported {construct}")
-            }
-            Err(e) => format!(" error {e}"),
-        },
+        "run" | "hold" => {
+            let m = &mut fdm.models;
+            m.winds.run(op == "hold", &m.exec.rng, m.exec.sim_time);
+            print(fdm)
+        }
         "init" => {
             fdm.models.winds.init_model();
             print(fdm)

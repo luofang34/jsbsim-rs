@@ -2,13 +2,16 @@
 // Copyright (C) 2011  Jon S. Berndt (jon@jsbsim.org)
 // Derived from JSBSim src/models/atmosphere/FGWinds.cpp (Turbulence).
 //
-//! The deterministic branches of `FGWinds::Turbulence`. Every branch that
-//! would draw from JSBSim's random number generator, which this crate does
-//! not provide, is unsupported.
+//! `FGWinds::Turbulence`: the type dispatch and Culp's roll and vertical
+//! model; the Dryden models are in [`dryden`].
+
+mod dryden;
+
+pub use dryden::{DrydenState, PoeTable};
 
 use super::Winds;
-use crate::Error;
-use crate::math::{ColumnVector3, E_EAST, E_NORTH};
+use crate::math::{ColumnVector3, E_DOWN, E_EAST, E_NORTH, E_P};
+use crate::random::RandomNumberGenerator;
 use crate::units::RADTODEG;
 
 /// `tType`.
@@ -54,6 +57,25 @@ impl TurbulenceType {
     }
 }
 
+/// Culp's state, which `InitModel` leaves alone.
+#[derive(Debug, Clone, Copy, Default, PartialEq)]
+pub struct CulpState {
+    /// `spike`: the decaying gust pulse.
+    pub spike: f64,
+    /// `target_time`: when the next pulse fires; 0 draws a new one.
+    pub target_time: f64,
+    /// `strength`: the pulse's uniform deviate.
+    pub strength: f64,
+}
+
+/// `wind_from_clockwise`, which nothing sets: Culp's roll rate offset.
+const WIND_FROM_CLOCKWISE: f64 = 0.0;
+
+/// 2 pi as JSBSim's Culp model spells it, to ten digits, which rounds to
+/// another double than `TAU`.
+#[allow(clippy::approx_constant)]
+const CULP_TWO_PI: f64 = 6.283185307;
+
 impl Winds {
     /// `GetTurbMagnitude`, ft/s.
     #[must_use]
@@ -61,50 +83,69 @@ impl Winds {
         self.turbulence_ned.magnitude()
     }
 
-    /// `FGWinds::Turbulence`. The early returns of the disabled Culp and
-    /// Dryden models skip the `TurbDirection` update, as in JSBSim.
-    pub(super) fn turbulence_step(&mut self) -> Result<(), Error> {
-        let t = self.turbulence;
-        match TurbulenceType::from_code(t.turb_type) {
-            Some(TurbulenceType::Culp) => {
-                // `wind_from_clockwise`, which nothing sets, seeds the roll
-                // rate.
-                self.turb_pqr = ColumnVector3::zero();
-                if t.gain != 0.0 {
-                    return Err(self.unsupported_turbulence());
-                }
-                self.turbulence_ned = ColumnVector3::zero();
-                return Ok(());
-            }
-            Some(TurbulenceType::Milspec | TurbulenceType::Tustin) => {
-                // Airspeed relative to the air mass without the turbulence.
-                let airmass =
-                    self.input.tl2b * (self.wind_ned + self.gust_ned + self.cosine_gust_ned);
-                let v = (self.input.uvw - airmass).magnitude();
-                if t.severity != 0 && v != 0.0 {
-                    return Err(self.unsupported_turbulence());
-                }
-                self.turbulence_ned = ColumnVector3::zero();
-                self.turb_pqr = ColumnVector3::zero();
-                return Ok(());
-            }
+    /// `FGWinds::Turbulence` at time `time`, drawing from the winds' own
+    /// generator if they have one, else from `exec_rng`. The early returns
+    /// of the disabled Culp and Dryden models skip the `TurbDirection`
+    /// update, as in JSBSim.
+    pub(super) fn turbulence_step(&mut self, exec_rng: &RandomNumberGenerator, time: f64) {
+        let generator = self.generator.take();
+        let rng = generator.as_ref().unwrap_or(exec_rng);
+        let updated = match TurbulenceType::from_code(self.turbulence.turb_type) {
+            Some(TurbulenceType::Culp) => self.culp_step(rng, time),
+            Some(TurbulenceType::Milspec) => self.dryden_step(rng, false),
+            Some(TurbulenceType::Tustin) => self.dryden_step(rng, true),
             Some(TurbulenceType::None | TurbulenceType::Standard) | None => {
                 self.turbulence_ned = ColumnVector3::zero();
                 self.turb_pqr = ColumnVector3::zero();
+                true
             }
+        };
+        self.generator = generator;
+        if updated {
+            let ned = self.turbulence_ned;
+            self.turbulence.direction = libm::atan2(ned[E_EAST], ned[E_NORTH]) * RADTODEG;
         }
-        let ned = self.turbulence_ned;
-        self.turbulence.direction = libm::atan2(ned[E_EAST], ned[E_NORTH]) * RADTODEG;
-        Ok(())
     }
 
-    fn unsupported_turbulence(&self) -> Error {
-        Error::Unsupported {
-            construct: format!(
-                "atmosphere/turb-type {} (FGWinds turbulence)",
-                self.turbulence.turb_type
-            ),
-            path: "winds".to_owned(),
+    /// The `ttCulp` case; false when a zero gain returns early.
+    fn culp_step(&mut self, rng: &RandomNumberGenerator, time: f64) -> bool {
+        self.turb_pqr = ColumnVector3::new(WIND_FROM_CLOCKWISE, 0.0, 0.0);
+        let t = &mut self.turbulence;
+        if t.gain == 0.0 {
+            self.turbulence_ned = ColumnVector3::zero();
+            return false;
         }
+        // The limits are written back, as JSBSim keeps them.
+        t.gain = t.gain.clamp(0.0, 1.0);
+        t.rate = t.rate.clamp(0.0, 30.0);
+        t.rhythmicity = t.rhythmicity.clamp(0.0, 1.0);
+        let sinewave = libm::sin(time * t.rate * CULP_TWO_PI);
+        let c = &mut self.culp;
+        if c.target_time == 0.0 {
+            let random = rng.uniform();
+            c.strength = random;
+            c.target_time = time + 0.71 + random * 0.5;
+        }
+        if time > c.target_time {
+            c.spike = 1.0;
+            c.target_time = 0.0;
+        }
+        // The vertical speed, ft/s, of a gain of 1.
+        let max_vs = 40.0;
+        let delta = c.strength * max_vs * t.gain * (1.0 - t.rhythmicity) * c.spike;
+        let mut down = sinewave * max_vs * t.gain * t.rhythmicity;
+        down += delta;
+        let (agl, span) = (self.input.distance_agl, self.input.wingspan);
+        if agl / span < 3.0 {
+            down *= agl / span * 0.3333;
+        }
+        self.turbulence_ned[E_DOWN] = down;
+        let (sin, cos) = libm::sincos(delta * 3.0);
+        self.turbulence_ned[E_NORTH] = sin;
+        self.turbulence_ned[E_EAST] = cos;
+        // A clockwise vortex rolls the aircraft left.
+        self.turb_pqr[E_P] += delta * 0.04;
+        c.spike *= 0.9;
+        true
     }
 }

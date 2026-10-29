@@ -335,7 +335,7 @@ impl Fdm {
         match model {
             Model::Propagate => m.propagate.run(holding, suspended, &m.inertial),
             Model::Inertial => m.inertial.run(holding),
-            Model::Winds => m.winds.run(holding)?,
+            Model::Winds => m.winds.run(holding, &m.exec.rng, m.exec.sim_time),
             Model::MassBalance => {
                 if !m.mass_balance.base.skip() && !holding {
                     self.run_model_functions(model, true)?;

@@ -5,11 +5,9 @@
 //! Winds (`FGWinds`): the steady wind, the user gust, the one-minus-cosine
 //! gust and the turbulence that the executive sums into the total wind.
 //!
-//! The stochastic turbulence models need JSBSim's random number generator,
-//! which this crate does not provide: [`Winds::run`] reports them as
-//! [`Error::Unsupported`] whenever C++ would draw a random number, and runs
-//! every deterministic branch (turbulence off, zero severity, zero gain,
-//! zero airspeed) exactly.
+//! The turbulence models draw from the executive's random number
+//! generator until `atmosphere/randomseed` gives the winds one of their
+//! own.
 
 mod bind;
 mod gust;
@@ -19,12 +17,11 @@ mod turbulence;
 
 pub use bind::bind;
 pub use gust::{CosineGust, GustFrame, GustProfile};
-pub use turbulence::TurbulenceType;
+pub use turbulence::{CulpState, DrydenState, PoeTable, TurbulenceType};
 
 use std::f64::consts::PI;
 
 use super::base::ModelBase;
-use crate::Error;
 use crate::math::{Axis, ColumnVector3, E_DOWN, E_EAST, E_NORTH, E_X, E_Y, Matrix33};
 
 /// Inputs loaded by the executive (`FGWinds::Inputs`). JSBSim's latitude,
@@ -113,6 +110,14 @@ pub struct Winds {
     /// `atmosphere/randomseed` once written; the executive's seed until
     /// then.
     pub random_seed: Option<i32>,
+    /// The generator `SetRandomSeed` makes from that seed.
+    pub generator: Option<crate::random::RandomNumberGenerator>,
+    /// Culp's pulse.
+    pub culp: CulpState,
+    /// The Dryden filters' history.
+    pub dryden: DrydenState,
+    /// MIL-F-8785C's turbulence intensities.
+    pub poe_table: PoeTable,
 }
 
 impl Winds {
@@ -127,15 +132,22 @@ impl Winds {
         self.cosine_gust_ned = ColumnVector3::zero();
         self.cosine_gust.profile.running = false;
         self.cosine_gust.profile.elapsed_time = 0.0;
+        self.dryden = DrydenState::default();
     }
 
-    /// `FGWinds::Run`. Fails with [`Error::Unsupported`] when a turbulence
-    /// model would need random numbers.
-    pub fn run(&mut self, holding: bool) -> Result<(), Error> {
+    /// `FGWinds::Run` at simulation time `sim_time`, the turbulence
+    /// drawing from `exec_rng` unless the winds have a generator of their
+    /// own.
+    pub fn run(
+        &mut self,
+        holding: bool,
+        exec_rng: &crate::random::RandomNumberGenerator,
+        sim_time: f64,
+    ) {
         if self.base.skip() || holding {
-            return Ok(());
+            return;
         }
-        self.turbulence_step()?;
+        self.turbulence_step(exec_rng, sim_time);
         if self.cosine_gust.profile.running {
             self.cosine_gust_step();
         }
@@ -147,7 +159,6 @@ impl Winds {
         if self.psiw < 0.0 {
             self.psiw += 2.0 * PI;
         }
-        Ok(())
     }
 
     /// `SetWindNED(const FGColumnVector3&)`, which leaves `psiw` alone.
@@ -192,6 +203,12 @@ impl Winds {
     #[must_use]
     pub fn random_seed(&self, exec_seed: i32) -> i32 {
         self.random_seed.unwrap_or(exec_seed)
+    }
+
+    /// `SetRandomSeed`: a new generator of the winds' own.
+    pub fn set_random_seed(&mut self, seed: i32) {
+        self.random_seed = Some(seed);
+        self.generator = Some(crate::random::RandomNumberGenerator::new(seed as u32));
     }
 
     /// `NumberOfUpDownburstCells`: a negative count clears the cells.

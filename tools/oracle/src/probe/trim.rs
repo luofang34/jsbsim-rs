@@ -146,6 +146,10 @@ impl Probe {
                 self.collect()?;
                 Ok(" ok".to_owned())
             }
+            "dt" => {
+                fdm.set_dt(number_at(0));
+                Ok(" ok".to_owned())
+            }
             "runic" => {
                 fdm.run_ic()?;
                 let mode = fdm.trim_requested();

@@ -173,6 +173,7 @@ pub const CASES: &[&str] = &[
     "turbine_spool_N2SpoolDown",
     "turbine_spool_N2SpoolUp",
     "turboprop_power_vc_function",
+    "turbulence-tests",
     "units",
     "unusable_fuel",
     "wf-to-bf",

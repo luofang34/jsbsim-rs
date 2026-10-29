@@ -31,7 +31,7 @@ pub fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
         "atmosphere/randomseed",
         Kind::Int,
         |m| f64::from(m.winds.random_seed(m.exec.random_seed)),
-        |m, v| m.winds.random_seed = Some(v as i32),
+        |m, v| m.winds.set_random_seed(v as i32),
     )?;
     Ok(())
 }

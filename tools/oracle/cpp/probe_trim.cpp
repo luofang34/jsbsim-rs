@@ -21,6 +21,7 @@
 //   ic <name>               IC->Load(<name>, true): its result
 //   watch <property>...     the properties a print lists, in order
 //   set <property> <v>      setDoubleValue on the (created) node
+//   dt <s>                  Setdt(s)
 //   runic                   RunIC(), then the trim the IC requests if any
 //   run <n>                 Run() n times, or until it returns false
 //   until <t>               Run() while sim-time-sec < t (ExecuteUntil)
@@ -171,6 +172,12 @@ std::string Probe::Op(const std::string& op, std::istringstream& args)
     args >> p >> v;
     exec->GetPropertyManager()->GetNode(p, true)->setDoubleValue(v);
     trims += Trims();
+    return " ok";
+  }
+  if (op == "dt") {
+    double dt = 0.0;
+    args >> dt;
+    exec->Setdt(dt);
     return " ok";
   }
   if (op == "runic") {
