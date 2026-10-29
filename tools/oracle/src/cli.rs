@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 //! Command-line interface: `build`, `generate`, `check-drift`, `check-xml`,
 //! `check-models`, `check-sincos`, `check-sockets`, `derive`, `determinism`,
-//! `port`, `compare`, `nasa` and `bench`.
+//! `snapshot`, `port`, `compare`, `nasa` and `bench`.
 
 use std::ffi::OsString;
 use std::path::{Path, PathBuf};
@@ -80,6 +80,7 @@ pub fn command() -> Command {
         .subcommand(port_command())
         .subcommand(compare_command())
         .subcommand(crate::determinism::command())
+        .subcommand(crate::snapshot_ab::cli::command())
         .subcommand(
             Command::new("port-stats")
                 .about("Run the Rust port on a script case and log its largest differences per property")
@@ -226,6 +227,9 @@ where
     }
     if name == "determinism" {
         return crate::determinism::run_blocking(&repo_root, sub);
+    }
+    if name == "snapshot" {
+        return crate::snapshot_ab::cli::run_blocking(&repo_root, sub);
     }
     if name == "derive" {
         return crate::derived::write_blocking(&repo_root).map(|()| ExitCode::SUCCESS);

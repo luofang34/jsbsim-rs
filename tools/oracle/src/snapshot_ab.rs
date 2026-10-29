@@ -16,6 +16,7 @@ use jsbsim::properties::{NodeId, PropertyTree};
 use jsbsim::snapshot::Snapshot;
 use sha2::{Digest, Sha256};
 
+pub mod cli;
 #[cfg(test)]
 mod tests;
 

@@ -125,6 +125,23 @@ pub enum OracleError {
         /// What is wrong.
         message: String,
     },
+    /// A snapshot case cannot run as specified.
+    #[error("snapshot case {case}: {message}")]
+    Snapshot {
+        /// The script of `oracle::snapshot_ab::cli::CASES`.
+        case: String,
+        /// What is wrong.
+        message: String,
+    },
+    /// The port failed a snapshot case.
+    #[error("snapshot case {case}: Rust port: {source}")]
+    SnapshotPort {
+        /// The script of `oracle::snapshot_ab::cli::CASES`.
+        case: String,
+        /// The port's error.
+        #[source]
+        source: jsbsim::Error,
+    },
     /// A `determinism` case could not be run, recorded or read back.
     #[error("determinism case {case}: {message}")]
     Determinism {

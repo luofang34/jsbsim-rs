@@ -5,6 +5,11 @@
 # pins) as wasm32-wasip1 under Node's WASI, then records the cases of
 # oracle/determinism.toml natively and as wasm32-wasip1 and fails on the
 # first value whose bits differ (see tools/oracle/src/determinism.rs).
+# Then snapshots: each case of tools/oracle/src/snapshot_ab/cli.rs is
+# snapshotted and continued natively and as wasm32-wasip1, each checking A
+# against B; the wasm build also restores the native snapshots and
+# continues them; the snapshot bytes, fingerprints and continuations must
+# match bit for bit.
 # Needs Node with node:wasi and the wasm32-wasip1 target
 # (`rustup target add wasm32-wasip1`); runs offline. Usage:
 #   scripts/wasm-determinism.sh [case...]
@@ -46,4 +51,15 @@ $runner "$root/target/wasm32-wasip1/release/oracle.wasm" \
   --repo-root "$root" determinism dump --out "$out/wasm" "$@"
 echo "==> compare"
 target/release/oracle --repo-root "$root" determinism compare "$out/native" "$out/wasm" "$@"
+
+echo "==> snapshots natively and as wasm32-wasip1"
+target/release/oracle --repo-root "$root" snapshot dump --out "$out/snapshot-native"
+$runner "$root/target/wasm32-wasip1/release/oracle.wasm" \
+  --repo-root "$root" snapshot dump --out "$out/snapshot-wasm"
+echo "==> native snapshots restored as wasm32-wasip1"
+$runner "$root/target/wasm32-wasip1/release/oracle.wasm" \
+  --repo-root "$root" snapshot continue --from "$out/snapshot-native" --out "$out/snapshot-continued"
+echo "==> compare snapshots"
+target/release/oracle --repo-root "$root" snapshot compare "$out/snapshot-native" "$out/snapshot-wasm"
+target/release/oracle --repo-root "$root" snapshot compare "$out/snapshot-native" "$out/snapshot-continued"
 echo "wasm-determinism: bit-identical in $((SECONDS - start)) s"
