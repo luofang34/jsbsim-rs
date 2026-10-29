@@ -64,7 +64,7 @@ impl Atmosphere {
         } else {
             -10.34 - 0.001217 * altitude + 459.67
         };
-        self.pressure = 14.62 * libm::exp(-0.00003 * altitude);
+        self.pressure = 14.62 * crate::elementary::exp(-0.00003 * altitude);
         self.density = self.pressure / (self.reng * self.temperature);
     }
 

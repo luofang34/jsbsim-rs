@@ -159,9 +159,9 @@ pub use super::turbine::seek;
 #[must_use]
 pub fn exp_seek(dt: f64, v: f64, target: f64, accel_tau: f64, decel_tau: f64) -> f64 {
     if v > target {
-        (v - target) * libm::exp(-dt / decel_tau) + target
+        (v - target) * crate::elementary::exp(-dt / decel_tau) + target
     } else if v < target {
-        (target - v) * (1.0 - libm::exp(-dt / accel_tau)) + v
+        (target - v) * (1.0 - crate::elementary::exp(-dt / accel_tau)) + v
     } else {
         v
     }

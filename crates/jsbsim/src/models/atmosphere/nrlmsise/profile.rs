@@ -33,14 +33,14 @@ pub(super) fn glatf(lat: f64) -> Gravity {
 pub(super) fn ccor(alt: f64, r: f64, h1: f64, zh: f64) -> f64 {
     let mut e = (alt - zh) / h1;
     if e > 70.0 {
-        return libm::exp(0.0);
+        return crate::elementary::exp(0.0);
     }
     if e < -70.0 {
-        return libm::exp(r);
+        return crate::elementary::exp(r);
     }
-    let ex = libm::exp(e);
+    let ex = crate::elementary::exp(e);
     e = r / (1.0 + ex);
-    libm::exp(e)
+    crate::elementary::exp(e)
 }
 
 /// `ccor2`: [`ccor`] with two transition scale lengths.
@@ -48,15 +48,15 @@ pub(super) fn ccor2(alt: f64, r: f64, h1: f64, zh: f64, h2: f64) -> f64 {
     let e1 = (alt - zh) / h1;
     let e2 = (alt - zh) / h2;
     if (e1 > 70.0) || (e2 > 70.0) {
-        return libm::exp(0.0);
+        return crate::elementary::exp(0.0);
     }
     if (e1 < -70.0) && (e2 < -70.0) {
-        return libm::exp(r);
+        return crate::elementary::exp(r);
     }
-    let ex1 = libm::exp(e1);
-    let ex2 = libm::exp(e2);
+    let ex1 = crate::elementary::exp(e1);
+    let ex2 = crate::elementary::exp(e2);
     let ccor2v = r / (1.0 + 0.5 * (ex1 + ex2));
-    libm::exp(ccor2v)
+    crate::elementary::exp(ccor2v)
 }
 
 /// `scalh`: scale height at `alt` of molecular weight `xm` at `temp`.
@@ -91,7 +91,7 @@ pub(super) fn dnet(mut dd: f64, dm: f64, zhm: f64, xmm: f64, xm: f64) -> f64 {
     if ylog > 10.0 {
         return dm;
     }
-    dd * libm::pow(1.0 + libm::exp(ylog), 1.0 / a)
+    dd * libm::pow(1.0 + crate::elementary::exp(ylog), 1.0 / a)
 }
 
 /// `zeta`: geopotential altitude difference of `zz` from `zl`.
@@ -144,7 +144,7 @@ fn densm_segment<const N: usize>(
     if expl > 50.0 {
         expl = 50.0;
     }
-    density * (t1 / *tz) * libm::exp(-expl)
+    density * (t1 / *tz) * crate::elementary::exp(-expl)
 }
 
 /// `densm`: temperature (`xm` zero, also left in `tz`) or density of
@@ -262,7 +262,7 @@ pub(super) fn densu(th: &Thermo, alt: f64, dlb: f64, xm: f64, alpha: f64, tz: &m
     // Geopotential altitude difference from zlb.
     let zg2 = zeta(z, th.zlb, re);
     // Bates temperature.
-    let tt = tinf - (tinf - tlb) * libm::exp(-s2 * zg2);
+    let tt = tinf - (tinf - tlb) * crate::elementary::exp(-s2 * zg2);
     let ta = tt;
     *tz = tt;
     let mut densu_temp = *tz;
@@ -280,7 +280,7 @@ pub(super) fn densu(th: &Thermo, alt: f64, dlb: f64, xm: f64, alpha: f64, tz: &m
     // Density above za.
     let mut glb = th.grav.gsurf / libm::pow(1.0 + th.zlb / re, 2.0);
     let gamma = xm * glb / (s2 * RGAS * tinf);
-    let mut expl = libm::exp(-s2 * gamma * zg2);
+    let mut expl = crate::elementary::exp(-s2 * gamma * zg2);
     if expl > 50.0 {
         expl = 50.0;
     }
@@ -311,5 +311,5 @@ pub(super) fn densu(th: &Thermo, alt: f64, dlb: f64, xm: f64, alpha: f64, tz: &m
     if *tz <= 0.0 {
         expl = 50.0;
     }
-    densu_temp * libm::pow(t1 / *tz, 1.0 + alpha) * libm::exp(-expl)
+    densu_temp * libm::pow(t1 / *tz, 1.0 + alpha) * crate::elementary::exp(-expl)
 }

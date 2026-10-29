@@ -6,6 +6,7 @@
 //! and data files reach the core through a [`Resolver`].
 
 pub mod c_numeric;
+pub mod elementary;
 pub mod error;
 pub mod fdm;
 pub mod functions;

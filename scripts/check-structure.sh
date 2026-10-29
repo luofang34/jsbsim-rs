@@ -24,9 +24,33 @@ find_tree() {
 
 # Files ported from GeographicLib (MIT) declare both licences and carry its
 # notice, LICENSES/GeographicLib-MIT.txt, line for line in their header.
+# Files ported from ARM optimized-routines (MIT OR Apache-2.0 WITH
+# LLVM-exception, LICENSES/optimized-routines.txt) declare that choice and
+# carry the MIT section of its licence the same way.
 mit_notice=LICENSES/GeographicLib-MIT.txt
+arm_licence=LICENSES/optimized-routines.txt
 spdx_lgpl='// SPDX-License-Identifier: LGPL-2.1-or-later'
 spdx_lgpl_mit='// SPDX-License-Identifier: LGPL-2.1-or-later AND MIT'
+spdx_lgpl_arm='// SPDX-License-Identifier: LGPL-2.1-or-later AND (MIT OR Apache-2.0 WITH LLVM-exception)'
+
+# require_notice <file> <licence name> <notice file> [sed range]: every
+# non-blank line of the notice (or of its section the range selects)
+# appears in the file's comments.
+require_notice() {
+  local file="$1" name="$2" notice="$3" range="${4:-1,\$}"
+  if [ ! -f "$notice" ]; then
+    fail "$file: $name, but $notice is missing"
+    return
+  fi
+  local text missing
+  text=$(sed -n 's#^//[[:space:]]*##p' "$file")
+  missing=$(sed -n "${range}p" "$notice" | grep -v '^[[:space:]]*$' | while IFS= read -r line; do
+    printf '%s\n' "$text" | grep -qxF -e "$line" || echo "$line"
+  done)
+  if [ -n "$missing" ]; then
+    fail "$file: $name without the full MIT notice (first missing line: $(echo "$missing" | head -n 1))"
+  fi
+}
 
 check_licence() {
   local file="$1"
@@ -34,18 +58,13 @@ check_licence() {
     if ! grep -q 'Derived from GeographicLib' "$file" || ! grep -q 'Charles Karney' "$file"; then
       fail "$file: LGPL-2.1-or-later AND MIT without a 'Derived from GeographicLib' line and Charles Karney's copyright"
     fi
-    if [ ! -f "$mit_notice" ]; then
-      fail "$file: LGPL-2.1-or-later AND MIT, but $mit_notice is missing"
-      return
+    require_notice "$file" 'LGPL-2.1-or-later AND MIT' "$mit_notice"
+  elif grep -qxF "$spdx_lgpl_arm" "$file"; then
+    if ! grep -q 'Derived from ARM optimized-routines' "$file" || ! grep -q 'Arm Limited' "$file" \
+      || ! grep -qE 'commit [0-9a-f]{40}' "$file"; then
+      fail "$file: optimized-routines licence without a 'Derived from ARM optimized-routines' line, its commit and Arm Limited's copyright"
     fi
-    local text missing
-    text=$(sed -n 's#^//[[:space:]]*##p' "$file")
-    missing=$(grep -v '^[[:space:]]*$' "$mit_notice" | while IFS= read -r line; do
-      printf '%s\n' "$text" | grep -qxF "$line" || echo "$line"
-    done)
-    if [ -n "$missing" ]; then
-      fail "$file: LGPL-2.1-or-later AND MIT without the full MIT notice (first missing line: $(echo "$missing" | head -n 1))"
-    fi
+    require_notice "$file" 'optimized-routines licence' "$arm_licence" '/^MIT License$/,/^SOFTWARE\.$/'
   elif grep -qxF "$spdx_lgpl" "$file"; then
     if grep -q 'Permission is hereby granted, free of charge' "$file"; then
       fail "$file: carries the MIT notice, so its SPDX line must be 'LGPL-2.1-or-later AND MIT'"

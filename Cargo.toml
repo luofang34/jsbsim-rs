@@ -42,6 +42,7 @@ let_underscore_must_use = "deny"
 let_underscore_future = "deny"
 await_holding_lock = "deny"
 disallowed_types = "deny"
+disallowed_methods = "deny"
 disallowed_macros = "deny"
 
 # One codegen unit gives LLVM each crate whole to inline across, which

@@ -191,7 +191,7 @@ fn unary(op: Op, x: f64) -> f64 {
                 1.0
             }
         }
-        Op::Exp => libm::exp(x),
+        Op::Exp => crate::elementary::exp(x),
         Op::Abs => x.abs(),
         Op::Sin => libm::sin(x),
         Op::Cos => libm::cos(x),

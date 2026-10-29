@@ -6,7 +6,8 @@
 # fusing them into one sincos, regenerates the references of the cases in
 # tools/oracle/src/sincos.rs under target/oracle-sincos, and requires the
 # port, linked with the platform maths library (tools/libm-platform in
-# place of the libm crate), to reproduce them bit for bit. Exits non-zero
+# place of the libm crate, and jsbsim::elementary forwarding to it through
+# the platform-libm feature), to reproduce them bit for bit. Exits non-zero
 # at any difference. The gate's build, goldens and tolerances are not used.
 # Usage: scripts/oracle-sincos.sh [case...]
 set -euo pipefail
@@ -21,4 +22,4 @@ command cp -f Cargo.lock "$work/Cargo.lock.saved"
 trap 'command cp -f "$work/Cargo.lock.saved" Cargo.lock' EXIT
 CARGO_TARGET_DIR="$work/cargo" cargo run --release -q -p oracle \
   --config "patch.crates-io.libm.path=\"$PWD/tools/libm-platform\"" \
-  -- check-sincos "$@"
+  --features jsbsim/platform-libm -- check-sincos "$@"

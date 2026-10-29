@@ -83,9 +83,9 @@ fn turboprop(fdm: &Fdm) -> &TurboProp {
 #[test]
 fn exp_seek_lags_toward_the_target() {
     let up = exp_seek(0.5, 10.0, 20.0, 1.0, 2.0);
-    assert_eq!(up, 10.0 * (1.0 - libm::exp(-0.5)) + 10.0);
+    assert_eq!(up, 10.0 * (1.0 - crate::elementary::exp(-0.5)) + 10.0);
     let down = exp_seek(0.5, 20.0, 10.0, 1.0, 2.0);
-    assert_eq!(down, 10.0 * libm::exp(-0.25) + 10.0);
+    assert_eq!(down, 10.0 * crate::elementary::exp(-0.25) + 10.0);
     assert_eq!(exp_seek(0.5, 3.0, 3.0, 1.0, 2.0), 3.0);
 }
 

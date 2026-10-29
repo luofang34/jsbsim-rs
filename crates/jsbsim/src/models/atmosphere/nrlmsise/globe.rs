@@ -27,7 +27,8 @@ fn g0(a: f64, p24: f64, p25: f64) -> f64 {
     a - 4.0
         + (p25 - 1.0)
             * (a - 4.0
-                + (libm::exp(-libm::sqrt(p24 * p24) * (a - 4.0)) - 1.0) / libm::sqrt(p24 * p24))
+                + (crate::elementary::exp(-libm::sqrt(p24 * p24) * (a - 4.0)) - 1.0)
+                    / libm::sqrt(p24 * p24))
 }
 
 /// Eq. A24c, `sumex`.
@@ -203,7 +204,7 @@ fn magnetic_activity(
             return;
         };
         if p[51] != 0.0 {
-            let mut exp1 = libm::exp(
+            let mut exp1 = crate::elementary::exp(
                 -10800.0 * libm::sqrt(p[51] * p[51])
                     / (1.0 + p[138] * (45.0 - libm::sqrt(input.g_lat * input.g_lat))),
             );
@@ -235,7 +236,7 @@ fn magnetic_activity(
         if p44 < 0.0 {
             p44 = 1.0E-5;
         }
-        let apdf = apd + (p45 - 1.0) * (apd + (libm::exp(-p44 * apd) - 1.0) / p44);
+        let apdf = apd + (p45 - 1.0) * (apd + (crate::elementary::exp(-p44 * apd) - 1.0) / p44);
         if sw[9] != 0.0 {
             t[8] = apdf
                 * (p[32]

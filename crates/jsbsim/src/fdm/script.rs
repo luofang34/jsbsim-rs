@@ -393,7 +393,9 @@ impl Fdm {
                     }
                     v
                 }
-                SetAction::Exp => (1.0 - libm::exp(-time_span / set.tc)) * set.span + set.original,
+                SetAction::Exp => {
+                    (1.0 - crate::elementary::exp(-time_span / set.tc)) * set.span + set.original
+                }
             };
             if let Some(node) = set.node {
                 self.write_node(node, value)?;

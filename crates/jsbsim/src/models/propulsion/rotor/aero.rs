@@ -84,7 +84,7 @@ impl Rotor {
         c0 /= 2.0 * (sqr(s.mu) + sqr(s.lambda)).sqrt() + 1e-15;
         // /SH79/ eqn(26) as dnu/dt = (Ct / (2 sqrt(mu^2 + lambda^2)) - nu)
         // / tau, integrated over the step with mu and lambda held.
-        s.nu = flow_scale * ((s.nu - c0) * libm::exp(-c.dt / c.inflow_lag) + c0);
+        s.nu = flow_scale * ((s.nu - c0) * crate::elementary::exp(-c.dt / c.inflow_lag) + c0);
         s.lambda = ww / (s.omega * c.radius) - s.nu;
         let ct_l = (1.0 / 2.0 * b[2] + 1.0 / 4.0 * mu2) * s.lambda;
         let ct_over_sigma = (c.lift_curve_slope / 2.0) * (ct_l + ct_t0 + ct_t1);

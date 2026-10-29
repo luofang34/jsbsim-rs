@@ -24,7 +24,7 @@ fn layer_pressure(pb: f64, tmb: f64, lmb: f64, delta_h: f64) -> f64 {
         let factor = tmb / (tmb + lmb * delta_h);
         pb * libm::pow(factor, exp)
     } else {
-        pb * libm::exp(-G0 * delta_h / (RDRY * tmb))
+        pb * crate::elementary::exp(-G0 * delta_h / (RDRY * tmb))
     }
 }
 

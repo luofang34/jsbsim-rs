@@ -251,7 +251,7 @@ impl Rotor {
             let filtered_hagl = self.damp_hagl.execute(h_agl_ft) + c.ground_effect_shift;
             // The actual over nominal speed keeps the scale sane at startup.
             ge_factor -= self.controls.ground_effect_scale_norm
-                * (libm::exp(-filtered_hagl * c.ground_effect_exp)
+                * (crate::elementary::exp(-filtered_hagl * c.ground_effect_exp)
                     * (self.state.rpm / c.nominal_rpm));
             ge_factor = constrain(0.5, ge_factor, 1.0);
         }

@@ -7,6 +7,9 @@ allow-unwrap-in-tests = true
 disallowed-types = [
     { path = "anyhow::Error", reason = "libraries use typed thiserror enums" },
 ]
+disallowed-methods = [
+    { path = "libm::exp", reason = "use jsbsim::elementary::exp, which matches the platform libraries' speed" },
+]
 disallowed-macros = [
     { path = "std::println", reason = "use tracing" },
     { path = "std::eprintln", reason = "use tracing" },

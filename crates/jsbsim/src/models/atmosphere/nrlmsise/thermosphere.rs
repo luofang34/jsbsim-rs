@@ -171,7 +171,7 @@ fn lower_thermosphere_nodes(input: &Input, ctx: &mut Context) {
 fn nitrogen(sp: &mut Species, g28: f64, zhf: f64, ctx: &mut Context, output: &mut Output) {
     let mut tz = 0.0;
     // Diffusive density at zlb, then at altitude.
-    let db28 = PDM[2][0] * libm::exp(g28) * PD[2][0];
+    let db28 = PDM[2][0] * crate::elementary::exp(g28) * PD[2][0];
     output.d[2] = sp.diffusive(db28, 28.0, ALPHA[2], &mut output.t[1]);
     // Turbopause.
     let zh28 = PDM[2][2] * zhf;
@@ -189,7 +189,7 @@ fn nitrogen(sp: &mut Species, g28: f64, zhf: f64, ctx: &mut Context, output: &mu
 /// He density.
 fn helium(sp: &Species, input: &Input, ctx: &mut Context, output: &mut Output) {
     let g4 = ctx.sw[21] * globe7(&PD[0], input, ctx);
-    let db04 = PDM[0][0] * libm::exp(g4) * PD[0][0];
+    let db04 = PDM[0][0] * crate::elementary::exp(g4) * PD[0][0];
     output.d[0] = sp.diffusive(db04, 4., ALPHA[0], &mut output.t[1]);
     if sp.sw15 && (sp.z < ALTL[0]) {
         let (net, b04) = sp.mixed(output.d[0], db04, 4., ALPHA[0], PDM[0][2], &mut output.t[1]);
@@ -205,7 +205,7 @@ fn helium(sp: &Species, input: &Input, ctx: &mut Context, output: &mut Output) {
 /// O density.
 fn oxygen(sp: &Species, input: &Input, ctx: &mut Context, output: &mut Output) {
     let g16 = ctx.sw[21] * globe7(&PD[1], input, ctx);
-    let db16 = PDM[1][0] * libm::exp(g16) * PD[1][0];
+    let db16 = PDM[1][0] * crate::elementary::exp(g16) * PD[1][0];
     output.d[1] = sp.diffusive(db16, 16., ALPHA[1], &mut output.t[1]);
     if sp.sw15 && (sp.z <= ALTL[1]) {
         let (net, _) = sp.mixed(
@@ -233,7 +233,7 @@ fn oxygen(sp: &Species, input: &Input, ctx: &mut Context, output: &mut Output) {
 /// O2 density.
 fn dioxygen(sp: &Species, input: &Input, ctx: &mut Context, output: &mut Output) {
     let g32 = ctx.sw[21] * globe7(&PD[4], input, ctx);
-    let db32 = PDM[3][0] * libm::exp(g32) * PD[4][0];
+    let db32 = PDM[3][0] * crate::elementary::exp(g32) * PD[4][0];
     output.d[3] = sp.diffusive(db32, 32., ALPHA[3], &mut output.t[1]);
     if sp.sw15 {
         if sp.z <= ALTL[3] {
@@ -265,7 +265,7 @@ fn dioxygen(sp: &Species, input: &Input, ctx: &mut Context, output: &mut Output)
 /// Ar density.
 fn argon(sp: &Species, input: &Input, ctx: &mut Context, output: &mut Output) {
     let g40 = ctx.sw[21] * globe7(&PD[5], input, ctx);
-    let db40 = PDM[4][0] * libm::exp(g40) * PD[5][0];
+    let db40 = PDM[4][0] * crate::elementary::exp(g40) * PD[5][0];
     output.d[4] = sp.diffusive(db40, 40., ALPHA[4], &mut output.t[1]);
     if sp.sw15 && (sp.z <= ALTL[4]) {
         let (net, b40) = sp.mixed(
@@ -288,7 +288,7 @@ fn argon(sp: &Species, input: &Input, ctx: &mut Context, output: &mut Output) {
 /// H density.
 fn hydrogen(sp: &Species, input: &Input, ctx: &mut Context, output: &mut Output) {
     let g1 = ctx.sw[21] * globe7(&PD[6], input, ctx);
-    let db01 = PDM[5][0] * libm::exp(g1) * PD[6][0];
+    let db01 = PDM[5][0] * crate::elementary::exp(g1) * PD[6][0];
     output.d[6] = sp.diffusive(db01, 1., ALPHA[6], &mut output.t[1]);
     if sp.sw15 && (sp.z <= ALTL[6]) {
         let (net, b01) = sp.mixed(output.d[6], db01, 1., ALPHA[6], PDM[5][2], &mut output.t[1]);
@@ -309,7 +309,7 @@ fn hydrogen(sp: &Species, input: &Input, ctx: &mut Context, output: &mut Output)
 /// N density.
 fn atomic_nitrogen(sp: &Species, input: &Input, ctx: &mut Context, output: &mut Output) {
     let g14 = ctx.sw[21] * globe7(&PD[7], input, ctx);
-    let db14 = PDM[6][0] * libm::exp(g14) * PD[7][0];
+    let db14 = PDM[6][0] * crate::elementary::exp(g14) * PD[7][0];
     output.d[7] = sp.diffusive(db14, 14., ALPHA[7], &mut output.t[1]);
     if sp.sw15 && (sp.z <= ALTL[7]) {
         let (net, b14) = sp.mixed(
@@ -337,7 +337,7 @@ fn atomic_nitrogen(sp: &Species, input: &Input, ctx: &mut Context, output: &mut 
 /// Anomalous O density.
 fn anomalous_oxygen(sp: &Species, input: &Input, ctx: &mut Context, output: &mut Output) {
     let g16h = ctx.sw[21] * globe7(&PD[8], input, ctx);
-    let db16h = PDM[7][0] * libm::exp(g16h) * PD[8][0];
+    let db16h = PDM[7][0] * crate::elementary::exp(g16h) * PD[8][0];
     let tho = PDM[7][9] * PDL[0][6];
     let hot = Thermo {
         tinf: tho,
@@ -348,5 +348,8 @@ fn anomalous_oxygen(sp: &Species, input: &Input, ctx: &mut Context, output: &mut
     let zsht = PDM[7][5];
     let zmho = PDM[7][4];
     let zsho = scalh(zmho, 16.0, tho, sp.th.grav);
-    output.d[8] = dd * libm::exp(-zsht / zsho * (libm::exp(-(sp.z - zmho) / zsht) - 1.));
+    output.d[8] = dd
+        * crate::elementary::exp(
+            -zsht / zsho * (crate::elementary::exp(-(sp.z - zmho) / zsht) - 1.),
+        );
 }

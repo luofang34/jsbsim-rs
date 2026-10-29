@@ -24957,13 +24957,6 @@ rel = 0.0
 reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, exp, pow and the geodetic conversions (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The stiff gear springs and the friction solve carry those digits into the state; observed max 1.7e-14 (rel 1.7e-14) at t=43.00 s; bound 10x that."
 
 [[tolerance]]
-case = "B737_Runway"
-property = "fcs/steer-cmd-norm"
-abs = 6e-16
-rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, exp, pow and the geodetic conversions (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The stiff gear springs and the friction solve carry those digits into the state; observed max 5.6e-17 (rel 6.7e-16) at t=8.80 s; bound 10x that."
-
-[[tolerance]]
 case = "L4102"
 property = "*"
 abs = 0.0
@@ -25239,13 +25232,6 @@ reason = "State-affecting: Rust libm and Apple libm differ in the last digit of 
 
 [[tolerance]]
 case = "L4102"
-property = "propulsion/engine[0]/engtemp-c"
-abs = 2e-12
-rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, exp, pow and the geodetic conversions (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The stiff gear springs and the friction solve carry those digits into the state; observed max 1.7e-13 (rel 6.9e-16) at t=0.05 s; bound 10x that."
-
-[[tolerance]]
-case = "L4102"
 property = "propulsion/engine[0]/engine-rpm"
 abs = 2e-08
 rel = 0.0
@@ -25320,13 +25306,6 @@ property = "propulsion/engine[1]/power-hp"
 abs = 2e-10
 rel = 0.0
 reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, exp, pow and the geodetic conversions (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The stiff gear springs and the friction solve carry those digits into the state; observed max 1.3e-11 (rel 2.6e-11) at t=7.90 s; bound 10x that."
-
-[[tolerance]]
-case = "L4102"
-property = "propulsion/engine[1]/engtemp-c"
-abs = 2e-12
-rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, exp, pow and the geodetic conversions (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The stiff gear springs and the friction solve carry those digits into the state; observed max 1.7e-13 (rel 6.9e-16) at t=0.05 s; bound 10x that."
 
 [[tolerance]]
 case = "L4102"
@@ -25983,13 +25962,6 @@ reason = "State-affecting: Rust libm and Apple libm differ in the last digit of 
 
 [[tolerance]]
 case = "turboprop_power_vc_function"
-property = "propulsion/engine[0]/engtemp-c"
-abs = 2e-12
-rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, exp, pow and the geodetic conversions (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The stiff gear springs and the friction solve carry those digits into the state; observed max 1.7e-13 (rel 6.9e-16) at t=0.05 s; bound 10x that."
-
-[[tolerance]]
-case = "turboprop_power_vc_function"
 property = "propulsion/engine[0]/engine-rpm"
 abs = 2e-08
 rel = 0.0
@@ -26064,13 +26036,6 @@ property = "propulsion/engine[1]/power-hp"
 abs = 2e-10
 rel = 0.0
 reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, exp, pow and the geodetic conversions (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The stiff gear springs and the friction solve carry those digits into the state; observed max 1.3e-11 (rel 2.6e-11) at t=7.90 s; bound 10x that."
-
-[[tolerance]]
-case = "turboprop_power_vc_function"
-property = "propulsion/engine[1]/engtemp-c"
-abs = 2e-12
-rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, exp, pow and the geodetic conversions (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The stiff gear springs and the friction solve carry those digits into the state; observed max 1.7e-13 (rel 6.9e-16) at t=0.05 s; bound 10x that."
 
 [[tolerance]]
 case = "turboprop_power_vc_function"
@@ -31121,16 +31086,16 @@ reason = "State-affecting: Rust libm and Apple libm differ in the last digit of 
 [[tolerance]]
 case = "x151"
 property = "velocities/r-rad_sec"
-abs = 7e-15
+abs = 3e-15
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, exp and pow (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The X-15's flight carries those digits into the state; observed max 6.7e-16 (rel 8.6e-12) at t=3.90 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, exp and pow (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The X-15's flight carries those digits into the state; observed max 2.7e-16 (rel 8.6e-12) at t=4.3 s; bound 10x that."
 
 [[tolerance]]
 case = "x151"
 property = "attitude/phi-rad"
-abs = 3e-14
+abs = 9e-15
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, exp and pow (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The X-15's flight carries those digits into the state; observed max 2.3e-15 (rel 2.4e+00) at t=5.00 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, exp and pow (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The X-15's flight carries those digits into the state; observed max 8.7e-16 (rel 2.4e+00) at t=4.1 s; bound 10x that."
 
 [[tolerance]]
 case = "x151"
@@ -31326,7 +31291,7 @@ case = "x152"
 property = "velocities/r-rad_sec"
 abs = 8e-15
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, exp and pow (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The X-15's flight carries those digits into the state; observed max 7.9e-16 (rel 1.5e-11) at t=8.55 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, exp and pow (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The X-15's flight carries those digits into the state; observed max 8.2e-16 (rel 1.5e-11) at t=8.55 s; bound at least 9x that."
 
 [[tolerance]]
 case = "x152"
@@ -31515,7 +31480,7 @@ case = "x153"
 property = "velocities/p-rad_sec"
 abs = 2e-12
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, exp and pow (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The X-15's autopilot loops carry those digits through its burn into the state; observed max 1.8e-13 (rel 4.2e-08) at t=257.50 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, exp and pow (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The X-15's autopilot loops carry those digits through its burn into the state; observed max 2.0e-13 (rel 5.1e-08) at t=257.5 s; bound at least 9x that."
 
 [[tolerance]]
 case = "x153"
@@ -31536,7 +31501,7 @@ case = "x153"
 property = "attitude/phi-rad"
 abs = 4e-12
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, exp and pow (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The X-15's autopilot loops carry those digits through its burn into the state; observed max 3.7e-13 (rel 2.4e+00) at t=254.50 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, exp and pow (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The X-15's autopilot loops carry those digits through its burn into the state; observed max 4.1e-13 (rel 2.4e+00) at t=254.5 s; bound at least 9x that."
 
 [[tolerance]]
 case = "x153"
@@ -31592,7 +31557,7 @@ case = "x153"
 property = "accelerations/rdot-rad_sec2"
 abs = 6e-13
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, exp and pow (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The X-15's autopilot loops carry those digits through its burn into the state; observed max 5.8e-14 (rel 4.4e-06) at t=297.50 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, exp and pow (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The X-15's autopilot loops carry those digits through its burn into the state; observed max 8.2e-14 (rel 3.1e-06) at t=299 s; bound at least 7x that."
 
 [[tolerance]]
 case = "x153"
@@ -31634,7 +31599,7 @@ case = "x153"
 property = "moments/n-total-lbsft"
 abs = 5e-08
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, exp and pow (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The X-15's autopilot loops carry those digits through its burn into the state; observed max 4.5e-09 (rel 1.2e-05) at t=281.50 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, exp and pow (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The X-15's autopilot loops carry those digits through its burn into the state; observed max 6.2e-09 (rel 1.2e-05) at t=299 s; bound at least 8x that."
 
 [[tolerance]]
 case = "x153"
@@ -32208,7 +32173,7 @@ case = "sim_primer"
 property = "position/long-gc-deg"
 abs = 5e-12
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, exp and pow (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The ah1s sits on its gear throughout; the stiff gear springs and friction solve carry those digits into the state and the rotor's inflow and flapping; observed max 4.8e-13 (rel 4.1e-15) at t=15.20 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, exp and pow (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The ah1s sits on its gear throughout; the stiff gear springs and friction solve carry those digits into the state and the rotor's inflow and flapping; observed max 5.7e-13 (rel 4.8e-15) at t=58.2 s; bound at least 8x that."
 
 [[tolerance]]
 case = "sim_primer"
@@ -32717,6 +32682,15 @@ reason = "Bit-identical: the same IEEE operations in JSBSim's order; the tags li
 
 [[tolerance]]
 case = "planet"
+property = "runic/atmosphere/pressure-altitude"
+abs = 2e-10
+rel = 0.0
+t_start = 43.0
+t_end = 44.0
+reason = "runic/atmosphere/pressure-altitude on line 43: with jsbsim::elementary::exp the pressure is bit-identical, and the libm crate's pow, which inverts it to a pressure altitude, differs from Apple libm's in the last ulp at that pressure, and the layer's T/lapse-rate factor (about -1.5e5 ft) carries that ulp into 17 ulps of the altitude (at the pressure 5 ulps away that the libm crate's exp gives, the libm crate's pow lands on Apple's pressure altitude by coincidence); with Apple libm (scripts/oracle-sincos.sh) the case is bit-identical; observed max 1.5e-11 (rel 3.3e-15) at line 43; bound 10x that."
+
+[[tolerance]]
+case = "planet"
 property = "run/accelerations/gravity-ft_sec2"
 abs = 8e-08
 rel = 0.0
@@ -32833,41 +32807,6 @@ property = "run/velocities/w-fps"
 abs = 0.5
 rel = 0.0
 reason = "run/velocities/w-fps: Rust libm and Apple libm differ in the last digit of exp, log, pow, sin, cos and the geodetic conversions (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The tripod's stiff contacts, under the Moon's, Mars' and NRLMSISE-00's gravity and air, carry those digits into the state; observed max 4.5e-02; bound 10x that."
-
-[[tolerance]]
-case = "planet"
-property = "runic/atmosphere/P-psf"
-abs = 2e-11
-rel = 0.0
-reason = "runic/atmosphere/P-psf: Rust libm and Apple libm differ in the last digit of exp, log, pow, sin, cos and the geodetic conversions (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The tripod's stiff contacts, under the Moon's, Mars' and NRLMSISE-00's gravity and air, carry those digits into the state; observed max 1.1e-12; bound 10x that."
-
-[[tolerance]]
-case = "planet"
-property = "runic/atmosphere/P-sl-psf"
-abs = 5e-12
-rel = 0.0
-reason = "runic/atmosphere/P-sl-psf: Rust libm and Apple libm differ in the last digit of exp, log, pow, sin, cos and the geodetic conversions (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The tripod's stiff contacts, under the Moon's, Mars' and NRLMSISE-00's gravity and air, carry those digits into the state; observed max 4.5e-13; bound 10x that."
-
-[[tolerance]]
-case = "planet"
-property = "runic/atmosphere/a-fps"
-abs = 3e-12
-rel = 0.0
-reason = "runic/atmosphere/a-fps: Rust libm and Apple libm differ in the last digit of exp, log, pow, sin, cos and the geodetic conversions (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The tripod's stiff contacts, under the Moon's, Mars' and NRLMSISE-00's gravity and air, carry those digits into the state; observed max 2.3e-13; bound 10x that."
-
-[[tolerance]]
-case = "planet"
-property = "runic/atmosphere/density-altitude"
-abs = 2e-10
-rel = 0.0
-reason = "runic/atmosphere/density-altitude: Rust libm and Apple libm differ in the last digit of exp, log, pow, sin, cos and the geodetic conversions (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The tripod's stiff contacts, under the Moon's, Mars' and NRLMSISE-00's gravity and air, carry those digits into the state; observed max 1.6e-11; bound 10x that."
-
-[[tolerance]]
-case = "planet"
-property = "runic/atmosphere/rho-slugs_ft3"
-abs = 5e-18
-rel = 0.0
-reason = "runic/atmosphere/rho-slugs_ft3: Rust libm and Apple libm differ in the last digit of exp, log, pow, sin, cos and the geodetic conversions (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. The tripod's stiff contacts, under the Moon's, Mars' and NRLMSISE-00's gravity and air, carry those digits into the state; observed max 4.3e-19; bound 10x that."
 
 [[tolerance]]
 case = "planet"
@@ -33810,7 +33749,7 @@ case = "weather-balloon"
 property = "velocities/v-fps"
 abs = 7e-11
 rel = 0.0
-reason = "velocities/v-fps: State-affecting: Rust libm and Apple libm differ in the last digit of exp, log, pow, sin, cos and the geodetic conversions (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. Here the balloon's gas law and drag carry them into the climb; observed max 7.0e-12 (rel 2.1e-09) at t=1796.0 s; bound 10x that."
+reason = "velocities/v-fps: State-affecting: Rust libm and Apple libm differ in the last digit of exp, log, pow, sin, cos and the geodetic conversions (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical. Here the balloon's gas law and drag carry them into the climb; observed max 7.0e-12 (rel 2.1e-09) at t=1796 s; bound at least 9x that."
 
 [[tolerance]]
 case = "weather-balloon"

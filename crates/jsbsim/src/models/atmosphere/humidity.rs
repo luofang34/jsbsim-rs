@@ -36,7 +36,7 @@ impl Atmosphere {
     #[must_use]
     pub fn calculate_vapor_pressure(temperature: f64) -> f64 {
         let temperature_deg_c = rankine_to_celsius(temperature);
-        A * libm::exp(B * temperature_deg_c / (C + temperature_deg_c))
+        A * crate::elementary::exp(B * temperature_deg_c / (C + temperature_deg_c))
     }
 
     /// `ValidateVaporMassFraction`: caps the vapor at saturation and at the

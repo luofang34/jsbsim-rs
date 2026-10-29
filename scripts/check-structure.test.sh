@@ -47,6 +47,22 @@ expect pass mit-port "$mit_case && mit_file 'LGPL-2.1-or-later AND MIT' yes yes 
 expect fail mit-notice-without-and "$mit_case && mit_file 'LGPL-2.1-or-later' yes yes > crates/a/src/m.rs"
 expect fail mit-and-without-notice "$mit_case && mit_file 'LGPL-2.1-or-later AND MIT' yes no > crates/a/src/m.rs"
 expect fail mit-and-without-origin "$mit_case && mit_file 'LGPL-2.1-or-later AND MIT' no yes > crates/a/src/m.rs"
+# optimized-routines ports: the licence choice, the MIT section of its
+# licence, its origin and the pinned commit.
+arm_licence="$here/../LICENSES/optimized-routines.txt"
+arm_file() { # arm_file <spdx> <with-derived-line:yes|no> <with-notice:yes|no>
+  echo "// SPDX-License-Identifier: $1"
+  [ "$2" = yes ] && echo '// Derived from ARM optimized-routines math/exp.c at commit 2ee4b0d45680a9880412c1d186224b08652c35f6: Copyright (c) 2018, Arm Limited.'
+  [ "$3" = yes ] && sed -n '/^MIT License$/,/^SOFTWARE\.$/p' "$arm_licence" | sed 's#^#//   #'
+  echo '//! Module m.'
+}
+arm_spdx='LGPL-2.1-or-later AND (MIT OR Apache-2.0 WITH LLVM-exception)'
+arm_case="mkdir -p LICENSES && cp \"$arm_licence\" LICENSES/optimized-routines.txt"
+expect pass arm-port "$arm_case && arm_file '$arm_spdx' yes yes > crates/a/src/m.rs"
+expect fail arm-notice-without-and "$arm_case && arm_file 'LGPL-2.1-or-later' yes yes > crates/a/src/m.rs"
+expect fail arm-and-without-notice "$arm_case && arm_file '$arm_spdx' yes no > crates/a/src/m.rs"
+expect fail arm-and-without-origin "$arm_case && arm_file '$arm_spdx' no yes > crates/a/src/m.rs"
+expect fail arm-and-without-licence-file "arm_file '$arm_spdx' yes yes > crates/a/src/m.rs"
 expect fail mod-rs "printf '%s\n' \"$spdx\" > crates/a/src/mod.rs"
 expect fail utils-rs "printf '%s\n' \"$spdx\" > crates/a/src/utils.rs"
 expect fail long-file "{ echo \"$spdx\"; for i in \$(seq 500); do echo '// x'; done; } > crates/a/src/long.rs"
