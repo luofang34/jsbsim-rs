@@ -17,14 +17,22 @@ use crate::xml::{Location, atof_locale_c};
 /// (`FGPropertyValue`). A leading `-` negates the value.
 #[derive(Debug, Clone)]
 pub struct PropertyValue {
-    name: String,
-    sign: f64,
     /// Bound at first read when the property did not exist at load, as
     /// `FGPropertyValue::GetNode` does: a property created after load
     /// still binds, and a missing one fails at that first evaluation, not
     /// at load. The evaluator holds operands through a shared borrow of the
     /// function set, hence `Cell`, which is `Send`.
     node: Cell<Option<NodeId>>,
+    sign: f64,
+    /// Read only to bind late or to report an error; boxed so that the
+    /// operands a frame walks stay small.
+    source: Box<Source>,
+}
+
+/// Where a [`PropertyValue`] comes from.
+#[derive(Debug, Clone)]
+struct Source {
+    name: String,
     at: Location,
 }
 
@@ -41,17 +49,19 @@ impl PropertyValue {
             None
         };
         Ok(Self {
-            name: name.to_owned(),
-            sign,
             node: Cell::new(node),
-            at,
+            sign,
+            source: Box::new(Source {
+                name: name.to_owned(),
+                at,
+            }),
         })
     }
 
     /// Property path without sign.
     #[must_use]
     pub fn name(&self) -> &str {
-        &self.name
+        &self.source.name
     }
 
     /// -1 for a negated operand, 1 otherwise.
@@ -80,10 +90,10 @@ impl PropertyValue {
     #[inline(never)]
     fn bind_late(&self, tree: &PropertyTree) -> Result<NodeId, Error> {
         let node = tree
-            .get(&self.name)?
+            .get(&self.source.name)?
             .ok_or_else(|| FunctionError::MissingProperty {
-                property: self.name.clone(),
-                at: self.at.clone(),
+                property: self.source.name.clone(),
+                at: self.source.at.clone(),
             })?;
         self.node.set(Some(node));
         Ok(node)

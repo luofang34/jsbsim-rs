@@ -56,22 +56,31 @@ enum Bound {
 /// One operation with its operands.
 #[derive(Debug, Clone)]
 pub struct Function {
-    name: String,
     op: Op,
     params: Vec<Parameter>,
     node: Option<NodeId>,
     copy_to: Option<NodeId>,
     cached: Option<f64>,
-    at: Location,
     /// The draw of a `<random>` or `<urandom>`.
-    random: Option<random::RandomDraw>,
+    random: Option<Box<random::RandomDraw>>,
+    /// Read at load and to report an error; boxed, as `random` is, so
+    /// that the functions a frame walks stay small.
+    source: Box<FunctionSource>,
+}
+
+/// Where a [`Function`] comes from.
+#[derive(Debug, Clone)]
+struct FunctionSource {
+    /// The `name` attribute (after `#` substitution).
+    name: String,
+    at: Location,
 }
 
 impl Function {
     /// The `name` attribute (after `#` substitution).
     #[must_use]
     pub fn name(&self) -> &str {
-        &self.name
+        &self.source.name
     }
 
     /// The operation.

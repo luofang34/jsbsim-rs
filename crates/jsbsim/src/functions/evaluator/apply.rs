@@ -57,7 +57,7 @@ impl<G: GetterSource> Evaluator<'_, G> {
     }
 
     pub(super) fn apply(&mut self, f: &Function) -> Eval {
-        let at = &f.at;
+        let at = &f.source.at;
         Ok(match f.op {
             Op::Identity => self.p(f, 0)?,
             Op::Product => self.fold(&f.params, 1.0, |t, v| t * v)?,
@@ -108,7 +108,7 @@ impl<G: GetterSource> Evaluator<'_, G> {
     }
 
     fn arithmetic(&mut self, f: &Function) -> Eval {
-        let at = &f.at;
+        let at = &f.source.at;
         Ok(match f.op {
             Op::Quotient => {
                 let y = self.p(f, 1)?;
@@ -213,7 +213,7 @@ impl<G: GetterSource> Evaluator<'_, G> {
         let short = f.op == Op::Or;
         for param in &f.params {
             let v = self.eval_parameter(param)?;
-            if self.binary(v, &f.at)? == short {
+            if self.binary(v, &f.source.at)? == short {
                 return Ok(f64::from(u8::from(short)));
             }
         }
@@ -239,7 +239,7 @@ impl<G: GetterSource> Evaluator<'_, G> {
         let temp = self.p(f, 0)?;
         if temp < 0.0 {
             let message = format!("The switch function index ({temp}) is negative.");
-            let at = f.at.clone();
+            let at = f.source.at.clone();
             return Err(self.fail(FunctionError::Index { at, message }));
         }
         let values = f.params.split_first().map_or(&[][..], |(_, values)| values);
@@ -252,7 +252,7 @@ impl<G: GetterSource> Evaluator<'_, G> {
             "The switch function index ({temp}) selected a value above the range of supplied values[0:{}] - not enough values were supplied.",
             values.len().saturating_sub(1)
         );
-        let at = f.at.clone();
+        let at = f.source.at.clone();
         Err(self.fail(FunctionError::Index { at, message }))
     }
 
@@ -330,7 +330,7 @@ impl<G: GetterSource> Evaluator<'_, G> {
         let axis = usize::try_from(idx).ok().and_then(Axis::from_index1);
         let Some(axis) = axis else {
             let message = "The index must be one of the integer value 1, 2 or 3.".to_owned();
-            let at = f.at.clone();
+            let at = f.source.at.clone();
             return Err(self.fail(FunctionError::Index { at, message }));
         };
         let qa = Quaternion::from_axis_index(E_Y, -alpha);

@@ -46,7 +46,7 @@ impl FunctionSet {
         } else {
             let message = format!(
                 "Illegal use of the special character '#'. The 'copyto' argument in function {} is ignored.",
-                self.function(id)?.name
+                self.function(id)?.name()
             );
             self.lenient(&el.location(), message)?;
             return Ok(id);
@@ -56,7 +56,7 @@ impl FunctionSet {
             None => {
                 let message = format!(
                     "Property \"{copy_to}\" must be previously defined in function {}. The 'copyto' argument is ignored.",
-                    self.function(id)?.name
+                    self.function(id)?.name()
                 );
                 self.lenient(&el.location(), message)?;
             }
@@ -146,14 +146,13 @@ impl FunctionSet {
             name = name.replacen('#', prefix, 1);
         }
         let id = self.push_function(Function {
-            name,
             op,
             params,
             node: None,
             copy_to: None,
             cached: None,
-            at,
             random: None,
+            source: Box::new(super::FunctionSource { name, at }),
         });
         if let Some(property) = output {
             let node = self.bind(tree, &property, Bound::Function(id), &el.location())?;

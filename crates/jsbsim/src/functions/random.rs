@@ -99,18 +99,20 @@ impl FunctionSet {
             .into());
         }
         Ok(self.push_function(Function {
-            name: String::new(),
             op,
             params: Vec::new(),
             node: None,
             copy_to: None,
             cached: None,
-            at: el.location(),
-            random: Some(RandomDraw {
+            random: Some(Box::new(RandomDraw {
                 gaussian,
                 scale,
                 offset,
                 own,
+            })),
+            source: Box::new(super::FunctionSource {
+                name: String::new(),
+                at: el.location(),
             }),
         }))
     }
