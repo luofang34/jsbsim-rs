@@ -15,6 +15,12 @@ use crate::math::{Axis, ColumnVector3, E_X, E_Y, E_Z, Quaternion};
 use crate::units::{DEGTORAD, RADTODEG};
 use crate::xml::Location;
 
+#[cfg(test)]
+mod tests;
+
+/// `invlog2val`, `1.0/log10(2.0)`, which Clang folds to a constant.
+const INV_LOG10_2: f64 = 1.0 / std::f64::consts::LOG10_2;
+
 /// `GetBinary`: |v| < 1e-9 is false, |v| - 1 < 1e-9 is true (so 0.5 is
 /// true), anything else is an error.
 fn binary(v: f64, at: &Location) -> Result<bool, Error> {
@@ -150,7 +156,7 @@ fn unary(op: Op, x: f64) -> f64 {
         }
         Op::Log2 => {
             if x > 0.0 {
-                libm::log10(x) * (1.0 / libm::log10(2.0))
+                libm::log10(x) * INV_LOG10_2
             } else {
                 f64::NEG_INFINITY
             }
