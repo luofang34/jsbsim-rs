@@ -19954,7 +19954,7 @@ case = "Short_S23_2"
 property = "fcs/aileron-cmd-norm"
 abs = 0.0
 rel = 2e-12
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, pow and the geodetic conversions (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical, iteration counts included. The trim's regula falsi and the closed loops after it carry those digits into the state; observed max rel 1.2e-13 (884 ulp of a ~-0.012 value, |diff| 1.5e-15) at t=1 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of sin, cos, atan2, pow and the geodetic conversions (and Clang fuses each sin/cos pair of the C++ into __sincos_stret, whose sine differs from sin() in the last ulp); with Apple libm and the oracle built with -fno-builtin-sin -fno-builtin-cos the case is bit-identical, iteration counts included. The trim's regula falsi and the closed loops after it carry those digits into the state; observed max rel 1.2e-13 (|diff| 1.5e-15 on a ~-0.012 value, a small residual of order-1 terms) at t=1 s; bound 10x that."
 
 [[tolerance]]
 case = "Short_S23_2"
