@@ -6,11 +6,13 @@
 //! bit for bit as it did after the snapshot (see `oracle::snapshot_ab`),
 //! with the c172x's sensor noise and every turbulence model on, on a
 //! ground callback, with a trim or reset requested and pending, and
-//! across property nodes created while running.
+//! across property nodes created while running. A snapshot of another
+//! model is refused with the fingerprint part that differs.
 
 use std::path::{Path, PathBuf};
 
 use jsbsim::fdm::Fdm;
+use jsbsim::snapshot::{FingerprintPart, Snapshot, SnapshotError};
 use jsbsim::{Error, FileResolver, Resolver};
 use oracle::snapshot_ab::{AbOutcome, ab, ab_with};
 use oracle::steady_state::{
@@ -344,7 +346,7 @@ fn requests_and_runtime_properties_continue_bit_for_bit() {
 fn a_rewind_past_created_nodes_rebinds_by_name() {
     let mut fdm = overlay_fdm();
     run_to(&mut fdm, 0.3);
-    let mut early = jsbsim::snapshot::Snapshot::new();
+    let mut early = Snapshot::new();
     fdm.snapshot_into(&mut early).unwrap();
     while fdm.get_property("simulation/sim-time-sec").unwrap() < 1.2 {
         host(&mut fdm).unwrap();
@@ -361,4 +363,114 @@ fn a_rewind_past_created_nodes_rebinds_by_name() {
     run_to(&mut fdm, 1.2);
     assert_eq!(fdm.get_property("test/out").unwrap(), 10.0);
     assert_eq!(fdm.get_property("test/other").unwrap(), 1.0);
+}
+
+/// Serves the oracle's inputs with the ball's aircraft file edited: its
+/// empty weight 20000 lbs becomes 20001, one byte.
+#[cfg(test)]
+struct EditedBall {
+    files: FileResolver,
+}
+
+#[cfg(test)]
+const BALL_AIRCRAFT: &str = "aircraft/ball/ball.xml";
+
+#[cfg(test)]
+impl Resolver for EditedBall {
+    fn resolve(&self, path: &str) -> Result<Vec<u8>, Error> {
+        let bytes = self.files.resolve(path)?;
+        if path != BALL_AIRCRAFT {
+            return Ok(bytes);
+        }
+        let text = String::from_utf8(bytes).unwrap();
+        let original = r#"<emptywt unit="LBS"> 20000 </emptywt>"#;
+        assert!(text.contains(original), "{BALL_AIRCRAFT} has no {original}");
+        let edited = r#"<emptywt unit="LBS"> 20001 </emptywt>"#;
+        Ok(text.replacen(original, edited, 1).into_bytes())
+    }
+
+    fn exists(&self, path: &str) -> bool {
+        self.files.exists(path)
+    }
+}
+
+/// `script` loaded from `resolver` and initialised.
+#[cfg(test)]
+fn loaded(resolver: &dyn Resolver, script: &str) -> Fdm {
+    let mut fdm = Fdm::new().unwrap();
+    fdm.load_script(resolver, script).unwrap();
+    fdm.run_ic().unwrap();
+    fdm
+}
+
+#[cfg(test)]
+fn mismatch(part: FingerprintPart) -> Result<(), Error> {
+    Err(Error::Snapshot(SnapshotError::FingerprintMismatch { part }))
+}
+
+/// A snapshot of one model does not restore onto another: the error
+/// names the first part of the fingerprint that differs, and since the
+/// header is checked before anything is written, the executive it was
+/// refused by is as it was and still restores its own snapshots.
+#[test]
+fn a_snapshot_of_another_model_is_refused_untouched() {
+    let inputs = FileResolver::new(oracle_dir().join("inputs"));
+    let mut ball = loaded(&inputs, "scripts/ball.xml");
+    run(&mut ball, 50);
+    let mut ball_snapshot = Snapshot::new();
+    ball.snapshot_into(&mut ball_snapshot).unwrap();
+
+    let mut mk82 = loaded(&inputs, "scripts/mk82_script.xml");
+    run(&mut mk82, 50);
+    let mut before = Snapshot::new();
+    mk82.snapshot_into(&mut before).unwrap();
+    assert_eq!(
+        mk82.restore(&ball_snapshot),
+        mismatch(FingerprintPart::Documents)
+    );
+    let mut after = Snapshot::new();
+    mk82.snapshot_into(&mut after).unwrap();
+    assert!(after == before, "the refused restore changed the state");
+    check(
+        "mk82 after a refused restore",
+        &ab(&mut mk82, AFTER).unwrap(),
+    );
+
+    // The same aircraft with one byte of its file changed differs in its
+    // documents alone.
+    let edited = EditedBall { files: inputs };
+    let mut edited_ball = loaded(&edited, "scripts/ball.xml");
+    let (ours, theirs) = (
+        edited_ball.fingerprint().unwrap(),
+        ball_snapshot.fingerprint().unwrap(),
+    );
+    assert_ne!(ours.documents, theirs.documents);
+    assert_eq!(
+        (ours.tree, ours.load_nodes),
+        (theirs.tree, theirs.load_nodes)
+    );
+    assert_eq!(ours.models, theirs.models);
+    assert_eq!(
+        edited_ball.restore(&ball_snapshot),
+        mismatch(FingerprintPart::Documents)
+    );
+
+    // The same documents loaded after the host created a node differ in
+    // the load-time tree.
+    let mut extra = Fdm::new().unwrap();
+    extra.set_property("test/before-load", 1.0).unwrap();
+    extra
+        .load_script(
+            &FileResolver::new(oracle_dir().join("inputs")),
+            "scripts/ball.xml",
+        )
+        .unwrap();
+    extra.run_ic().unwrap();
+    assert_eq!(extra.fingerprint().unwrap().documents, theirs.documents);
+    assert_eq!(
+        extra.restore(&ball_snapshot),
+        mismatch(FingerprintPart::Tree)
+    );
+
+    ball.restore(&ball_snapshot).unwrap();
 }
