@@ -18,15 +18,17 @@ use crate::models::atmosphere::{SH_RATIO, STD_DAY_SL_PRESSURE};
 
 /// `coeff` of [`pitot_total_pressure`]: `pow(0.5*(SHRatio+1), b) *
 /// pow((SHRatio+1)/(SHRatio-1), d)`. Clang folds the `pow`s of these
-/// constant operands at compile time; Rust cannot fold `libm::pow`, so the
-/// value is spelled out bit for bit, and a test checks it against the
-/// expression.
+/// constant operands at compile time with the platform `pow`, which rounds
+/// each of them correctly; Rust cannot fold `libm::pow`, so the value is
+/// spelled out bit for bit, and a test checks it against the expression
+/// evaluated with the platform `pow`.
 pub(super) const PITOT_COEFF: f64 = f64::from_bits(0x4064_dd7d_9589_19b5);
 
 /// `coeff` of [`mach_from_impact_pressure`]: `pow(0.5*(SHRatio+1),
 /// -0.25*c) * pow(0.5*(SHRatio+1)/SHRatio, -0.5*d)`, spelled out as
-/// [`PITOT_COEFF`] is.
-pub(super) const RAYLEIGH_COEFF: f64 = f64::from_bits(0x3fec_337c_4b7c_389b);
+/// [`PITOT_COEFF`] is. The `libm` crate's `pow` gives a product one ulp
+/// lower.
+pub(super) const RAYLEIGH_COEFF: f64 = f64::from_bits(0x3fec_337c_4b7c_389c);
 
 /// `PitotTotalPressure(mach, pressure)`, psf: isentropic below Mach 1,
 /// Rayleigh's pitot formula behind a normal shock above it. A negative
