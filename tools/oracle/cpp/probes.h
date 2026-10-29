@@ -3,7 +3,10 @@
 #ifndef ORACLE_PROBES_H
 #define ORACLE_PROBES_H
 
+namespace JSBSim { class FGFDMExec; }
+
 int RunScript(int argc, char** argv);
+bool InstallGroundCallback(JSBSim::FGFDMExec& exec, const char* name);
 int RunBench(int argc, char** argv);
 int RunBenchAircraft(int argc, char** argv);
 int RunPropertiesProbe(const char* ops_file, const char* out_file);

@@ -220,6 +220,7 @@ fn spec(case: &Case) -> ScriptSpec {
         properties,
         aircraft_path: Some(case.aircraft_path.clone()),
         inputs: None,
+        ground_callback: None,
     }
 }
 

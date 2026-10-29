@@ -15,8 +15,9 @@
 //        oracle_driver properties|units|xml|math|functions|table|mass-balance|initial-condition|propulsion|trim|random
 //                      <input.txt> <out.txt>
 //
-// The script mode is implemented here, the bench modes in bench.cpp and the
-// probe modes in probe_*.cpp.
+// The script mode is implemented here, its ground callbacks in
+// ground_callbacks.cpp, the bench modes in bench.cpp and the probe modes in
+// probe_*.cpp.
 //
 // Rows are written after RunIC (and trim, if requested) and then after every
 // N-th call to FGFDMExec::Run(), where N is derived from <rate_hz> with the
@@ -71,6 +72,14 @@ int RunScript(int argc, char** argv)
   exec.SetAircraftPath(SGPath(aircraft_path ? aircraft_path : "aircraft"));
   exec.SetEnginePath(SGPath("engine"));
   exec.SetSystemsPath(SGPath("systems"));
+  // ORACLE_GROUND_CALLBACK names a terrain of ground_callbacks.cpp, made
+  // before the script loads so that its initial conditions are placed on
+  // that terrain.
+  const char* ground = std::getenv("ORACLE_GROUND_CALLBACK");
+  if (ground && !InstallGroundCallback(exec, ground)) {
+    std::fprintf(stderr, "no ground callback named %s\n", ground);
+    return 2;
+  }
 
   if (!exec.LoadScript(SGPath::fromLocal8Bit(script.c_str()), 0.0, SGPath())) {
     std::fprintf(stderr, "script %s was not loaded\n", script.c_str());

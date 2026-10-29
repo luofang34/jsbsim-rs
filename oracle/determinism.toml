@@ -2,7 +2,9 @@
 # Rust port runs each natively and as wasm32-wasip1, and every sampled value
 # (script cases) or transcript byte (transcript cases) must be identical.
 # c1722 and c1724 fly the c172x with its sensor noise on; random, winds,
-# turbulence-tests and sensor-random-seed draw from the shared generator.
+# turbulence-tests and sensor-random-seed draw from the shared generator;
+# gear_rover_deck_rotating and gear_rover_deck_heaving run on ground
+# callbacks of tools/oracle/src/ground.rs.
 cases = [
     "ball",
     "mk82",
@@ -15,4 +17,6 @@ cases = [
     "winds",
     "turbulence-tests",
     "sensor-random-seed",
+    "gear_rover_deck_rotating",
+    "gear_rover_deck_heaving",
 ]

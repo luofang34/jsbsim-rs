@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<runscript name="gear rover slope">
+  <!--
+    SPDX-License-Identifier: LGPL-2.1-or-later
+    gear_rover on the "slope" ground callback (its golden's manifest names
+    it): released on the incline, it settles on its struts and rolls down,
+    then every brake locks, its wheels skid and it comes to rest, held by
+    static friction.
+  -->
+  <use aircraft="gear_rover" initialize="slope"/>
+  <run start="0.0" end="15.0" dt="0.008333333333333333">
+    <event name="Brakes">
+      <condition>simulation/sim-time-sec ge 1.0</condition>
+      <set name="fcs/left-brake-cmd-norm" value="1.0"/>
+      <set name="fcs/right-brake-cmd-norm" value="1.0"/>
+      <set name="fcs/center-brake-cmd-norm" value="1.0"/>
+    </event>
+  </run>
+</runscript>

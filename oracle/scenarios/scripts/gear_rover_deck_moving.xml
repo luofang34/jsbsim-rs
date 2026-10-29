@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<runscript name="gear rover deck moving">
+  <!--
+    SPDX-License-Identifier: LGPL-2.1-or-later
+    gear_rover on the "deck-moving" ground callback (its golden's manifest
+    names it), a deck moving east and up: the deck slides sideways under
+    the wheels, the side friction drags the rover along, and once every
+    brake locks it is carried at the deck's velocity.
+  -->
+  <use aircraft="gear_rover" initialize="deck_quartering"/>
+  <run start="0.0" end="12.0" dt="0.008333333333333333">
+    <event name="Brakes">
+      <condition>simulation/sim-time-sec ge 3.0</condition>
+      <set name="fcs/left-brake-cmd-norm" value="1.0"/>
+      <set name="fcs/right-brake-cmd-norm" value="1.0"/>
+      <set name="fcs/center-brake-cmd-norm" value="1.0"/>
+    </event>
+  </run>
+</runscript>

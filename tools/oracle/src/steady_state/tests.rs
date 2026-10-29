@@ -40,8 +40,9 @@ fn script_aircraft(run: &ScriptRun) -> String {
     used.attribute("aircraft").to_owned()
 }
 
-/// (script, inputs root under `oracle/`) of every script golden.
-fn golden_scripts() -> BTreeSet<(String, String)> {
+/// (script, inputs root under `oracle/`, ground callback) of every script
+/// golden.
+fn golden_scripts() -> BTreeSet<(String, String, Option<String>)> {
     let goldens = oracle_dir().join("goldens");
     let mut scripts = BTreeSet::new();
     for case in manifest::list_cases_blocking(&goldens).unwrap() {
@@ -49,7 +50,7 @@ fn golden_scripts() -> BTreeSet<(String, String)> {
         if let CaseSpec::Script(spec) = manifest.case {
             let root = spec.inputs.as_deref().unwrap_or("oracle/inputs");
             if let Some(root) = root.strip_prefix("oracle/") {
-                scripts.insert((spec.script, root.to_owned()));
+                scripts.insert((spec.script, root.to_owned(), spec.ground_callback));
             }
         }
     }
@@ -66,7 +67,11 @@ fn every_run_is_a_golden_script_of_an_aircraft_that_loads() {
             seen.insert((run.root, run.script)),
             "{run:?} is listed twice"
         );
-        let key = (run.script.to_owned(), run.root.to_owned());
+        let key = (
+            run.script.to_owned(),
+            run.root.to_owned(),
+            run.ground_callback.map(str::to_owned),
+        );
         assert!(goldens.contains(&key), "{run:?} is no golden's script");
         // The derived and scenario aircraft are not corpus aircraft.
         if run.root == "inputs" {
@@ -106,10 +111,7 @@ impl Flown {
 fn every_family_is_flown_by_a_listed_run() {
     let mut flown = Flown::default();
     for run in all_scripts() {
-        let mut fdm = Fdm::new().unwrap();
-        let resolver = FileResolver::new(oracle_dir().join(run.root));
-        fdm.load_script(&resolver, run.script).unwrap();
-        flown.add(&fdm);
+        flown.add(&run.load(&oracle_dir()).unwrap());
     }
     let resolver = FileResolver::new(oracle_dir());
     for name in PLANET_TRIPODS {

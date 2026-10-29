@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  gear_rover at rest on the "slope" ground callback of
+  tools/oracle/cpp/ground_callbacks.cpp, facing north down its atan(5/12)
+  incline and pitched to match it.
+-->
+<initialize name="slope">
+  <latitude unit="DEG"> 0.0 </latitude>
+  <longitude unit="DEG"> 0.0 </longitude>
+  <psi unit="DEG"> 0.0 </psi>
+  <theta unit="DEG"> -22.62 </theta>
+  <altitudeAGL unit="FT"> 2.4 </altitudeAGL>
+</initialize>

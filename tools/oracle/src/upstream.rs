@@ -236,8 +236,13 @@ pub fn run_script_in_blocking(
     let end = spec
         .end_time
         .map_or_else(|| "-".to_owned(), |t| format!("{t:?}"));
+    let mut driver = Command::new(paths.driver_exe());
+    match &spec.ground_callback {
+        Some(name) => driver.env("ORACLE_GROUND_CALLBACK", name),
+        None => driver.env_remove("ORACLE_GROUND_CALLBACK"),
+    };
     let output = run_blocking(
-        Command::new(paths.driver_exe())
+        driver
             .current_dir(run_dir)
             .env("JSBSIM_DEBUG", "0")
             .env(

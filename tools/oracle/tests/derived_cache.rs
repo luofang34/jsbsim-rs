@@ -100,9 +100,7 @@ fn steady_state_frames_read_only_cached_derived_values() {
             report.push((format!("aircraft {name}"), misses(&mut fdm, &count, FRAMES)));
         }
         for run in SCRIPTS {
-            let resolver = FileResolver::new(oracle_dir().join(run.root));
-            let mut fdm = Fdm::new().unwrap();
-            fdm.load_script(&resolver, run.script).unwrap();
+            let mut fdm = run.load(&oracle_dir()).unwrap();
             fdm.run_ic().unwrap();
             report.push((
                 format!("script {}", run.script),
@@ -122,9 +120,7 @@ fn steady_state_frames_read_only_cached_derived_values() {
         }
         // The trimming scripts, from their first frame after the trim.
         for run in TRIMMED {
-            let resolver = FileResolver::new(oracle_dir().join(run.root));
-            let mut fdm = Fdm::new().unwrap();
-            fdm.load_script(&resolver, run.script).unwrap();
+            let mut fdm = run.load(&oracle_dir()).unwrap();
             fdm.run_ic().unwrap();
             run_until_trimmed(&mut fdm, run.script);
             report.push((

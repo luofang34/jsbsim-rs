@@ -6,6 +6,13 @@
 //! each script to be a golden's and every engine, thruster, buoyancy and
 //! atmosphere family to be flown by at least one run.
 
+use std::path::Path;
+
+use jsbsim::FileResolver;
+use jsbsim::fdm::Fdm;
+
+use crate::port_script::Stop;
+
 #[cfg(test)]
 mod tests;
 
@@ -18,6 +25,9 @@ pub struct ScriptRun {
     pub script: &'static str,
     /// Frames measured after the warm-up.
     pub frames: u32,
+    /// Terrain of [`crate::ground`] the script runs on, as its golden's
+    /// `ground_callback`.
+    pub ground_callback: Option<&'static str>,
 }
 
 const fn run(root: &'static str, script: &'static str, frames: u32) -> ScriptRun {
@@ -25,6 +35,31 @@ const fn run(root: &'static str, script: &'static str, frames: u32) -> ScriptRun
         root,
         script,
         frames,
+        ground_callback: None,
+    }
+}
+
+const fn on(ground: &'static str, script: &'static str, frames: u32) -> ScriptRun {
+    ScriptRun {
+        root: "scenarios",
+        script,
+        frames,
+        ground_callback: Some(ground),
+    }
+}
+
+impl ScriptRun {
+    /// A new FDM on the run's terrain with its script loaded, from
+    /// `oracle_dir` (the repository's `oracle/`).
+    pub fn load(&self, oracle_dir: &Path) -> Result<Fdm, Stop> {
+        let mut fdm = Fdm::new().map_err(Stop::Port)?;
+        if let Some(name) = self.ground_callback {
+            crate::ground::install(&mut fdm, name).map_err(Stop::Oracle)?;
+        }
+        let resolver = FileResolver::new(oracle_dir.join(self.root));
+        fdm.load_script(&resolver, self.script)
+            .map_err(Stop::Port)?;
+        Ok(fdm)
     }
 }
 
@@ -35,8 +70,10 @@ pub const FRAMES: u32 = 1000;
 ///
 /// ball_orbit_phase's window covers its undock burn ramps at 10 s and
 /// 12 s; mk82's ends before touchdown; gear_rover_taxi's rolls, steers,
-/// brakes and rests on every kind of contact, and gear_rover_retract's
-/// slides on its skids with the gear up and lands back on its wheels;
+/// brakes and rests on every kind of contact, gear_rover_retract's
+/// slides on its skids with the gear up and lands back on its wheels, and
+/// gear_rover_deck_rotating's is carried round by a ground callback's
+/// spinning deck;
 /// piston_start_c310's cranks, starts, runs on each magneto, cuts off and
 /// restarts its engines, and piston_governor_c310's governs, feathers,
 /// windmills and restarts in flight; c1722_inertia's trims, starts running
@@ -57,6 +94,11 @@ pub const SCRIPTS: &[ScriptRun] = &[
     run("inputs", "scripts/c1724.xml", FRAMES),
     run("scenarios", "scripts/gear_rover_taxi.xml", 2000),
     run("scenarios", "scripts/gear_rover_retract.xml", 1000),
+    on(
+        "deck-rotating",
+        "scripts/gear_rover_deck_rotating.xml",
+        1000,
+    ),
     run("derived", "scripts/piston_start_c310.xml", 3000),
     run("derived", "scripts/piston_governor_c310.xml", 5000),
     run("derived", "scripts/c1722_inertia.xml", 12000),

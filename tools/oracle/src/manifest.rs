@@ -56,6 +56,10 @@ pub struct ScriptSpec {
     /// checkout and Rust its vendored subset in `oracle/inputs`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub inputs: Option<String>,
+    /// Terrain of [`crate::ground`] installed before the script loads;
+    /// JSBSim's flat default when absent.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub ground_callback: Option<String>,
 }
 
 impl ScriptSpec {

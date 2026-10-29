@@ -119,9 +119,7 @@ fn measure_corpus(
 #[cfg(test)]
 fn measure_trimmed(report: &mut Vec<(String, u32, (u64, u64))>) {
     for run in TRIMMED {
-        let resolver = FileResolver::new(oracle_dir().join(run.root));
-        let mut fdm = Fdm::new().unwrap();
-        fdm.load_script(&resolver, run.script).unwrap();
+        let mut fdm = run.load(&oracle_dir()).unwrap();
         fdm.run_ic().unwrap();
         run_until_trimmed(&mut fdm, run.script);
         report.push((
@@ -136,9 +134,7 @@ fn measure_trimmed(report: &mut Vec<(String, u32, (u64, u64))>) {
 #[cfg(test)]
 fn measure_scripts(report: &mut Vec<(String, u32, (u64, u64))>) {
     for run in SCRIPTS {
-        let resolver = FileResolver::new(oracle_dir().join(run.root));
-        let mut fdm = Fdm::new().unwrap();
-        fdm.load_script(&resolver, run.script).unwrap();
+        let mut fdm = run.load(&oracle_dir()).unwrap();
         fdm.run_ic().unwrap();
         report.push((
             format!("script {}", run.script),

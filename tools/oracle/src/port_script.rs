@@ -65,6 +65,9 @@ fn sample(
 ) -> Result<(), Stop> {
     let resolver = FileResolver::new(root);
     let mut fdm = Fdm::with_options(options).map_err(port_error)?;
+    if let Some(name) = &spec.ground_callback {
+        crate::ground::install(&mut fdm, name).map_err(Stop::Oracle)?;
+    }
     if let Some(path) = &spec.aircraft_path {
         fdm.set_aircraft_path(path);
     }

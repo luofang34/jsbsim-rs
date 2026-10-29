@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<runscript name="gear rover deck heaving">
+  <!--
+    SPDX-License-Identifier: LGPL-2.1-or-later
+    gear_rover on the "deck-heaving" ground callback (its golden's manifest
+    names it), a deck rising and falling 1 ft every 4 s: the struts take
+    the heave while the rover rolls, then every brake locks and it rides
+    the deck at rest.
+  -->
+  <use aircraft="gear_rover" initialize="deck_rolling"/>
+  <run start="0.0" end="12.0" dt="0.008333333333333333">
+    <event name="Brakes">
+      <condition>simulation/sim-time-sec ge 4.0</condition>
+      <set name="fcs/left-brake-cmd-norm" value="1.0"/>
+      <set name="fcs/right-brake-cmd-norm" value="1.0"/>
+      <set name="fcs/center-brake-cmd-norm" value="1.0"/>
+    </event>
+  </run>
+</runscript>

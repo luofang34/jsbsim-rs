@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  gear_rover at rest, facing north-east, where the deck ground callbacks of
+  tools/oracle/cpp/ground_callbacks.cpp cross latitude 0 and longitude 0.
+-->
+<initialize name="deck_quartering">
+  <latitude unit="DEG"> 0.0 </latitude>
+  <longitude unit="DEG"> 0.0 </longitude>
+  <psi unit="DEG"> 45.0 </psi>
+  <altitudeAGL unit="FT"> 2.4 </altitudeAGL>
+</initialize>

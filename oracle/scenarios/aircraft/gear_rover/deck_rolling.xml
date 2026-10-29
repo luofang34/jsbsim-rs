@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  gear_rover rolling north at 10 ft/s where the deck ground callbacks of
+  tools/oracle/cpp/ground_callbacks.cpp cross latitude 0 and longitude 0.
+-->
+<initialize name="deck_rolling">
+  <latitude unit="DEG"> 0.0 </latitude>
+  <longitude unit="DEG"> 0.0 </longitude>
+  <psi unit="DEG"> 0.0 </psi>
+  <ubody unit="FT/SEC"> 10.0 </ubody>
+  <altitudeAGL unit="FT"> 2.4 </altitudeAGL>
+</initialize>
