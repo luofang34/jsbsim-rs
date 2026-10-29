@@ -10,6 +10,7 @@ pub mod error;
 pub mod fdm;
 pub mod functions;
 pub mod initial_condition;
+pub mod linearization;
 pub mod math;
 pub mod models;
 pub mod options;

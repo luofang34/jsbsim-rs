@@ -199,6 +199,7 @@ impl Fdm {
         loader: &mut DocumentLoader<'_>,
         document: Element,
     ) -> Result<(), Error> {
+        self.models.aircraft.name = document.attribute("name").to_owned();
         if let Some(mut planet) = document.find_element("planet").cloned() {
             self.load_planet(loader, &mut planet)?;
         }

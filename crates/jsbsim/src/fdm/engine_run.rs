@@ -51,6 +51,12 @@ impl Fdm {
         let throttles = &mut self.models.fcs.throttles;
         throttles.set_mixture_pos(n, 1.0);
         throttles.set_mixture_cmd(n, 1.0);
+        self.engine_init_running(i)
+    }
+
+    /// `FGEngine::InitRunning` of engine `i`, with the `Calculate` it asks
+    /// for.
+    pub(crate) fn engine_init_running(&mut self, i: usize) -> Result<(), Error> {
         let p = &mut self.models.propulsion;
         let Some(e) = p.engines.get_mut(i) else {
             return Ok(());

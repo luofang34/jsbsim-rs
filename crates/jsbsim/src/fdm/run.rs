@@ -455,12 +455,7 @@ impl Fdm {
                 ExecRequest::Reset(mode) => self.reset_to_initial_conditions(mode)?,
                 ExecRequest::Trim(mode) => self.do_trim(mode)?,
                 ExecRequest::InitRunning(n) => self.init_running(n)?,
-                ExecRequest::Linearize => {
-                    return Err(Error::Unsupported {
-                        construct: "simulation/do_linearization".to_owned(),
-                        path: "property write".to_owned(),
-                    });
-                }
+                ExecRequest::Linearize => self.do_linearization()?,
             }
         }
         Ok(())

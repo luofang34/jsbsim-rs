@@ -29,6 +29,8 @@ pub struct Inputs {
 /// `FGAircraft`.
 #[derive(Debug, Clone, Default)]
 pub struct Aircraft {
+    /// `AircraftName`: the `name` of the `<fdm_config>` (`ReadPrologue`).
+    pub name: String,
     /// Scheduling.
     pub base: ModelBase,
     /// Wing area, ft^2.

@@ -7,6 +7,7 @@ use std::path::PathBuf;
 use jsbsim::FileResolver;
 use jsbsim::c_numeric::format_g;
 use jsbsim::fdm::Fdm;
+use jsbsim::linearization::Linearization;
 use jsbsim::trim::{Control, Trim, TrimMode, TrimReport};
 
 use super::ProbeContext;
@@ -190,6 +191,10 @@ impl Probe {
                 self.print_now()
             }
             "print" => self.print_now(),
+            "linearize" => {
+                let lin = fdm.linearize()?;
+                Ok(linearization(&lin) + &Self::print(fdm, &self.watched)?)
+            }
             _ => Ok(" unknown".to_owned()),
         }
     }
@@ -251,6 +256,30 @@ impl Probe {
         };
         format!("{}{result}", self.trims)
     }
+}
+
+/// What the C++ probe's `Linearize` prints.
+fn linearization(lin: &Linearization) -> String {
+    let mut out = format!(" name {}", lin.aircraft_name);
+    for (tag, v) in [("x", &lin.x), ("u", &lin.u), ("y", &lin.y)] {
+        out.push_str(&format!(" {tag}"));
+        for c in v {
+            out.push_str(&format!(" {} {}", c.name(), c.unit()));
+        }
+    }
+    for (tag, v) in [("x0", &lin.x0), ("u0", &lin.u0), ("y0", &lin.y0)] {
+        out.push_str(&format!(" {tag}"));
+        for x in v {
+            out.push_str(&format!(" {}", number(*x)));
+        }
+    }
+    for (tag, m) in [("A", &lin.a), ("B", &lin.b), ("C", &lin.c), ("D", &lin.d)] {
+        out.push_str(&format!(" {tag}"));
+        for x in m.iter().flatten() {
+            out.push_str(&format!(" {}", number(*x)));
+        }
+    }
+    out
 }
 
 fn load_failure(e: jsbsim::Error) -> String {

@@ -170,6 +170,7 @@ pub struct Fdm {
     systems_path: String,
     last_trim: Option<crate::trim::TrimReport>,
     trims_run: u32,
+    pub(crate) last_linearization: Option<crate::linearization::Linearization>,
 }
 
 impl Fdm {
@@ -199,6 +200,7 @@ impl Fdm {
             systems_path: "systems".to_owned(),
             last_trim: None,
             trims_run: 0,
+            last_linearization: None,
         };
         fdm.options = options;
         fdm.env.functions = FunctionSet::with_options(options);

@@ -28,6 +28,10 @@
 //   run <n>                 Run() n times, or until it returns false
 //   until <t>               Run() while sim-time-sec < t (ExecuteUntil)
 //   print                   print
+//   linearize               FGLinearization(exec): "name <aircraft>", then
+//                           per vector x, u, y its "<v> <name> <unit>..."
+//                           and "<v>0 <values>", then "A <row-major
+//                           values>" and B, C and D, then print
 //
 // Every op but paths, new and watch is followed by what each trim it ran
 // did ("trim t <time> mode <m> result <0|1> its <cycles>", then per axis
@@ -49,6 +53,7 @@
 #include "FGFDMExec.h"
 #include "FGJSBBase.h"
 #include "initialization/FGInitialCondition.h"
+#include "initialization/FGLinearization.h"
 #include "initialization/FGTrimAxis.h"
 #include "input_output/FGPropertyManager.h"
 #define class struct
@@ -107,6 +112,42 @@ public:
 
   bool pending = false;
 };
+
+std::string Vector(const std::string& tag, const std::vector<double>& v)
+{
+  std::string out = " " + tag;
+  for (double x : v) out += " " + Number(x);
+  return out;
+}
+
+std::string Matrix(const std::string& tag, const std::vector<std::vector<double>>& m)
+{
+  std::string out = " " + tag;
+  for (const auto& row : m)
+    for (double x : row) out += " " + Number(x);
+  return out;
+}
+
+std::string Names(const std::string& tag, const std::vector<std::string>& names,
+                  const std::vector<std::string>& units)
+{
+  std::string out = " " + tag;
+  for (size_t i = 0; i < names.size(); ++i) out += " " + names[i] + " " + units[i];
+  return out;
+}
+
+std::string Linearize(JSBSim::FGFDMExec* exec)
+{
+  JSBSim::FGLinearization lin(exec);
+  return " name " + exec->GetAircraft()->GetAircraftName() +
+         Names("x", lin.GetStateNames(), lin.GetStateUnits()) +
+         Names("u", lin.GetInputNames(), lin.GetInputUnits()) +
+         Names("y", lin.GetOutputNames(), lin.GetOutputUnits()) +
+         Vector("x0", lin.GetInitialState()) + Vector("u0", lin.GetInitialInput()) +
+         Vector("y0", lin.GetInitialOutput()) + Matrix("A", lin.GetSystemMatrix()) +
+         Matrix("B", lin.GetInputMatrix()) + Matrix("C", lin.GetOutputMatrix()) +
+         Matrix("D", lin.GetFeedforwardMatrix());
+}
 
 class Probe {
 public:
@@ -214,6 +255,7 @@ std::string Probe::Op(const std::string& op, std::istringstream& args)
     return Print();
   }
   if (op == "print") return Print();
+  if (op == "linearize") return Linearize(exec) + Print();
   return " unknown";
 }
 
