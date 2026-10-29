@@ -209,12 +209,33 @@ fn version_2_files_load_frames() {
 }
 
 #[test]
-fn trims_and_running_engines_are_unsupported() {
-    for body in [
-        "<trim> Longitudinal </trim>",
-        "<trim>1</trim>",
-        "<running> -1 </running>",
-    ] {
+fn running_engines_are_recorded_by_number() {
+    let cases: [(&str, &[usize], &[usize]); 3] = [
+        ("<running> -1 </running>", &[0, 1, 31], &[]),
+        (
+            "<running> 0 </running><running>2</running>",
+            &[0, 2],
+            &[1, 3],
+        ),
+        ("", &[], &[0]),
+    ];
+    for (body, running, stopped) in cases {
+        let mut fdm = fdm();
+        let xml = format!("<initialize><vt unit=\"FT/SEC\">10</vt>{body}</initialize>");
+        assert_eq!(load(&mut fdm, &xml), Ok(true), "{body}");
+        for &n in running {
+            assert!(fdm.models.ic.is_engine_running(n), "{body}: {n}");
+        }
+        for &n in stopped {
+            assert!(!fdm.models.ic.is_engine_running(n), "{body}: {n}");
+        }
+        assert!(!fdm.models.ic.is_engine_running(32));
+    }
+}
+
+#[test]
+fn trims_are_unsupported() {
+    for body in ["<trim> Longitudinal </trim>", "<trim>1</trim>"] {
         let mut fdm = fdm();
         let xml = format!("<initialize><vt unit=\"FT/SEC\">10</vt>{body}</initialize>");
         let err = load(&mut fdm, &xml).unwrap_err();

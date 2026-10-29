@@ -6,9 +6,9 @@
 //! Initialization files: the `<initialize>` document of format 1 (flat
 //! elements applied through the setters) or 2 (frames, see `load_v2`).
 //!
-//! Trimming and starting engines are not ported: a version 1 `<trim>` that
-//! requests a trim and any `<running>` are refused before anything is
-//! applied.
+//! Trimming is not ported: a version 1 `<trim>` that requests a trim is
+//! refused before anything is applied. The `<running>` engines are
+//! recorded for `RunIC` to start.
 
 use std::f64::consts::PI;
 
@@ -75,18 +75,22 @@ impl InitialCondition {
                 document.location()
             )));
         }
-        if let Some(running) = document.find_element("running") {
-            return Err(Error::Unsupported {
-                construct: "<running> (engines started by the initial conditions, FGPropulsion)"
-                    .to_owned(),
-                path: running.location().to_string(),
-            });
-        }
         let mut outcome = LoadOutcome::default();
         match version {
             Some(v) if v >= 2.0 => outcome = self.load_v2(document, atmosphere, inertial)?,
             Some(v) if v < 1.0 => {}
             _ => outcome.result = self.load_v1(document, atmosphere, inertial)?,
+        }
+        // Engine -1 is every engine.
+        for running in document.find_elements("running") {
+            let n = running.data_as_number()? as i32;
+            self.engines_running |= match n {
+                -1 => u32::MAX,
+                n => u32::try_from(n)
+                    .ok()
+                    .and_then(|n| 1u32.checked_shl(n))
+                    .unwrap_or(0),
+            };
         }
         Ok(outcome)
     }

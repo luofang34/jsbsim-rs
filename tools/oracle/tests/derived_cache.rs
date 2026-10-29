@@ -95,6 +95,7 @@ fn steady_state_frames_read_only_cached_derived_values() {
             (&derived, "scripts/c1724.xml", FRAMES),
             (&derived, "scripts/piston_start_c310.xml", 3000),
             (&derived, "scripts/piston_governor_c310.xml", 5000),
+            (&derived, "scripts/c1722_untrimmed.xml", 12000),
         ] {
             let mut fdm = Fdm::new().unwrap();
             fdm.load_script(resolver, script).unwrap();

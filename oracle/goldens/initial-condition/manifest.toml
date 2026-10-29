@@ -1,7 +1,7 @@
 [case]
 kind = "transcript"
 probe = "initial-condition"
-unsupported = ["<trim>", "<running>"]
+unsupported = ["<trim>"]
 
 [provenance]
 upstream_commit = "66f7fafc07fe13e7ede9db20873030fed2881713"

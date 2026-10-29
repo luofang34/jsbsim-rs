@@ -315,3 +315,32 @@ fn starting_an_engine_sets_its_fcs_mixture() {
     let input = &fdm.models.propulsion.input;
     assert_eq!((input.throttle_cmd[0], input.mixture_pos[0]), (1.0, 1.0));
 }
+
+#[test]
+fn run_ic_starts_the_engines_the_initial_conditions_name() {
+    let mut fdm = load(ROCKET).unwrap();
+    let mut r = MemoryResolver::new();
+    let ic = "<initialize><altitude unit=\"FT\">10000</altitude><running>0</running></initialize>";
+    r.insert("aircraft/t/running.xml", ic.as_bytes().to_vec());
+    assert!(
+        fdm.load_initial_conditions(&r, "aircraft/t", "running")
+            .unwrap()
+    );
+    assert_eq!(
+        fdm.get_property("propulsion/engine/set-running").unwrap(),
+        0.0
+    );
+    fdm.run_ic().unwrap();
+    assert_eq!(
+        fdm.get_property("propulsion/engine/set-running").unwrap(),
+        1.0
+    );
+    // A reset runs the initial conditions again, which start it again.
+    fdm.set_property("propulsion/engine/set-running", 0.0)
+        .unwrap();
+    fdm.reset_to_initial_conditions(0).unwrap();
+    assert_eq!(
+        fdm.get_property("propulsion/engine/set-running").unwrap(),
+        1.0
+    );
+}

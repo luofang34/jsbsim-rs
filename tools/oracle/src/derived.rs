@@ -18,6 +18,7 @@ pub mod aero_limits;
 pub mod ground;
 pub mod kinematic;
 pub mod piston;
+pub mod piston_fuel;
 pub mod piston_scenarios;
 pub mod systems;
 pub mod tanks;

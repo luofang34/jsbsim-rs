@@ -10,7 +10,8 @@
 //!   sets before `RunIC`;
 //! - the Short S.23 of `TestEngineIndexedProps`, whose engine's
 //!   `starter-max-power-W` function becomes a post-function, and in the
-//!   second variant reads an indexed table.
+//!   second variant reads an indexed table;
+//! - the c172x of the fuel tests, in [`piston_fuel`](super::piston_fuel).
 
 use crate::OracleError;
 
@@ -73,12 +74,17 @@ pub const SHORT_S23_SYSTEMS: [&str; 7] = [
     "Systems/take-off-ap.xml",
 ];
 
-fn fail(source: &str, message: &str) -> OracleError {
+pub(super) fn fail(source: &str, message: &str) -> OracleError {
     OracleError::Provenance(format!("{source}: {message}"))
 }
 
 /// `text` with the comment `comment` before its root element `root`.
-fn with_header(text: &str, root: &str, comment: &str, source: &str) -> Result<String, OracleError> {
+pub(super) fn with_header(
+    text: &str,
+    root: &str,
+    comment: &str,
+    source: &str,
+) -> Result<String, OracleError> {
     let at = text
         .find(&format!("<{root}"))
         .ok_or_else(|| fail(source, &format!("no <{root}>")))?;
@@ -92,7 +98,12 @@ fn with_header(text: &str, root: &str, comment: &str, source: &str) -> Result<St
 }
 
 /// `text` with its only `from` replaced by `to`.
-fn replace_once(text: &str, from: &str, to: &str, source: &str) -> Result<String, OracleError> {
+pub(super) fn replace_once(
+    text: &str,
+    from: &str,
+    to: &str,
+    source: &str,
+) -> Result<String, OracleError> {
     if text.matches(from).count() != 1 {
         return Err(fail(source, &format!("expected one {from}")));
     }
@@ -379,5 +390,6 @@ pub fn files(read: Read<'_>) -> Result<Vec<(String, String)>, OracleError> {
     noise0_files(read, &mut files)?;
     takeoff_files(read, &mut files)?;
     test_files(read, &mut files)?;
+    super::piston_fuel::files(read, &mut files)?;
     Ok(files)
 }

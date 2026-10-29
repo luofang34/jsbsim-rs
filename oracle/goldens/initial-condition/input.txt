@@ -20,7 +20,7 @@ load files/versions.xml
 load files/version-half.xml
 load files/not-reset.xml
 load files/missing.xml
-# Trim requests and running engines, which the port refuses.
+# A trim request, which the port refuses, and running engines.
 load files/v1-trim.xml
 load files/v1-running.xml
 # Calibrated, Mach and equivalent speeds kept across altitude, latitude

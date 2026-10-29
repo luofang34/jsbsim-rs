@@ -16175,3 +16175,717 @@ property = "propulsion/engine[3]/AFR"
 abs = 4e-11
 rel = 0.0
 reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; the air/fuel ratio is infinite while no fuel flows; observed max 3.6e-12 (rel 4.3e-13) at t=16.9 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the same IEEE operations in JSBSim's order; properties listed differ."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "position/lat-geod-deg"
+abs = 4e-14
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 3.6e-15 (rel 1.3e-16) at t=1.8 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "position/long-gc-deg"
+abs = 2e-13
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 1.4e-14 (rel 1.6e-16) at t=0.2 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "velocities/u-fps"
+abs = 7e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 6.8e-13 (rel 2.6e-15) at t=28.6 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "velocities/v-fps"
+abs = 3e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 2.7e-13 (rel 2.6e-12) at t=17.9 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "velocities/w-fps"
+abs = 4e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 3.0e-13 (rel 2.7e-14) at t=29.3 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "velocities/p-rad_sec"
+abs = 4e-14
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 3.6e-15 (rel 2.3e-14) at t=17.9 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "velocities/q-rad_sec"
+abs = 5e-14
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 4.3e-15 (rel 1.0e-14) at t=17.2 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "velocities/r-rad_sec"
+abs = 4e-14
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 3.2e-15 (rel 3.0e-14) at t=16 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "attitude/phi-rad"
+abs = 4e-14
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 3.6e-15 (rel 3.0e-15) at t=24.1 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "attitude/theta-rad"
+abs = 5e-14
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 4.7e-15 (rel 3.9e-12) at t=27.1 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "attitude/psi-rad"
+abs = 9e-14
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 8.9e-15 (rel 2.3e-13) at t=29.8 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "accelerations/udot-ft_sec2"
+abs = 2e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 1.5e-13 (rel 5.9e-13) at t=26.8 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "accelerations/vdot-ft_sec2"
+abs = 9e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 8.1e-13 (rel 1.4e-10) at t=16 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "accelerations/wdot-ft_sec2"
+abs = 3e-11
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 2.3e-12 (rel 8.8e-11) at t=29.3 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "accelerations/pdot-rad_sec2"
+abs = 5e-13
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 4.2e-14 (rel 9.8e-11) at t=29.3 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "accelerations/qdot-rad_sec2"
+abs = 6e-13
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 5.9e-14 (rel 1.1e-10) at t=29.3 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "accelerations/rdot-rad_sec2"
+abs = 2e-13
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 1.2e-14 (rel 1.3e-10) at t=16.2 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "forces/fbx-total-lbs"
+abs = 1e-10
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 9.6e-12 (rel 1.6e-13) at t=29.3 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "forces/fby-total-lbs"
+abs = 5e-11
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 4.1e-12 (rel 8.0e-13) at t=16.3 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "forces/fbz-total-lbs"
+abs = 2e-09
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 1.7e-10 (rel 1.9e-14) at t=29.3 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "moments/l-total-lbsft"
+abs = 6e-10
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 5.9e-11 (rel 1.1e-11) at t=29.3 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "moments/m-total-lbsft"
+abs = 9e-10
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 8.7e-11 (rel 6.2e-10) at t=29.3 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "moments/n-total-lbsft"
+abs = 4e-10
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 3.0e-11 (rel 2.5e-11) at t=16.2 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "forces/fbx-prop-lbs"
+abs = 7e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 6.8e-13 (rel 5.2e-14) at t=5.5 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "moments/l-prop-lbsft"
+abs = 3e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 2.3e-13 (rel 2.2e-15) at t=4.8 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "moments/m-prop-lbsft"
+abs = 8e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 7.4e-13 (rel 5.2e-14) at t=2.5 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "moments/n-prop-lbsft"
+abs = 2e-11
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 1.3e-12 (rel 1.1e-14) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "velocities/vc-kts"
+abs = 4e-11
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 3.1e-12 (rel 3.9e-14) at t=7.4 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "aero/qbar-psf"
+abs = 4e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 3.8e-13 (rel 5.0e-15) at t=28.6 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "aero/alpha-rad"
+abs = 2e-14
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 1.1e-15 (rel 2.6e-14) at t=29.3 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "propulsion/engine[0]/thrust-lbs"
+abs = 7e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 6.8e-13 (rel 5.2e-14) at t=5.5 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "propulsion/engine[0]/engine-rpm"
+abs = 2e-11
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 1.8e-12 (rel 6.6e-16) at t=5.5 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "propulsion/engine[0]/propeller-rpm"
+abs = 2e-11
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 1.8e-12 (rel 6.6e-16) at t=5.5 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "propulsion/engine[0]/advance-ratio"
+abs = 2e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 1.4e-13 (rel 2.5e-15) at t=17.5 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "propulsion/engine[0]/thrust-coefficient"
+abs = 2e-15
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 1.3e-16 (rel 5.3e-14) at t=10.8 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "propulsion/engine[0]/helical-tip-Mach"
+abs = 7e-15
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 6.4e-16 (rel 2.7e-15) at t=28.6 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "propulsion/engine[0]/prop-induced-velocity_fps"
+abs = 3e-13
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 2.8e-14 (rel 1.5e-13) at t=4.3 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "propulsion/engine[0]/propeller-power-ftlbps"
+abs = 3e-09
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 2.2e-10 (rel 2.2e-15) at t=6.2 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "propulsion/engine[0]/propeller-torque-ftlb"
+abs = 3e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 2.3e-13 (rel 2.2e-15) at t=4.8 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "propulsion/engine[0]/power-hp"
+abs = 2e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 1.4e-13 (rel 2.7e-15) at t=5.9 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "propulsion/engine[0]/map-inhg"
+abs = 4e-13
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 3.2e-14 (rel 1.2e-15) at t=13.5 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "propulsion/engine[0]/egt-degF"
+abs = 1e-11
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 9.1e-13 (rel 6.4e-16) at t=5.6 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "propulsion/engine[0]/cht-degF"
+abs = 4e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 3.4e-13 (rel 9.2e-16) at t=13.8 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "propulsion/engine[0]/oil-pressure-psi"
+abs = 3e-13
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 2.8e-14 (rel 6.6e-16) at t=11.4 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "propulsion/engine[0]/fuel-flow-rate-pps"
+abs = 2e-16
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 1.4e-17 (rel 6.8e-16) at t=5.2 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "propulsion/engine[0]/fuel-flow-rate-gph"
+abs = 8e-14
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 7.1e-15 (rel 6.3e-16) at t=2.7 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "propulsion/engine[0]/fuel-used-lbs"
+abs = 2e-16
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 1.4e-17 (rel 2.2e-16) at t=3 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "propulsion/engine[0]/y-position"
+abs = 2e-13
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 1.1e-14 (rel 3.9e-14) at t=29.3 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "propulsion/engine[0]/z-position"
+abs = 2e-13
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; observed max 1.4e-14 (rel 5.4e-16) at t=17.9 s; bound 10x that."
+
+[[tolerance]]
+case = "unusable_fuel"
+property = "propulsion/engine[0]/AFR"
+abs = 6e-14
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm the run is bit-identical; the air/fuel ratio is infinite while no fuel flows; observed max 5.3e-15 (rel 4.7e-16) at t=6.9 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the same IEEE operations in JSBSim's order; properties listed differ."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "position/lat-geod-deg"
+abs = 4e-14
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 3.6e-15 (rel 1.3e-16) at t=1 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "position/long-gc-deg"
+abs = 2e-13
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 1.4e-14 (rel 1.6e-16) at t=0.2 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "velocities/u-fps"
+abs = 3e-11
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 2.1e-12 (rel 1.9e-14) at t=193.8 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "velocities/v-fps"
+abs = 2e-10
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 1.3e-11 (rel 2.6e-11) at t=185.2 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "velocities/w-fps"
+abs = 4e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 3.4e-13 (rel 4.0e-14) at t=137.8 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "velocities/p-rad_sec"
+abs = 2e-11
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 1.3e-12 (rel 3.0e-07) at t=135.8 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "velocities/q-rad_sec"
+abs = 2e-13
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 1.3e-14 (rel 1.6e-10) at t=183.4 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "velocities/r-rad_sec"
+abs = 2e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 1.7e-13 (rel 5.2e-08) at t=184 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "attitude/phi-rad"
+abs = 5e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 4.6e-13 (rel 1.1e-07) at t=135.6 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "attitude/theta-rad"
+abs = 3e-13
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 2.1e-14 (rel 1.5e-10) at t=93.2 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "attitude/psi-rad"
+abs = 4e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 3.2e-13 (rel 7.4e-14) at t=185.2 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "accelerations/udot-ft_sec2"
+abs = 1e-11
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 9.6e-13 (rel 8.3e-11) at t=135.6 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "accelerations/vdot-ft_sec2"
+abs = 3e-10
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 2.1e-11 (rel 2.8e-07) at t=184 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "accelerations/wdot-ft_sec2"
+abs = 4e-11
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 3.7e-12 (rel 4.7e-09) at t=7.4 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "accelerations/pdot-rad_sec2"
+abs = 2e-10
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 2.0e-11 (rel 1.3e-05) at t=90.2 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "accelerations/qdot-rad_sec2"
+abs = 2e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 1.4e-13 (rel 1.5e-10) at t=90.2 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "accelerations/rdot-rad_sec2"
+abs = 4e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 3.2e-13 (rel 3.2e-07) at t=135.8 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "forces/fbx-total-lbs"
+abs = 4e-10
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 3.9e-11 (rel 6.6e-11) at t=135.8 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "forces/fby-total-lbs"
+abs = 3e-09
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 2.3e-10 (rel 1.8e-09) at t=90.2 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "forces/fbz-total-lbs"
+abs = 2e-09
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 1.1e-10 (rel 4.1e-14) at t=137.8 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "moments/l-total-lbsft"
+abs = 5e-07
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 4.1e-08 (rel 2.4e-03) at t=90.2 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "moments/m-total-lbsft"
+abs = 9e-10
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 8.1e-11 (rel 1.5e-10) at t=7.4 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "moments/n-total-lbsft"
+abs = 2e-08
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 1.1e-09 (rel 3.6e-06) at t=135.8 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "forces/fbx-prop-lbs"
+abs = 2e-11
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 1.9e-12 (rel 2.4e-11) at t=88.8 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "moments/l-prop-lbsft"
+abs = 7e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 7.0e-13 (rel 7.2e-13) at t=107.2 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "moments/m-prop-lbsft"
+abs = 3e-10
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 2.2e-11 (rel 1.8e-12) at t=184 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "moments/n-prop-lbsft"
+abs = 2e-11
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 1.9e-12 (rel 5.8e-13) at t=68.6 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "velocities/vc-kts"
+abs = 9e-11
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 8.6e-12 (rel 1.5e-13) at t=87.8 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "aero/qbar-psf"
+abs = 6e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 5.6e-13 (rel 3.7e-14) at t=96.2 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "aero/alpha-rad"
+abs = 4e-14
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 3.5e-15 (rel 4.7e-14) at t=185.6 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "propulsion/engine[0]/thrust-lbs"
+abs = 2e-11
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 1.9e-12 (rel 2.4e-11) at t=88.8 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "propulsion/engine[0]/engine-rpm"
+abs = 2e-10
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 1.1e-11 (rel 1.5e-14) at t=107.4 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "propulsion/engine[0]/propeller-rpm"
+abs = 2e-10
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 1.1e-11 (rel 1.5e-14) at t=107.4 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "propulsion/engine[0]/advance-ratio"
+abs = 5e-13
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 4.1e-14 (rel 2.5e-14) at t=193.8 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "propulsion/engine[0]/thrust-coefficient"
+abs = 5e-14
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 4.1e-15 (rel 2.4e-11) at t=193.8 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "propulsion/engine[0]/helical-tip-Mach"
+abs = 3e-14
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 2.8e-15 (rel 1.2e-14) at t=107.8 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "propulsion/engine[0]/prop-induced-velocity_fps"
+abs = 3e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 2.1e-13 (rel 2.4e-11) at t=68.8 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "propulsion/engine[0]/propeller-power-ftlbps"
+abs = 2e-09
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 1.4e-10 (rel 7.6e-14) at t=62.2 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "propulsion/engine[0]/propeller-torque-ftlb"
+abs = 7e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 7.0e-13 (rel 7.2e-13) at t=107.2 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "propulsion/engine[0]/power-hp"
+abs = 2e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 1.3e-13 (rel 7.2e-13) at t=73.4 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "propulsion/engine[0]/map-inhg"
+abs = 8e-13
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 7.5e-14 (rel 3.7e-15) at t=184.6 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "propulsion/engine[0]/egt-degF"
+abs = 2e-11
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 1.4e-12 (rel 9.7e-16) at t=58 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "propulsion/engine[0]/cht-degF"
+abs = 8e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 8.0e-13 (rel 3.1e-15) at t=81.4 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "propulsion/engine[0]/oil-pressure-psi"
+abs = 4e-12
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 3.7e-13 (rel 1.5e-14) at t=107.2 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "propulsion/engine[0]/fuel-flow-rate-pps"
+abs = 2e-16
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 1.3e-17 (rel 1.8e-15) at t=64.2 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "propulsion/engine[0]/fuel-flow-rate-gph"
+abs = 8e-14
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 7.1e-15 (rel 1.8e-15) at t=64.2 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "propulsion/engine[0]/fuel-used-lbs"
+abs = 3e-15
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 2.2e-16 (rel 4.2e-16) at t=75.2 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "propulsion/engine[0]/y-position"
+abs = 7e-13
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 6.4e-14 (rel 8.9e-14) at t=135.8 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "propulsion/engine[0]/z-position"
+abs = 2e-11
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; observed max 1.1e-12 (rel 4.3e-14) at t=135.8 s; bound 10x that."
+
+[[tolerance]]
+case = "c1722_untrimmed"
+property = "propulsion/engine[0]/AFR"
+abs = 6e-14
+rel = 0.0
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the sin, cos, atan2 and pow behind the attitude, the geodetic position and the propeller's P-factor angle, which the flight carries; with Apple libm too, isolated last-digit differences remain in the aerodynamic forces while the propulsion's outputs agree; the air/fuel ratio is infinite while no fuel flows; observed max 5.3e-15 (rel 4.7e-16) at t=9.6 s; bound 10x that."

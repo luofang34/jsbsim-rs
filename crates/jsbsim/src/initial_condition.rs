@@ -109,6 +109,8 @@ pub struct InitialCondition {
     last_speed_set: SpeedSet,
     last_altitude_set: AltitudeSet,
     last_latitude_set: LatitudeSet,
+    /// The engines `<running>` starts, one bit each (`enginesRunning`).
+    engines_running: u32,
 }
 
 impl<'a> Environment<'a> {
@@ -142,6 +144,7 @@ impl Default for InitialCondition {
             last_speed_set: SpeedSet::Vt,
             last_altitude_set: AltitudeSet::Asl,
             last_latitude_set: LatitudeSet::Geocentric,
+            engines_running: 0,
         }
     }
 }
@@ -170,6 +173,15 @@ impl InitialCondition {
         let mut ic = Self::default();
         ic.initialize_ic(inertial);
         ic
+    }
+
+    /// `IsEngineRunning(n)`: whether `<running>` starts engine `n`.
+    #[must_use]
+    pub fn is_engine_running(&self, n: usize) -> bool {
+        u32::try_from(n)
+            .ok()
+            .and_then(|n| 1u32.checked_shl(n))
+            .is_some_and(|bit| self.engines_running & bit != 0)
     }
 
     /// `InitializeIC`: at rest on the equator at sea level, level and

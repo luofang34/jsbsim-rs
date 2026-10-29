@@ -389,7 +389,8 @@ impl Fdm {
     }
 
     /// `RunIC`: initialise from the initial conditions with integration
-    /// suspended, run one frame, and seed the integrator histories.
+    /// suspended, run one frame, seed the integrator histories, then start
+    /// the engines the initial conditions say are running.
     pub fn run_ic(&mut self) -> Result<(), Error> {
         let e = &mut self.models.exec;
         e.saved_dt = e.dt;
@@ -399,6 +400,11 @@ impl Fdm {
         self.models.propagate.initialize_derivatives();
         let e = &mut self.models.exec;
         e.dt = e.saved_dt;
+        for n in 0..self.models.propulsion.engines.len() {
+            if self.models.ic.is_engine_running(n) {
+                self.init_running(i32::try_from(n).unwrap_or(i32::MAX))?;
+            }
+        }
         Ok(())
     }
 
