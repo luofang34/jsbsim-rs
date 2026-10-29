@@ -315,11 +315,8 @@ impl Fdm {
 
     /// `FGOutput::Load(element)`: a `file` include is merged into the
     /// element (`FGModel::Upload`), its attributes and children added. The
-    /// output's own functions, and the included file's, are not loaded:
-    /// JSBSim ties each named one to a property whose value it caches only
-    /// when the type prints, which the port never does, so the port leaves
-    /// those properties out; templates there only serve the output's
-    /// `apply` conversions.
+    /// type's functions, the included file's among them, load as
+    /// `PreLoad` and `PostLoad` load a model's.
     fn load_output(
         &mut self,
         el: &Element,
@@ -356,14 +353,30 @@ impl Fdm {
         } else {
             el
         };
-        if el.find_element("function").is_some() {
-            tracing::warn!(
-                "{}: the functions of an <output> are not loaded",
-                el.location()
-            );
-        }
         let dt = self.models.exec.dt;
-        self.models.output.load(el, &mut self.env.binder(), dt)
+        self.models.output.load(el, &mut self.env.binder(), dt)?;
+        let (mut pre, mut post) = (Vec::new(), Vec::new());
+        for f in el.find_elements("function") {
+            let kind = f.attribute("type");
+            if kind == "template" {
+                let name = f.attribute("name").to_owned();
+                self.env
+                    .functions
+                    .add_template(&mut self.env.tree, &name, f)?;
+                continue;
+            }
+            let functions = &mut self.env.functions;
+            match kind {
+                "" | "pre" => pre.push(functions.load_function(&mut self.env.tree, f, "")?),
+                "post" => post.push(functions.load_function(&mut self.env.tree, f, "")?),
+                _ => {}
+            }
+        }
+        if let Some(t) = self.models.output.types.last_mut() {
+            t.pre = pre;
+            t.post = post;
+        }
+        Ok(())
     }
 
     /// `LoadPlanet(element)`.

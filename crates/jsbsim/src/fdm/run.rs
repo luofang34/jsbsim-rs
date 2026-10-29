@@ -364,6 +364,7 @@ impl Fdm {
                 m.ground_reactions.store_multipliers(solved);
             }
             Model::Auxiliary => m.auxiliary.run(holding),
+            Model::Output => self.run_output(holding)?,
             _ => {}
         }
         Ok(())
@@ -400,6 +401,7 @@ impl Fdm {
         e.saved_dt = e.dt;
         e.dt = 0.0;
         self.initialize()?;
+        self.models.output.init_model();
         self.run()?;
         self.models.propagate.initialize_derivatives();
         let e = &mut self.models.exec;

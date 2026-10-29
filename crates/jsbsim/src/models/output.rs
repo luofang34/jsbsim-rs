@@ -2,19 +2,23 @@
 // FGOutput: Copyright (C) 1999 Jon S. Berndt (jon@jsbsim.org).
 // FGOutputType: Copyright (C) 2011 Bertrand Coconnier.
 // Derived from JSBSim src/models/FGOutput.cpp (Load) and
-// src/input_output/FGOutputType.cpp (SetIdx, Load, SetRateHz, GetRateHz).
+// src/input_output/FGOutputType.cpp (SetIdx, Load, Run, SetRateHz,
+// GetRateHz).
 //
 //! `FGOutput` and its output types, without their files and sockets.
 //!
 //! Each `<output>` directive JSBSim loads becomes an output type that ties
 //! `simulation/output[n]/log_rate_hz` and `simulation/output[n]/enabled`.
 //! The port keeps those properties and their state exactly, so scripts can
-//! write and read them, but writes nothing: output types only print, so
-//! nothing in the simulation depends on them.
+//! write and read them, but writes nothing. An output type's own
+//! `<function>`s are its pre- and post-functions: their properties exist
+//! from the load, and the executive caches their values on the frames the
+//! type would print, as JSBSim does around `Print`.
 
 use super::base::ModelBase;
 use crate::Error;
 use crate::fdm::{Binder, Kind};
+use crate::functions::FnId;
 use crate::xml::Element;
 
 #[cfg(test)]
@@ -29,23 +33,17 @@ pub struct Output {
     pub types: Vec<OutputType>,
 }
 
-/// The state of an `FGOutputType` its properties expose.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+/// The state of an `FGOutputType` its properties expose, and its
+/// functions.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct OutputType {
-    /// `FGModel::rate`: frames between prints.
-    pub rate: u32,
-    /// `FGModel::enabled`, tied to `simulation/output[n]/enabled`.
-    pub enabled: bool,
-}
-
-impl Default for OutputType {
-    fn default() -> Self {
-        let base = ModelBase::default();
-        Self {
-            rate: base.rate,
-            enabled: base.enabled,
-        }
-    }
+    /// `FGModel`'s scheduling: `rate` is the frames between prints and
+    /// `enabled` is tied to `simulation/output[n]/enabled`.
+    pub base: ModelBase,
+    /// The pre-functions, cached before each print.
+    pub pre: Vec<FnId>,
+    /// The post-functions, cached after each print.
+    pub post: Vec<FnId>,
 }
 
 impl OutputType {
@@ -57,11 +55,11 @@ impl OutputType {
         if rt_hz > 0.0 {
             // C++ converts the double to `unsigned int` as `as` does on
             // arm64: truncating, and saturating out of range.
-            self.rate = (0.5 + 1.0 / (dt * rt_hz)) as u32;
-            self.enabled = true;
+            self.base.rate = (0.5 + 1.0 / (dt * rt_hz)) as u32;
+            self.base.enabled = true;
         } else {
-            self.rate = 1;
-            self.enabled = false;
+            self.base.rate = 1;
+            self.base.enabled = false;
         }
     }
 
@@ -69,7 +67,7 @@ impl OutputType {
     /// back, not the one last written.
     #[must_use]
     pub fn rate_hz(&self, dt: f64) -> f64 {
-        1.0 / (f64::from(self.rate) * dt)
+        1.0 / (f64::from(self.base.rate) * dt)
     }
 }
 
@@ -118,10 +116,15 @@ impl Output {
         b.property(
             &format!("{prefix}/enabled"),
             Kind::Bool,
-            move |m| m.output.types.get(idx).map_or(0.0, |t| flag(t.enabled)),
+            move |m| {
+                m.output
+                    .types
+                    .get(idx)
+                    .map_or(0.0, |t| flag(t.base.enabled))
+            },
             move |m, v| {
                 if let Some(t) = m.output.types.get_mut(idx) {
-                    t.enabled = v != 0.0;
+                    t.base.enabled = v != 0.0;
                 }
             },
         )?;
@@ -134,5 +137,19 @@ impl Output {
             t.set_rate_hz(rate, dt);
         }
         Ok(())
+    }
+
+    /// `FGOutput::InitModel`: the model's and every type's frame counter.
+    pub fn init_model(&mut self) {
+        self.base.init();
+        for t in &mut self.types {
+            t.base.init();
+        }
+    }
+
+    /// `FGOutput::Run` before its types run: false when no type runs this
+    /// frame.
+    pub fn runs(&mut self, holding: bool, trim_status: bool) -> bool {
+        !(trim_status || self.base.skip() || holding)
     }
 }

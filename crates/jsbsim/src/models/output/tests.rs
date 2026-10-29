@@ -9,11 +9,11 @@ const DT: f64 = 1.0 / 120.0;
 fn the_rate_is_a_frame_count_read_back_as_hz() {
     let mut t = OutputType::default();
     t.set_rate_hz(10.0, DT);
-    assert_eq!((t.rate, t.enabled), (12, true));
+    assert_eq!((t.base.rate, t.base.enabled), (12, true));
     assert_eq!(t.rate_hz(DT), 1.0 / (12.0 * DT));
     // 7 Hz at 120 Hz is 17 frames, which reads back as 7.06 Hz.
     t.set_rate_hz(7.0, DT);
-    assert_eq!(t.rate, 17);
+    assert_eq!(t.base.rate, 17);
     assert_eq!(t.rate_hz(DT), 1.0 / (17.0 * DT));
     // The frame count is kept when dt changes; the rate in Hz follows.
     assert_eq!(t.rate_hz(DT / 2.0), 1.0 / (17.0 * DT / 2.0));
@@ -25,15 +25,15 @@ fn rates_clamp_and_zero_or_negative_disables() {
     // Clamped to 1000 Hz, faster than the frame rate: no frames between
     // prints, which reads back as infinitely fast.
     t.set_rate_hz(5000.0, DT);
-    assert_eq!((t.rate, t.enabled), (0, true));
+    assert_eq!((t.base.rate, t.base.enabled), (0, true));
     assert_eq!(t.rate_hz(DT), f64::INFINITY);
     t.set_rate_hz(0.0, DT);
-    assert_eq!((t.rate, t.enabled), (1, false));
+    assert_eq!((t.base.rate, t.base.enabled), (1, false));
     t.set_rate_hz(10.0, DT);
     t.set_rate_hz(-3.0, DT);
-    assert_eq!((t.rate, t.enabled), (1, false));
+    assert_eq!((t.base.rate, t.base.enabled), (1, false));
     t.set_rate_hz(f64::NAN, DT);
-    assert_eq!((t.rate, t.enabled), (1, false));
+    assert_eq!((t.base.rate, t.base.enabled), (1, false));
 }
 
 fn aircraft(outputs: &str) -> String {
@@ -115,7 +115,7 @@ fn writes_are_stored_and_read_back_as_jsbsim_does() {
         0.0
     );
     fdm.set_property("simulation/output/enabled", 0.0).unwrap();
-    assert!(!fdm.models.output.types[0].enabled);
+    assert!(!fdm.models.output.types[0].base.enabled);
     fdm.set_property("simulation/output/enabled", 2.0).unwrap();
     assert_eq!(fdm.get_property("simulation/output/enabled").unwrap(), 1.0);
 }
@@ -181,4 +181,31 @@ fn an_output_file_that_is_missing_or_not_an_output_fails() {
     let other = r#"<input type="CSV"/>"#;
     let err = load_with(output, &[("aircraft/t/more.xml", other)]).err();
     assert!(matches!(err, Some(Error::Model { .. })), "{err:?}");
+}
+
+#[test]
+fn an_output_function_is_cached_on_the_frames_its_type_prints() {
+    // 40 Hz at 120 Hz: a print every third frame, the first one in RunIC.
+    let mut fdm = load(
+        r#"<output name="a.csv" type="CSV" rate="40">
+            <function name="test/copy">
+                <property>test/frame</property>
+            </function>
+        </output>"#,
+    )
+    .unwrap();
+    fdm.set_property("simulation/models/FGAerodynamics/enabled", 0.0)
+        .unwrap();
+    fdm.set_property("test/frame", 0.5).unwrap();
+    // Before the first print the value is evaluated on every read.
+    assert_eq!(fdm.get_property("test/copy").unwrap(), 0.5);
+    fdm.set_property("test/frame", 0.0).unwrap();
+    fdm.run_ic().unwrap();
+    let mut seen = Vec::new();
+    for frame in 1..=7 {
+        fdm.set_property("test/frame", f64::from(frame)).unwrap();
+        fdm.run().unwrap();
+        seen.push(fdm.get_property("test/copy").unwrap());
+    }
+    assert_eq!(seen, [0.0, 0.0, 3.0, 3.0, 3.0, 6.0, 6.0]);
 }

@@ -34,6 +34,34 @@ impl Fdm {
         Ok(())
     }
 
+    /// `FGOutput::Run`: each output type due to print caches its pre- and
+    /// post-functions around the print the port does not make.
+    pub(super) fn run_output(&mut self, holding: bool) -> Result<(), Error> {
+        let trim_status = self.models.exec.trim_status;
+        if !self.models.output.runs(holding, trim_status) {
+            return Ok(());
+        }
+        for i in 0..self.models.output.types.len() {
+            let Some(t) = self.models.output.types.get_mut(i) else {
+                continue;
+            };
+            if t.base.skip() {
+                continue;
+            }
+            for pre in [true, false] {
+                let mut k = 0;
+                while let Some(id) = self.models.output.types.get(i).and_then(|t| {
+                    let ids = if pre { &t.pre } else { &t.post };
+                    ids.get(k).copied()
+                }) {
+                    self.env.cache_value(&self.models, id)?;
+                    k += 1;
+                }
+            }
+        }
+        Ok(())
+    }
+
     /// `FGModelFunctions::InitModel`: declared properties back to their
     /// initial values unless persistent.
     pub(super) fn reset_local_properties(&mut self, model: Model) -> Result<(), Error> {
