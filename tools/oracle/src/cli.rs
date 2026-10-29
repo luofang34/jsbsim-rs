@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 //! Command-line interface: `build`, `generate`, `check-drift`, `check-xml`,
-//! `check-models`, `check-sincos`, `derive`, `determinism`, `port`, `compare`,
-//! `nasa` and `bench`.
+//! `check-models`, `check-sincos`, `check-sockets`, `derive`, `determinism`,
+//! `port`, `compare`, `nasa` and `bench`.
 
 use std::ffi::OsString;
 use std::path::{Path, PathBuf};
@@ -74,6 +74,7 @@ pub fn command() -> Command {
                 .arg(jsbsim_root.clone()),
         )
         .subcommand(sincos_command(jsbsim_root.clone()))
+        .subcommand(sockets_command(jsbsim_root.clone()))
         .subcommand(bench_command(jsbsim_root.clone()))
         .subcommand(nasa_command(jsbsim_root))
         .subcommand(
@@ -112,6 +113,12 @@ fn sincos_command(jsbsim_root: Arg) -> Command {
                 .action(ArgAction::Append)
                 .help("Golden case names; the diagnostic's list when omitted"),
         )
+}
+
+fn sockets_command(jsbsim_root: Arg) -> Command {
+    Command::new("check-sockets")
+        .about("Run the cases with <input> sockets in C++ and require every bind on loopback")
+        .arg(jsbsim_root)
 }
 
 fn bench_command(jsbsim_root: Arg) -> Command {
@@ -197,17 +204,7 @@ where
         return crate::stats::port_stats_blocking(&repo_root, &case, until);
     }
     if name == "port" {
-        let mut names = case_names(sub);
-        if names.is_empty() {
-            names = manifest::list_cases_blocking(&repo_root.join("oracle").join("goldens"))?;
-        }
-        let mut code = ExitCode::SUCCESS;
-        for case in &names {
-            if cases::port_blocking(&repo_root, case)? != ExitCode::SUCCESS {
-                code = ExitCode::FAILURE;
-            }
-        }
-        return Ok(code);
+        return port_blocking(&repo_root, sub);
     }
     if name == "compare" {
         let tolerances = sub
@@ -249,6 +246,7 @@ where
         "build" => return Ok(ExitCode::SUCCESS),
         "check-xml" => return corpus::check_xml_blocking(&paths),
         "check-models" => return corpus::models::check_models_blocking(&paths),
+        "check-sockets" => return crate::sockets::check_blocking(&paths),
         "bench" => {
             return crate::bench::run_blocking(&paths, &case_names(sub), &ratio_guards(sub)?);
         }
@@ -260,6 +258,21 @@ where
         "check-drift" => cases::check_drift_blocking(&paths, &cases),
         _ => Ok(ExitCode::SUCCESS),
     }
+}
+
+/// `port`: runs the Rust port on the named golden cases, or on all of them.
+fn port_blocking(repo_root: &Path, sub: &ArgMatches) -> Result<ExitCode, OracleError> {
+    let mut names = case_names(sub);
+    if names.is_empty() {
+        names = manifest::list_cases_blocking(&repo_root.join("oracle").join("goldens"))?;
+    }
+    let mut code = ExitCode::SUCCESS;
+    for case in &names {
+        if cases::port_blocking(repo_root, case)? != ExitCode::SUCCESS {
+            code = ExitCode::FAILURE;
+        }
+    }
+    Ok(code)
 }
 
 fn run_nasa(repo_root: PathBuf, sub: &ArgMatches) -> Result<ExitCode, OracleError> {

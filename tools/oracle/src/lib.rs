@@ -21,6 +21,7 @@ pub mod port_script;
 pub mod probe;
 pub mod series;
 pub mod sincos;
+pub mod sockets;
 pub mod stats;
 pub mod steady_state;
 pub mod tolerance;

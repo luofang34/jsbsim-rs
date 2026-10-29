@@ -197,11 +197,20 @@ pub fn build_blocking(paths: &Paths) -> Result<(), OracleError> {
             .arg(build_dir.join("src"))
             .args(&sources)
             .arg(build_dir.join("src").join("libJSBSim.a"))
+            .args(DRIVER_LIBS)
             .arg("-o")
             .arg(paths.driver_exe()),
     )?;
     Ok(())
 }
+
+/// Libraries the driver links besides libJSBSim: `loopback_bind.cpp` calls
+/// `dlsym`, which glibc before 2.34 keeps in libdl.
+const DRIVER_LIBS: &[&str] = if cfg!(target_os = "linux") {
+    &["-ldl"]
+} else {
+    &[]
+};
 
 /// Output of one driver run.
 #[derive(Debug, Clone)]
@@ -231,32 +240,8 @@ pub fn run_script_in_blocking(
     run_dir: &Path,
 ) -> Result<Run, OracleError> {
     let upstream_commit = upstream_commit_blocking(&paths.jsbsim_root)?;
-    std::fs::create_dir_all(run_dir).map_err(|e| OracleError::io("creating", run_dir, e))?;
     let csv = run_dir.join("driver.csv");
-    let end = spec
-        .end_time
-        .map_or_else(|| "-".to_owned(), |t| format!("{t:?}"));
-    let mut driver = Command::new(paths.driver_exe());
-    match &spec.ground_callback {
-        Some(name) => driver.env("ORACLE_GROUND_CALLBACK", name),
-        None => driver.env_remove("ORACLE_GROUND_CALLBACK"),
-    };
-    let output = run_blocking(
-        driver
-            .current_dir(run_dir)
-            .env("JSBSIM_DEBUG", "0")
-            .env(
-                "ORACLE_AIRCRAFT_PATH",
-                spec.aircraft_path.as_deref().unwrap_or("aircraft"),
-            )
-            .arg("script")
-            .arg(root)
-            .arg(root.join(&spec.script))
-            .arg(format!("{:?}", spec.rate_hz))
-            .arg(end)
-            .arg(&csv)
-            .args(&spec.properties),
-    )?;
+    let output = run_blocking(&mut script_command_blocking(paths, root, spec, run_dir)?)?;
     let (dt, every_n_frames) = parse_timing(&String::from_utf8_lossy(&output.stdout))?;
     let series = Series::read_blocking(&csv)?;
     let expected: Vec<&str> = std::iter::once(crate::series::TIME_COLUMN)
@@ -280,6 +265,41 @@ pub fn run_script_in_blocking(
             rows,
         },
     })
+}
+
+/// The driver command that runs `spec` with the script and aircraft under
+/// `root`, writing `driver.csv` into `run_dir`, which it creates.
+pub(crate) fn script_command_blocking(
+    paths: &Paths,
+    root: &Path,
+    spec: &ScriptSpec,
+    run_dir: &Path,
+) -> Result<Command, OracleError> {
+    std::fs::create_dir_all(run_dir).map_err(|e| OracleError::io("creating", run_dir, e))?;
+    let end = spec
+        .end_time
+        .map_or_else(|| "-".to_owned(), |t| format!("{t:?}"));
+    let mut driver = Command::new(paths.driver_exe());
+    match &spec.ground_callback {
+        Some(name) => driver.env("ORACLE_GROUND_CALLBACK", name),
+        None => driver.env_remove("ORACLE_GROUND_CALLBACK"),
+    };
+    driver
+        .current_dir(run_dir)
+        .env("JSBSIM_DEBUG", "0")
+        .env_remove(crate::sockets::REPORT_ENV)
+        .env(
+            "ORACLE_AIRCRAFT_PATH",
+            spec.aircraft_path.as_deref().unwrap_or("aircraft"),
+        )
+        .arg("script")
+        .arg(root)
+        .arg(root.join(&spec.script))
+        .arg(format!("{:?}", spec.rate_hz))
+        .arg(end)
+        .arg(run_dir.join("driver.csv"))
+        .args(&spec.properties);
+    Ok(driver)
 }
 
 /// Output of one probe run.
