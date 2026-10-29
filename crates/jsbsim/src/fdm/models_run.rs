@@ -55,6 +55,10 @@ impl Fdm {
     pub(super) fn load_ground_reactions(&mut self, el: &Element) -> Result<(), Error> {
         let ctx = &mut self.env.load_context(self.options);
         self.models.ground_reactions.load(el, ctx)?;
+        // A contact registers at most two friction constraints a frame.
+        let most = 2 * self.models.ground_reactions.contacts.len();
+        self.models.ground_reactions.multipliers.reserve(most);
+        self.models.accelerations.reserve_multipliers(most);
         self.post_load(el, "", Model::GroundReactions)
     }
 

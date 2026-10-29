@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<runscript name="gear rover retract">
+  <!--
+    SPDX-License-Identifier: LGPL-2.1-or-later
+    gear_rover rolling with its nose wheel steered when its retractable
+    gear goes up: the rover drops onto its STRUCTURE skids and its
+    castered tail wheel and slides on them (dynamic friction); the gear
+    comes down while it still slides, the wheels lifting the rover once it
+    is past 0.99, and the rover rolls to rest.
+  -->
+  <use aircraft="gear_rover" initialize="rolling"/>
+  <run start="0.0" end="12.0" dt="0.008333333333333333">
+    <property value="0.6"> fcs/steer-cmd-norm </property>
+    <event name="Gear up">
+      <condition>simulation/sim-time-sec ge 1.5</condition>
+      <set name="gear/gear-pos-norm" value="0.0"/>
+    </event>
+    <event name="Gear down">
+      <condition>simulation/sim-time-sec ge 3.0</condition>
+      <set name="gear/gear-pos-norm" value="1.0" action="FG_RAMP" tc="1.0"/>
+    </event>
+  </run>
+</runscript>

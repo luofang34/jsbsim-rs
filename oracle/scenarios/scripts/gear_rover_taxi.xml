@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<runscript name="gear rover taxi">
+  <!--
+    SPDX-License-Identifier: LGPL-2.1-or-later
+    gear_rover rolling on its wheels: the nose wheel steered into a turn
+    and back, which swings the castered tail wheel and loads the main
+    wheels sideways (Pacejka on the nose, the table on LEFT_MAIN), then
+    the LEFT brake alone, all brakes, a rougher surface and a release,
+    until the rover rests.
+  -->
+  <use aircraft="gear_rover" initialize="rolling"/>
+  <run start="0.0" end="20.0" dt="0.008333333333333333">
+    <event name="Steer">
+      <condition>simulation/sim-time-sec ge 1.0</condition>
+      <set name="fcs/steer-cmd-norm" value="0.5" action="FG_RAMP" tc="1.0"/>
+    </event>
+    <event name="Straighten">
+      <condition>simulation/sim-time-sec ge 4.0</condition>
+      <set name="fcs/steer-cmd-norm" value="0.0" action="FG_RAMP" tc="0.5"/>
+      <set name="fcs/left-brake-cmd-norm" value="1.0"/>
+    </event>
+    <event name="Brake">
+      <condition>simulation/sim-time-sec ge 6.0</condition>
+      <set name="fcs/right-brake-cmd-norm" value="1.0"/>
+      <set name="fcs/center-brake-cmd-norm" value="0.5"/>
+      <set name="ground/rolling_friction-factor" value="2.0"/>
+      <set name="ground/static-friction-factor" value="0.7"/>
+    </event>
+    <event name="Release">
+      <condition>simulation/sim-time-sec ge 12.0</condition>
+      <set name="fcs/left-brake-cmd-norm" value="0.0"/>
+      <set name="fcs/right-brake-cmd-norm" value="0.0"/>
+      <set name="fcs/center-brake-cmd-norm" value="0.0"/>
+    </event>
+  </run>
+</runscript>

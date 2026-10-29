@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  gear_rover rolling at 30 ft/s on its wheels, compressed by about 0.1 ft.
+-->
+<initialize name="rolling">
+  <latitude unit="DEG"> 37.6 </latitude>
+  <longitude unit="DEG"> -122.4 </longitude>
+  <psi unit="DEG"> 30.0 </psi>
+  <ubody unit="FT/SEC"> 30.0 </ubody>
+  <altitudeAGL unit="FT"> 2.4 </altitudeAGL>
+</initialize>

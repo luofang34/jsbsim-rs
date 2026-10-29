@@ -106,15 +106,21 @@ fn steady_state_frames_allocate_nothing() {
         ));
     }
 
-    // (script, measured frames): ball_orbit_phase's window covers its
-    // undock burn ramps at 10 s and 12 s; mk82's ends before touchdown.
-    for (script, frames) in [
-        ("scripts/ball_orbit_phase.xml", 3000),
-        ("scripts/ball.xml", FRAMES),
-        ("scripts/mk82_script.xml", FRAMES),
+    // (inputs, script, measured frames): ball_orbit_phase's window covers
+    // its undock burn ramps at 10 s and 12 s; mk82's ends before touchdown;
+    // gear_rover_taxi's rolls, steers, brakes and rests on every kind of
+    // contact, and gear_rover_retract's slides on its skids with the gear
+    // up and lands back on its wheels.
+    let scenarios = FileResolver::new(oracle_dir().join("scenarios"));
+    for (resolver, script, frames) in [
+        (&resolver, "scripts/ball_orbit_phase.xml", 3000),
+        (&resolver, "scripts/ball.xml", FRAMES),
+        (&resolver, "scripts/mk82_script.xml", FRAMES),
+        (&scenarios, "scripts/gear_rover_taxi.xml", 2000),
+        (&scenarios, "scripts/gear_rover_retract.xml", 1000),
     ] {
         let mut fdm = Fdm::new().unwrap();
-        fdm.load_script(&resolver, script).unwrap();
+        fdm.load_script(resolver, script).unwrap();
         fdm.run_ic().unwrap();
         report.push((
             format!("script {script}"),

@@ -131,6 +131,14 @@ impl Accelerations {
         }
     }
 
+    /// Room for `most` friction constraints, so that frames reaching that
+    /// many allocate nothing.
+    pub fn reserve_multipliers(&mut self, most: usize) {
+        self.input.multipliers.reserve(most);
+        self.scratch.0.reserve(most * most);
+        self.scratch.1.reserve(most);
+    }
+
     /// `InitializeDerivatives`.
     pub fn initialize_derivatives(&mut self, hold_down: bool, trim_status: bool) {
         self.calculate_pqrdot(hold_down);

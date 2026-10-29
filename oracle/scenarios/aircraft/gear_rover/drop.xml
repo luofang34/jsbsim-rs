@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  gear_rover with its wheels about 0.8 ft above the ground, moving forward
+  at 40 ft/s and sinking at 3 ft/s, slightly pitched and rolled.
+-->
+<initialize name="drop">
+  <latitude unit="DEG"> 37.6 </latitude>
+  <longitude unit="DEG"> -122.4 </longitude>
+  <psi unit="DEG"> 30.0 </psi>
+  <phi unit="DEG"> 3.0 </phi>
+  <theta unit="DEG"> 2.0 </theta>
+  <ubody unit="FT/SEC"> 40.0 </ubody>
+  <vbody unit="FT/SEC"> 2.0 </vbody>
+  <wbody unit="FT/SEC"> 3.0 </wbody>
+  <altitudeAGL unit="FT"> 3.3 </altitudeAGL>
+</initialize>

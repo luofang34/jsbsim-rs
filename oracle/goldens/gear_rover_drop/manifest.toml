@@ -1,0 +1,14 @@
+[case]
+kind = "script"
+script = "scripts/gear_rover_drop.xml"
+rate_hz = 20.0
+properties = ["position/h-agl-ft", "position/lat-geod-deg", "position/long-gc-deg", "position/ecef-x-ft", "position/ecef-y-ft", "position/ecef-z-ft", "velocities/u-fps", "velocities/v-fps", "velocities/w-fps", "velocities/p-rad_sec", "velocities/q-rad_sec", "velocities/r-rad_sec", "attitude/phi-rad", "attitude/theta-rad", "attitude/psi-rad", "accelerations/udot-ft_sec2", "accelerations/vdot-ft_sec2", "accelerations/wdot-ft_sec2", "accelerations/pdot-rad_sec2", "accelerations/qdot-rad_sec2", "accelerations/rdot-rad_sec2", "forces/fbx-gear-lbs", "forces/fby-gear-lbs", "forces/fbz-gear-lbs", "moments/l-gear-lbsft", "moments/m-gear-lbsft", "moments/n-gear-lbsft", "forces/fbz-weight-lbs", "velocities/vg-fps", "gear/wow", "gear/unit[0]/WOW", "gear/unit[0]/compression-ft", "gear/unit[0]/compression-velocity-fps", "gear/unit[0]/slip-angle-deg", "gear/unit[0]/side_friction_coeff", "gear/unit[0]/wheel-speed-fps", "gear/unit[1]/WOW", "gear/unit[1]/compression-ft", "gear/unit[1]/compression-velocity-fps", "gear/unit[1]/slip-angle-deg", "gear/unit[1]/side_friction_coeff", "gear/unit[1]/wheel-speed-fps", "gear/unit[2]/WOW", "gear/unit[2]/compression-ft", "gear/unit[2]/compression-velocity-fps", "gear/unit[2]/slip-angle-deg", "gear/unit[2]/side_friction_coeff", "gear/unit[2]/wheel-speed-fps", "gear/unit[3]/WOW", "gear/unit[3]/compression-ft", "gear/unit[3]/compression-velocity-fps", "gear/unit[3]/slip-angle-deg", "gear/unit[3]/side_friction_coeff", "gear/unit[3]/wheel-speed-fps", "contact/unit[4]/WOW", "contact/unit[4]/compression-ft", "contact/unit[4]/compression-velocity-fps", "contact/unit[5]/WOW", "contact/unit[5]/compression-ft", "contact/unit[5]/compression-velocity-fps", "contact/unit[6]/WOW", "contact/unit[6]/compression-ft", "contact/unit[6]/compression-velocity-fps", "gear/unit[3]/steering-angle-deg", "fcs/steer-pos-deg[0]", "gear/gear-pos-norm"]
+inputs = "oracle/scenarios"
+
+[provenance]
+upstream_commit = "66f7fafc07fe13e7ede9db20873030fed2881713"
+driver = "tools/oracle/cpp"
+cxx_flags = "-ffp-contract=off"
+dt = 0.008333333333333333
+every_n_frames = 6
+rows = 301
