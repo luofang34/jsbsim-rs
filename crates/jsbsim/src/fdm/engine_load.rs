@@ -147,6 +147,12 @@ impl Fdm {
             let Some(el) = thruster_el.find_element(name) else {
                 continue;
             };
+            if !families::thruster_registered(name) {
+                return Err(Error::Unsupported {
+                    construct: format!("<{name}>"),
+                    path: el.location().to_string(),
+                });
+            }
             let mut base = ThrusterBase {
                 name: el.attribute("name").to_owned(),
                 engine_number: n,
@@ -154,15 +160,15 @@ impl Fdm {
                 ..ThrusterBase::default()
             };
             base.force.transform_type = TransformType::Custom;
+            base.load(thruster_el, el, &mut self.env.binder())?;
             let options = self.options;
             let ctx = &mut self.env.load_context(options);
-            return match families::load_thruster(name, el, base, ctx)? {
-                Some(thruster) => Ok(thruster),
-                None => Err(Error::Unsupported {
+            return families::load_thruster(name, el, base, ctx)?.ok_or_else(|| {
+                Error::Unsupported {
                     construct: format!("<{name}>"),
                     path: el.location().to_string(),
-                }),
-            };
+                }
+            });
         }
         Err(Error::Model {
             message: format!("{}: Unknown thruster type", thruster_el.location()),

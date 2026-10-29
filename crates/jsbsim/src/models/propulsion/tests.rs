@@ -21,7 +21,7 @@ fn aircraft(propulsion: &str) -> String {
 }
 
 #[cfg(test)]
-fn load(propulsion: &str) -> Result<Fdm, Error> {
+pub(super) fn load(propulsion: &str) -> Result<Fdm, Error> {
     let mut r = MemoryResolver::new();
     r.insert("aircraft/t/t.xml", aircraft(propulsion));
     let mut fdm = Fdm::new()?;

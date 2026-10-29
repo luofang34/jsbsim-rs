@@ -57,7 +57,7 @@ impl EngineFamily for TestEngine {
             .get(base.number)
             .copied()
             .unwrap_or(0.0);
-        Ok((throttle, thruster.sample(ev)?))
+        Ok((throttle, thruster.sample(models, ev)?))
     }
 
     fn step(
@@ -104,7 +104,12 @@ impl ThrusterFamily for TestThruster {
         Ok(Self)
     }
 
-    fn sample(&self, _base: &ThrusterBase, _ev: &mut Evaluator<'_>) -> Result<(), Error> {
+    fn sample(
+        &self,
+        _base: &ThrusterBase,
+        _models: &Models,
+        _ev: &mut Evaluator<'_>,
+    ) -> Result<(), Error> {
         Ok(())
     }
 

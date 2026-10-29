@@ -42,7 +42,7 @@
 //! is read: [`EngineFamily::sample`] reads everything the C++ `Calculate`
 //! reads, through an [`Evaluator`] over `&Models`, into an owned
 //! `Sample` (asking its thruster for the thruster's reads with
-//! [`Thruster::sample`]); [`EngineFamily::step`] then updates the engine
+//! [`Thruster::sample`], which reads the other models too); [`EngineFamily::step`] then updates the engine
 //! and calls [`Thruster::calculate`] without reading anything. The
 //! engine's pre- and post-functions run around the two. Both phases run
 //! without allocating.
@@ -143,8 +143,14 @@ pub trait ThrusterFamily: Sized {
         ctx: &mut LoadContext<'_>,
     ) -> Result<Self, Error>;
 
-    /// The reads of `Calculate`.
-    fn sample(&self, base: &ThrusterBase, ev: &mut Evaluator<'_>) -> Result<Self::Sample, Error>;
+    /// The reads of `Calculate`, from the property tree through `ev` and
+    /// from the other models.
+    fn sample(
+        &self,
+        base: &ThrusterBase,
+        models: &Models,
+        ev: &mut Evaluator<'_>,
+    ) -> Result<Self::Sample, Error>;
 
     /// `Calculate(power)`: the thrust, lbs.
     fn calculate(&mut self, base: &mut ThrusterBase, power: f64, sample: &Self::Sample) -> f64;
@@ -334,10 +340,14 @@ macro_rules! thrusters {
         #[allow(unused_variables)]
         impl Thruster {
             /// The reads of the thruster's `Calculate`.
-            pub fn sample(&self, ev: &mut Evaluator<'_>) -> Result<ThrusterSample, Error> {
+            pub fn sample(
+                &self,
+                models: &Models,
+                ev: &mut Evaluator<'_>,
+            ) -> Result<ThrusterSample, Error> {
                 match self.kind {
                     $($(#[$cfg])* ThrusterKind::$variant(ref f) => {
-                        f.sample(&self.base, ev).map(ThrusterSample::$variant)
+                        f.sample(&self.base, models, ev).map(ThrusterSample::$variant)
                     })*
                 }
             }
@@ -370,6 +380,7 @@ engines! {
 }
 
 thrusters! {
+    Direct(super::thruster::Direct) = "direct";
     #[cfg(test)]
     Test(super::test_engine::TestThruster) = "test_thruster";
 }

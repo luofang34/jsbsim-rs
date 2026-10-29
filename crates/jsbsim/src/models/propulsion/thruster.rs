@@ -1,15 +1,24 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // Copyright (C) 2000 Jon S. Berndt (jon@jsbsim.org)
-// Derived from JSBSim src/models/propulsion/FGThruster.h and
+// Derived from JSBSim src/models/propulsion/FGThruster.{h,cpp} and
 // FGEngine.cpp (LoadThrusterInputs).
 //
-//! What every thruster has (`FGThruster`'s members and its `FGForce`).
-//! Thruster types are registered in [`families`](super::families).
+//! What every thruster has (`FGThruster`'s members and its `FGForce`),
+//! and the direct thruster, which is `FGThruster` itself. Thruster types
+//! are registered in [`families`](super::families).
+
+mod bind;
+#[cfg(test)]
+mod tests;
 
 use super::Inputs;
-use super::families::ThrusterKind;
+use super::families::{ThrusterFamily, ThrusterKind};
 use super::force::Force;
-use crate::math::ColumnVector3;
+use crate::Error;
+use crate::fdm::{Binder, LoadContext, Models};
+use crate::functions::Evaluator;
+use crate::math::{ColumnVector3, E_X, E_Y, E_Z, Matrix33};
+use crate::xml::Element;
 
 /// `FGThruster::Inputs`, which the engine copies from its own before it
 /// calculates the thrust (`LoadThrusterInputs`).
@@ -80,6 +89,51 @@ pub struct ThrusterBase {
 }
 
 impl ThrusterBase {
+    /// The rest of `FGThruster`'s constructor on the thruster type's
+    /// element `el` (a child of `<thruster>`): the location, its
+    /// `propulsion/engine[n]/` ties, then either a fixed `<pointing>` or
+    /// the `<orient>` angles with their ties (and, for `<direct>`, the
+    /// reverser's), then `ResetToIC`.
+    pub fn load(
+        &mut self,
+        thruster_el: &Element,
+        el: &Element,
+        binder: &mut Binder<'_>,
+    ) -> Result<(), Error> {
+        let n = self.engine_number;
+        let location = match thruster_el.find_element("location") {
+            Some(loc) => loc.find_element_triplet_convert_to("IN")?,
+            None => {
+                tracing::error!("{}: No thruster location found.", thruster_el.location());
+                ColumnVector3::zero()
+            }
+        };
+        self.force.set_location(location);
+        bind::bind_location(binder, n)?;
+        if let Some(pointing_el) = thruster_el.find_element("pointing") {
+            // A fixed nozzle: no property gimbals or reverses it.
+            let pointing = pointing_el.find_element_triplet_convert_to("RAD")?;
+            let mut t = Matrix33::zero();
+            t[(E_X, E_X)] = pointing[E_X];
+            t[(E_Y, E_X)] = pointing[E_Y];
+            t[(E_Z, E_X)] = pointing[E_Z];
+            self.force.transform = t;
+        } else {
+            let orientation = match thruster_el.find_element("orient") {
+                Some(orient) => orient.find_element_triplet_convert_to("RAD")?,
+                None => ColumnVector3::zero(),
+            };
+            self.force.set_angles_to_body(orientation);
+            bind::bind_orientation(binder, n)?;
+            // Only a direct thruster can be reversed.
+            if el.name() == "direct" {
+                bind::bind_reverser(binder, n)?;
+            }
+        }
+        self.reset_to_ic();
+        Ok(())
+    }
+
     /// `FGThruster::ResetToIC`.
     pub fn reset_to_ic(&mut self) {
         self.reverser_angle = 0.0;
@@ -95,4 +149,37 @@ pub struct Thruster {
     pub base: ThrusterBase,
     /// The thruster type and its state.
     pub kind: ThrusterKind,
+}
+
+/// `<direct>`: `FGThruster` itself, whose thrust is the power it is
+/// given, scaled by the reverser.
+#[derive(Debug, Clone)]
+pub struct Direct;
+
+impl ThrusterFamily for Direct {
+    type Sample = ();
+
+    fn load(
+        _el: &Element,
+        _base: &mut ThrusterBase,
+        _ctx: &mut LoadContext<'_>,
+    ) -> Result<Self, Error> {
+        Ok(Self)
+    }
+
+    fn sample(
+        &self,
+        _base: &ThrusterBase,
+        _models: &Models,
+        _ev: &mut Evaluator<'_>,
+    ) -> Result<(), Error> {
+        Ok(())
+    }
+
+    /// `FGThruster::Calculate(tt)`.
+    fn calculate(&mut self, base: &mut ThrusterBase, power: f64, _sample: &()) -> f64 {
+        base.thrust = libm::cos(base.reverser_angle) * power;
+        base.force.native_force[E_X] = base.thrust;
+        base.thrust
+    }
 }

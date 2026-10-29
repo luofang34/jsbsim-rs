@@ -29,6 +29,7 @@ const char* const kPrefixes[] = {
   "inertia/", "metrics/", "position/", "velocities/", "attitude/",
   "accelerations/", "forces/", "moments/", "aero/", "atmosphere/",
   "external_reactions/", "fcs/", "systems/", "simulation/", "contact/", "gear/",
+  "propulsion/",
 };
 
 // Output types made by <output> I/O directives, which the port ignores.
