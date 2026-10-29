@@ -47,7 +47,7 @@ impl Models {
     }
 
     /// `LoadInputs(idx)`.
-    fn load_inputs(&mut self, model: Model) {
+    pub(super) fn load_inputs(&mut self, model: Model) {
         match model {
             Model::Propagate => {
                 let p = &mut self.propagate.input;
@@ -99,6 +99,12 @@ impl Models {
         g.vcalibrated_kts = self.auxiliary.airspeed.vcas * FPSTOKTS;
         g.temperature = self.atmosphere.temperature;
         g.brake_pos = self.fcs.brake_pos;
+        g.takeoff_throttle = self
+            .fcs
+            .throttles
+            .throttle_pos
+            .first()
+            .is_some_and(|t| *t > 0.90);
         g.fcs_gear_pos = self.fcs.gear_pos;
         g.empty_weight = self.mass_balance.empty_weight;
         g.tb2l = f.tb2l;

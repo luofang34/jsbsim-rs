@@ -89,3 +89,17 @@ fn an_override_created_between_frames_takes_effect_in_the_next_frame() {
     fdm.run().unwrap();
     assert_eq!(fdm.get_property("atmosphere/T-R").unwrap(), 450.0);
 }
+
+#[test]
+fn takeoff_throttle_follows_the_first_engine_above_ninety_percent() {
+    let mut fdm = Fdm::new().unwrap();
+    fdm.models.load_inputs(super::order::Model::GroundReactions);
+    assert!(!fdm.models.ground_reactions.input.takeoff_throttle);
+    fdm.models.fcs.throttles.add();
+    fdm.models.fcs.throttles.throttle_pos[0] = 0.9;
+    fdm.models.load_inputs(super::order::Model::GroundReactions);
+    assert!(!fdm.models.ground_reactions.input.takeoff_throttle);
+    fdm.models.fcs.throttles.throttle_pos[0] = 0.95;
+    fdm.models.load_inputs(super::order::Model::GroundReactions);
+    assert!(fdm.models.ground_reactions.input.takeoff_throttle);
+}
