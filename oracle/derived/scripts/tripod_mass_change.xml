@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  tripod_mass_change.xml: tests/TestMassChangeOnGround.py
+  test_cg_at_structural_origin: 240 frames standing, then the 1000 lb point
+  mass 1 ft below the CG, which must not make the structure jump. Regenerate with `oracle derive`.
+-->
+<runscript name="tripod_mass_change">
+  <use aircraft="tripod_mass_change" initialize="ground"/>
+  <run start="0.0" end="4.0" dt="0.008333333333333333">
+    <event name="Payload">
+      <condition> simulation/frame ge 240 </condition>
+      <set name="inertia/pointmass-weight-lbs" value="1000.0"/>
+    </event>
+  </run>
+</runscript>

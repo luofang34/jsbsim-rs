@@ -5363,3 +5363,466 @@ property = "*"
 abs = 0.0
 rel = 0.0
 reason = "Tank contents, fill levels, drain-to-full CG interpolation, liquid and grain inertias, the heat exchange, refuel, dump and transfer use only IEEE basic operations and sqrt in JSBSim's order, and each tank's area is one libm pow of its capacity that agrees with Apple's for every tank here, so they must be bit-identical; observed max |diff| 0."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the same IEEE operations in JSBSim's order; properties listed differ."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "position/long-gc-deg"
+abs = 1e-08
+rel = 0.0
+period = 360.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 5.9e-10 (rel 1.5e-09) at t=6.2 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "position/ecef-x-ft"
+abs = 1e-18
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 8.4e-20 (rel 5.0e-11) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "position/ecef-y-ft"
+abs = 5e-19
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 4.2e-20 (rel 1.5e-09) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "velocities/u-fps"
+abs = 1e-16
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 5.5e-18 (rel 1.4e-09) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "velocities/v-fps"
+abs = 5e-17
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 2.8e-18 (rel 1.0e-10) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "velocities/w-fps"
+abs = 5e-22
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 2.6e-23 (rel 7.3e-16) at t=6.3 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "velocities/p-rad_sec"
+abs = 2e-19
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 1.3e-20 (rel 2.2e-10) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "velocities/q-rad_sec"
+abs = 5e-19
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 2.6e-20 (rel 8.6e-10) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "velocities/r-rad_sec"
+abs = 2e-19
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 1.4e-20 (rel 1.6e-09) at t=2.2 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "attitude/phi-rad"
+abs = 1e-21
+rel = 0.0
+period = 6.283185307179586
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 5.5e-23 (rel 3.8e-11) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "attitude/theta-rad"
+abs = 2e-21
+rel = 0.0
+period = 6.283185307179586
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 1.3e-22 (rel 2.2e-14) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "attitude/psi-rad"
+abs = 2e-10
+rel = 0.0
+period = 6.283185307179586
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 1.0e-11 (rel 1.5e-09) at t=6.2 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "accelerations/udot-ft_sec2"
+abs = 1e-14
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 6.6e-16 (rel 1.1e-10) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "accelerations/vdot-ft_sec2"
+abs = 5e-15
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 3.3e-16 (rel 1.0e-10) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "accelerations/wdot-ft_sec2"
+abs = 1e-21
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 5.3e-23 (rel 1.0e-13) at t=8.6 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "accelerations/pdot-rad_sec2"
+abs = 5e-17
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 3.1e-18 (rel 1.0e-10) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "accelerations/qdot-rad_sec2"
+abs = 1e-16
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 6.2e-18 (rel 7.5e-09) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "accelerations/rdot-rad_sec2"
+abs = 5e-17
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 2.5e-18 (rel 6.0e-10) at t=5.5 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "forces/fbx-gear-lbs"
+abs = 1e-12
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 6.2e-14 (rel 8.3e-11) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "forces/fby-gear-lbs"
+abs = 5e-13
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 3.1e-14 (rel 1.0e-10) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "moments/l-gear-lbsft"
+abs = 5e-14
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 3.1e-15 (rel 1.0e-10) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "moments/m-gear-lbsft"
+abs = 1e-13
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 6.2e-15 (rel 7.5e-09) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "moments/n-gear-lbsft"
+abs = 5e-14
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 2.5e-15 (rel 6.0e-10) at t=5.5 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "velocities/vg-fps"
+abs = 1e-16
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 6.2e-18 (rel 1.0e-10) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "contact/unit[0]/compression-velocity-fps"
+abs = 5e-19
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 2.6e-20 (rel 7.7e-13) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "contact/unit[1]/compression-velocity-fps"
+abs = 5e-19
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 2.6e-20 (rel 7.8e-13) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_centered"
+property = "contact/unit[2]/compression-velocity-fps"
+abs = 1e-21
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 7.3e-23 (rel 1.9e-15) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the same IEEE operations in JSBSim's order; properties listed differ."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "position/long-gc-deg"
+abs = 5e-13
+rel = 0.0
+period = 360.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 2.3e-14 (rel 1.7e-09) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "position/ecef-x-ft"
+abs = 5e-17
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 2.4e-18 (rel 2.0e-15) at t=7 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "position/ecef-y-ft"
+abs = 5e-18
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 4.9e-19 (rel 1.7e-09) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "velocities/u-fps"
+abs = 5e-16
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 4.4e-17 (rel 6.7e-10) at t=9.9 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "velocities/v-fps"
+abs = 5e-16
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 2.7e-17 (rel 3.1e-09) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "velocities/w-fps"
+abs = 1e-15
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 5.9e-17 (rel 1.3e-12) at t=3.3 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "velocities/p-rad_sec"
+abs = 5e-17
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 3.8e-18 (rel 8.4e-09) at t=3.5 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "velocities/q-rad_sec"
+abs = 1e-16
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 5.2e-18 (rel 4.6e-14) at t=3.3 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "velocities/r-rad_sec"
+abs = 1e-18
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 9.5e-20 (rel 1.8e-08) at t=3.4 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "attitude/phi-rad"
+abs = 2e-17
+rel = 0.0
+period = 6.283185307179586
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 1.7e-18 (rel 4.7e-07) at t=4.1 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "attitude/theta-rad"
+abs = 1e-16
+rel = 0.0
+period = 6.283185307179586
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 6.9e-18 (rel 3.9e-16) at t=8.8 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "attitude/psi-rad"
+abs = 1e-14
+rel = 0.0
+period = 6.283185307179586
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 8.9e-16 (rel 1.6e-09) at t=5.4 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "accelerations/udot-ft_sec2"
+abs = 1e-13
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 5.3e-15 (rel 4.6e-11) at t=9.9 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "accelerations/vdot-ft_sec2"
+abs = 5e-14
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 3.3e-15 (rel 7.5e-09) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "accelerations/wdot-ft_sec2"
+abs = 1e-15
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 9.4e-17 (rel 2.5e-11) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "accelerations/pdot-rad_sec2"
+abs = 5e-15
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 2.3e-16 (rel 3.1e-07) at t=4 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "accelerations/qdot-rad_sec2"
+abs = 2e-15
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 1.2e-16 (rel 2.4e-12) at t=4 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "accelerations/rdot-rad_sec2"
+abs = 2e-16
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 1.8e-17 (rel 1.3e-07) at t=4.2 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "forces/fbx-gear-lbs"
+abs = 1e-11
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 6.4e-13 (rel 9.0e-15) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "forces/fby-gear-lbs"
+abs = 5e-12
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 4.0e-13 (rel 3.2e-09) at t=10 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "forces/fbz-gear-lbs"
+abs = 5e-12
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 4.5e-13 (rel 1.1e-16) at t=4 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "moments/l-gear-lbsft"
+abs = 5e-12
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 2.3e-13 (rel 1.2e-08) at t=4 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "moments/m-gear-lbsft"
+abs = 2e-12
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 1.2e-13 (rel 2.4e-12) at t=4 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "moments/n-gear-lbsft"
+abs = 2e-13
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 1.8e-14 (rel 2.1e-08) at t=4.2 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "velocities/vg-fps"
+abs = 5e-16
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 4.4e-17 (rel 4.8e-10) at t=9.9 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "contact/unit[0]/compression-velocity-fps"
+abs = 1e-15
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 6.4e-17 (rel 4.4e-14) at t=3.3 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "contact/unit[1]/compression-velocity-fps"
+abs = 1e-15
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 5.9e-17 (rel 1.4e-13) at t=3.3 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_ground_eccentric"
+property = "contact/unit[2]/compression-velocity-fps"
+abs = 1e-15
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 5.4e-17 (rel 7.6e-14) at t=3.3 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_mass_change"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the same IEEE operations in JSBSim's order; properties listed differ."
+
+[[tolerance]]
+case = "tripod_mass_change"
+property = "velocities/r-rad_sec"
+abs = 1e-23
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 6.2e-25 (rel 2.0e-11) at t=3.2 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_mass_change"
+property = "accelerations/vdot-ft_sec2"
+abs = 2e-21
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 1.1e-22 (rel 4.1e-10) at t=2.8 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_mass_change"
+property = "accelerations/rdot-rad_sec2"
+abs = 1e-22
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 6.8e-24 (rel 9.9e-10) at t=2.13 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_mass_change"
+property = "forces/fby-gear-lbs"
+abs = 2e-19
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 1.4e-20 (rel 8.5e-07) at t=2.13 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_mass_change"
+property = "moments/n-gear-lbsft"
+abs = 1e-19
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 6.8e-21 (rel 3.2e+00) at t=2.13 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_mass_change"
+property = "gear/unit[1]/wheel-speed-fps"
+abs = 1e-23
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 6.2e-25 (rel 6.0e-14) at t=3.27 s; bound 10x that."
+
+[[tolerance]]
+case = "tripod_mass_change"
+property = "gear/unit[2]/wheel-speed-fps"
+abs = 1e-23
+rel = 0.0
+reason = "State-affecting: the geodetic conversions behind each contact's ground normal and height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos) differ in the last digit between Rust libm and Apple libm, which the friction solve carries into the near-zero lateral and angular motion; with Apple libm in those two the state is bit-identical; observed max 6.2e-25 (rel 6.8e-14) at t=3.27 s; bound 10x that."

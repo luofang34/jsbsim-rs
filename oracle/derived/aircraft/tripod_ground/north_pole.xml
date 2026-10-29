@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  JSBSim's tests/TestGndReactions.py initial conditions: ic/h-sl-ft 0.1 at
+  ic/lat-gc-deg 90, clear of centrifugal and Coriolis accelerations.
+  Regenerate with `oracle derive`.
+-->
+<initialize name="north_pole">
+  <latitude unit="DEG" type="geocentric"> 90.0 </latitude>
+  <longitude unit="DEG"> 0.0 </longitude>
+  <altitude unit="FT"> 0.1 </altitude>
+</initialize>

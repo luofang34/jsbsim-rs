@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  tripod_ground_eccentric.xml: tests/TestGndReactions.py test_eccentric_mass
+  untrimmed: the tripod with a 1000 lb point mass 0.25 ft off its CG,
+  settling on its contacts at the North pole. Regenerate with `oracle derive`.
+-->
+<runscript name="tripod_ground_eccentric">
+  <use aircraft="tripod_ground" initialize="north_pole"/>
+  <run start="0.0" end="10.0" dt="0.008333333333333333">
+    <property value="1000."> inertia/pointmass-weight-lbs </property>
+  </run>
+</runscript>

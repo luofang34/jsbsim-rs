@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  JSBSim's tests/TestMassChangeOnGround.py initial conditions: ic/h-agl-ft
+  0.1, the contacts starting compressed by the tripod's weight.
+  Regenerate with `oracle derive`.
+-->
+<initialize name="ground">
+  <latitude unit="DEG"> 0.0 </latitude>
+  <longitude unit="DEG"> 0.0 </longitude>
+  <altitudeAGL unit="FT"> 0.1 </altitudeAGL>
+</initialize>
