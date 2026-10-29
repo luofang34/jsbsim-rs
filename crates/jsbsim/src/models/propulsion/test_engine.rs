@@ -10,7 +10,7 @@
 
 use super::Inputs;
 use super::engine::{EngineBase, EngineType};
-use super::families::{EngineFamily, ThrusterFamily};
+use super::families::{EngineFamily, InitRunning, ThrusterFamily};
 use super::thruster::{Thruster, ThrusterBase};
 use crate::Error;
 use crate::fdm::ModelEvaluator;
@@ -87,9 +87,9 @@ impl EngineFamily for TestEngine {
         base: &mut EngineBase,
         _thruster: &mut Thruster,
         _input: &mut Inputs,
-    ) -> i32 {
+    ) -> InitRunning {
         base.running = true;
-        1
+        InitRunning::Done
     }
 }
 

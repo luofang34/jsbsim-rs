@@ -1,35 +1,35 @@
 # Rust outcome of loading each corpus aircraft, checked by
 # `oracle check-models`: "ok" (properties match C++) or the typed
 # Unsupported the load stops at.
-737 unsupported <turbine_engine> (In file engine/CFM56.xml: line 14)
-787-8 unsupported <turbine_engine> (In file engine/trent_1000.xml: line 3)
-A320 unsupported <turbine_engine> (In file engine/CFM56_5.xml: line 14)
-A4 unsupported <turbine_engine> (In file engine/J52.xml: line 14)
+737 ok
+787-8 ok
+A320 ok
+A4 ok
 B17 ok
-B747 unsupported <turbine_engine> (In file engine/GE-CF6-80C2-B1F.xml: line 33)
+B747 ok
 Boeing314 ok
-C130 unsupported <turbine_engine> (In file engine/t56.xml: line 14)
+C130 ok
 Camel ok
-Concorde unsupported <turbine_engine> (In file engine/Olympus593Mrk610.xml: line 67)
+Concorde ok
 DHC6 unsupported <turboprop_engine> (In file aircraft/DHC6/Engines/PT6A-27.xml: line 23)
 F450 unsupported <brushless_dc_motor> (In file engine/DJI_E305.xml: line 3)
-F4N unsupported <turbine_engine> (In file aircraft/F4N/Engines/J79-GE-11A.xml: line 14)
-F80C unsupported <turbine_engine> (In file engine/J33-A-35.xml: line 20)
+F4N ok
+F80C ok
 J246 unsupported <rocket_engine> (In file engine/SRB.xml: line 2)
 J3Cub ok
 L17 ok
 L410 unsupported <turboprop_engine> (In file engine/engtm601.xml: line 28)
-MD11 unsupported <turbine_engine> (In file engine/CF6-80C2.xml: line 17)
-OV10 unsupported <turbine_engine> (In file engine/T76.xml: line 14)
+MD11 ok
+OV10 ok
 Pterosaur unsupported <electric_engine> (In file engine/dummy.xml: line 13)
 SGS ok
 Short_S23 ok
 Shuttle ok
 Submarine_Scout unsupported <buoyant_forces> (In file aircraft/Submarine_Scout/Submarine_Scout.xml: line 616)
-T37 unsupported <turbine_engine> (In file engine/J69-T25.xml: line 20)
-T38 unsupported <turbine_engine> (In file engine/J85-GE-5.xml: line 15)
+T37 ok
+T38 ok
 X15 unsupported <rocket_engine> (In file engine/XLR99.xml: line 2)
-XB-70 unsupported <turbine_engine> (In file engine/YJ93-GE-3.xml: line 3)
+XB-70 ok
 ZLT-NT unsupported <buoyant_forces> (In file aircraft/ZLT-NT/ZLT-NT.xml: line 672)
 ah1s unsupported <electric_engine> (In file aircraft/ah1s/Engines/electric_1500hp.xml: line 1)
 ball ok
@@ -41,13 +41,13 @@ c172x unsupported <noise> of variance 0.05 in sensor fcs/attitude/sensor/phi-rad
 c182 ok
 c310 ok
 dr1 ok
-f104 unsupported <turbine_engine> (In file engine/J79-GE-11A.xml: line 14)
-f15 unsupported <turbine_engine> (In file engine/F100-PW-229.xml: line 14)
-f16 unsupported <turbine_engine> (In file engine/F100-PW-229.xml: line 14)
-f22 unsupported <turbine_engine> (In file engine/F119-PW-1.xml: line 14)
-fokker100 unsupported <turbine_engine> (In file engine/Tay-620.xml: line 14)
+f104 ok
+f15 ok
+f16 ok
+f22 ok
+fokker100 ok
 fokker50 unsupported <turboprop_engine> (In file engine/PW125BX.xml: line 28)
-global5000 unsupported <turbine_engine> (In file engine/BR710.xml: line 30)
+global5000 unsupported <noise> of variance 0.05 in sensor fcs/attitude/sensor/phi-rad (FGSensor random noise) (In file aircraft/global5000/global5000ap.xml: line 68)
 minisgs ok
 mk82 ok
 p51d ok
@@ -57,7 +57,7 @@ pc7 unsupported <turboprop_engine> (In file aircraft/pc7/Engines/PT6A.xml: line 
 pogo-jsbsim unsupported <turboprop_engine> (In file aircraft/pogo-jsbsim/Engines/YT40-A-16.xml: line 32)
 sgs126 ok
 sgs233 ok
-t6texan2 unsupported <turbine_engine> (In file engine/PT6A-68.xml: line 14)
+t6texan2 ok
 weather-balloon unsupported <buoyant_forces> (In file aircraft/weather-balloon/weather-balloon.xml: line 135)
 wrightFlyer1903 ok
 x24b unsupported <rocket_engine> (In file engine/XLR99.xml: line 2)

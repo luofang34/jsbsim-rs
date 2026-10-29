@@ -19,7 +19,7 @@ mod tests;
 
 use super::Inputs;
 use super::engine::{EngineBase, EngineType};
-use super::families::{EngineFamily, ThrusterSample};
+use super::families::{EngineFamily, InitRunning, ThrusterSample};
 use super::thruster::Thruster;
 use crate::Error;
 use crate::fdm::ModelEvaluator;
@@ -383,7 +383,7 @@ impl EngineFamily for Piston {
         base: &mut EngineBase,
         thruster: &mut Thruster,
         input: &mut Inputs,
-    ) -> i32 {
+    ) -> InitRunning {
         let n = self.number;
         self.state.magnetos = 3;
         let mixture = input.pressure_ratio * 1.3;
@@ -396,7 +396,7 @@ impl EngineFamily for Piston {
         let rpm = 2.0 * self.config.idle_rpm / thruster.base.gear_ratio;
         thruster.set_rpm(rpm);
         base.running = true;
-        1
+        InitRunning::Done
     }
 
     /// `FGPiston::ResetToIC`.

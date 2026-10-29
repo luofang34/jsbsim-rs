@@ -8,6 +8,7 @@
 use super::Fdm;
 use crate::Error;
 use crate::math::ColumnVector3;
+use crate::models::propulsion::families::InitRunning;
 
 impl Fdm {
     /// `FGPropulsion::InitRunning(n)`: engine `n`, or every engine for a
@@ -20,16 +21,21 @@ impl Fdm {
                     message: "Tried to initialize a non-existent engine!".to_owned(),
                 });
             }
-            Ok(i) => self.set_engine_running(i),
-            Err(_) => (0..count).for_each(|i| self.set_engine_running(i)),
+            Ok(i) => self.set_engine_running(i)?,
+            Err(_) => {
+                for i in 0..count {
+                    self.set_engine_running(i)?;
+                }
+            }
         }
         self.steady_state()?;
         Ok(())
     }
 
     /// `SetEngineRunning`: full throttle and mixture in the engine inputs,
-    /// full mixture in the FCS, then the engine's `InitRunning`.
-    fn set_engine_running(&mut self, i: usize) {
+    /// full mixture in the FCS, then the engine's `InitRunning`, with the
+    /// `Calculate` it asks for.
+    fn set_engine_running(&mut self, i: usize) -> Result<(), Error> {
         let input = &mut self.models.propulsion.input;
         for v in [
             &mut input.throttle_cmd,
@@ -46,10 +52,40 @@ impl Fdm {
         throttles.set_mixture_pos(n, 1.0);
         throttles.set_mixture_cmd(n, 1.0);
         let p = &mut self.models.propulsion;
-        if let Some(e) = p.engines.get_mut(i) {
-            e.kind
-                .init_running(&mut e.base, &mut e.thruster, &mut p.input);
+        let Some(e) = p.engines.get_mut(i) else {
+            return Ok(());
+        };
+        let InitRunning::Calculate {
+            suspend_integration,
+            zero_step,
+        } = e
+            .kind
+            .init_running(&mut e.base, &mut e.thruster, &mut p.input)
+        else {
+            return Ok(());
+        };
+        let saved_step = p.input.total_delta_t;
+        if zero_step {
+            p.input.total_delta_t = 0.0;
         }
+        if suspend_integration {
+            let x = &mut self.models.exec;
+            x.saved_dt = x.dt;
+            x.dt = 0.0;
+        }
+        self.calculate_engine(i)?;
+        if suspend_integration {
+            let x = &mut self.models.exec;
+            x.dt = x.saved_dt;
+        }
+        let p = &mut self.models.propulsion;
+        if zero_step {
+            p.input.total_delta_t = saved_step;
+        }
+        if let Some(e) = p.engines.get_mut(i) {
+            e.kind.init_running_done();
+        }
+        Ok(())
     }
 
     /// `GetSteadyState`: each engine calculated with a half-second step

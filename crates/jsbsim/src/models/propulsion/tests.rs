@@ -136,13 +136,13 @@ fn reset_restores_the_initial_contents() {
 
 #[test]
 fn engine_and_thruster_types_are_refused_by_name() {
-    let turbine = r#"<propulsion><engine>
-      <turbine_engine name="p"/><thruster><propeller/></thruster>
+    let rocket = r#"<propulsion><engine>
+      <rocket_engine name="p"/><thruster><propeller/></thruster>
     </engine></propulsion>"#;
-    let err = load(turbine).err().unwrap();
+    let err = load(rocket).err().unwrap();
     assert!(
         matches!(&err, Error::Unsupported { construct, path }
-            if construct == "<turbine_engine>" && path.contains("line 1")),
+            if construct == "<rocket_engine>" && path.contains("line 1")),
         "{err:?}"
     );
     let propeller = r#"<propulsion><engine>

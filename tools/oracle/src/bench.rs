@@ -41,13 +41,17 @@ pub const AIRBORNE_IC: [(&str, f64); 2] = [("ic/h-sl-ft", 10000.0), ("ic/u-fps",
 /// Aircraft that load but cannot run, in JSBSim as in the port, with the
 /// property whose missing node stops the first frame. The tests that fly
 /// every aircraft loading `ok` check that these still stop there.
-pub const UNRUNNABLE: [(&str, &str); 2] = [
+pub const UNRUNNABLE: [(&str, &str); 4] = [
     // Its flap normalizer reads `fcs/flaps-pos-deg`, but its flap
     // kinematic writes `fcs/flap-pos-deg`.
     ("L17", "fcs/flaps-pos-deg"),
     // Its pushback system reads a FlightGear property outside the
     // instance.
     ("dr1", "/sim/model/pushback/position-norm"),
+    // Its radar system reads a range that FlightGear sets.
+    ("f104", "systems/radar/range"),
+    // Its pushback system, as the dr1's.
+    ("fokker100", "/sim/model/pushback/position-norm"),
 ];
 
 /// One benchmarked script or aircraft.

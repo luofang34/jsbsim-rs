@@ -15,6 +15,7 @@ pub mod engine;
 pub mod families;
 pub mod force;
 mod fuel;
+pub mod nozzle;
 pub mod piston;
 pub mod propeller;
 pub mod tank;
@@ -23,6 +24,7 @@ mod test_engine;
 #[cfg(test)]
 mod tests;
 pub mod thruster;
+pub mod turbine;
 
 pub use bind::{bind, bind_engine};
 pub use engine::{Engine, EngineBase, EngineType};

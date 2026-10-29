@@ -50,7 +50,7 @@ fn engines_in_an_included_propulsion_file_are_refused_by_type() {
     std::fs::create_dir_all(&engines).unwrap();
     std::fs::write(
         engines.join("x.xml"),
-        "<?xml version=\"1.0\"?>\n<turbine_engine name=\"x\"/>\n",
+        "<?xml version=\"1.0\"?>\n<rocket_engine name=\"x\"/>\n",
     )
     .unwrap();
     std::fs::write(
@@ -61,7 +61,7 @@ fn engines_in_an_included_propulsion_file_are_refused_by_type() {
     let mut fdm = Fdm::new().unwrap();
     match fdm.load_model(&FileResolver::new(root.path()), "aircraft", "prop") {
         Err(jsbsim::Error::Unsupported { construct, path }) => {
-            assert_eq!(construct, "<turbine_engine>");
+            assert_eq!(construct, "<rocket_engine>");
             assert!(path.contains("engine/x.xml"), "{path}");
         }
         other => panic!("expected the included engine to be unsupported, got {other:?}"),
