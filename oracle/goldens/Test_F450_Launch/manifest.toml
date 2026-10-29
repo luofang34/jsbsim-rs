@@ -1,0 +1,13 @@
+[case]
+kind = "script"
+script = "scripts/Test_F450_Launch.xml"
+rate_hz = 20.0
+properties = ["position/h-sl-ft", "position/h-agl-ft", "position/lat-geod-deg", "position/long-gc-deg", "velocities/u-fps", "velocities/v-fps", "velocities/w-fps", "velocities/p-rad_sec", "velocities/q-rad_sec", "velocities/r-rad_sec", "attitude/phi-rad", "attitude/theta-rad", "attitude/psi-rad", "accelerations/udot-ft_sec2", "accelerations/vdot-ft_sec2", "accelerations/wdot-ft_sec2", "accelerations/pdot-rad_sec2", "accelerations/qdot-rad_sec2", "accelerations/rdot-rad_sec2", "forces/fbx-total-lbs", "forces/fby-total-lbs", "forces/fbz-total-lbs", "moments/l-total-lbsft", "moments/m-total-lbsft", "moments/n-total-lbsft", "forces/fbx-prop-lbs", "forces/fby-prop-lbs", "forces/fbz-prop-lbs", "moments/l-prop-lbsft", "moments/m-prop-lbsft", "moments/n-prop-lbsft", "velocities/vc-kts", "aero/qbar-psf", "aero/alpha-rad", "propulsion/total-fuel-lbs", "forces/fbx-gear-lbs", "forces/fbz-gear-lbs", "gear/wow", "propulsion/engine[0]/thrust-lbs", "propulsion/engine[0]/power-hp", "propulsion/engine[0]/current-amperes", "propulsion/engine[0]/engine-rpm", "propulsion/engine[0]/propeller-rpm", "propulsion/engine[0]/advance-ratio", "propulsion/engine[0]/thrust-coefficient", "propulsion/engine[0]/propeller-power-ftlbps", "propulsion/engine[0]/propeller-torque-ftlb", "fcs/throttle-pos-norm[0]", "propulsion/engine[1]/thrust-lbs", "propulsion/engine[1]/power-hp", "propulsion/engine[1]/current-amperes", "propulsion/engine[1]/engine-rpm", "propulsion/engine[1]/propeller-rpm", "propulsion/engine[1]/advance-ratio", "propulsion/engine[1]/thrust-coefficient", "propulsion/engine[1]/propeller-power-ftlbps", "propulsion/engine[1]/propeller-torque-ftlb", "fcs/throttle-pos-norm[1]", "propulsion/engine[2]/thrust-lbs", "propulsion/engine[2]/power-hp", "propulsion/engine[2]/current-amperes", "propulsion/engine[2]/engine-rpm", "propulsion/engine[2]/propeller-rpm", "propulsion/engine[2]/advance-ratio", "propulsion/engine[2]/thrust-coefficient", "propulsion/engine[2]/propeller-power-ftlbps", "propulsion/engine[2]/propeller-torque-ftlb", "fcs/throttle-pos-norm[2]", "propulsion/engine[3]/thrust-lbs", "propulsion/engine[3]/power-hp", "propulsion/engine[3]/current-amperes", "propulsion/engine[3]/engine-rpm", "propulsion/engine[3]/propeller-rpm", "propulsion/engine[3]/advance-ratio", "propulsion/engine[3]/thrust-coefficient", "propulsion/engine[3]/propeller-power-ftlbps", "propulsion/engine[3]/propeller-torque-ftlb", "fcs/throttle-pos-norm[3]"]
+
+[provenance]
+upstream_commit = "66f7fafc07fe13e7ede9db20873030fed2881713"
+driver = "tools/oracle/cpp"
+cxx_flags = "-ffp-contract=off"
+dt = 0.002
+every_n_frames = 25
+rows = 601

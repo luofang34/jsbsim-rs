@@ -52,7 +52,7 @@ fn loading_aircraft() -> Vec<String> {
 /// (root under `oracle/`, script) of every script that trims through
 /// `simulation/do_simple_trim`.
 #[cfg(test)]
-const TRIMMED: [(&str, &str); 9] = [
+const TRIMMED: [(&str, &str); 10] = [
     ("derived", "scripts/c1722.xml"),
     ("derived", "scripts/c172_cruise_8K.xml"),
     ("derived", "scripts/c172_cross_wind.xml"),
@@ -62,6 +62,7 @@ const TRIMMED: [(&str, &str); 9] = [
     ("inputs", "scripts/Short_S23_2.xml"),
     ("inputs", "scripts/Short_S23_3.xml"),
     ("inputs", "scripts/Short_S23_4.xml"),
+    ("inputs", "scripts/737_cruise.xml"),
 ];
 
 /// Runs `fdm` until its script's trim has completed.
@@ -123,6 +124,9 @@ fn steady_state_frames_read_only_cached_derived_values() {
             (&derived, "scripts/piston_start_c310.xml", 3000),
             (&derived, "scripts/piston_governor_c310.xml", 5000),
             (&derived, "scripts/c1722_inertia.xml", 12000),
+            (&resolver, "scripts/f16_test.xml", 3000),
+            (&resolver, "scripts/L4102.xml", 3000),
+            (&resolver, "scripts/Test_F450_Launch.xml", 3000),
         ] {
             let mut fdm = Fdm::new().unwrap();
             fdm.load_script(resolver, script).unwrap();

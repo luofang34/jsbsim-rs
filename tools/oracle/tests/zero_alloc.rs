@@ -61,7 +61,7 @@ fn measure(fdm: &mut Fdm, frames: u32) -> (u64, u64) {
 /// (root under `oracle/`, script) of every script that trims through
 /// `simulation/do_simple_trim`.
 #[cfg(test)]
-const TRIMMED: [(&str, &str); 9] = [
+const TRIMMED: [(&str, &str); 10] = [
     ("derived", "scripts/c1722.xml"),
     ("derived", "scripts/c172_cruise_8K.xml"),
     ("derived", "scripts/c172_cross_wind.xml"),
@@ -71,6 +71,7 @@ const TRIMMED: [(&str, &str); 9] = [
     ("inputs", "scripts/Short_S23_2.xml"),
     ("inputs", "scripts/Short_S23_3.xml"),
     ("inputs", "scripts/Short_S23_4.xml"),
+    ("inputs", "scripts/737_cruise.xml"),
 ];
 
 /// Runs `fdm` until its script's trim has completed.
@@ -147,6 +148,60 @@ fn measure_trimmed(report: &mut Vec<(String, u32, (u64, u64))>) {
     }
 }
 
+/// The vendored, scenario and derived scripts, and the c172x without
+/// sensor noise flown from the airborne initial condition.
+#[cfg(test)]
+fn measure_scripts(resolver: &FileResolver, report: &mut Vec<(String, u32, (u64, u64))>) {
+    // (inputs, script, measured frames): ball_orbit_phase's window covers
+    // its undock burn ramps at 10 s and 12 s; mk82's ends before touchdown;
+    // gear_rover_taxi's rolls, steers, brakes and rests on every kind of
+    // contact, and gear_rover_retract's slides on its skids with the gear
+    // up and lands back on its wheels; piston_start_c310's cranks, starts,
+    // runs on each magneto, cuts off and restarts its engines, and
+    // piston_governor_c310's governs, feathers, windmills and restarts in
+    // flight; c1722_inertia's trims, starts running from its initial
+    // conditions and burns its tanks down to the unusable fuel; f16_test's
+    // turbine spins up, lights and spools to full throttle; L4102's
+    // turboprops start running from their initial conditions; and
+    // Test_F450_Launch's brushless motors lift the quadcopter off.
+    let scenarios = FileResolver::new(oracle_dir().join("scenarios"));
+    let derived = FileResolver::new(oracle_dir().join("derived"));
+    let mut fdm = Fdm::new().unwrap();
+    fdm.load_model(&derived, "aircraft", oracle::derived::piston::NOISE0)
+        .unwrap();
+    for (property, value) in oracle::bench::AIRBORNE_IC {
+        fdm.set_property(property, value).unwrap();
+    }
+    fdm.run_ic().unwrap();
+    report.push((
+        format!("aircraft {}", oracle::derived::piston::NOISE0),
+        FRAMES,
+        measure(&mut fdm, FRAMES),
+    ));
+    for (resolver, script, frames) in [
+        (resolver, "scripts/ball_orbit_phase.xml", 3000),
+        (resolver, "scripts/ball.xml", FRAMES),
+        (resolver, "scripts/mk82_script.xml", FRAMES),
+        (&scenarios, "scripts/gear_rover_taxi.xml", 2000),
+        (&scenarios, "scripts/gear_rover_retract.xml", 1000),
+        (&derived, "scripts/piston_start_c310.xml", 3000),
+        (&derived, "scripts/piston_governor_c310.xml", 5000),
+        (&derived, "scripts/c1722_inertia.xml", 12000),
+        (resolver, "scripts/f16_test.xml", 3000),
+        (resolver, "scripts/L4102.xml", 3000),
+        (resolver, "scripts/Test_F450_Launch.xml", 3000),
+    ] {
+        let mut fdm = Fdm::new().unwrap();
+        fdm.load_script(resolver, script).unwrap();
+        fdm.run_ic().unwrap();
+        report.push((
+            format!("script {script}"),
+            frames,
+            measure(&mut fdm, frames),
+        ));
+    }
+}
+
 #[test]
 fn steady_state_frames_allocate_nothing() {
     let _profiler = dhat::Profiler::builder().testing().build();
@@ -173,49 +228,7 @@ fn steady_state_frames_allocate_nothing() {
         ));
     }
 
-    // (inputs, script, measured frames): ball_orbit_phase's window covers
-    // its undock burn ramps at 10 s and 12 s; mk82's ends before touchdown;
-    // gear_rover_taxi's rolls, steers, brakes and rests on every kind of
-    // contact, and gear_rover_retract's slides on its skids with the gear
-    // up and lands back on its wheels; piston_start_c310's cranks, starts,
-    // runs on each magneto, cuts off and restarts its engines, and
-    // piston_governor_c310's governs, feathers, windmills and restarts in
-    // flight; c1722_inertia's trims, starts running from its initial
-    // conditions and burns its tanks down to the unusable fuel.
-    let scenarios = FileResolver::new(oracle_dir().join("scenarios"));
-    let derived = FileResolver::new(oracle_dir().join("derived"));
-    let mut fdm = Fdm::new().unwrap();
-    fdm.load_model(&derived, "aircraft", oracle::derived::piston::NOISE0)
-        .unwrap();
-    for (property, value) in oracle::bench::AIRBORNE_IC {
-        fdm.set_property(property, value).unwrap();
-    }
-    fdm.run_ic().unwrap();
-    report.push((
-        format!("aircraft {}", oracle::derived::piston::NOISE0),
-        FRAMES,
-        measure(&mut fdm, FRAMES),
-    ));
-    for (resolver, script, frames) in [
-        (&resolver, "scripts/ball_orbit_phase.xml", 3000),
-        (&resolver, "scripts/ball.xml", FRAMES),
-        (&resolver, "scripts/mk82_script.xml", FRAMES),
-        (&scenarios, "scripts/gear_rover_taxi.xml", 2000),
-        (&scenarios, "scripts/gear_rover_retract.xml", 1000),
-        (&derived, "scripts/piston_start_c310.xml", 3000),
-        (&derived, "scripts/piston_governor_c310.xml", 5000),
-        (&derived, "scripts/c1722_inertia.xml", 12000),
-    ] {
-        let mut fdm = Fdm::new().unwrap();
-        fdm.load_script(resolver, script).unwrap();
-        fdm.run_ic().unwrap();
-        report.push((
-            format!("script {script}"),
-            frames,
-            measure(&mut fdm, frames),
-        ));
-    }
-
+    measure_scripts(&resolver, &mut report);
     measure_trimmed(&mut report);
 
     let failures: Vec<_> = report
