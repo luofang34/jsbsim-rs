@@ -78,3 +78,22 @@ script = "scripts/f16_test.xml"
 warm_up = 100
 frames = 2000
 repeats = 15
+
+# A rocket: the J246 launching (scripts/J2461.xml), timed from 13.3 s to
+# 30 s with its four main engines and both solid boosters burning.
+[[case]]
+name = "j246"
+script = "scripts/J2461.xml"
+warm_up = 1600
+frames = 2000
+repeats = 15
+
+# A helicopter: the ah1s on its gear (scripts/sim_primer.xml), its main
+# rotor driven through the transmission under the governor and its tail
+# rotor slaved to it, timed from 5 s to 21.7 s.
+[[case]]
+name = "ah1s"
+script = "scripts/sim_primer.xml"
+warm_up = 600
+frames = 2000
+repeats = 15
