@@ -21,7 +21,7 @@ L17 ok
 L410 ok
 MD11 ok
 OV10 ok
-Pterosaur unsupported <electric_engine> (In file engine/dummy.xml: line 13)
+Pterosaur ok
 SGS ok
 Short_S23 ok
 Shuttle ok
@@ -31,7 +31,7 @@ T38 ok
 X15 unsupported <rocket_engine> (In file engine/XLR99.xml: line 2)
 XB-70 ok
 ZLT-NT unsupported <buoyant_forces> (In file aircraft/ZLT-NT/ZLT-NT.xml: line 672)
-ah1s unsupported <electric_engine> (In file aircraft/ah1s/Engines/electric_1500hp.xml: line 1)
+ah1s unsupported <rotor> (In file aircraft/ah1s/Engines/ah1s_rotor.xml: line 3)
 ball ok
 ballx ok
 blank load-error

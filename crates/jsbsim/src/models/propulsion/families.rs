@@ -312,6 +312,7 @@ engines! {
     Piston(super::piston::Piston) = "piston_engine";
     Turbine(super::turbine::Turbine) = "turbine_engine";
     TurboProp(super::turboprop::TurboProp) = "turboprop_engine";
+    Electric(super::electric::Electric) = "electric_engine";
     #[cfg(test)]
     Test(super::test_engine::TestEngine) = "test_engine";
 }
