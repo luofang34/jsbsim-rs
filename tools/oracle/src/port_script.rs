@@ -66,6 +66,14 @@ fn sample(root: &Path, spec: &ScriptSpec, series: &mut Series) -> Result<(), Sto
     }
     let end_time = spec.end_time.unwrap_or(f64::INFINITY);
     fdm.run_ic().map_err(port_error)?;
+    // As the driver (and JSBSim's command-line program): an initial
+    // condition's trim request runs once, and its result is not checked.
+    let mode = fdm.trim_requested();
+    if mode != jsbsim::trim::TrimMode::None {
+        jsbsim::trim::Trim::new(&fdm, mode)
+            .do_trim(&mut fdm)
+            .map_err(port_error)?;
+    }
     row(&mut fdm, spec, series)?;
     let mut frames = 0u32;
     let mut result = fdm.run().map_err(port_error)?;

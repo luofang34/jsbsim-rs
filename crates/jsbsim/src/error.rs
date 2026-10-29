@@ -37,6 +37,14 @@ pub enum Error {
         /// What is wrong, with the location.
         message: String,
     },
+    /// `TrimFailureException`: the trim requested through
+    /// `simulation/do_simple_trim` did not converge ("Trim Failed") or
+    /// named no trim mode ("Illegal trimming mode!").
+    #[error("{message}")]
+    TrimFailed {
+        /// JSBSim's message.
+        message: String,
+    },
     /// A property path SimGear would reject.
     #[error("invalid property path: {0}")]
     PropertyPath(#[from] PathError),

@@ -66,9 +66,6 @@ const PROPERTIES: [&str; 49] = [
     "targetNlf",
 ];
 
-/// `TrimMode::tNone`: the port refuses every other trim request.
-const TRIM_NONE: i32 = 6;
-
 fn number(v: f64) -> String {
     format_g(v, 17)
 }
@@ -111,7 +108,7 @@ fn print(fdm: &mut Fdm) -> Result<String, jsbsim::Error> {
     }
     out.push_str(&format!(" epa {}", number(ic.earth_position_angle())));
     out.push_str(&format!(" speedset {}", speed_set_index(ic.speed_set())));
-    out.push_str(&format!(" trim {TRIM_NONE}"));
+    out.push_str(&format!(" trim {}", ic.trim_requested() as i32));
     Ok(out)
 }
 

@@ -234,17 +234,23 @@ fn running_engines_are_recorded_by_number() {
 }
 
 #[test]
-fn trims_are_unsupported() {
-    for body in ["<trim> Longitudinal </trim>", "<trim>1</trim>"] {
+fn a_version_1_trim_is_recorded_as_jsbsim_spells_it() {
+    use crate::trim::TrimMode;
+    for (body, mode) in [
+        ("<trim> Longitudinal </trim>", TrimMode::Longitudinal),
+        ("<trim>sideways</trim>", TrimMode::None),
+        ("<trim>longitudinal</trim>", TrimMode::Longitudinal),
+        ("<trim>1</trim>", TrimMode::Ground),
+        ("<trim>FULL</trim>", TrimMode::Full),
+        ("<trim>turn</trim>", TrimMode::Turn),
+        ("<trim>0</trim>", TrimMode::None),
+    ] {
         let mut fdm = fdm();
         let xml = format!("<initialize><vt unit=\"FT/SEC\">10</vt>{body}</initialize>");
-        let err = load(&mut fdm, &xml).unwrap_err();
-        assert!(matches!(err, Error::Unsupported { .. }), "{body}: {err}");
-        assert_eq!(
-            fdm.get_property("ic/vt-fps").unwrap(),
-            0.0,
-            "nothing applied"
-        );
+        assert_eq!(load(&mut fdm, &xml), Ok(true), "{body}");
+        assert_eq!(fdm.models.ic.trim_requested(), mode, "{body}");
+        let vt = fdm.get_property("ic/vt-fps").unwrap();
+        assert!((vt - 10.0).abs() < 1e-9, "{body}: {vt}");
     }
 }
 

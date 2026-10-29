@@ -111,6 +111,8 @@ pub struct InitialCondition {
     last_latitude_set: LatitudeSet,
     /// The engines `<running>` starts, one bit each (`enginesRunning`).
     engines_running: u32,
+    /// The trim a version 1 `<trim>` requests (`trimRequested`).
+    trim_requested: crate::trim::TrimMode,
 }
 
 impl<'a> Environment<'a> {
@@ -145,6 +147,7 @@ impl Default for InitialCondition {
             last_altitude_set: AltitudeSet::Asl,
             last_latitude_set: LatitudeSet::Geocentric,
             engines_running: 0,
+            trim_requested: crate::trim::TrimMode::None,
         }
     }
 }
@@ -182,6 +185,12 @@ impl InitialCondition {
             .ok()
             .and_then(|n| 1u32.checked_shl(n))
             .is_some_and(|bit| self.engines_running & bit != 0)
+    }
+
+    /// `TrimRequested`: the trim a version 1 `<trim>` asks for.
+    #[must_use]
+    pub fn trim_requested(&self) -> crate::trim::TrimMode {
+        self.trim_requested
     }
 
     /// `InitializeIC`: at rest on the equator at sea level, level and

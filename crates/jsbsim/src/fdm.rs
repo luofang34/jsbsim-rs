@@ -19,6 +19,7 @@ mod order;
 mod propulsion;
 mod run;
 mod script;
+mod trim;
 
 #[cfg(test)]
 mod tests;
@@ -155,6 +156,8 @@ pub struct Fdm {
     script: Option<crate::script::Script>,
     aircraft_path: String,
     systems_path: String,
+    last_trim: Option<crate::trim::TrimReport>,
+    trims_run: u32,
 }
 
 impl Fdm {
@@ -181,6 +184,8 @@ impl Fdm {
             script: None,
             aircraft_path: "aircraft".to_owned(),
             systems_path: "systems".to_owned(),
+            last_trim: None,
+            trims_run: 0,
         };
         fdm.options = options;
         fdm.env.functions = FunctionSet::with_options(options);

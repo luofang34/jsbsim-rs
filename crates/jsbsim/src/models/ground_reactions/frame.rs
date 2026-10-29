@@ -70,6 +70,13 @@ fn cpp_min(a: f64, b: f64) -> f64 {
 }
 
 impl Contact {
+    /// `GetBodyLocation`: the contact relative to the CG of `input`, body
+    /// frame, ft.
+    #[must_use]
+    pub fn body_location(&self, input: &Inputs) -> ColumnVector3 {
+        ts2b() * (self.location - input.xyz_cg)
+    }
+
     /// `GetBodyForces` up to the compression speed. Returns what the rest
     /// of a compressed frame needs; otherwise the frame is complete but for
     /// [`Contact::end_frame`].

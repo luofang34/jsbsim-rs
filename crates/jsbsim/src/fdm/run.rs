@@ -371,7 +371,11 @@ impl Fdm {
 
     /// `Initialize(IC)`: the initial state into the models, then one frame.
     fn initialize(&mut self) -> Result<(), Error> {
-        let ic = self.models.ic.initial_state();
+        self.initialize_from(self.models.ic.initial_state())
+    }
+
+    /// `Initialize(FGIC)` from the state an initial condition gives.
+    pub fn initialize_from(&mut self, ic: InitialState) -> Result<(), Error> {
         let m = &mut self.models;
         m.propagate.set_initial_state(
             &m.inertial,
@@ -432,12 +436,7 @@ impl Fdm {
         while let Some(request) = self.models.exec.requests.pop() {
             match request {
                 ExecRequest::Reset(mode) => self.reset_to_initial_conditions(mode)?,
-                ExecRequest::Trim(_) => {
-                    return Err(Error::Unsupported {
-                        construct: "simulation/do_simple_trim (FGTrim)".to_owned(),
-                        path: "property write".to_owned(),
-                    });
-                }
+                ExecRequest::Trim(mode) => self.do_trim(mode)?,
                 ExecRequest::InitRunning(n) => self.init_running(n)?,
                 ExecRequest::Linearize => {
                     return Err(Error::Unsupported {

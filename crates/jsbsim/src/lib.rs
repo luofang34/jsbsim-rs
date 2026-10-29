@@ -16,6 +16,7 @@ pub mod options;
 pub mod properties;
 pub mod resolver;
 pub mod script;
+pub mod trim;
 pub mod units;
 pub mod xml;
 

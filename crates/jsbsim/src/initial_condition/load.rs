@@ -6,9 +6,9 @@
 //! Initialization files: the `<initialize>` document of format 1 (flat
 //! elements applied through the setters) or 2 (frames, see `load_v2`).
 //!
-//! Trimming is not ported: a version 1 `<trim>` that requests a trim is
-//! refused before anything is applied. The `<running>` engines are
-//! recorded for `RunIC` to start.
+//! A version 1 `<trim>` records the trim it requests, which the
+//! front end runs after `RunIC`. The `<running>` engines are recorded for
+//! `RunIC` to start.
 
 use std::f64::consts::PI;
 
@@ -17,6 +17,7 @@ use crate::Error;
 use crate::math::{E_PHI, E_PSI, E_THT, E_U, E_V, E_W, Quaternion};
 use crate::models::atmosphere::Atmosphere;
 use crate::models::inertial::Inertial;
+use crate::trim::TrimMode;
 use crate::xml::Element;
 
 /// What `Load` reports.
@@ -36,15 +37,15 @@ fn model_error(message: String) -> Error {
 }
 
 /// `SetTrimRequest`: the trim mode `value` asks for; anything unknown,
-/// including `0`, asks for none.
-fn trim_mode(value: &str) -> Option<&'static str> {
+/// including `0`, leaves the request as it was.
+fn trim_mode(value: &str) -> Option<TrimMode> {
     match value.to_ascii_lowercase().as_str() {
-        "1" | "ground" => Some("ground"),
-        "longitudinal" => Some("longitudinal"),
-        "full" => Some("full"),
-        "pullup" => Some("pullup"),
-        "custom" => Some("custom"),
-        "turn" => Some("turn"),
+        "1" | "ground" => Some(TrimMode::Ground),
+        "longitudinal" => Some(TrimMode::Longitudinal),
+        "full" => Some(TrimMode::Full),
+        "pullup" => Some(TrimMode::Pullup),
+        "custom" => Some(TrimMode::Custom),
+        "turn" => Some(TrimMode::Turn),
         _ => None,
     }
 }
@@ -95,20 +96,6 @@ impl InitialCondition {
         Ok(outcome)
     }
 
-    fn refuse_trim(document: &Element) -> Result<(), Error> {
-        let Some(trim) = document.find_element("trim") else {
-            return Ok(());
-        };
-        let value = document.find_element_value("trim");
-        match trim_mode(value) {
-            Some(mode) => Err(Error::Unsupported {
-                construct: format!("<trim> {mode} (FGTrim)"),
-                path: trim.location().to_string(),
-            }),
-            None => Ok(()),
-        }
-    }
-
     /// `Load_v1`: position, then orientation (set directly, so the local
     /// velocity is kept), then speeds, angles and wind through the setters.
     fn load_v1(
@@ -117,7 +104,6 @@ impl InitialCondition {
         atmosphere: &Atmosphere,
         inertial: &mut Inertial,
     ) -> Result<bool, Error> {
-        Self::refuse_trim(document)?;
         let value = |name: &str, unit: &str| -> Result<Option<f64>, Error> {
             match document.find_element(name) {
                 Some(_) => Ok(Some(
@@ -216,6 +202,11 @@ impl InitialCondition {
         }
         if document.find_element("targetNlf").is_some() {
             self.set_target_nlf(document.find_element_value_as_number("targetNlf")?);
+        }
+        if document.find_element("trim").is_some()
+            && let Some(mode) = trim_mode(document.find_element_value("trim"))
+        {
+            self.trim_requested = mode;
         }
         Ok(())
     }
