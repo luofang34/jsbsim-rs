@@ -77,15 +77,7 @@ pub fn command() -> Command {
         .subcommand(sockets_command(jsbsim_root.clone()))
         .subcommand(bench_command(jsbsim_root.clone()))
         .subcommand(nasa_command(jsbsim_root))
-        .subcommand(
-            Command::new("port")
-                .about("Run the Rust port on golden cases and compare them with their references")
-                .arg(
-                    Arg::new("case")
-                        .action(ArgAction::Append)
-                        .help("Golden case names; all cases when omitted"),
-                ),
-        )
+        .subcommand(port_command())
         .subcommand(compare_command())
         .subcommand(crate::determinism::command())
         .subcommand(
@@ -98,6 +90,19 @@ pub fn command() -> Command {
                         .value_parser(value_parser!(f64))
                         .help("Compare rows up to this time, s"),
                 ),
+        )
+}
+
+fn port_command() -> Command {
+    Command::new("port")
+        .about(
+            "Run the Rust port on golden cases, compare them with their references and check \
+             the margins their tolerance rows claim",
+        )
+        .arg(
+            Arg::new("case")
+                .action(ArgAction::Append)
+                .help("Golden case names; all cases when omitted"),
         )
 }
 
@@ -260,17 +265,34 @@ where
     }
 }
 
-/// `port`: runs the Rust port on the named golden cases, or on all of them.
+/// `port`: runs the Rust port on the named golden cases, or on all of them,
+/// then checks the margins their tolerance rows claim (see
+/// [`crate::margin`]).
 fn port_blocking(repo_root: &Path, sub: &ArgMatches) -> Result<ExitCode, OracleError> {
     let mut names = case_names(sub);
     if names.is_empty() {
         names = manifest::list_cases_blocking(&repo_root.join("oracle").join("goldens"))?;
     }
+    let table = ToleranceTable::read_blocking(&repo_root.join("oracle").join("tolerances.toml"))?;
+    let mut margins = crate::margin::Margins::new(&table);
     let mut code = ExitCode::SUCCESS;
     for case in &names {
-        if cases::port_blocking(repo_root, case)? != ExitCode::SUCCESS {
+        if cases::port_blocking(repo_root, case, &table, &mut margins)? != ExitCode::SUCCESS {
             code = ExitCode::FAILURE;
         }
+    }
+    let refuted = margins.refuted(&table, &names);
+    for refutation in &refuted {
+        error!("{refutation}");
+    }
+    if refuted.is_empty() {
+        info!("tolerance margins: every claimed margin holds");
+    } else {
+        error!(
+            "tolerance margins: {} rows do not have the margin their reason claims",
+            refuted.len()
+        );
+        code = ExitCode::FAILURE;
     }
     Ok(code)
 }

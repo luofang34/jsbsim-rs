@@ -8,8 +8,9 @@
 # fails if the element trees differ; then loads every corpus aircraft in
 # C++ and Rust (see tools/oracle/src/corpus/models.rs); then checks that the
 # driver binds its sockets on loopback only (tools/oracle/src/sockets.rs);
-# then runs the Rust port on every golden case and compares it with the
-# reference.
+# then runs the Rust port on every golden case, compares it with the
+# reference and checks that each tolerance row has the margin over the
+# observed difference its reason claims (tools/oracle/src/margin/claim.rs).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 

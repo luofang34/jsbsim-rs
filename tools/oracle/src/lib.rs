@@ -16,6 +16,7 @@ pub mod determinism;
 pub mod error;
 pub mod ground;
 pub mod manifest;
+pub mod margin;
 pub mod nasa;
 pub mod port_script;
 pub mod probe;

@@ -61,7 +61,7 @@ pub fn compare_transcript(
 
 /// Whether candidate line `b` is the port's refusal, declared in
 /// `unsupported`, of the operation reference line `a` reports on.
-fn declared_unsupported(a: &str, b: &str, unsupported: &[String]) -> bool {
+pub(crate) fn declared_unsupported(a: &str, b: &str, unsupported: &[String]) -> bool {
     let (Some((input_a, _)), Some((input_b, result))) = (a.split_once(" =>"), b.split_once(" =>"))
     else {
         return false;
@@ -170,15 +170,34 @@ fn lookup<'t>(
     property: &str,
     line: usize,
 ) -> Result<&'t Tolerance, OracleError> {
+    let index = position(table, case, property, line)?;
+    table
+        .rows()
+        .get(index)
+        .ok_or_else(|| OracleError::MissingTolerance {
+            case: case.to_owned(),
+            property: property.to_owned(),
+            time: line as f64,
+        })
+}
+
+/// Index of the row bounding number `<op>/<tag>` on `line` of `case`'s
+/// transcript, found in the order the module documentation gives.
+pub(crate) fn position(
+    table: &ToleranceTable,
+    case: &str,
+    property: &str,
+    line: usize,
+) -> Result<usize, OracleError> {
     let time = line as f64;
     let (op, tag) = property.split_once('/').unwrap_or((property, ""));
     let tag_wide = format!("*/{tag}");
     let op_wide = format!("{op}/*");
     table
-        .lookup(case, property, time)
-        .or_else(|| table.lookup(case, &tag_wide, time))
-        .or_else(|| table.lookup(case, &op_wide, time))
-        .or_else(|| table.lookup(case, "*", time))
+        .position(case, property, time)
+        .or_else(|| table.position(case, &tag_wide, time))
+        .or_else(|| table.position(case, &op_wide, time))
+        .or_else(|| table.position(case, "*", time))
         .ok_or_else(|| OracleError::MissingTolerance {
             case: case.to_owned(),
             property: property.to_owned(),

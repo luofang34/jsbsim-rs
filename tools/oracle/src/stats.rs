@@ -2,6 +2,12 @@
 //! Largest Rust-vs-C++ differences of a script case, per property, for
 //! choosing and justifying tolerance rows. Angles listed with a period in
 //! the case's tolerance rows are compared as wrapped differences.
+//!
+//! Samples pair as [`crate::Tolerance::agrees`] pairs them: equal values,
+//! equal infinities included, and NaN on both sides are no difference. A
+//! NaN on one side, an infinity against a finite value and infinities of
+//! opposite sign are mismatches, counted apart from the maxima, so neither
+//! NaN nor infinity ever enters one.
 
 use std::path::Path;
 use std::process::ExitCode;
@@ -10,6 +16,9 @@ use tracing::{error, info};
 
 use crate::manifest::{CaseSpec, Manifest, REFERENCE_FILE};
 use crate::{OracleError, Series};
+
+#[cfg(test)]
+mod tests;
 
 /// Largest difference of one property up to a time.
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -20,6 +29,10 @@ pub struct Max {
     pub rel: f64,
     /// Time of the largest absolute difference, s.
     pub time: f64,
+    /// Samples that are mismatches rather than differences.
+    pub mismatches: usize,
+    /// Time of the first mismatch, s.
+    pub first_mismatch: Option<f64>,
 }
 
 /// Per-property maxima of `candidate` against `reference` over the rows
@@ -38,6 +51,8 @@ pub fn maxima(
             abs: 0.0,
             rel: 0.0,
             time: 0.0,
+            mismatches: 0,
+            first_mismatch: None,
         };
         for (r, c) in reference.rows.iter().zip(&candidate.rows) {
             let (Some(&t), Some(&a), Some(&b)) = (r.first(), r.get(i), c.get(i)) else {
@@ -46,12 +61,20 @@ pub fn maxima(
             if t > until {
                 break;
             }
+            if a == b || (a.is_nan() && b.is_nan()) {
+                continue;
+            }
             let mut d = b - a;
             if let Some(p) = p {
                 d -= p * (d / p).round();
             }
             let d = d.abs();
-            if d > m.abs || d.is_nan() {
+            if !d.is_finite() {
+                m.mismatches = m.mismatches.wrapping_add(1);
+                m.first_mismatch = m.first_mismatch.or(Some(t));
+                continue;
+            }
+            if d > m.abs {
                 m.abs = d;
                 m.time = t;
             }
@@ -105,6 +128,12 @@ pub fn port_stats_blocking(
             "{case} {name:<36} max |diff| {:.3e} at t={:.2}, max rel {:.3e}",
             m.abs, m.time, m.rel
         );
+        if let Some(t) = m.first_mismatch {
+            error!(
+                "{case} {name:<36} {} mismatches (NaN on one side or an infinity), first at t={t:.2}",
+                m.mismatches
+            );
+        }
     }
     Ok(ExitCode::SUCCESS)
 }

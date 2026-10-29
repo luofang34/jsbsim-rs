@@ -48,7 +48,11 @@ live in `oracle/`:
   `abs + rel * |reference|`, optionally for a time window `[t_start, t_end)`,
   with a mandatory reason, and for angles on a branch cut a `period` (2π or
   360) by which differences are wrapped. A logged property without a row is
-  an error. A
+  an error. A reason stating `bound 10x that` must have a bound of 10 to 20
+  times the largest difference `port` observes under the row (ten times,
+  rounded up to one significant figure); one stating `bound at least <m>x
+  that` (m ≥ 2) must have at least that margin; `port` fails otherwise,
+  and on a claiming row that observes no difference. A
   transcript case with rows is compared number by number under the row for
   `<op>/<tag>`, then `<op>/*`, then `*`; without rows it must match exactly.
 

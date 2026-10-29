@@ -166,9 +166,16 @@ impl ToleranceTable {
     /// The row of `case` named exactly `property` covering `time`, if any.
     #[must_use]
     pub fn lookup(&self, case: &str, property: &str, time: f64) -> Option<&Tolerance> {
+        self.position(case, property, time)
+            .and_then(|index| self.rows.get(index))
+    }
+
+    /// Index in [`Self::rows`] of the row [`Self::lookup`] finds.
+    #[must_use]
+    pub fn position(&self, case: &str, property: &str, time: f64) -> Option<usize> {
         self.rows
             .iter()
-            .find(|row| row.case == case && row.property == property && row.covers(time))
+            .position(|row| row.case == case && row.property == property && row.covers(time))
     }
 
     /// The row bounding series column `property` of `case` at `time`: the
@@ -176,8 +183,15 @@ impl ToleranceTable {
     /// column the case does not list.
     #[must_use]
     pub fn lookup_series(&self, case: &str, property: &str, time: f64) -> Option<&Tolerance> {
-        self.lookup(case, property, time)
-            .or_else(|| self.lookup(case, "*", time))
+        self.position_series(case, property, time)
+            .and_then(|index| self.rows.get(index))
+    }
+
+    /// Index in [`Self::rows`] of the row [`Self::lookup_series`] finds.
+    #[must_use]
+    pub fn position_series(&self, case: &str, property: &str, time: f64) -> Option<usize> {
+        self.position(case, property, time)
+            .or_else(|| self.position(case, "*", time))
     }
 
     /// All rows, in file order.

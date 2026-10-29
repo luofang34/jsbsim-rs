@@ -11,6 +11,7 @@ use crate::cli::report;
 use crate::manifest::{
     self, CaseSpec, INPUT_FILE, Manifest, Provenance, REFERENCE_FILE, TRANSCRIPT_FILE,
 };
+use crate::margin::Margins;
 use crate::transcript::{TranscriptOutcome, compare_transcript, compare_transcript_declaring};
 use crate::upstream::{self, Paths};
 use crate::{OracleError, Series, ToleranceTable, compare};
@@ -143,13 +144,21 @@ pub fn report_transcript(case: &str, outcome: &TranscriptOutcome) -> bool {
 }
 
 /// Runs the Rust twin of transcript case `case`, writes its output under
-/// `target/oracle/port/` and compares it with the reference.
-pub fn port_blocking(repo_root: &Path, case: &str) -> Result<ExitCode, OracleError> {
+/// `target/oracle/port/` and compares it with the reference under `table`,
+/// counting every difference into `margins`.
+pub fn port_blocking(
+    repo_root: &Path,
+    case: &str,
+    table: &ToleranceTable,
+    margins: &mut Margins,
+) -> Result<ExitCode, OracleError> {
     let dir = repo_root.join("oracle").join("goldens").join(case);
     let manifest = Manifest::read_blocking(&dir)?;
     let spec = match &manifest.case {
         CaseSpec::Transcript(spec) => spec,
-        CaseSpec::Script(spec) => return port_script_blocking(repo_root, case, spec),
+        CaseSpec::Script(spec) => {
+            return port_script_blocking(repo_root, case, spec, table, margins);
+        }
     };
     let input_path = dir.join(INPUT_FILE);
     let input = std::fs::read_to_string(&input_path)
@@ -165,9 +174,9 @@ pub fn port_blocking(repo_root: &Path, case: &str) -> Result<ExitCode, OracleErr
     let reference_path = dir.join(TRANSCRIPT_FILE);
     let reference = std::fs::read_to_string(&reference_path)
         .map_err(|e| OracleError::io("reading", &reference_path, e))?;
-    let table = ToleranceTable::read_blocking(&repo_root.join("oracle").join("tolerances.toml"))?;
+    margins.observe_transcript(case, &reference, &candidate, table, &spec.unsupported)?;
     let outcome =
-        compare_transcript_declaring(case, &reference, &candidate, &table, &spec.unsupported)?;
+        compare_transcript_declaring(case, &reference, &candidate, table, &spec.unsupported)?;
     Ok(if report_transcript(case, &outcome) {
         ExitCode::SUCCESS
     } else {
@@ -176,12 +185,15 @@ pub fn port_blocking(repo_root: &Path, case: &str) -> Result<ExitCode, OracleErr
 }
 
 /// Runs the Rust port on script case `case` with the vendored inputs and
-/// compares it with the reference. A run that stops with an error is
-/// compared up to the last row it produced.
+/// compares it with the reference under `table`, counting every
+/// difference into `margins`. A run that stops with an error is compared up
+/// to the last row it produced.
 pub fn port_script_blocking(
     repo_root: &Path,
     case: &str,
     spec: &crate::manifest::ScriptSpec,
+    table: &ToleranceTable,
+    margins: &mut Margins,
 ) -> Result<ExitCode, OracleError> {
     let dir = repo_root.join("oracle").join("goldens").join(case);
     let (candidate, error) = crate::port_script::run_script(&spec.rust_root(repo_root), spec);
@@ -193,8 +205,8 @@ pub fn port_script_blocking(
         error!("{case}: the Rust run stopped after t={cut}: {e}");
         reference.rows.truncate(candidate.rows.len());
     }
-    let table = ToleranceTable::read_blocking(&repo_root.join("oracle").join("tolerances.toml"))?;
-    let outcome = compare(case, &reference, &candidate, &table)?;
+    let outcome = compare(case, &reference, &candidate, table)?;
+    margins.observe_series(case, &reference, &candidate, table)?;
     Ok(if report(case, &outcome) && error.is_none() {
         ExitCode::SUCCESS
     } else {
