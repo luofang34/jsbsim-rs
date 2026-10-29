@@ -305,7 +305,10 @@ impl Fdm {
                 setter(&mut self.models, convert_write(*kind, value));
                 true
             }
-            None => self.env.tree.set_double(node, value),
+            None => {
+                self.env.tree.set_double_at_target(target, value);
+                true
+            }
         };
         self.process_requests()?;
         Ok(written)

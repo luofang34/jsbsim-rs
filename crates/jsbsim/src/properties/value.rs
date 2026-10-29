@@ -226,38 +226,57 @@ impl PropertyTree {
     fn write<T: Written>(&mut self, id: NodeId, value: T) -> bool {
         match self.write_target(id) {
             Some(target) => {
-                self.store_typed(target, value);
-                self.trace_write(target);
+                self.write_at_target(target, value);
                 true
             }
             None => false,
         }
     }
 
+    /// [`set_double`](Self::set_double) of a node that
+    /// [`write_target`](Self::write_target) returned: no aliases to follow
+    /// again.
+    pub(crate) fn set_double_at_target(&mut self, target: NodeId, value: f64) {
+        self.write_at_target(target, value);
+    }
+
+    #[inline]
+    fn write_at_target<T: Written>(&mut self, target: NodeId, value: T) {
+        self.store_typed(target, value);
+        if self.attribute(target, Attribute::TRACE_WRITE) {
+            self.trace_write(target);
+        }
+    }
+
+    /// Converts in place, so that a write to a typed node neither drops nor
+    /// rebuilds its value.
+    #[inline]
     fn store_typed<T: Written>(&mut self, target: NodeId, value: T) {
         let Some(node) = self.node_mut(target) else {
             return;
         };
         let slot = &mut node.value;
-        *slot = match &*slot {
-            Value::None | Value::Unspecified(_) | Value::Alias(_) => value.into_value(),
-            Value::Bool(_) => Value::Bool(value.to_bool()),
-            Value::Int(_) => Value::Int(value.to_int()),
-            Value::Long(_) => Value::Long(value.to_long()),
-            Value::Float(_) => Value::Float(value.to_float()),
-            Value::Double(_) => Value::Double(value.to_double()),
-            Value::String(_) => Value::String(value.to_text()),
-        };
+        match slot {
+            Value::Double(d) => *d = value.to_double(),
+            Value::Bool(b) => *b = value.to_bool(),
+            Value::Int(i) => *i = value.to_int(),
+            Value::Long(l) => *l = value.to_long(),
+            Value::Float(f) => *f = value.to_float(),
+            Value::String(s) => *s = value.to_text(),
+            Value::None | Value::Unspecified(_) | Value::Alias(_) => *slot = value.into_value(),
+        }
     }
 
+    /// Kept out of line so that the TRACE_WRITE test of every write stays
+    /// small enough to inline.
+    #[cold]
+    #[inline(never)]
     fn trace_write(&self, id: NodeId) {
-        if self.attribute(id, Attribute::TRACE_WRITE) {
-            info!(
-                "TRACE: Write node {}, value \"{}\"",
-                self.path(id, false),
-                self.get_string(id)
-            );
-        }
+        info!(
+            "TRACE: Write node {}, value \"{}\"",
+            self.path(id, false),
+            self.get_string(id)
+        );
     }
 
     /// `setBoolValue`; false when the node is not writable.
@@ -311,7 +330,9 @@ impl PropertyTree {
             Value::Unspecified(_) if !unspecified => Value::String(text.to_owned()),
             other => parse_into(other, text),
         };
-        self.trace_write(target);
+        if self.attribute(target, Attribute::TRACE_WRITE) {
+            self.trace_write(target);
+        }
         true
     }
 

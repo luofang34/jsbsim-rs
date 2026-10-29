@@ -264,3 +264,36 @@ fn absolute_paths_leave_an_instance_tree() {
     assert_eq!(tree.get("../../systems/x").unwrap(), Some(absolute));
     assert_eq!(tree.children(base), &[tree.parent(relative).unwrap()]);
 }
+
+#[test]
+fn a_double_written_at_its_target_converts_to_the_node_type() {
+    let mut tree = PropertyTree::new();
+    let mut typed = |path: &str, set: fn(&mut PropertyTree, NodeId)| {
+        let id = tree.get_or_create(tree.root(), path).unwrap();
+        set(&mut tree, id);
+        let target = tree.write_target(id).unwrap();
+        tree.set_double_at_target(target, 2.75);
+        (tree.value_type(id), tree.get_string(id))
+    };
+    let expected = [
+        (ValueType::Bool, "true"),
+        (ValueType::Int, "2"),
+        (ValueType::Long, "2"),
+        (ValueType::Float, "2.75"),
+        (ValueType::Double, "2.75"),
+        (ValueType::String, "2.750000"),
+        (ValueType::Double, "2.75"),
+    ];
+    let got = [
+        typed("b", |t, id| assert!(t.set_bool(id, false))),
+        typed("i", |t, id| assert!(t.set_int(id, 0))),
+        typed("l", |t, id| assert!(t.set_long(id, 0))),
+        typed("f", |t, id| assert!(t.set_float(id, 0.0))),
+        typed("d", |t, id| assert!(t.set_double(id, 0.0))),
+        typed("s", |t, id| assert!(t.set_string(id, "x"))),
+        typed("none", |_, _| {}),
+    ];
+    for ((ty, text), (got_ty, got_text)) in expected.into_iter().zip(got) {
+        assert_eq!((ty, text), (got_ty, got_text.as_str()));
+    }
+}
