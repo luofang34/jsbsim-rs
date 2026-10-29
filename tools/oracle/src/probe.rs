@@ -13,6 +13,7 @@ mod mass_balance;
 mod math;
 pub mod models;
 mod properties;
+mod propulsion;
 mod table;
 mod units;
 mod winds;
@@ -53,6 +54,7 @@ pub fn run(name: &str, input: &str, context: &ProbeContext) -> Result<String, Or
         }),
         "winds" => Ok(winds::run(input)),
         "fcs" => Ok(fcs::run(input, context)),
+        "propulsion" => Ok(propulsion::run(input, context)),
         "geodesic" => Ok(geodesic::run(input, context)),
         other => Err(OracleError::Provenance(format!("unknown probe {other}"))),
     }

@@ -13,6 +13,7 @@ mod exec_bind;
 mod load;
 mod models_run;
 mod order;
+mod propulsion;
 mod run;
 mod script;
 
@@ -118,7 +119,7 @@ pub struct Models {
     /// `FGAuxiliary`.
     pub auxiliary: Auxiliary,
     /// `FGPropulsion`.
-    pub propulsion: ForceModel,
+    pub propulsion: crate::models::propulsion::Propulsion,
     /// `FGAerodynamics`.
     pub aerodynamics: crate::models::aerodynamics::Aerodynamics,
     /// `FGGroundReactions`.

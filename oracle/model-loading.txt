@@ -10,7 +10,7 @@ B747 unsupported <engine> in <propulsion> (In file aircraft/B747/B747.xml: line 
 Boeing314 unsupported <engine> in <propulsion> (In file aircraft/Boeing314/Boeing314.xml: line 491)
 C130 unsupported <engine> in <propulsion> (In file aircraft/C130/C130.xml: line 114)
 Camel unsupported <engine> in <propulsion> (In file aircraft/Camel/Camel.xml: line 580)
-Concorde unsupported <property> in <propulsion> (In file aircraft/Concorde/Concorde.xml: line 641)
+Concorde unsupported <engine> in <propulsion> (In file aircraft/Concorde/Concorde.xml: line 644)
 DHC6 unsupported <engine> in <propulsion> (In file aircraft/DHC6/DHC6.xml: line 166)
 F450 unsupported <engine> in <propulsion> (In file aircraft/F450/Propulsion.xml: line 4)
 F4N unsupported <engine> in <propulsion> (In file aircraft/F4N/F4N.xml: line 214)

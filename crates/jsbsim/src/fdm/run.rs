@@ -91,22 +91,24 @@ impl Models {
                 g.xyz_cg = self.mass_balance.xyz_cg;
             }
             Model::MassBalance => self.load_mass_balance_inputs(),
+            Model::Propulsion => self.load_propulsion_inputs(),
             Model::Accelerations => self.load_accelerations_inputs(),
             Model::Auxiliary => self.load_auxiliary_inputs(),
             _ => {}
         }
     }
 
-    /// The executive supplies no tank or lifting gas inputs, so they
-    /// contribute nothing.
+    /// The executive supplies no lifting gas inputs, so they contribute
+    /// nothing.
     fn load_mass_balance_inputs(&mut self) {
+        let tank_inertia = self.propulsion.calculate_tank_inertias(&self.mass_balance);
         let i = &mut self.mass_balance.input;
         i.gas_inertia = Matrix33::zero();
         i.gas_mass = 0.0;
         i.gas_moment = ColumnVector3::zero();
-        i.tanks_weight = 0.0;
-        i.tanks_moment = ColumnVector3::zero();
-        i.tank_inertia = Matrix33::zero();
+        i.tanks_weight = self.propulsion.tanks_weight();
+        i.tanks_moment = self.propulsion.tanks_moment();
+        i.tank_inertia = tank_inertia;
         i.wow = self.ground_reactions.wow();
     }
 
@@ -177,7 +179,7 @@ impl Models {
                 self.aerodynamics.state.forces,
                 self.aerodynamics.state.moments,
             ),
-            propulsion: fm(&self.propulsion),
+            propulsion: (self.propulsion.forces, self.propulsion.moments),
             ground: (self.ground_reactions.forces, self.ground_reactions.moments),
             external: (
                 self.external_reactions.total_forces,
@@ -201,6 +203,7 @@ impl Models {
             Model::Aerodynamics => self.aerodynamics.init_model(),
             Model::ExternalReactions => self.external_reactions.init_model(),
             Model::GroundReactions => self.ground_reactions.init_model(),
+            Model::Propulsion => self.propulsion.init_model(),
             _ => {}
         }
     }
@@ -331,6 +334,7 @@ impl Fdm {
             Model::Aerodynamics => self.run_aerodynamics()?,
             Model::GroundReactions => self.run_ground_reactions()?,
             Model::ExternalReactions => self.run_external_reactions()?,
+            Model::Propulsion => self.run_propulsion()?,
             Model::Accelerations => {
                 let (hd, ts) = (m.exec.hold_down, m.exec.trim_status);
                 m.accelerations.run(holding, hd, ts);

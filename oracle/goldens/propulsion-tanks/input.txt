@@ -1,0 +1,143 @@
+# FGTank and FGPropulsion's tank management on aircraft without engines:
+# oracle/scenarios/aircraft/tanks* (every tank element, the loader's
+# refusals, an included <propulsion>), then the fuel tank cases of
+# tests/TestFuelTanksInertia.py, tests/TestUnusableFuel.py and
+# tests/TestPointMassInertia.py on the engine-less corpus aircraft of
+# oracle/derived/aircraft (see tools/oracle/src/derived/tanks.rs).
+paths ../.. scenarios/aircraft inputs/systems
+new
+load tanks
+watch propulsion/tank[0]/contents-lbs propulsion/tank[0]/pct-full propulsion/tank[0]/density-lbs_per_gal propulsion/tank[0]/unusable-volume-gal propulsion/tank[0]/priority propulsion/tank[0]/x-position propulsion/tank[1]/contents-lbs propulsion/tank[1]/density-lbs_per_gal propulsion/tank[2]/local-ixx-slug_ft2 propulsion/tank[3]/local-iyy-slug_ft2 propulsion/tank[5]/priority propulsion/test/declared propulsion/test/contents-sum propulsion/total-fuel-lbs propulsion/refuel inertia/weight-lbs inertia/cg-x-in inertia/cg-y-in inertia/cg-z-in inertia/ixx-slugs_ft2 inertia/iyy-slugs_ft2 inertia/izz-slugs_ft2 inertia/ixz-slugs_ft2
+print
+tanks
+set ic/h-sl-ft 10000
+set ic/vc-kts 250
+runic
+tanks
+set propulsion/tank[0]/external-flow-rate-pps -2.5
+set propulsion/tank[1]/external-flow-rate-pps 4
+set propulsion/tank[2]/external-flow-rate-pps -10
+set propulsion/tank[3]/external-flow-rate-pps -25
+run
+run
+run
+tanks
+set propulsion/tank[1]/external-flow-rate-pps 4000
+run
+run
+tanks
+set propulsion/tank[0]/external-flow-rate-pps 0
+set propulsion/tank[1]/external-flow-rate-pps -300
+set propulsion/tank[2]/external-flow-rate-pps 0
+set propulsion/tank[3]/external-flow-rate-pps 0
+run
+run
+run
+tanks
+set propulsion/tank[1]/external-flow-rate-pps 0
+set propulsion/tank[0]/priority 0
+set propulsion/tank[5]/priority 3
+set propulsion/tank[0]/x-position 60
+set propulsion/tank[0]/unusable-volume-gal 2.5
+set propulsion/tank[2]/contents-lbs 5000
+set propulsion/tank[3]/contents-lbs 0
+print
+tanks
+dump 30
+dump 600
+refuel 2
+refuel 60
+transfer 0 1 40
+transfer 1 -1 1000
+transfer -1 3 2500
+transfer 2 0 10
+tanks
+init
+print
+set simulation/reset 0
+print
+tanks
+set propulsion/tank[0]/contents-lbs 0
+set propulsion/tank[1]/contents-lbs 0
+set propulsion/tank[2]/contents-lbs 0
+set propulsion/tank[3]/contents-lbs 0
+set propulsion/tank[5]/contents-lbs 0
+run
+print
+# The same aircraft with its <propulsion> in a file of its own.
+new
+load tanks_include
+print
+tanks
+# What FGTank and FGPropulsion refuse.
+new
+load tanks_unknown_type
+new
+load tanks_overfull
+new
+load tanks_swapped
+new
+load tanks_bore
+new
+load tanks_unknown_grain
+# TestFuelTanksInertia.test_fuel_tanks_inertia, up to the script it runs
+# with the engine: halving the contents halves the local inertias.
+paths ../.. derived/aircraft inputs/systems
+new
+load c172x_tanks
+watch propulsion/tank/contents-lbs propulsion/tank/local-ixx-slug_ft2 propulsion/tank/local-iyy-slug_ft2 propulsion/tank/local-izz-slug_ft2 propulsion/tank[1]/contents-lbs inertia/weight-lbs inertia/ixx-slugs_ft2 inertia/cg-y-in
+set ic/h-sl-ft 5000
+set ic/vc-kts 100
+runic
+set propulsion/tank/contents-lbs 64.5
+print
+run
+tanks
+# TestUnusableFuel, up to running the engine until it starves.
+new
+load c172x_tanks
+watch propulsion/tank[0]/unusable-volume-gal propulsion/tank[0]/contents-lbs propulsion/tank[1]/unusable-volume-gal propulsion/tank[1]/contents-lbs propulsion/tank[0]/pct-full
+set propulsion/tank[0]/unusable-volume-gal 1.5
+set propulsion/tank[1]/unusable-volume-gal 1.5
+set propulsion/tank[0]/contents-lbs 10
+set propulsion/tank[1]/contents-lbs 10
+set ic/h-sl-ft 5000
+runic
+tanks
+# TestFuelTanksInertia.test_fuel_tanks_content: J246's fuel and oxidizer
+# totals.
+new
+load J246_tanks
+set ic/h-sl-ft 10000
+runic
+tanks
+# TestFuelTanksInertia.test_grain_tanks_content: a grain half full when
+# loaded, then filled; then one empty when loaded, then filled.
+new
+load J246_half_grain
+watch propulsion/tank[0]/contents-lbs propulsion/tank[0]/local-ixx-slug_ft2 propulsion/tank[0]/local-iyy-slug_ft2
+set ic/h-sl-ft 10000
+runic
+set propulsion/tank/contents-lbs 1114092
+print
+new
+load J246_empty_grain
+watch propulsion/tank[0]/contents-lbs propulsion/tank[0]/local-ixx-slug_ft2 propulsion/tank[0]/local-iyy-slug_ft2
+set ic/h-sl-ft 10000
+runic
+set propulsion/tank/contents-lbs 1114092
+print
+tanks
+# TestPointMassInertia: with no point mass and empty tanks the weight is
+# the empty weight.
+new
+load f16_tanks
+watch inertia/weight-lbs inertia/empty-weight-lbs inertia/ixz-slugs_ft2 inertia/ixx-slugs_ft2 inertia/cg-x-in
+set ic/h-sl-ft 10000
+set ic/vc-kts 300
+runic
+set inertia/pointmass-weight-lbs 0
+set propulsion/tank[0]/contents-lbs 0
+set propulsion/tank[1]/contents-lbs 0
+run
+tanks

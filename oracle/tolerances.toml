@@ -5253,3 +5253,10 @@ property = "velocities/q-rad_sec"
 abs = 2e-14
 rel = 0.0
 reason = "The angle of attack first differs by one ulp at t=0.02 s, as it does for the unmodified mk82, from a last-digit libm difference in the dynamics; it first differs here at t=0.18 s and the propagation carries it; observed max 1.9e-15 (rel 2.3e-12) at t=9.34 s; bound 10x that."
+
+[[tolerance]]
+case = "propulsion-tanks"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Tank contents, fill levels, drain-to-full CG interpolation, liquid and grain inertias, the heat exchange, refuel, dump and transfer use only IEEE basic operations and sqrt in JSBSim's order, and each tank's area is one libm pow of its capacity that agrees with Apple's for every tank here, so they must be bit-identical; observed max |diff| 0."

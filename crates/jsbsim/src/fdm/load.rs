@@ -253,11 +253,7 @@ impl Fdm {
     ) -> Result<(), Error> {
         unsupported_if_present(document, "buoyant_forces")?;
         if let Some(mut propulsion) = document.find_element("propulsion").cloned() {
-            refuse_children(&propulsion)?;
-            // A `file` include holds the engines; it is refused like inline ones.
-            if let Some(included) = loader.open(&mut propulsion, IncludeKind::Model)? {
-                refuse_children(&included)?;
-            }
+            self.load_propulsion(loader, &mut propulsion)?;
         }
         let systems: Vec<Element> = document
             .children()
@@ -332,18 +328,6 @@ fn unsupported_if_present(document: &Element, name: &str) -> Result<(), Error> {
         Some(el) => Err(Error::Unsupported {
             construct: format!("<{name}>"),
             path: el.location().to_string(),
-        }),
-        None => Ok(()),
-    }
-}
-
-/// A model that is not ported yet may only be present empty, or hold
-/// nothing but `<documentation>`, which JSBSim ignores.
-pub(super) fn refuse_children(el: &Element) -> Result<(), Error> {
-    match el.children().iter().find(|c| c.name() != "documentation") {
-        Some(child) => Err(Error::Unsupported {
-            construct: format!("<{}> in <{}>", child.name(), el.name()),
-            path: child.location().to_string(),
         }),
         None => Ok(()),
     }

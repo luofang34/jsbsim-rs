@@ -28,7 +28,8 @@ pub fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
     b.getter("inertia/ixz-slugs_ft2", |m| m.mass_balance.j[(E_X, E_Z)])?;
     b.getter("inertia/iyz-slugs_ft2", |m| -m.mass_balance.j[(E_Y, E_Z)])?;
     b.setter_only("inertia/print-mass-properties", Kind::Int, |m, _| {
-        m.mass_balance.mass_properties_report();
+        let tanks = m.propulsion.tank_report(&m.mass_balance);
+        m.mass_balance.mass_properties_report(&tanks);
     })?;
     Ok(())
 }
@@ -71,10 +72,9 @@ pub(super) fn bind_point_mass(b: &mut Binder<'_>, num: usize) -> Result<(), Erro
 }
 
 impl MassBalance {
-    /// `GetMassPropertiesReport`: the base vehicle, each point mass and
-    /// the total (lb, in, slug·ft^2). Tanks are not reported as this port
-    /// has no propulsion tanks.
-    pub fn mass_properties_report(&self) {
+    /// `GetMassPropertiesReport`: the base vehicle, each point mass, the
+    /// propulsion's `tank_report` and the total (lb, in, slug·ft^2).
+    pub fn mass_properties_report(&self, tank_report: &str) {
         let row = |label: &str, w: f64, l: [f64; 3], j: &crate::math::Matrix33| {
             format!(
                 "{label:<34}{w:>12.1}{:>8.1}{:>8.1}{:>8.1}{:>12.1}{:>12.1}{:>12.1}{:>12.1}{:>12.1}{:>12.1}",
@@ -107,6 +107,9 @@ impl MassBalance {
             let label = format!("{i:<4}{:<30}", pm.name);
             out.push_str(&row(&label, pm.weight, v(pm.location), &pm.inertia));
             out.push('\n');
+        }
+        if !tank_report.is_empty() {
+            out.push_str(&format!("\n    {:<34}\n{tank_report}", "Tanks Content"));
         }
         out.push_str(&row("    Total: ", self.weight, v(self.xyz_cg), &self.j));
         tracing::info!("{out}");

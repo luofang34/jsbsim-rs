@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  A grain whose bore is as wide as the grain, which FGTank refuses.
+-->
+<fdm_config name="tanks_bore" version="2.0" release="ALPHA">
+  <fileheader/>
+  <metrics/>
+  <mass_balance>
+    <ixx unit="SLUG*FT2"> 1000.0 </ixx>
+    <iyy unit="SLUG*FT2"> 2000.0 </iyy>
+    <izz unit="SLUG*FT2"> 2500.0 </izz>
+    <ixz unit="SLUG*FT2"> 15.0 </ixz>
+    <emptywt unit="LBS"> 3000 </emptywt>
+    <location name="CG" unit="IN">
+      <x> 40.0 </x>
+      <y> 0.0 </y>
+      <z> 5.0 </z>
+    </location>
+  </mass_balance>
+  <ground_reactions/>
+  <propulsion>
+    <tank type="FUEL">
+      <location unit="IN">
+        <x> 0.0 </x>
+        <y> 0.0 </y>
+        <z> 0.0 </z>
+      </location>
+      <radius unit="IN"> 4 </radius>
+      <grain_config type="CYLINDRICAL">
+        <length unit="IN"> 10 </length>
+        <bore_diameter unit="IN"> 8 </bore_diameter>
+      </grain_config>
+      <capacity unit="LBS"> 50 </capacity>
+    </tank>
+  </propulsion>
+  <aerodynamics/>
+</fdm_config>

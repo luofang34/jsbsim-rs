@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<!-- SPDX-License-Identifier: LGPL-2.1-or-later -->
+<propulsion name="tank scenario">
+  <documentation> Every tank element FGTank reads, outside an engine. </documentation>
+  <property value="3.5">propulsion/test/declared</property>
+  <function name="propulsion/test/contents-sum">
+    <sum>
+      <property>propulsion/tank[0]/contents-lbs</property>
+      <property>propulsion/tank[1]/contents-lbs</property>
+      <property>propulsion/tank[2]/contents-lbs</property>
+    </sum>
+  </function>
+  <tank type="FUEL" name="left wing">
+    <location unit="IN">
+      <x> 50.0 </x>
+      <y> -80.0 </y>
+      <z> 10.0 </z>
+    </location>
+    <drain_location unit="FT">
+      <x> 4.0 </x>
+      <y> -6.0 </y>
+      <z> 1.5 </z>
+    </drain_location>
+    <radius unit="FT"> 1.5 </radius>
+    <inertia_factor> 0.5 </inertia_factor>
+    <capacity unit="KG"> 200 </capacity>
+    <contents unit="KG"> 150 </contents>
+    <unusable-volume unit="LTR"> 4.0 </unusable-volume>
+    <temperature> 59 </temperature>
+    <standpipe unit="LBS"> 30 </standpipe>
+    <priority> 2 </priority>
+    <density unit="KG/L"> 0.8 </density>
+  </tank>
+  <tank type="FUEL" name="right wing">
+    <capacity unit="LBS"> 500 </capacity>
+    <contents unit="LBS"> 120 </contents>
+    <unusable-volume unit="GAL"> 1.0 </unusable-volume>
+    <radius unit="IN"> 12 </radius>
+    <type> JET-A </type>
+  </tank>
+  <tank type="OXIDIZER" name="grain">
+    <location unit="IN">
+      <x> 120.0 </x>
+      <y> 0.0 </y>
+      <z> -4.0 </z>
+    </location>
+    <radius unit="IN"> 10.0 </radius>
+    <grain_config type="ENDBURNING">
+      <length unit="IN"> 50.0 </length>
+    </grain_config>
+    <capacity unit="LBS"> 1000 </capacity>
+    <contents unit="LBS"> 800 </contents>
+  </tank>
+  <tank type="FUEL" name="bored">
+    <location unit="IN">
+      <x> 100.0 </x>
+      <y> 0.0 </y>
+      <z> 0.0 </z>
+    </location>
+    <radius unit="IN"> 20.0 </radius>
+    <grain_config type="CYLINDRICAL">
+      <length unit="FT"> 6.0 </length>
+      <bore_diameter unit="IN"> 8.0 </bore_diameter>
+    </grain_config>
+    <capacity unit="LBS"> 2000 </capacity>
+    <contents unit="LBS"> 2000 </contents>
+  </tank>
+  <tank type="FUEL" name="zero capacity">
+    <location unit="IN">
+      <x> 0.0 </x>
+      <y> 0.0 </y>
+      <z> 0.0 </z>
+    </location>
+    <capacity unit="LBS"> 0 </capacity>
+  </tank>
+  <tank type="FUEL" name="unselected">
+    <location unit="M">
+      <x> 1.0 </x>
+      <y> 0.5 </y>
+      <z> 0.0 </z>
+    </location>
+    <capacity unit="LBS"> 100 </capacity>
+    <contents unit="LBS"> 2 </contents>
+    <unusable-volume unit="GAL"> 1.0 </unusable-volume>
+    <priority> 0 </priority>
+    <type> KEROSENE </type>
+  </tank>
+  <dump-rate unit="KG/MIN"> 100 </dump-rate>
+  <refuel-rate unit="LBS/MIN"> 3000 </refuel-rate>
+</propulsion>
