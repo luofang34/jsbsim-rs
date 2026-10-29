@@ -153,3 +153,6 @@ impl Output {
         !(trim_status || self.base.skip() || holding)
     }
 }
+
+crate::snapshot::visit_fields! { OutputType { base } skip { pre, post } }
+crate::snapshot::visit_fields! { Output { base, types } }

@@ -464,33 +464,3 @@ impl Fdm {
         Ok(())
     }
 }
-
-impl Fdm {
-    /// `FGInitialCondition::Load(file)` for `dir/name` (`.xml` added when
-    /// it has no extension), applied to [`Models::ic`]. False, with the
-    /// problem logged, where JSBSim's `Load` returns false.
-    pub fn load_initial_conditions(
-        &mut self,
-        resolver: &dyn crate::Resolver,
-        dir: &str,
-        name: &str,
-    ) -> Result<bool, Error> {
-        let loader = crate::xml::DocumentLoader::new(resolver, dir);
-        let document = loader.load_document(&format!("{dir}/{name}"))?;
-        self.load_initial_conditions_document(&document)
-    }
-
-    /// `FGInitialCondition::Load` on a parsed `<initialize>` document.
-    pub fn load_initial_conditions_document(
-        &mut self,
-        document: &crate::xml::Element,
-    ) -> Result<bool, Error> {
-        let m = &mut self.models;
-        let outcome = m.ic.load(document, &m.atmosphere, &mut m.inertial)?;
-        if outcome.planet_rotation_changed {
-            m.propagate.input.omega_planet = m.inertial.omega_planet;
-            m.accelerations.input.omega_planet = m.inertial.omega_planet;
-        }
-        Ok(outcome.result)
-    }
-}

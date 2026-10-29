@@ -280,3 +280,13 @@ fn inverse_inertia(j: &Matrix33) -> Matrix33 {
 
     Matrix33::new(k1, k2, k3, k2, k4, k5, k3, k5, k6)
 }
+
+crate::snapshot::visit_fields! {
+    Inputs { gas_mass, tanks_weight, gas_moment, gas_inertia, tanks_moment, tank_inertia, wow }
+}
+crate::snapshot::visit_fields! {
+    MassBalance {
+        base, input, mass, weight, empty_weight, xyz_cg, j, jinv, pm_j, base_j, last_xyz_cg,
+        delta_xyz_cg, delta_xyz_cg_body, base_xyz_cg, point_masses,
+    }
+}

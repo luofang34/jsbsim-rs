@@ -145,3 +145,13 @@ pub struct Engine {
     /// The engine type and its state.
     pub kind: EngineKind,
 }
+
+crate::snapshot::visit_fields! {
+    EngineBase {
+        number, sl_fuel_flow_max, max_throttle, min_throttle, fuel_expended, fuel_flow_rate,
+        pct_power, starter, starved, running, cranking, fuel_freeze, fuel_flow_gph, fuel_flow_pph,
+        fuel_used_lbs, fuel_density, source_tanks,
+    }
+    skip { name, engine_type, functions }
+}
+crate::snapshot::visit_fields! { Engine { base, thruster, kind } }

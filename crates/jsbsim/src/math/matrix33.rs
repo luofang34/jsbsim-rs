@@ -333,3 +333,5 @@ impl SubAssign for Matrix33 {
         }
     }
 }
+
+crate::snapshot::visit_fields! { Matrix33 { data } }

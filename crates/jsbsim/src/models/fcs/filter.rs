@@ -256,3 +256,13 @@ fn is_constant(parameter: &Parameter, ctx: &mut LoadContext<'_>) -> bool {
         _ => false,
     }
 }
+
+crate::snapshot::visit_fields! { Coefficients { ca, cb, cc, cd, ce } }
+crate::snapshot::visit_fields! {
+    Filter {
+        dynamic, initialize, k, previous_input1, previous_input2, previous_output1,
+        previous_output2,
+    }
+    each { c }
+    skip { kind }
+}

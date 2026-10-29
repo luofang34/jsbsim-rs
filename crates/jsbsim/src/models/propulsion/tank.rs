@@ -292,3 +292,14 @@ pub fn fuel_density(name: &str) -> f64 {
         }
     }
 }
+
+crate::snapshot::visit_fields! { Grain { length, inner_radius, volume } skip { kind } }
+crate::snapshot::visit_fields! { Initial { contents, temperature, standpipe, priority } }
+crate::snapshot::visit_fields! {
+    Tank {
+        grain, number, xyz, xyz_drain, capacity, unusable_volume, radius, density, ixx, iyy, izz,
+        inertia_factor, pct_full, contents, area, temperature, standpipe, external_flow, selected,
+        priority, initial,
+    }
+    skip { tank_type, name }
+}

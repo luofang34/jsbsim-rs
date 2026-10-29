@@ -181,3 +181,9 @@ impl EngineFamily for BrushLessDcMotor {
         0.0
     }
 }
+
+crate::snapshot::visit_fields! {
+    BrushLessDcMotor {
+        number, zero_torque_current, coil_resistance, max_volts, kv, power_watts, hp, current,
+    }
+}

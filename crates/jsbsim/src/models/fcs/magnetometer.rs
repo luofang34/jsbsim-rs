@@ -175,3 +175,7 @@ impl Family for Magnetometer {
         self.counter = 0;
     }
 }
+
+crate::snapshot::visit_fields! {
+    Magnetometer { signal, orientation, location, field, date, counter, constructed }
+}

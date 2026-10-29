@@ -151,3 +151,8 @@ impl Family for Angles {
         base.clip(tick);
     }
 }
+
+crate::snapshot::visit_fields! {
+    Angles { target, source, target_unit, source_unit, output_unit }
+    skip { target_path, source_path }
+}

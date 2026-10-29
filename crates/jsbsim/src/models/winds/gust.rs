@@ -158,3 +158,10 @@ impl Winds {
         }
     }
 }
+
+crate::snapshot::visit_fields! {
+    GustProfile { running, elapsed_time, startup_duration, steady_duration, end_duration }
+}
+crate::snapshot::visit_fields! {
+    CosineGust { direction, direction_local, magnitude, frame, profile }
+}

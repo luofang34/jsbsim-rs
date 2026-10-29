@@ -170,3 +170,10 @@ impl Ballonet {
         self.inertia = j;
     }
 }
+
+crate::snapshot::visit_fields! {
+    Ballonet {
+        envelope, temperature, pressure, contents, volume, d_volume_ideal, du, valve_open, inertia,
+    }
+    skip { heat, blower }
+}

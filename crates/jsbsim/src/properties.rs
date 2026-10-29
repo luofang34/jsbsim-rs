@@ -17,6 +17,7 @@ mod conversion;
 mod naming;
 mod node_map;
 mod path;
+mod snapshot;
 mod value;
 
 #[cfg(test)]

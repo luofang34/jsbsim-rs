@@ -172,3 +172,5 @@ impl Atmosphere {
         (SH_RATIO * c.rair * c.temperature).sqrt()
     }
 }
+
+crate::snapshot::visit_fields! { Msis { day_of_year, seconds_in_day, flags, f107a, f107, ap } }

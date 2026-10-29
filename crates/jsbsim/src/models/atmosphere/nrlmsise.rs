@@ -255,3 +255,5 @@ fn lower_atmosphere(
     profile::densm(input.alt, 1.0, 0.0, &mut tz, &ctx.n3, &ctx.n2, ctx.grav);
     output.t[1] = tz;
 }
+
+crate::snapshot::visit_fields! { Flags { switches } }

@@ -304,3 +304,12 @@ impl EngineFamily for Rocket {
         self.oxidizer_expended
     }
 }
+
+crate::snapshot::visit_fields! {
+    Rocket {
+        number, isp, it, it_vac, mxr, burn_time, thrust_variation, total_isp_variation, vac_thrust,
+        oxidizer_expended, total_propellant_expended, sl_oxi_flow_max, prop_flow_max,
+        oxidizer_flow_rate, propellant_flow_rate, flameout, buildup_time,
+    }
+    skip { isp_function, thrust_table }
+}

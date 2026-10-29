@@ -337,3 +337,15 @@ impl Auxiliary {
         self.beta.abs()
     }
 }
+
+crate::snapshot::visit_fields! {
+    Airspeeds { vcas, veas, vground, mach, mach_u, mach_uvw, qbar_uw, qbar_uv, re, pt, tat, tatc }
+}
+crate::snapshot::visit_fields! { Loads { pilot_accel, pilot_accel_n, ncg, nwcg, nx, ny, nz } }
+crate::snapshot::visit_fields! { Start { neu_location } }
+crate::snapshot::visit_fields! {
+    Auxiliary {
+        base, input, alpha, beta, adot, bdot, qbar, vt, tb2w, tw2b, aero_uvw, aero_pqr, euler_rates,
+        psigt, gamma, hoverbcg, hoverbmac, location_vrp, airspeed, loads, start,
+    }
+}

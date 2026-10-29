@@ -196,6 +196,18 @@ impl Fdm {
         aircraft_path: &str,
         model: &str,
     ) -> Result<(), Error> {
+        self.hashed_load(resolver, |fdm, r| {
+            fdm.load_model_from(r, aircraft_path, model)
+        })
+    }
+
+    /// [`load_model`](Self::load_model) within another load.
+    pub(super) fn load_model_from(
+        &mut self,
+        resolver: &dyn Resolver,
+        aircraft_path: &str,
+        model: &str,
+    ) -> Result<(), Error> {
         let dir = format!("{aircraft_path}/{model}");
         self.full_aircraft_path.clone_from(&dir);
         let mut loader =

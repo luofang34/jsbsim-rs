@@ -96,3 +96,9 @@ impl PointMass {
         self.location[axis] = value;
     }
 }
+
+crate::snapshot::visit_unit_enum! { Shape { Unspecified, Tube, Cylinder, Sphere, Ball } }
+crate::snapshot::visit_fields! {
+    PointMass { shape, location, weight, radius, length, inertia }
+    skip { name }
+}

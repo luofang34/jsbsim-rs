@@ -46,3 +46,5 @@ impl ModelBase {
         true
     }
 }
+
+crate::snapshot::visit_fields! { ModelBase { rate, exe_ctr, enabled } }

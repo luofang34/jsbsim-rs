@@ -65,3 +65,5 @@ impl Family for DeadBand {
         base.clip(tick);
     }
 }
+
+crate::snapshot::visit_fields! { DeadBand { width, gain } }

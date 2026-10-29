@@ -298,3 +298,11 @@ impl Family for LinearActuator {
         }
     }
 }
+
+crate::snapshot::visit_fields! {
+    LinearActuator {
+        set, reset, direction, count_spin, versus, bias, input_last, input_mem, module, hysteresis,
+        rate, gain, lag, previous_lag_input, previous_lag_output, ca, cb,
+    }
+    parts { set_param, reset_param, versus_param, bias_param }
+}

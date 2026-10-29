@@ -49,3 +49,5 @@ impl Family for Summer {
         base.clip(tick);
     }
 }
+
+crate::snapshot::visit_fields! { Summer { bias } }

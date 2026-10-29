@@ -42,3 +42,5 @@ impl LagFilter {
         self.prev_out = 0.0;
     }
 }
+
+crate::snapshot::visit_fields! { LagFilter { prev_in, prev_out, ca, cb } }

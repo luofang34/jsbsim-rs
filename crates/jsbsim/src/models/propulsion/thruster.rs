@@ -185,3 +185,27 @@ impl ThrusterFamily for Direct {
         base.thrust
     }
 }
+
+crate::snapshot::visit_fields! {
+    ThrusterInputs {
+        total_delta_t, h_agl, pqri, aero_pqr, aero_uvw, density, pressure, soundspeed, alpha, beta,
+        vt,
+    }
+}
+crate::snapshot::visit_fields! {
+    ThrusterBase {
+        force, engine_number, thrust, power_required, gear_ratio, thrust_coeff, reverser_angle,
+        input,
+    }
+    skip { name }
+}
+crate::snapshot::visit_fields! { Thruster { base, kind } }
+impl crate::snapshot::Visit for Direct {
+    fn visit<V: crate::snapshot::Visitor>(
+        &mut self,
+        v: &mut V,
+    ) -> Result<(), crate::snapshot::SnapshotError> {
+        let _ = v;
+        Ok(())
+    }
+}

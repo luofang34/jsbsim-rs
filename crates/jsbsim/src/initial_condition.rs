@@ -441,3 +441,13 @@ impl InitialCondition {
         self.flight_path_angle_rad() * RADTODEG
     }
 }
+
+crate::snapshot::visit_unit_enum! { SpeedSet { Vt, Vc, Ve, Mach, Uvw, Ned, Vg } }
+crate::snapshot::visit_unit_enum! { AltitudeSet { Asl, Agl } }
+crate::snapshot::visit_unit_enum! { LatitudeSet { Geocentric, Geodetic } }
+crate::snapshot::visit_fields! {
+    InitialCondition {
+        uvw_ned, pqr_body, position, orientation, vt, target_nlf, tw2b, tb2w, alpha, beta, epa,
+        last_speed_set, last_altitude_set, last_latitude_set, engines_running, trim_requested,
+    }
+}

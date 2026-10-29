@@ -309,3 +309,19 @@ impl Propulsion {
         j
     }
 }
+
+crate::snapshot::visit_fields! {
+    Inputs {
+        pressure, pressure_ratio, temperature, density, density_ratio, soundspeed, total_pressure,
+        tat_c, vt, vc, qbar, alpha, beta, h_agl, aero_uvw, aero_pqr, pqri, throttle_cmd,
+        mixture_cmd, throttle_pos, mixture_pos, prop_advance, prop_feather, total_delta_t,
+    }
+}
+// The feed lists are rebuilt for each engine as it draws fuel.
+crate::snapshot::visit_fields! {
+    Propulsion {
+        base, input, engines, tanks, active_engine, forces, moments, refuel, dump, fuel_freeze,
+        total_fuel_quantity, total_oxidizer_quantity, dump_rate, refuel_rate, tank_j,
+    }
+    skip { feed }
+}

@@ -74,3 +74,5 @@ impl Family for Accelerometer {
         self.signal.reset(base);
     }
 }
+
+crate::snapshot::visit_fields! { Accelerometer { signal, orientation, location } }

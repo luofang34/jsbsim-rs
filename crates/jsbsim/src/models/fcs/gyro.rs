@@ -62,3 +62,5 @@ impl Family for Gyro {
         self.signal.reset(base);
     }
 }
+
+crate::snapshot::visit_fields! { Gyro { signal, orientation } }

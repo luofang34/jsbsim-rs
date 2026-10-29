@@ -20,6 +20,7 @@ mod msis;
 pub mod nrlmsise;
 mod override_nodes;
 mod pressure;
+mod snapshot;
 mod standard;
 #[cfg(test)]
 mod tests;

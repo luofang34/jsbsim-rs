@@ -64,3 +64,5 @@ impl ThrusterFamily for Nozzle {
         base.thrust
     }
 }
+
+crate::snapshot::visit_fields! { Nozzle { area } }

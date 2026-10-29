@@ -60,3 +60,5 @@ impl Family for FcsFunction {
         base.clip(tick);
     }
 }
+
+crate::snapshot::visit_fields! { FcsFunction {} skip { function } }

@@ -144,3 +144,33 @@ impl Parameter {
         }
     }
 }
+
+/// The node, which a late-bound operand binds while running: restoring
+/// puts back whether it was bound, so an operand bound to a node created
+/// after the snapshot binds again by name.
+impl crate::snapshot::Visit for PropertyValue {
+    fn visit<V: crate::snapshot::Visitor>(
+        &mut self,
+        v: &mut V,
+    ) -> Result<(), crate::snapshot::SnapshotError> {
+        crate::snapshot::Visit::visit(&mut self.node, v)
+    }
+}
+
+impl crate::snapshot::Visit for Parameter {
+    fn visit<V: crate::snapshot::Visitor>(
+        &mut self,
+        v: &mut V,
+    ) -> Result<(), crate::snapshot::SnapshotError> {
+        match self {
+            Self::Property(p) | Self::Template { property: p, .. } => {
+                v.kind("property operand");
+                crate::snapshot::Visit::visit(p, v)
+            }
+            Self::Real(_) | Self::Function(_) | Self::Table(_) | Self::TemplateArgument(_) => {
+                v.kind("operand");
+                Ok(())
+            }
+        }
+    }
+}

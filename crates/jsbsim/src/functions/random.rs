@@ -117,3 +117,5 @@ impl FunctionSet {
         }))
     }
 }
+
+crate::snapshot::visit_fields! { RandomDraw { own } skip { gaussian, scale, offset } }

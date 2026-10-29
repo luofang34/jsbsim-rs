@@ -59,3 +59,5 @@ impl OverrideNodes {
         }
     }
 }
+
+crate::snapshot::visit_fields! { OverrideNodes { temperature, pressure, density, looked_up_at } }

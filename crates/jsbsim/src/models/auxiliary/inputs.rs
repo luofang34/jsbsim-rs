@@ -87,3 +87,17 @@ pub struct Inputs {
     /// Turbulence rates, rad/s.
     pub turb_pqr: ColumnVector3,
 }
+
+crate::snapshot::visit_fields! {
+    Air { pressure, density, temperature, sound_speed, kinematic_viscosity }
+}
+crate::snapshot::visit_fields! {
+    Constants { std_day_sl_soundspeed, standard_gravity, wingspan, wingchord }
+}
+crate::snapshot::visit_fields! {
+    Inputs {
+        air, constants, distance_agl, mass, tl2b, tb2l, pqr, pqri, pqridot, uvw, uvwdot, vel,
+        body_accel, to_eye_pt, rp_body, vrp_body, fw, location, cos_tht, sin_tht, cos_phi, sin_phi,
+        total_wind_ned, turb_pqr,
+    }
+}

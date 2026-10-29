@@ -9,11 +9,17 @@
 //! `oracle::steady_state` runs through its events, while dhat counts
 //! heap blocks across the measured frames. dhat allows one profiler per
 //! process, so everything runs in one test of its own binary.
+//!
+//! Each run then takes a snapshot and restores it every frame, as a host
+//! rewinding frame by frame does: after the first, neither
+//! `Fdm::snapshot_into` nor `Fdm::restore` on a reused `Snapshot`
+//! allocates.
 
 use std::path::{Path, PathBuf};
 
 use jsbsim::FileResolver;
 use jsbsim::fdm::Fdm;
+use jsbsim::snapshot::Snapshot;
 use oracle::steady_state::{
     FRAMES, PLANET_TRIPOD_ALTITUDE_FT, PLANET_TRIPOD_DIR, PLANET_TRIPODS, SCRIPTS, TRIMMED,
 };
@@ -51,6 +57,35 @@ fn measure(fdm: &mut Fdm, frames: u32) -> (u64, u64) {
     let before = dhat::HeapStats::get();
     for _ in 0..frames {
         assert!(fdm.run().unwrap(), "the run ended while measured");
+    }
+    let after = dhat::HeapStats::get();
+    let (run_blocks, run_bytes) = (
+        after.total_blocks - before.total_blocks,
+        after.total_bytes - before.total_bytes,
+    );
+    let (snapshot_blocks, snapshot_bytes) = measure_snapshots(fdm, frames.min(SNAPSHOT_FRAMES));
+    (run_blocks + snapshot_blocks, run_bytes + snapshot_bytes)
+}
+
+/// Frames measured with a snapshot and a restore each.
+const SNAPSHOT_FRAMES: u32 = 200;
+
+/// Heap blocks and bytes allocated across `frames` frames that each take
+/// a snapshot, run, restore it and run again, after a first snapshot
+/// that may allocate; fewer when the script ends.
+#[cfg(test)]
+fn measure_snapshots(fdm: &mut Fdm, frames: u32) -> (u64, u64) {
+    let mut snapshot = Snapshot::new();
+    fdm.snapshot_into(&mut snapshot).unwrap();
+    let before = dhat::HeapStats::get();
+    fdm.restore(&snapshot).unwrap();
+    for _ in 0..frames {
+        fdm.snapshot_into(&mut snapshot).unwrap();
+        fdm.run().unwrap();
+        fdm.restore(&snapshot).unwrap();
+        if !fdm.run().unwrap() {
+            break;
+        }
     }
     let after = dhat::HeapStats::get();
     (

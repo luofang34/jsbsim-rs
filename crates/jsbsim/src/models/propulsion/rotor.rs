@@ -349,3 +349,43 @@ impl ThrusterFamily for Rotor {
         self.state.engine_rpm = rpm;
     }
 }
+
+crate::snapshot::visit_fields! {
+    RotorConfig {
+        dt, radius, blade_num, sense, nominal_rpm, minimal_rpm, maximal_rpm, blade_chord,
+        lift_curve_slope, blade_twist, hinge_offset, blade_flapping_moment, blade_mass_moment,
+        polar_moment, inflow_lag, tip_loss_b, ground_effect_exp, ground_effect_shift,
+        lock_number_by_rho, solidity, r, b, max_brake_power, gear_loss, gear_moment,
+    }
+}
+crate::snapshot::visit_fields! {
+    RotorState {
+        rho, rpm, omega, beta_orient, a0, a_1, b_1, a_dw, a1s, b1s, h_drag, j_side, torque, c_t,
+        lambda, mu, nu, v_induced, theta_downwash, phi_downwash, engine_rpm,
+    }
+}
+crate::snapshot::visit_fields! {
+    RotorControls { collective, lateral, longitudinal, ground_effect_scale_norm }
+    skip { map }
+}
+crate::snapshot::visit_fields! { ExternalRpm { definition, source, source_gear_ratio } }
+impl crate::snapshot::Visit for RpmDrive {
+    fn visit<V: crate::snapshot::Visitor>(
+        &mut self,
+        v: &mut V,
+    ) -> Result<(), crate::snapshot::SnapshotError> {
+        match self {
+            Self::Transmission(t) => {
+                v.kind("transmission");
+                crate::snapshot::Visit::visit(t, v)
+            }
+            Self::External(e) => {
+                v.kind("external rpm");
+                crate::snapshot::Visit::visit(e, v)
+            }
+        }
+    }
+}
+crate::snapshot::visit_fields! {
+    Rotor { config, state, controls, drive, inv_transform, damp_hagl }
+}

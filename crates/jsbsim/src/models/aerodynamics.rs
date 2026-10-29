@@ -413,3 +413,21 @@ impl Aerodynamics {
         Ok(())
     }
 }
+
+crate::snapshot::visit_fields! {
+    Inputs {
+        alpha, beta, qbar, vt, tb2w, tw2b, rp_body, wing_area, wing_span, wing_chord,
+        wing_incidence,
+    }
+}
+crate::snapshot::visit_fields! {
+    State {
+        alpha_cl_min0, alpha_cl_max0, alpha_cl_min, alpha_cl_max, alpha_hyst_min, alpha_hyst_max,
+        impending_stall, stall_hyst, clsq, lod, alphaw, bi2vel, ci2vel, qbar_area, delta_rp, forces,
+        moments, fw, moments_mrc, ts2b, tb2s,
+    }
+}
+crate::snapshot::visit_fields! {
+    Aerodynamics { base, input, state }
+    skip { force_axis, moment_axis, functions, functions_at_cg, rp_shift }
+}

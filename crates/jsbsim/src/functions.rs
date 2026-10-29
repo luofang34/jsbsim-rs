@@ -22,6 +22,18 @@ mod parameter;
 mod random;
 mod table;
 
+crate::snapshot::visit_fields! {
+    Function { params, cached }
+    parts { random }
+    skip { op, node, copy_to, source }
+}
+
+// The executive's generator is visited with the executive.
+crate::snapshot::visit_fields! {
+    FunctionSet { functions, tables }
+    skip { bound, templates, options, exec_rng }
+}
+
 #[cfg(test)]
 mod tests;
 

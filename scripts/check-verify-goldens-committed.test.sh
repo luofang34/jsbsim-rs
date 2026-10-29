@@ -10,7 +10,7 @@ cd "$(dirname "$0")/.."
 checker=scripts/verify-goldens-committed.sh
 scratch="$(mktemp -d)"
 trap 'rm -rf "$scratch"' EXIT
-dirs=(oracle/goldens oracle/inputs oracle/derived oracle/scenarios oracle/nasa)
+dirs=(oracle/goldens oracle/inputs oracle/derived oracle/scenarios oracle/nasa oracle/snapshot)
 
 # A commit holding every guarded file on disk, minus "$1" when given.
 commit_without() {

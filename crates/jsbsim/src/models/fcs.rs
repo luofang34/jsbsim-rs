@@ -233,3 +233,23 @@ impl Fcs {
         self.dt(exec_dt) * f64::from(self.channel_rate)
     }
 }
+
+impl crate::snapshot::Visit for Surface {
+    fn visit<V: crate::snapshot::Visitor>(
+        &mut self,
+        v: &mut V,
+    ) -> Result<(), crate::snapshot::SnapshotError> {
+        crate::snapshot::Visit::visit(&mut self.0, v)
+    }
+}
+crate::snapshot::visit_fields! {
+    Channel { exec_rate, frames_since_run, components }
+    skip { name, on_off }
+}
+crate::snapshot::visit_fields! {
+    Fcs {
+        base, da_cmd, de_cmd, dr_cmd, df_cmd, dsb_cmd, dsp_cmd, ptrim_cmd, ytrim_cmd, rtrim_cmd,
+        dal, dar, de, dr, df, dsb, dsp, gear_cmd, gear_pos, brake_pos, tailhook_pos, wing_fold_pos,
+        channel_rate, channels, throttles,
+    }
+}

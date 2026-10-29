@@ -272,3 +272,9 @@ pub fn bind(b: &mut crate::fdm::Binder<'_>) -> Result<(), Error> {
     }
     Ok(())
 }
+
+crate::snapshot::visit_fields! {
+    ExternalForce { location, acting_location, body_force, moment }
+    skip { name, is_moment, frame, magnitude, direction }
+}
+crate::snapshot::visit_fields! { ExternalReactions { base, forces, total_forces, total_moments } }

@@ -265,3 +265,11 @@ impl GasCell {
         self.moment = ColumnVector3::zero() + arm.cross(self.body_force);
     }
 }
+
+crate::snapshot::visit_fields! {
+    GasCell {
+        envelope, temperature, pressure, contents, volume, d_volume_ideal, buoyancy, valve_open,
+        mass, ballonets, inertia, mass_moment, body_force, moment,
+    }
+    skip { gas, heat }
+}

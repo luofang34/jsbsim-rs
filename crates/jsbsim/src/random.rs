@@ -171,6 +171,47 @@ impl RandomNumberGenerator {
     }
 }
 
+impl RandomNumberGenerator {
+    /// The engine's state, the cached normal deviate and whether it is
+    /// held, through a shared reference, as the generator is shared.
+    fn visit_shared<V: crate::snapshot::Visitor>(
+        &self,
+        v: &mut V,
+    ) -> Result<(), crate::snapshot::SnapshotError> {
+        use crate::snapshot::Visit;
+        let mut state = self.state.load(Ordering::Relaxed);
+        let mut cached = self.cached_normal.load(Ordering::Relaxed);
+        let mut has = self.has_cached_normal.load(Ordering::Relaxed);
+        state.visit(v)?;
+        cached.visit(v)?;
+        has.visit(v)?;
+        self.state.store(state, Ordering::Relaxed);
+        self.cached_normal.store(cached, Ordering::Relaxed);
+        self.has_cached_normal.store(has, Ordering::Relaxed);
+        Ok(())
+    }
+}
+
+impl crate::snapshot::Visit for RandomNumberGenerator {
+    fn visit<V: crate::snapshot::Visitor>(
+        &mut self,
+        v: &mut V,
+    ) -> Result<(), crate::snapshot::SnapshotError> {
+        self.visit_shared(v)
+    }
+}
+
+/// The executive's generator: every holder of the pointer sees the
+/// restored state.
+impl crate::snapshot::Visit for SharedGenerator {
+    fn visit<V: crate::snapshot::Visitor>(
+        &mut self,
+        v: &mut V,
+    ) -> Result<(), crate::snapshot::SnapshotError> {
+        self.visit_shared(v)
+    }
+}
+
 /// `__up * stddev() + mean()` with JSBSim's stddev 1 and mean 0, which
 /// turns a negative zero positive.
 fn standard(up: f64) -> f64 {

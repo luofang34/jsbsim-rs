@@ -266,3 +266,50 @@ pub fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
     )?;
     Ok(())
 }
+
+crate::snapshot::visit_fields! {
+    Surface { solid, bumpiness, maximum_force, rolling_factor, static_factor, pos }
+}
+crate::snapshot::visit_fields! {
+    Inputs {
+        vground, vcalibrated_kts, temperature, distance_agl, distance_asl, total_delta_t,
+        takeoff_throttle, wow, tb2l, tec2l, tec2b, pqr, uvw, xyz_cg, location, brake_pos,
+        fcs_gear_pos, empty_weight,
+    }
+}
+
+/// The friction constraints registered by the last frame that ran the
+/// ground reactions, which the next accelerations solve reads.
+impl crate::snapshot::Visit for GroundReactions {
+    fn visit<V: crate::snapshot::Visitor>(
+        &mut self,
+        v: &mut V,
+    ) -> Result<(), crate::snapshot::SnapshotError> {
+        let Self {
+            base,
+            input,
+            contacts,
+            surface,
+            ds_cmd,
+            forces,
+            moments,
+            multipliers,
+        } = self;
+        base.visit(v)?;
+        input.visit(v)?;
+        contacts.visit(v)?;
+        surface.visit(v)?;
+        ds_cmd.visit(v)?;
+        forces.visit(v)?;
+        moments.visit(v)?;
+        let n = v.len(multipliers.len(), "friction constraints")?;
+        if v.loading() {
+            multipliers.resize(n, (0, FrictionType::Roll));
+        }
+        for (contact, kind) in multipliers.iter_mut().take(n) {
+            contact.visit(v)?;
+            kind.visit(v)?;
+        }
+        Ok(())
+    }
+}

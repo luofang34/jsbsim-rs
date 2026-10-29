@@ -81,3 +81,6 @@ pub fn udp_rate(rate: i32, dt: f64) -> u32 {
     // truncating, and saturating out of range (a zero rate is infinite).
     (0.5 + 1.0 / (dt * f64::from(rate))) as u32
 }
+
+crate::snapshot::visit_fields! { InputType { base } skip { functions } }
+crate::snapshot::visit_fields! { Input { base, types } }

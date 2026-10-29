@@ -324,3 +324,20 @@ impl EngineFamily for TurboProp {
         self.state.cutoff = cutoff;
     }
 }
+
+crate::snapshot::visit_unit_enum! { Phase { Off, Run, SpinUp, Start, Trim } }
+crate::snapshot::visit_fields! {
+    TurboPropConfig {
+        idle_n1, max_n1, n1_factor, beta_range_throttle_end, reverse_max_power, max_power, psfc,
+        idle_max_delay, max_starting_time, starter_n1, ielu_max_torque, itt_delay,
+    }
+    skip { engine_power_rpm_n1, itt_n1, combustion_efficiency_n1, engine_power_vc }
+}
+crate::snapshot::visit_fields! {
+    TurboPropState {
+        phase, n1, hp, throttle_pos, old_throttle, rpm, oil_pressure_psi, oil_temp_degk,
+        combustion_efficiency, start_time, eng_itt_degc, eng_temperature, reversed, cutoff,
+        ielu_intervent, eng_starting, generator_power, condition,
+    }
+}
+crate::snapshot::visit_fields! { TurboProp { number, config, state } }

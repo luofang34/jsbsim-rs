@@ -218,3 +218,10 @@ pub fn bind_throttle(b: &mut Binder<'_>, num: usize) -> Result<(), Error> {
     )?;
     Ok(())
 }
+
+crate::snapshot::visit_fields! {
+    Throttles {
+        throttle_cmd, throttle_pos, mixture_cmd, mixture_pos, prop_advance_cmd, prop_advance,
+        prop_feather_cmd, prop_feather,
+    }
+}

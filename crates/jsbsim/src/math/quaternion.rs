@@ -354,3 +354,18 @@ impl MulAssign<f64> for Quaternion {
         self.derived = None;
     }
 }
+
+/// The components; the derived matrices and angles are dropped on
+/// restore and recomputed from them when next read.
+impl crate::snapshot::Visit for Quaternion {
+    fn visit<V: crate::snapshot::Visitor>(
+        &mut self,
+        v: &mut V,
+    ) -> Result<(), crate::snapshot::SnapshotError> {
+        crate::snapshot::Visit::visit(&mut self.data, v)?;
+        if v.loading() {
+            self.derived = None;
+        }
+        Ok(())
+    }
+}

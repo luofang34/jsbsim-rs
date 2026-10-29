@@ -135,6 +135,14 @@ impl Fdm {
     /// `FGFDMExec::LoadScript(script)`: the run span and time step, the
     /// aircraft and initial conditions, the declarations and the events.
     pub fn load_script(&mut self, resolver: &dyn Resolver, script_path: &str) -> Result<(), Error> {
+        self.hashed_load(resolver, |fdm, r| fdm.load_script_from(r, script_path))
+    }
+
+    fn load_script_from(
+        &mut self,
+        resolver: &dyn Resolver,
+        script_path: &str,
+    ) -> Result<(), Error> {
         let loader = DocumentLoader::new(resolver, self.aircraft_path.clone());
         let document = loader.load_document(script_path)?;
         if document.name() != "runscript" {
@@ -172,14 +180,14 @@ impl Fdm {
             return Err(script_error("Aircraft must be specified in use element."));
         }
         let aircraft_path = self.aircraft_path.clone();
-        self.load_model(resolver, &aircraft_path, aircraft)?;
+        self.load_model_from(resolver, &aircraft_path, aircraft)?;
         let initialize = use_el.attribute("initialize");
         if initialize.is_empty() {
             return Err(script_error(
                 "Initialization file must be specified in use element.",
             ));
         }
-        if !self.load_initial_conditions(
+        if !self.load_initial_conditions_from(
             resolver,
             &format!("{aircraft_path}/{aircraft}"),
             initialize,

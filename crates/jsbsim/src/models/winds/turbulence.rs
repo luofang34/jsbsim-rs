@@ -149,3 +149,5 @@ impl Winds {
         true
     }
 }
+
+crate::snapshot::visit_fields! { CulpState { spike, target_time, strength } }

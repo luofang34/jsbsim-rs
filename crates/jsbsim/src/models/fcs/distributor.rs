@@ -181,3 +181,7 @@ pub fn pairs(fcs: &Fcs, at: ComponentAt, case: usize) -> usize {
         .and_then(|d| d.cases.get(case))
         .map_or(0, |c| c.pairs.len())
 }
+
+crate::snapshot::visit_fields! { PropValPair { property, value } }
+crate::snapshot::visit_fields! { Case { pairs } parts { test } }
+crate::snapshot::visit_fields! { Distributor { exclusive, cases } }

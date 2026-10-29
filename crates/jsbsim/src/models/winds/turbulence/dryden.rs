@@ -300,3 +300,10 @@ impl Winds {
         };
     }
 }
+
+crate::snapshot::visit_fields! {
+    DrydenState {
+        xi_u_km1, nu_u_km1, xi_v_km1, xi_v_km2, nu_v_km1, nu_v_km2, xi_w_km1, xi_w_km2, nu_w_km1,
+        nu_w_km2, xi_p_km1, nu_p_km1, xi_q_km1, xi_r_km1,
+    }
+}

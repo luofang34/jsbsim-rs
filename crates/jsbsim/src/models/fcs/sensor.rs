@@ -307,3 +307,13 @@ impl Family for Sensor {
         self.signal.reset(base);
     }
 }
+
+crate::snapshot::visit_fields! { Noise { variance, absolute, gaussian } }
+crate::snapshot::visit_fields! {
+    Signal {
+        min, max, bias, gain, drift_rate, drift, lag, granularity, ca, cb, previous_output,
+        previous_input, bits, quantized, divisions, fail_low, fail_high, fail_stuck, noise,
+        random_seed, generator,
+    }
+}
+crate::snapshot::visit_fields! { Sensor { signal } }

@@ -19,6 +19,7 @@ pub mod properties;
 pub mod random;
 pub mod resolver;
 pub mod script;
+pub mod snapshot;
 pub mod trim;
 pub mod units;
 pub mod xml;

@@ -425,3 +425,12 @@ fn model_error_at(base: &Base) -> Error {
         ),
     }
 }
+
+crate::snapshot::visit_fields! {
+    Actuator {
+        bias, hysteresis_width, deadband_width, lag_val, ca, cb, previous_output,
+        previous_hyst_output, previous_rate_lim_output, previous_lag_input, previous_lag_output,
+        fail_zero, fail_hardover, fail_stuck, initialized, saturated, clip_min_missing,
+    }
+    parts { rate_limit_incr, rate_limit_decr, lag }
+}

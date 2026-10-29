@@ -127,3 +127,14 @@ impl ThrusterFamily for TestThruster {
         power
     }
 }
+
+crate::snapshot::visit_fields! { TestEngine { calculations, throttle } }
+impl crate::snapshot::Visit for TestThruster {
+    fn visit<V: crate::snapshot::Visitor>(
+        &mut self,
+        v: &mut V,
+    ) -> Result<(), crate::snapshot::SnapshotError> {
+        let _ = v;
+        Ok(())
+    }
+}

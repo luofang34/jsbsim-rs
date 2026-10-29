@@ -242,3 +242,8 @@ pub fn bind(b: &mut crate::fdm::Binder<'_>) -> Result<(), Error> {
     )?;
     Ok(())
 }
+
+crate::snapshot::visit_fields! {
+    Inertial { base, a, b, gm, j2, omega_planet, grav_type, grav_accel, position, ground, time }
+    skip { name }
+}

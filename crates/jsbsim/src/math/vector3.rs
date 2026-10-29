@@ -197,3 +197,5 @@ impl DivAssign<f64> for ColumnVector3 {
         }
     }
 }
+
+crate::snapshot::visit_fields! { ColumnVector3 { data } }

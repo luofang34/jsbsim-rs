@@ -168,3 +168,17 @@ impl Family for Gain {
         base.clip(tick);
     }
 }
+
+crate::snapshot::visit_fields! { Scale { in_min, in_max, out_min, out_max, zero_centered } }
+impl crate::snapshot::Visit for GainType {
+    fn visit<V: crate::snapshot::Visitor>(
+        &mut self,
+        v: &mut V,
+    ) -> Result<(), crate::snapshot::SnapshotError> {
+        match self {
+            Self::AerosurfaceScale(scale) => crate::snapshot::Visit::visit(scale, v),
+            Self::Pure | Self::Scheduled(_) => Ok(()),
+        }
+    }
+}
+crate::snapshot::visit_fields! { Gain { gain, kind } }

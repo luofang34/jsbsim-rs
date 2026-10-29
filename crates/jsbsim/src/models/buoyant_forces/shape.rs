@@ -208,3 +208,8 @@ pub fn c_max(a: f64, b: f64) -> f64 {
 pub fn c_min(a: f64, b: f64) -> f64 {
     if b < a { b } else { a }
 }
+
+crate::snapshot::visit_fields! { Shape { x_radius, y_radius, z_radius, x_width, y_width, z_width } }
+crate::snapshot::visit_fields! {
+    Envelope { xyz, shape, max_volume, max_overpressure, volume, valve_coefficient }
+}

@@ -189,3 +189,10 @@ pub fn bind(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
     })?;
     Ok(())
 }
+
+crate::snapshot::visit_fields! {
+    Transmission {
+        free_wheel_lag, free_wheel_transmission, thruster_moment, engine_moment, engine_friction,
+        clutch_ctrl_norm, brake_ctrl_norm, max_brake_power, engine_rpm, thruster_rpm,
+    }
+}

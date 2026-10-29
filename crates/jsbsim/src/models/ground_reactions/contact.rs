@@ -454,3 +454,26 @@ fn damping(el: &Element, tag: &str) -> Result<Option<(DampType, f64)>, Error> {
         )
     }))
 }
+
+crate::snapshot::visit_fields! {
+    Strut { k_spring, b_damp, b_damp_rebound }
+    skip { damp, damp_rebound, function }
+}
+crate::snapshot::visit_fields! {
+    Friction { static_coeff, dynamic_coeff, rolling_coeff, stiffness, shape, peak, curvature }
+    skip { cornering }
+}
+crate::snapshot::visit_fields! { Steering { max_angle, castered, angle } skip { kind } }
+crate::snapshot::visit_fields! {
+    ContactState {
+        wow, last_wow, agl, compress_length, compress_speed, wheel_slip, strut_force, side_coeff,
+        wheel_vel, local_gear,
+    }
+}
+crate::snapshot::visit_fields! {
+    Contact {
+        number, location, acting_location, strut, friction, steering, t_gear, retractable, gear_pos,
+        use_fcs_gear_pos, surface, state, force, reporting,
+    }
+    skip { name, kind, brake_group }
+}

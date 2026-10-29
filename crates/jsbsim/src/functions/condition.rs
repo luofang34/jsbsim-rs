@@ -172,3 +172,18 @@ impl Condition {
         }
     }
 }
+
+impl crate::snapshot::Visit for Condition {
+    fn visit<V: crate::snapshot::Visitor>(
+        &mut self,
+        v: &mut V,
+    ) -> Result<(), crate::snapshot::SnapshotError> {
+        match self {
+            Self::Group { conditions, .. } => crate::snapshot::Visit::visit(conditions, v),
+            Self::Test { left, right, .. } => {
+                crate::snapshot::Visit::visit(left, v)?;
+                crate::snapshot::Visit::visit(right, v)
+            }
+        }
+    }
+}

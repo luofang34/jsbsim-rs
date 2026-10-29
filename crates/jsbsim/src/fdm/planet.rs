@@ -25,6 +25,17 @@ impl Fdm {
         path: &str,
         use_aircraft_path: bool,
     ) -> Result<(), Error> {
+        self.hashed_load(resolver, |fdm, r| {
+            fdm.load_planet_file_from(r, path, use_aircraft_path)
+        })
+    }
+
+    fn load_planet_file_from(
+        &mut self,
+        resolver: &dyn Resolver,
+        path: &str,
+        use_aircraft_path: bool,
+    ) -> Result<(), Error> {
         let file = match use_aircraft_path {
             true => format!("{}/{path}", self.aircraft_path),
             false => path.to_owned(),

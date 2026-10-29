@@ -71,3 +71,5 @@ fn transform(orient: ColumnVector3) -> Matrix33 {
         cr * cp,
     )
 }
+
+crate::snapshot::visit_fields! { Orientation { transform } skip { axis } }

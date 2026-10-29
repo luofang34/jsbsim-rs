@@ -192,6 +192,20 @@ macro_rules! engines {
             }
         }
 
+        impl crate::snapshot::Visit for EngineKind {
+            fn visit<V: crate::snapshot::Visitor>(
+                &mut self,
+                v: &mut V,
+            ) -> Result<(), crate::snapshot::SnapshotError> {
+                match self {
+                    $($(#[$cfg])* Self::$variant(f) => {
+                        v.kind($element);
+                        crate::snapshot::Visit::visit(f, v)
+                    })*
+                }
+            }
+        }
+
         // With no type registered the arguments of these dispatches go
         // unused.
         #[allow(unused_variables)]

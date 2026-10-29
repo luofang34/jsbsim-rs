@@ -134,3 +134,11 @@ impl Force {
         self.update_custom_transform_matrix();
     }
 }
+
+crate::snapshot::visit_fields! {
+    Force {
+        native_force, native_moment, orient, location, acting_location, transform, body_force,
+        moment,
+    }
+    skip { transform_type }
+}

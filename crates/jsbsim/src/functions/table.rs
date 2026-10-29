@@ -301,3 +301,9 @@ fn row_at(row: &[f64], c: usize) -> Option<(f64, f64, f64)> {
 fn key_slots(n_dims: usize) -> Box<[Cell<f64>]> {
     (0..n_dims).map(|_| Cell::new(f64::NAN)).collect()
 }
+
+crate::snapshot::visit_fields! {
+    Table { tables, keys }
+    each { lookup }
+    skip { kind, n_rows, n_cols, n_dims, data, internal, name }
+}

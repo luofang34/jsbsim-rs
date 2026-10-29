@@ -173,3 +173,26 @@ impl std::fmt::Debug for Slot {
         }
     }
 }
+
+crate::snapshot::visit_fields! { DefaultGroundCallback { a, b, terrain_elevation } }
+
+/// The default callback's terrain is the simulation's; a custom callback
+/// belongs to the host, which keeps it across a restore. A snapshot of
+/// the default terrain restored under a custom callback is read past.
+impl crate::snapshot::Visit for Slot {
+    fn visit<V: crate::snapshot::Visitor>(
+        &mut self,
+        v: &mut V,
+    ) -> Result<(), crate::snapshot::SnapshotError> {
+        let mut default = matches!(self, Self::Default(_));
+        crate::snapshot::Visit::visit(&mut default, v)?;
+        match self {
+            Self::Default(d) if default => crate::snapshot::Visit::visit(d, v),
+            Self::Custom(_) if default => {
+                let mut ignored = DefaultGroundCallback::new(1.0, 1.0);
+                crate::snapshot::Visit::visit(&mut ignored, v)
+            }
+            _ => Ok(()),
+        }
+    }
+}

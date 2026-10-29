@@ -410,3 +410,38 @@ impl EngineFamily for Piston {
         self.state.magnetos = setting;
     }
 }
+
+crate::snapshot::visit_fields! {
+    PistonConfig {
+        cycles, idle_rpm, max_rpm, displacement, displacement_si, max_hp, spark_fail_drop,
+        min_manifold_pressure_inhg, max_manifold_pressure_inhg, manifold_pressure_lag, bore, stroke,
+        cylinders, cylinder_head_mass, compression_ratio, z_throttle, peak_mean_piston_speed_fps,
+        rated_mean_piston_speed_fps, starter_torque, starter_rpm, fmep_dynamic, fmep_static,
+        min_map, max_map, oil_press_relief_valve, oil_press_rpm_max, design_oil_temp,
+        oil_viscosity_index,
+    }
+    skip { combustion_efficiency, mixture_efficiency }
+}
+crate::snapshot::visit_fields! {
+    PistonTuning {
+        static_friction_hp, isfc, starter_gain, volumetric_efficiency, z_airbox, ram_air_factor,
+        cooling_factor,
+    }
+}
+crate::snapshot::visit_fields! {
+    Boost {
+        speeds, speed, boosted, manual, b_manual, override_, b_override, b_takeoff, takeoff_boost,
+        rated_boost, rated_altitude, rated_rpm, rated_power, switch_altitude, switch_pressure, mul,
+        rated_map, takeoff_map, switch_hysteresis, loss_factor, loss_hp,
+    }
+}
+crate::snapshot::visit_fields! {
+    PistonState {
+        p_amb, p_ram, t_amb, rpm, ias, mean_piston_speed_fps, map, tmap, manifold_pressure_inhg,
+        pmep, fmep, indicated_horse_power, hp, magnetos, magneto_left, magneto_right, rho_air,
+        volumetric_efficiency_reduced, m_dot_air, v_dot_air, equivalence_ratio, m_dot_fuel,
+        combustion_efficiency, exhaust_gas_temp_k, egt_c, cylinder_head_temp_k, oil_pressure_psi,
+        oil_temp_k,
+    }
+}
+crate::snapshot::visit_fields! { Piston { number, config, tuning, boost, state } }

@@ -482,3 +482,7 @@ fn set_gear_reports(fdm: &mut Fdm, on: bool) {
         c.reporting.enabled = on;
     }
 }
+
+crate::snapshot::visit_unit_enum! {
+    TrimMode { Longitudinal, Full, Ground, Pullup, Custom, Turn, None }
+}

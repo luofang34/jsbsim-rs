@@ -348,3 +348,12 @@ impl ThrusterFamily for Propeller {
         self.torque[E_X]
     }
 }
+
+crate::snapshot::visit_fields! {
+    Propeller {
+        num_blades, j, rpm, ixx, diameter, max_pitch, min_pitch, min_rpm, max_rpm, pitch, p_factor,
+        sense, sense_multiplier, advance, excess_torque, d4, d5, helical_tip_mach, vinduced, torque,
+        ct_factor, cp_factor, constant_speed, reverse_pitch, reversed, reverse_coef, feathered,
+    }
+    skip { tables }
+}

@@ -118,6 +118,20 @@ macro_rules! families {
             $($(#[$doc])* $variant($ty),)+
         }
 
+        impl crate::snapshot::Visit for Kind {
+            fn visit<V: crate::snapshot::Visitor>(
+                &mut self,
+                v: &mut V,
+            ) -> Result<(), crate::snapshot::SnapshotError> {
+                match self {
+                    $(Self::$variant(family) => {
+                        v.kind(stringify!($variant));
+                        crate::snapshot::Visit::visit(family, v)
+                    })+
+                }
+            }
+        }
+
         impl Kind {
             fn reset(&mut self, base: &mut Base) {
                 match self {
@@ -213,3 +227,5 @@ families! {
     /// `<angle>` (`FGAngles`).
     Angles(super::angles::Angles) = "angle";
 }
+
+crate::snapshot::visit_fields! { Component { base, kind } }

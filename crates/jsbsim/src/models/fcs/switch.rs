@@ -142,3 +142,6 @@ impl Family for Switch {
         base.clip(tick);
     }
 }
+
+crate::snapshot::visit_fields! { Test { value } parts { condition } }
+crate::snapshot::visit_fields! { Switch { tests, initialized } }

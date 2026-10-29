@@ -221,3 +221,9 @@ impl Family for Waypoint {
         base.clip(tick);
     }
 }
+
+crate::snapshot::visit_fields! { Coordinate { value, unit } }
+crate::snapshot::visit_fields! {
+    Waypoint { target_latitude, target_longitude, source_latitude, source_longitude, source }
+    skip { kind, unit }
+}

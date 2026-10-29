@@ -14,6 +14,7 @@ mod env;
 pub(crate) use env::Env;
 mod buoyancy;
 mod exec_bind;
+mod ic_load;
 mod input;
 mod load;
 mod models_run;
@@ -22,6 +23,7 @@ mod planet;
 mod propulsion;
 mod run;
 mod script;
+mod snapshot;
 mod trim;
 
 #[cfg(test)]
@@ -171,6 +173,8 @@ pub struct Fdm {
     last_trim: Option<crate::trim::TrimReport>,
     trims_run: u32,
     pub(crate) last_linearization: Option<crate::linearization::Linearization>,
+    /// What the loads so far contribute to a snapshot's fingerprint.
+    snapshot_record: crate::snapshot::LoadRecord,
 }
 
 impl Fdm {
@@ -201,6 +205,7 @@ impl Fdm {
             last_trim: None,
             trims_run: 0,
             last_linearization: None,
+            snapshot_record: crate::snapshot::LoadRecord::default(),
         };
         fdm.options = options;
         fdm.env.functions = FunctionSet::with_options(options);
@@ -211,6 +216,7 @@ impl Fdm {
         fdm.load_planet_constants();
         fdm.initialize_models()?;
         fdm.models.ic.initialize_ic(&fdm.models.inertial);
+        fdm.loaded_without_documents();
         Ok(fdm)
     }
 
@@ -262,7 +268,9 @@ impl Fdm {
     /// `FGMassBalance::Load(<mass_balance>)`, tying the point mass
     /// properties as it adds them.
     pub fn load_mass_balance(&mut self, el: &crate::xml::Element) -> Result<(), Error> {
-        self.models.mass_balance.load(el, &mut self.env.binder())
+        let loaded = self.models.mass_balance.load(el, &mut self.env.binder());
+        self.loaded_without_documents();
+        loaded
     }
 
     /// `SetAircraftPath`: where `load_script` finds aircraft, relative to

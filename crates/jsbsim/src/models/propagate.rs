@@ -8,6 +8,7 @@
 mod bind;
 mod integrate;
 mod orbit;
+mod snapshot;
 
 pub use bind::bind;
 pub use integrate::Integrator;

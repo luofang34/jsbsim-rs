@@ -454,3 +454,24 @@ impl EngineFamily for Turbine {
         self.flags.cutoff = cutoff;
     }
 }
+
+crate::snapshot::visit_unit_enum! { Phase { Off, Run, SpinUp, Start, Stall, Seize, Trim } }
+crate::snapshot::visit_fields! {
+    TurbineConfig {
+        mil_thrust, max_thrust, bypass_ratio, tsfc, atsfc, idle_n1, idle_n2, ignition_n1,
+        ignition_n2, n1_spinup, n2_spinup, n1_start_rate, n2_start_rate, n1_spindown, n2_spindown,
+        augmented, aug_method, injected, injection_time, disable_windmill, idle_ff,
+    }
+}
+crate::snapshot::visit_fields! {
+    TurbineFlags { stalled, seized, overtemp, fire, injection, augmentation, reversed, cutoff }
+}
+crate::snapshot::visit_fields! {
+    TurbineState {
+        phase, n1, n2, n2norm, max_n1, max_n2, n1_factor, n2_factor, throttle_pos, augment_cmd,
+        egt_degc, epr, oil_pressure_psi, oil_temp_degk, bleed_demand, inlet_position,
+        nozzle_position, corrected_tsfc, injection_timer, inj_water_norm, inj_n1_increment,
+        inj_n2_increment,
+    }
+}
+crate::snapshot::visit_fields! { Turbine { number, config, flags, state } skip { lookups } }

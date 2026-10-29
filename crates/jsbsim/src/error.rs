@@ -61,6 +61,9 @@ pub enum Error {
         /// GeographicLib's message.
         message: String,
     },
+    /// A snapshot that does not decode or does not fit this executive.
+    #[error(transparent)]
+    Snapshot(#[from] crate::snapshot::SnapshotError),
     /// A property path SimGear would reject.
     #[error("invalid property path: {0}")]
     PropertyPath(#[from] PathError),

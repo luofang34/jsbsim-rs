@@ -156,3 +156,19 @@ impl Reporting {
         self.ground_speed = 0.0;
     }
 }
+
+crate::snapshot::visit_unit_enum! { FrictionType { Roll, Side, Dynamic } }
+crate::snapshot::visit_fields! { Multipliers { roll, side, dynamic } }
+crate::snapshot::visit_fields! {
+    ContactForce {
+        t_ground, ground_normal, ground_wheel_vel, normal_force, body_force, moment, brake_coeff,
+        static_friction, multipliers,
+    }
+}
+crate::snapshot::visit_fields! {
+    Reporting {
+        enabled, first_contact, started_ground_run, landing_reported, takeoff_reported, sink_rate,
+        ground_speed, takeoff_distance, takeoff_distance_50ft, landing_distance, max_strut_force,
+        max_strut_travel,
+    }
+}

@@ -230,3 +230,11 @@ impl Family for Pid {
         self.i_out_total = 0.0;
     }
 }
+
+crate::snapshot::visit_unit_enum! {
+    Integration { None, Rect, Trapezoidal, AdamsBashforth2, AdamsBashforth3 }
+}
+crate::snapshot::visit_fields! {
+    Pid { kp, ki, kd, standard, integration, i_out_total, input_prev, input_prev2 }
+    parts { pvdot, trigger }
+}

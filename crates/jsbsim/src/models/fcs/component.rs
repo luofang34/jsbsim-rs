@@ -327,3 +327,10 @@ fn load_clip(el: &Element, ctx: &mut LoadContext<'_>) -> Result<Option<Clip>, Er
         cyclic: clip_el.attribute("type") == "cyclic",
     }))
 }
+
+crate::snapshot::visit_fields! { Clip { min, max } skip { cyclic } }
+crate::snapshot::visit_fields! {
+    Base { inputs, delay, index, dt, input, output }
+    parts { clip }
+    skip { name, outputs }
+}

@@ -167,3 +167,5 @@ impl Family for Kinemat {
         base.clip(tick);
     }
 }
+
+crate::snapshot::visit_fields! { Kinemat { detents, transition_times, do_scale } }

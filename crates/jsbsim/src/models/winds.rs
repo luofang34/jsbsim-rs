@@ -216,3 +216,20 @@ impl Winds {
         self.updownburst_cells = usize::try_from(num).unwrap_or(0);
     }
 }
+
+crate::snapshot::visit_fields! {
+    Inputs { uvw, wingspan, distance_agl, altitude_asl, tl2b, tw2b, total_delta_t }
+}
+crate::snapshot::visit_fields! {
+    TurbulenceSettings {
+        turb_type, gain, rate, rhythmicity, windspeed_at_20ft, severity, direction,
+    }
+}
+crate::snapshot::visit_fields! {
+    Winds {
+        base, input, wind_ned, total_wind_ned, turb_pqr, psiw, gust_ned, turbulence_ned,
+        cosine_gust_ned, cosine_gust, turbulence, updownburst_cells, random_seed, generator, culp,
+        dryden,
+    }
+    skip { poe_table }
+}

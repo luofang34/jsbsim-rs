@@ -176,3 +176,11 @@ pub fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
     }
     Ok(())
 }
+
+crate::snapshot::visit_fields! {
+    Aircraft {
+        base, wing_area, wing_span, cbar, wing_incidence, htail_area, htail_arm, vtail_area,
+        vtail_arm, lbarh, lbarv, vbarh, vbarv, xyz_rp, xyz_ep, xyz_vrp, forces, moments,
+    }
+    skip { name }
+}

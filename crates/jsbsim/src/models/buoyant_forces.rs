@@ -151,3 +151,8 @@ impl BuoyantForces {
         j
     }
 }
+
+crate::snapshot::visit_fields! { Inputs { pressure, temperature, density, gravity } }
+crate::snapshot::visit_fields! {
+    BuoyantForces { base, input, cells, forces, moments, gas_cell_j, none_defined }
+}

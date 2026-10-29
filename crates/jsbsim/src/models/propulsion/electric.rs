@@ -121,3 +121,5 @@ impl EngineFamily for Electric {
         0.0
     }
 }
+
+crate::snapshot::visit_fields! { Electric { number, power_watts, rpm, hp } }

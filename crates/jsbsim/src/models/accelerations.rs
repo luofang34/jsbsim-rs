@@ -357,3 +357,21 @@ pub fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
     }
     Ok(())
 }
+
+crate::snapshot::visit_fields! { LagrangeMultiplier { force_jacobian, lever_arm, min, max, value } }
+crate::snapshot::visit_fields! {
+    Inputs {
+        j, jinv, ti2b, tb2i, tec2b, tec2i, moment, ground_moment, force, ground_force, grav_accel,
+        pqri, pqr, uvw, inertial_position, omega_planet, terrain_velocity, terrain_angular_vel,
+        delta_t, mass,
+    }
+    dynamic { multipliers }
+}
+// The solver's matrices are filled afresh by each solve.
+crate::snapshot::visit_fields! {
+    Accelerations {
+        base, input, grav_torque, pqrdot, pqridot, uvwdot, uvwidot, body_accel, friction_forces,
+        friction_moments,
+    }
+    skip { scratch }
+}

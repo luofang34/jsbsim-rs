@@ -7,6 +7,8 @@
 //! transformations, plus geodesic distance and heading on the ellipse
 //! (GeographicLib's inverse problem, as JSBSim uses it).
 
+mod snapshot;
+
 use super::geodesic::Geodesic;
 use super::{Axis, ColumnVector3, E_X, E_Y, E_Z, Matrix33};
 use crate::units::{DEGTORAD, RADTODEG, sign};
