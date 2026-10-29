@@ -1,0 +1,13 @@
+[case]
+kind = "script"
+script = "scripts/sim_primer.xml"
+rate_hz = 5.0
+properties = ["position/h-sl-ft", "position/h-agl-ft", "position/lat-geod-deg", "position/long-gc-deg", "velocities/u-fps", "velocities/v-fps", "velocities/w-fps", "velocities/p-rad_sec", "velocities/q-rad_sec", "velocities/r-rad_sec", "attitude/phi-rad", "attitude/theta-rad", "attitude/psi-rad", "accelerations/udot-ft_sec2", "accelerations/vdot-ft_sec2", "accelerations/wdot-ft_sec2", "accelerations/pdot-rad_sec2", "accelerations/qdot-rad_sec2", "accelerations/rdot-rad_sec2", "forces/fbx-total-lbs", "forces/fby-total-lbs", "forces/fbz-total-lbs", "moments/l-total-lbsft", "moments/m-total-lbsft", "moments/n-total-lbsft", "forces/fbx-prop-lbs", "forces/fby-prop-lbs", "forces/fbz-prop-lbs", "moments/l-prop-lbsft", "moments/m-prop-lbsft", "moments/n-prop-lbsft", "velocities/vc-kts", "aero/qbar-psf", "aero/alpha-rad", "propulsion/total-fuel-lbs", "forces/fbx-gear-lbs", "forces/fbz-gear-lbs", "gear/wow", "propulsion/tank[0]/contents-lbs", "propulsion/tank[1]/contents-lbs", "propulsion/engine[0]/thrust-lbs", "propulsion/engine[0]/rotor-rpm", "propulsion/engine[0]/engine-rpm", "propulsion/engine[0]/a0-rad", "propulsion/engine[0]/a1-rad", "propulsion/engine[0]/b1-rad", "propulsion/engine[0]/inflow-ratio", "propulsion/engine[0]/advance-ratio", "propulsion/engine[0]/induced-inflow-ratio", "propulsion/engine[0]/vi-fps", "propulsion/engine[0]/thrust-coefficient", "propulsion/engine[0]/torque-lbsft", "propulsion/engine[0]/theta-downwash-rad", "propulsion/engine[0]/phi-downwash-rad", "propulsion/engine[0]/power-hp", "fcs/throttle-pos-norm[0]", "propulsion/engine[0]/free-wheel-transmission", "propulsion/engine[0]/collective-ctrl-rad", "propulsion/engine[0]/lateral-ctrl-rad", "propulsion/engine[0]/longitudinal-ctrl-rad", "propulsion/engine[1]/thrust-lbs", "propulsion/engine[1]/rotor-rpm", "propulsion/engine[1]/engine-rpm", "propulsion/engine[1]/a0-rad", "propulsion/engine[1]/a1-rad", "propulsion/engine[1]/b1-rad", "propulsion/engine[1]/inflow-ratio", "propulsion/engine[1]/advance-ratio", "propulsion/engine[1]/induced-inflow-ratio", "propulsion/engine[1]/vi-fps", "propulsion/engine[1]/thrust-coefficient", "propulsion/engine[1]/torque-lbsft", "propulsion/engine[1]/theta-downwash-rad", "propulsion/engine[1]/phi-downwash-rad", "propulsion/engine[1]/power-hp", "fcs/throttle-pos-norm[1]", "propulsion/engine[1]/antitorque-ctrl-rad"]
+
+[provenance]
+upstream_commit = "66f7fafc07fe13e7ede9db20873030fed2881713"
+driver = "tools/oracle/cpp"
+cxx_flags = "-ffp-contract=off"
+dt = 0.0083333
+every_n_frames = 24
+rows = 501

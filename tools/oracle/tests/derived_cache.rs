@@ -127,6 +127,9 @@ fn steady_state_frames_read_only_cached_derived_values() {
             (&resolver, "scripts/f16_test.xml", 3000),
             (&resolver, "scripts/L4102.xml", 3000),
             (&resolver, "scripts/Test_F450_Launch.xml", 3000),
+            (&resolver, "scripts/J2461.xml", 2400),
+            (&resolver, "scripts/x153.xml", 3000),
+            (&resolver, "scripts/sim_primer.xml", 3000),
         ] {
             let mut fdm = Fdm::new().unwrap();
             fdm.load_script(resolver, script).unwrap();

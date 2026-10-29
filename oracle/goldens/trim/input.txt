@@ -145,3 +145,15 @@ runic
 until 30
 set simulation/do_simple_trim 1
 until 40
+# CheckTrim.test_trim_doesnt_ignite_rockets: the J246 standing on its pad
+# cannot reach a vertical equilibrium, so the trim ends at full throttle
+# and fails; integration is suspended throughout, so its solid rocket
+# boosters stay unlit.
+paths ../../inputs aircraft systems
+new
+watch simulation/sim-time-sec simulation/trim-completed fcs/throttle-cmd-norm[0] fcs/throttle-pos-norm[0] propulsion/engine[0]/thrust-lbs propulsion/engine[1]/thrust-lbs propulsion/engine[0]/total-impulse propulsion/engine[2]/thrust-lbs propulsion/tank[0]/contents-lbs
+model J246
+ic LC39
+runic
+set simulation/do_simple_trim 1
+print

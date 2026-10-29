@@ -3,9 +3,9 @@
 //! puts the thrusters back where they started (the F450's brushless
 //! motors, whose engine has no `ResetToIC` of its own, stop their
 //! propellers; the c310's constant-speed propeller gets its blade angle
-//! back), and the run after the reset repeats the run before it exactly.
-//! (The test's rotor case flies the ah1s, which the port does not load
-//! yet.)
+//! back; the ah1s's rotors, the tail one slaved to the main one, stop with
+//! their transmission), and the run after the reset repeats the run before
+//! it exactly.
 
 use std::path::Path;
 
@@ -113,6 +113,21 @@ fn a_reset_restores_the_blade_angle_and_the_run_repeats() {
             ("fcs/advance-cmd-norm[0]", 0.5),
         ],
         &["propulsion/engine[0]/blade-angle"],
+        600,
+    );
+}
+
+#[test]
+fn a_reset_stops_the_rotors_and_their_transmission_and_the_run_repeats() {
+    check_reset(
+        "ah1s",
+        "reset00",
+        &[("fcs/rpm-governor-active-norm", 1.0)],
+        &[
+            "propulsion/engine[0]/rotor-rpm",
+            "propulsion/engine[0]/engine-rpm",
+            "propulsion/engine[1]/rotor-rpm",
+        ],
         600,
     );
 }

@@ -162,8 +162,12 @@ fn measure_scripts(resolver: &FileResolver, report: &mut Vec<(String, u32, (u64,
     // flight; c1722_inertia's trims, starts running from its initial
     // conditions and burns its tanks down to the unusable fuel; f16_test's
     // turbine spins up, lights and spools to full throttle; L4102's
-    // turboprops start running from their initial conditions; and
-    // Test_F450_Launch's brushless motors lift the quadcopter off.
+    // turboprops start running from their initial conditions;
+    // Test_F450_Launch's brushless motors lift the quadcopter off; J2461's
+    // main engines start and its solid boosters ignite and burn; x153's
+    // XLR-99 lights and throttles up; and sim_primer's engine spins the
+    // ah1s's rotors up through the transmission and its governor takes
+    // over.
     let scenarios = FileResolver::new(oracle_dir().join("scenarios"));
     let derived = FileResolver::new(oracle_dir().join("derived"));
     for (resolver, script, frames) in [
@@ -178,6 +182,9 @@ fn measure_scripts(resolver: &FileResolver, report: &mut Vec<(String, u32, (u64,
         (resolver, "scripts/f16_test.xml", 3000),
         (resolver, "scripts/L4102.xml", 3000),
         (resolver, "scripts/Test_F450_Launch.xml", 3000),
+        (resolver, "scripts/J2461.xml", 2400),
+        (resolver, "scripts/x153.xml", 3000),
+        (resolver, "scripts/sim_primer.xml", 3000),
     ] {
         let mut fdm = Fdm::new().unwrap();
         fdm.load_script(resolver, script).unwrap();
