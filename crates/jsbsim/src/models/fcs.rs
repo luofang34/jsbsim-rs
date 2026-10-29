@@ -31,6 +31,7 @@ pub mod summer;
 pub mod switch;
 #[cfg(test)]
 mod tests;
+pub mod throttle;
 pub mod waypoint;
 
 pub use bind::bind;
@@ -172,6 +173,9 @@ pub struct Fcs {
     pub channel_rate: i32,
     /// Channels in load order.
     pub channels: Vec<Channel>,
+    /// Throttle, mixture, advance and feather commands and positions, one
+    /// of each per engine.
+    pub throttles: throttle::Throttles,
 }
 
 impl Fcs {
@@ -198,6 +202,7 @@ impl Fcs {
         self.ptrim_cmd = 0.0;
         self.ytrim_cmd = 0.0;
         self.rtrim_cmd = 0.0;
+        self.throttles.init();
         self.tailhook_pos = 0.0;
         self.wing_fold_pos = 0.0;
         for s in [

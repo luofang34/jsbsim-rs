@@ -27,8 +27,8 @@ impl Fdm {
         Ok(())
     }
 
-    /// `SetEngineRunning`: full throttle and mixture, then the engine's
-    /// `InitRunning`.
+    /// `SetEngineRunning`: full throttle and mixture in the engine inputs,
+    /// full mixture in the FCS, then the engine's `InitRunning`.
     fn set_engine_running(&mut self, i: usize) {
         let input = &mut self.models.propulsion.input;
         for v in [
@@ -41,6 +41,10 @@ impl Fdm {
                 *x = 1.0;
             }
         }
+        let n = i32::try_from(i).unwrap_or(i32::MAX);
+        let throttles = &mut self.models.fcs.throttles;
+        throttles.set_mixture_pos(n, 1.0);
+        throttles.set_mixture_cmd(n, 1.0);
         if let Some(e) = self.models.propulsion.engines.get_mut(i) {
             e.kind.init_running(&mut e.base);
         }

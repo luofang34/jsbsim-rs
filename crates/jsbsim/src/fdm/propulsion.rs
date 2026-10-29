@@ -10,6 +10,7 @@ use super::{Fdm, Models};
 use crate::Error;
 use crate::math::ColumnVector3;
 use crate::models::external_reactions::Transforms;
+use crate::models::fcs::throttle;
 use crate::models::propulsion::{self, Tank, TankType, families, tank};
 use crate::xml::{DocumentLoader, Element, IncludeKind};
 
@@ -36,6 +37,15 @@ impl Models {
         i.total_delta_t = self.exec.dt * f64::from(self.propulsion.base.rate);
         i.h_agl = self.propagate.distance_agl(&self.inertial);
         i.pqri = self.propagate.state.pqri;
+        // `clone_from` reuses each vector's buffer, so this allocates only
+        // the first time.
+        let t = &self.fcs.throttles;
+        i.throttle_pos.clone_from(&t.throttle_pos);
+        i.mixture_pos.clone_from(&t.mixture_pos);
+        i.throttle_cmd.clone_from(&t.throttle_cmd);
+        i.mixture_cmd.clone_from(&t.mixture_cmd);
+        i.prop_advance.clone_from(&t.prop_advance);
+        i.prop_feather.clone_from(&t.prop_feather);
     }
 }
 
@@ -86,7 +96,19 @@ impl Fdm {
         for engine in &mut p.engines {
             engine.base.fuel_density = fuel_density;
         }
-        self.post_load(el, "", Model::Propulsion)
+        self.post_load(el, "", Model::Propulsion)?;
+        // `FGFDMExec::LoadModel`: `FCS->AddThrottle()` for each engine.
+        for _ in 0..self.models.propulsion.engines.len() {
+            self.add_throttle()?;
+        }
+        Ok(())
+    }
+
+    /// `FGFCS::AddThrottle`: one more engine's commands and positions, and
+    /// their properties.
+    fn add_throttle(&mut self) -> Result<(), Error> {
+        let num = self.models.fcs.throttles.add();
+        throttle::bind_throttle(&mut self.env.binder(), num)
     }
 
     /// `FGPropulsion::Run`.

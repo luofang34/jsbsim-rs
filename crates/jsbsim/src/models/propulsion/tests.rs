@@ -273,3 +273,43 @@ fn an_engine_fed_by_a_missing_tank_fails_to_run() {
     fdm.set_property("ic/h-sl-ft", 10000.0).unwrap();
     assert!(matches!(fdm.run_ic(), Err(Error::Model { .. })));
 }
+
+#[test]
+fn each_engine_gets_throttle_properties_whose_positions_follow_the_commands() {
+    let mut fdm = running_rocket();
+    for (cmd, pos) in [
+        ("throttle-cmd-norm", "throttle-pos-norm"),
+        ("mixture-cmd-norm", "mixture-pos-norm"),
+        ("advance-cmd-norm", "advance-pos-norm"),
+        ("feather-cmd-norm", "feather-pos-norm"),
+    ] {
+        fdm.set_property(&format!("fcs/{cmd}[0]"), 0.75).unwrap();
+        fdm.run().unwrap();
+        let expected = if cmd.starts_with("feather") {
+            1.0
+        } else {
+            0.75
+        };
+        let got = fdm.get_property(&format!("fcs/{pos}")).unwrap();
+        assert_eq!(got, expected, "{pos}");
+    }
+    assert!(fdm.node("fcs/throttle-cmd-norm[1]").unwrap().is_none());
+    match &fdm.models.propulsion.engines[0].kind {
+        super::families::EngineKind::Test(e) => assert_eq!(e.throttle, 0.75),
+    }
+    fdm.models.fcs.init_model();
+    let t = &fdm.models.fcs.throttles;
+    assert_eq!((t.throttle_cmd[0], t.throttle_pos[0]), (0.0, 0.0));
+    assert_eq!((t.prop_advance_cmd[0], t.prop_feather_cmd[0]), (0.75, true));
+    assert_eq!((t.prop_advance[0], t.prop_feather[0]), (0.0, false));
+}
+
+#[test]
+fn starting_an_engine_sets_its_fcs_mixture() {
+    let fdm = running_rocket();
+    let t = &fdm.models.fcs.throttles;
+    assert_eq!((t.mixture_cmd[0], t.mixture_pos[0]), (1.0, 1.0));
+    assert_eq!(t.throttle_cmd[0], 0.0);
+    let input = &fdm.models.propulsion.input;
+    assert_eq!((input.throttle_cmd[0], input.mixture_pos[0]), (1.0, 1.0));
+}

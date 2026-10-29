@@ -105,6 +105,7 @@ impl Fdm {
             return Ok(());
         }
         self.run_model_functions(Model::Systems, true)?;
+        self.models.fcs.throttles.follow_commands();
         for c in 0..self.models.fcs.channels.len() {
             self.run_channel(c)?;
         }
