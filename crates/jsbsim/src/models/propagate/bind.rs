@@ -134,7 +134,7 @@ fn position_geodetic(b: &mut Binder<'_>) -> Result<(), Error> {
         "position/terrain-elevation-asl-ft",
         d,
         |m| m.propagate.terrain_elevation(&m.inertial),
-        |m, v| m.inertial.terrain_elevation = v,
+        |m, v| m.inertial.set_terrain_elevation(v),
     )?;
     for (name, i) in [("x", E_X), ("y", E_Y), ("z", E_Z)] {
         b.getter(&format!("position/eci-{name}-ft"), move |m| {

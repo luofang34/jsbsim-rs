@@ -7,6 +7,12 @@
 //! The planet: shape, rotation, gravity and the default flat-terrain
 //! ground callback.
 
+mod ground;
+#[cfg(test)]
+mod tests;
+
+pub use ground::{Contact, DefaultGroundCallback, GroundCallback};
+
 use super::base::ModelBase;
 use crate::Error;
 use crate::math::{ColumnVector3, E_X, E_Y, E_Z, Location};
@@ -21,7 +27,7 @@ pub const GRAVITY_WGS84: i32 = 1;
 pub const STANDARD_GRAVITY: f64 = 9.80665 / crate::units::FTTOM;
 
 /// `FGInertial`.
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct Inertial {
     /// Scheduling.
     pub base: ModelBase,
@@ -44,10 +50,10 @@ pub struct Inertial {
     pub grav_accel: ColumnVector3,
     /// Position the last gravity was computed at (`in.Position`).
     pub position: Location,
-    /// Terrain elevation of the default ground callback, ft.
-    pub terrain_elevation: f64,
-    /// Simulation time given to the ground callback.
-    pub time: f64,
+    /// `GroundCallback`.
+    ground: ground::Slot,
+    /// `GroundCallback->time`: the simulation time given to the callback.
+    time: f64,
 }
 
 impl Default for Inertial {
@@ -65,25 +71,10 @@ impl Default for Inertial {
             grav_type: GRAVITY_WGS84,
             grav_accel: ColumnVector3::zero(),
             position: Location::default(),
-            terrain_elevation: 0.0,
+            ground: ground::Slot::Default(DefaultGroundCallback::new(a, b)),
             time: 0.0,
         }
     }
-}
-
-/// What the ground callback reports about the terrain under a location.
-#[derive(Debug, Clone)]
-pub struct Contact {
-    /// Height of the location above the terrain, ft.
-    pub agl: f64,
-    /// Terrain point below the location.
-    pub point: Location,
-    /// Terrain normal, ECEF.
-    pub normal: ColumnVector3,
-    /// Terrain velocity, ECEF.
-    pub velocity: ColumnVector3,
-    /// Terrain angular velocity, ECEF.
-    pub angular_velocity: ColumnVector3,
 }
 
 impl Inertial {
@@ -111,6 +102,7 @@ impl Inertial {
         if el.find_element("J2").is_some() {
             self.j2 = el.find_element_value_as_number("J2")?;
         }
+        self.ground.get_mut().set_ellipse(self.a, self.b);
         Ok(())
     }
 
@@ -152,28 +144,41 @@ impl Inertial {
         )
     }
 
-    /// `FGDefaultGroundCallback::GetAGLevel`: flat terrain at the
-    /// configured elevation above the ellipsoid.
+    /// `GetContactPoint(location, ...)`: the ground callback's terrain
+    /// under `location` at the time it was last given.
     #[must_use]
     pub fn contact(&self, location: &Location) -> Contact {
-        let mut l = *location;
-        l.set_ellipse(self.a, self.b);
-        l.cache_derived();
-        let latitude = l.geod_latitude_rad();
-        let (sin_lat, cos_lat) = libm::sincos(latitude);
-        let longitude = l.longitude();
-        let (sin_lon, cos_lon) = libm::sincos(longitude);
-        let normal = ColumnVector3::new(cos_lat * cos_lon, cos_lat * sin_lon, sin_lat);
-        let mut point = Location::default();
-        point.set_ellipse(self.a, self.b);
-        point.set_position_geodetic(longitude, latitude, self.terrain_elevation);
-        Contact {
-            agl: l.geod_altitude() - self.terrain_elevation,
-            point,
-            normal,
-            velocity: ColumnVector3::zero(),
-            angular_velocity: ColumnVector3::zero(),
-        }
+        self.ground.get().ag_level(self.time, location)
+    }
+
+    /// `SetTerrainElevation(h)`, which only the default callback heeds.
+    pub fn set_terrain_elevation(&mut self, elevation: f64) {
+        self.ground.get_mut().set_terrain_elevation(elevation);
+    }
+
+    /// `SetTime(t)`: the simulation time the callback is queried with.
+    pub fn set_time(&mut self, time: f64) {
+        self.time = time;
+    }
+
+    /// The simulation time the callback is queried with, s.
+    #[must_use]
+    pub fn time(&self) -> f64 {
+        self.time
+    }
+
+    /// `SetGroundCallback(gc)`: `callback` replaces the current one. Like
+    /// a newly made `FGGroundCallback`, it is queried at time 0 until the
+    /// executive next sets the time.
+    pub fn set_ground_callback(&mut self, callback: Box<dyn GroundCallback>) {
+        self.ground = ground::Slot::Custom(callback);
+        self.time = 0.0;
+    }
+
+    /// Whether a callback replaced the default flat terrain.
+    #[must_use]
+    pub fn has_custom_ground_callback(&self) -> bool {
+        matches!(self.ground, ground::Slot::Custom(_))
     }
 
     /// `GetAltitudeAGL(location)`.

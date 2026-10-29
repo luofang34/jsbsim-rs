@@ -320,7 +320,7 @@ impl Fdm {
         let e = &mut self.models.exec;
         if !e.holding && !e.integration_suspended() {
             e.sim_time += e.dt;
-            self.models.inertial.time = e.sim_time;
+            self.models.inertial.set_time(e.sim_time);
             self.models.atmosphere.sim_time = e.sim_time;
             e.frame = e.frame.wrapping_add(1);
         }

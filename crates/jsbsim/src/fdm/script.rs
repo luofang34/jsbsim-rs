@@ -230,7 +230,7 @@ impl Fdm {
     /// `Setsim_time`.
     pub fn set_sim_time(&mut self, t: f64) {
         self.models.exec.sim_time = t;
-        self.models.inertial.time = t;
+        self.models.inertial.set_time(t);
         self.models.atmosphere.sim_time = t;
     }
 

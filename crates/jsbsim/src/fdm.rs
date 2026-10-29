@@ -114,7 +114,7 @@ impl ExecState {
 
 /// Every model, plus the executive state, in one place so getters can
 /// read any of them as JSBSim's getters do.
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Default)]
 pub struct Models {
     /// Executive state.
     pub exec: ExecState,
@@ -269,6 +269,17 @@ impl Fdm {
     /// the resolver's root.
     pub fn set_aircraft_path(&mut self, path: &str) {
         self.aircraft_path = path.to_owned();
+    }
+
+    /// `GetInertial()->SetGroundCallback(gc)`: every terrain query from
+    /// now on goes to `callback`. Install it before loading a script or
+    /// model so that initial conditions given above ground are placed on
+    /// its terrain. It stays installed across resets and planet loads.
+    pub fn set_ground_callback(
+        &mut self,
+        callback: Box<dyn crate::models::inertial::GroundCallback>,
+    ) {
+        self.models.inertial.set_ground_callback(callback);
     }
 
     /// `SetSystemsPath`: where `<system file="...">` includes are found

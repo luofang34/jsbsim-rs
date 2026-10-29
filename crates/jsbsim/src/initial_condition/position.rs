@@ -126,7 +126,7 @@ impl InitialCondition {
         elev: f64,
     ) {
         let agl = inertial.altitude_agl(&self.position);
-        inertial.terrain_elevation = elev;
+        inertial.set_terrain_elevation(elev);
         if self.last_altitude_set == AltitudeSet::Agl {
             let env = Environment {
                 atmosphere,

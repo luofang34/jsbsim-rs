@@ -52,8 +52,9 @@ impl InitialCondition {
         }
         let omega = inertial.omega_planet;
         if document.find_element("elevation").is_some() {
-            inertial.terrain_elevation =
-                document.find_element_value_as_number_convert_to("elevation", "FT")?;
+            inertial.set_terrain_elevation(
+                document.find_element_value_as_number_convert_to("elevation", "FT")?,
+            );
         }
         let env = Environment::new(atmosphere, inertial);
         match document.find_element("position") {
