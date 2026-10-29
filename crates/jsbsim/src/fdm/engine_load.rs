@@ -44,6 +44,28 @@ impl EngineLoad<'_> {
         self.fdm.env.load_context(options)
     }
 
+    /// The propulsion's engine inputs, as the engine's constructor sees
+    /// them.
+    #[must_use]
+    pub fn inputs(&self) -> &crate::models::propulsion::Inputs {
+        &self.fdm.models.propulsion.input
+    }
+
+    /// The engine's base and thruster, once [`EngineLoad::load_base`] has
+    /// loaded them, with the propulsion's engine inputs.
+    pub fn loaded_mut(
+        &mut self,
+    ) -> Option<(
+        &mut EngineBase,
+        &mut Thruster,
+        &crate::models::propulsion::Inputs,
+    )> {
+        let input = &self.fdm.models.propulsion.input;
+        self.loaded
+            .as_mut()
+            .map(|(base, thruster)| (base, thruster, input))
+    }
+
     /// The engine's base, once [`EngineLoad::load_base`] has loaded it.
     pub fn base_mut(&mut self) -> Option<&mut EngineBase> {
         self.loaded.as_mut().map(|(base, _)| base)

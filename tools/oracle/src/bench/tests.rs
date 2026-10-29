@@ -90,9 +90,9 @@ fn unknown_case_names_are_refused() {
 fn committed_cases_parse_and_name_existing_inputs() {
     let file = committed_cases();
     assert!(!file.cases.is_empty());
-    let root = rust_root(&repo_root());
     let mut names = HashSet::new();
     for case in &file.cases {
+        let root = case.rust_root(&repo_root());
         assert!(names.insert(&case.name), "duplicate case {}", case.name);
         assert!(case.frames > 0 && case.repeats > 0, "{}", case.name);
         let aircraft_path = case.aircraft_path.as_deref().unwrap_or("aircraft");
@@ -147,8 +147,7 @@ fn a_case_names_exactly_one_workload() {
 /// bench run times the same work on every repeat.
 #[test]
 fn every_case_runs_its_frames_in_the_port() {
-    let root = rust_root(&repo_root());
     for case in &committed_cases().cases {
-        rust::time(&root, case).unwrap();
+        rust::time(&case.rust_root(&repo_root()), case).unwrap();
     }
 }

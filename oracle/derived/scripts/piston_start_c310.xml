@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  piston_start_c310.xml: the c310 on the runway cranked
+  without spark, started by its magnetos, run on each magneto alone,
+  leaned, cut off by its mixture and restarted.
+  Regenerate with `oracle derive`.
+-->
+<runscript name="piston_start_c310">
+  <use aircraft="c310" initialize="reset00"/>
+  <run start="0.0" end="30" dt="0.008333333333333333">
+    <property value="1"> fcs/left-brake-cmd-norm </property>
+    <property value="1"> fcs/right-brake-cmd-norm </property>
+    <event name="crank without spark">
+      <condition> simulation/sim-time-sec ge 0.5 </condition>
+      <set name="fcs/throttle-cmd-norm[0]" value="0.3"/>
+      <set name="fcs/throttle-cmd-norm[1]" value="0.3"/>
+      <set name="fcs/mixture-cmd-norm[0]" value="1"/>
+      <set name="fcs/mixture-cmd-norm[1]" value="1"/>
+      <set name="propulsion/starter_cmd" value="1"/>
+    </event>
+    <event name="magnetos on">
+      <condition> simulation/sim-time-sec ge 2 </condition>
+      <set name="propulsion/magneto_cmd" value="3"/>
+    </event>
+    <event name="starter off">
+      <condition> simulation/sim-time-sec ge 5 </condition>
+      <set name="propulsion/starter_cmd" value="0"/>
+    </event>
+    <event name="left magneto">
+      <condition> simulation/sim-time-sec ge 8 </condition>
+      <set name="propulsion/magneto_cmd" value="1"/>
+    </event>
+    <event name="right magneto">
+      <condition> simulation/sim-time-sec ge 10 </condition>
+      <set name="propulsion/magneto_cmd" value="2"/>
+    </event>
+    <event name="both magnetos">
+      <condition> simulation/sim-time-sec ge 12 </condition>
+      <set name="propulsion/magneto_cmd" value="3"/>
+    </event>
+    <event name="lean">
+      <condition> simulation/sim-time-sec ge 14 </condition>
+      <set name="fcs/mixture-cmd-norm[0]" value="0.6"/>
+      <set name="fcs/mixture-cmd-norm[1]" value="0.6"/>
+    </event>
+    <event name="cut off">
+      <condition> simulation/sim-time-sec ge 17 </condition>
+      <set name="fcs/mixture-cmd-norm[0]" value="0"/>
+    </event>
+    <event name="restart">
+      <condition> simulation/sim-time-sec ge 22 </condition>
+      <set name="fcs/mixture-cmd-norm[0]" value="1"/>
+      <set name="propulsion/starter_cmd" value="1"/>
+    </event>
+    <event name="restarted">
+      <condition> simulation/sim-time-sec ge 25 </condition>
+      <set name="propulsion/starter_cmd" value="0"/>
+    </event>
+  </run>
+</runscript>

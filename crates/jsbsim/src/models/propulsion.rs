@@ -15,6 +15,7 @@ pub mod engine;
 pub mod families;
 pub mod force;
 mod fuel;
+pub mod piston;
 pub mod propeller;
 pub mod tank;
 #[cfg(test)]
@@ -163,7 +164,7 @@ impl Propulsion {
         for engine in &mut self.engines {
             engine
                 .kind
-                .reset_to_ic(&mut engine.base, &mut engine.thruster);
+                .reset_to_ic(&mut engine.base, &mut engine.thruster, &self.input);
         }
     }
 

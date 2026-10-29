@@ -82,7 +82,12 @@ impl EngineFamily for TestEngine {
         0.5 * base.sl_fuel_flow_max * base.pct_power * input.total_delta_t
     }
 
-    fn init_running(&mut self, base: &mut EngineBase) -> i32 {
+    fn init_running(
+        &mut self,
+        base: &mut EngineBase,
+        _thruster: &mut Thruster,
+        _input: &mut Inputs,
+    ) -> i32 {
         base.running = true;
         1
     }

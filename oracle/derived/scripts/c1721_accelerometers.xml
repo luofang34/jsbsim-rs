@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  c1721_accelerometers.xml: scripts/c1721.xml on c172r_accelerometers with the
+  settings of JSBSim's tests/TestAccelerometer.py testOnGround. Regenerate with `oracle derive`.
+-->
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+    name="C172-01A">
+  <use aircraft="c172r_accelerometers" initialize="reset00"/>
+  <run start="0.0" end="10" dt="0.008333">
+    <property value="1"> fcs/accelerometer/on </property>
+    <property value="0"> simulation/gravity-model </property>
+    <property value="0"> ic/psi-true-rad </property>
+    <event name="event name">
+      <condition>simulation/sim-time-sec  ge  0.25</condition>
+      <set name="fcs/aileron-cmd-norm" action="FG_STEP" value="0.25" tc="0.25"/>
+    </event>
+    <event name="event name">
+      <condition>simulation/sim-time-sec  ge  0.5</condition>
+      <set name="fcs/aileron-cmd-norm" action="FG_EXP" type="FG_DELTA" value="0.5" tc="0.5"/>
+    </event>
+    <event name="event name">
+      <condition>simulation/sim-time-sec  ge  1.5</condition>
+      <set name="fcs/rudder-cmd-norm" action="FG_RAMP" type="FG_DELTA" value="0.5" tc="0.5"/>
+    </event>
+    <event name="event name">
+      <condition>simulation/sim-time-sec  ge  1.5</condition>
+      <set name="fcs/elevator-cmd-norm" action="FG_RAMP" value="0.25" tc="0.5"/>
+    </event>
+    <event name="event name">
+      <condition>simulation/sim-time-sec  ge  2.5</condition>
+      <set name="fcs/elevator-cmd-norm" action="FG_EXP" type="FG_DELTA" value="0.5" tc="0.5"/>
+    </event>
+  </run>
+</runscript>

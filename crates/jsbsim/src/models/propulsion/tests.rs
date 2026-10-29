@@ -136,13 +136,13 @@ fn reset_restores_the_initial_contents() {
 
 #[test]
 fn engine_and_thruster_types_are_refused_by_name() {
-    let piston = r#"<propulsion><engine>
-      <piston_engine name="p"/><thruster><propeller/></thruster>
+    let turbine = r#"<propulsion><engine>
+      <turbine_engine name="p"/><thruster><propeller/></thruster>
     </engine></propulsion>"#;
-    let err = load(piston).err().unwrap();
+    let err = load(turbine).err().unwrap();
     assert!(
         matches!(&err, Error::Unsupported { construct, path }
-            if construct == "<piston_engine>" && path.contains("line 1")),
+            if construct == "<turbine_engine>" && path.contains("line 1")),
         "{err:?}"
     );
     let propeller = r#"<propulsion><engine>
@@ -216,6 +216,7 @@ fn starting_an_engine_reaches_a_steady_thrust_and_sums_its_force() {
     assert!((pitch + 1000.0).abs() < 1e-9, "{pitch}");
     let calculations = match &fdm.models.propulsion.engines[0].kind {
         super::families::EngineKind::Test(e) => e.calculations,
+        _ => panic!("not the test engine"),
     };
     assert!(calculations > 120, "{calculations}");
 }
@@ -296,6 +297,7 @@ fn each_engine_gets_throttle_properties_whose_positions_follow_the_commands() {
     assert!(fdm.node("fcs/throttle-cmd-norm[1]").unwrap().is_none());
     match &fdm.models.propulsion.engines[0].kind {
         super::families::EngineKind::Test(e) => assert_eq!(e.throttle, 0.75),
+        _ => panic!("not the test engine"),
     }
     fdm.models.fcs.init_model();
     let t = &fdm.models.fcs.throttles;

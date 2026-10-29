@@ -16,7 +16,7 @@ pub(super) fn time_blocking(
     case: &BenchCase,
     run_dir: &Path,
 ) -> Result<Vec<u64>, OracleError> {
-    let root = &paths.jsbsim_root;
+    let root = &case.cpp_root(paths);
     let mut command = Command::new(paths.driver_exe());
     command.current_dir(run_dir).env("JSBSIM_DEBUG", "0").env(
         "ORACLE_AIRCRAFT_PATH",

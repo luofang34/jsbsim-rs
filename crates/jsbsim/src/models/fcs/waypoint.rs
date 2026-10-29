@@ -193,6 +193,8 @@ impl Family for Waypoint {
     fn step(&mut self, base: &mut Base, c: Coordinates, tick: &Tick) {
         self.source
             .set_position_geodetic(c.source_longitude, c.source_latitude, 0.0);
+        // Computed once here rather than by each read below.
+        self.source.cache_derived();
         base.output = match self.kind {
             WaypointType::Heading => {
                 let heading = self

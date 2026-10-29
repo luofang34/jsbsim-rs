@@ -38,6 +38,18 @@ pub const CASES_FILE: &str = "oracle/bench.toml";
 /// ends the run. `tests/zero_alloc.rs` flies its aircraft from it too.
 pub const AIRBORNE_IC: [(&str, f64); 2] = [("ic/h-sl-ft", 10000.0), ("ic/u-fps", 500.0)];
 
+/// Aircraft that load but cannot run, in JSBSim as in the port, with the
+/// property whose missing node stops the first frame. The tests that fly
+/// every aircraft loading `ok` check that these still stop there.
+pub const UNRUNNABLE: [(&str, &str); 2] = [
+    // Its flap normalizer reads `fcs/flaps-pos-deg`, but its flap
+    // kinematic writes `fcs/flap-pos-deg`.
+    ("L17", "fcs/flaps-pos-deg"),
+    // Its pushback system reads a FlightGear property outside the
+    // instance.
+    ("dr1", "/sim/model/pushback/position-norm"),
+];
+
 /// One benchmarked script or aircraft.
 #[derive(Debug, Clone, PartialEq, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -56,6 +68,11 @@ pub struct BenchCase {
     /// absent.
     #[serde(default)]
     pub aircraft_path: Option<String>,
+    /// Directory, relative to this repository, holding the inputs of both
+    /// sides (such as `oracle/derived`); when absent C++ reads the JSBSim
+    /// checkout and Rust its vendored copies.
+    #[serde(default)]
+    pub inputs: Option<String>,
     /// Frames run after `RunIC` and before timing.
     pub warm_up: u32,
     /// Timed frames per repeat.
@@ -152,6 +169,24 @@ pub fn rust_root(repo_root: &Path) -> PathBuf {
     repo_root.join("oracle").join("inputs")
 }
 
+impl BenchCase {
+    /// Where the Rust port reads this case's inputs.
+    #[must_use]
+    pub fn rust_root(&self, repo_root: &Path) -> PathBuf {
+        self.inputs
+            .as_ref()
+            .map_or_else(|| rust_root(repo_root), |d| repo_root.join(d))
+    }
+
+    /// Where the C++ driver reads this case's inputs.
+    #[must_use]
+    pub fn cpp_root(&self, paths: &Paths) -> PathBuf {
+        self.inputs
+            .as_ref()
+            .map_or_else(|| paths.jsbsim_root.clone(), |d| paths.repo_root.join(d))
+    }
+}
+
 /// Runs the selected cases and logs a table. A case that cannot run is
 /// logged and makes the result [`ExitCode::FAILURE`]; the others still run.
 pub fn run_blocking(paths: &Paths, names: &[String]) -> Result<ExitCode, OracleError> {
@@ -181,7 +216,7 @@ pub fn run_blocking(paths: &Paths, names: &[String]) -> Result<ExitCode, OracleE
 fn run_case_blocking(paths: &Paths, case: &BenchCase) -> Result<CaseResult, OracleError> {
     let run_dir = paths.work_dir().join("bench").join(&case.name);
     std::fs::create_dir_all(&run_dir).map_err(|e| OracleError::io("creating", &run_dir, e))?;
-    let rust_root = rust_root(&paths.repo_root);
+    let rust_root = case.rust_root(&paths.repo_root);
     let mut cpp_ns = Vec::new();
     let mut rust_ns = Vec::new();
     for _ in 0..case.repeats {

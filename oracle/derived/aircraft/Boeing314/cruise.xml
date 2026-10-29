@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  cruise.xml: the Boeing 314 level at 8000 ft and 150 kt, for the piston
+  engine scenarios. Regenerate with `oracle derive`.
+-->
+<initialize name="cruise">
+  <latitude unit="DEG"> 37.6 </latitude>
+  <longitude unit="DEG"> -122.4 </longitude>
+  <altitude unit="FT"> 8000.0 </altitude>
+  <vc unit="KTS"> 150.0 </vc>
+  <theta unit="DEG"> 2.0 </theta>
+  <psi unit="DEG"> 270.0 </psi>
+</initialize>

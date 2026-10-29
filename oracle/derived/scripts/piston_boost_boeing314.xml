@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  piston_boost_boeing314.xml: the Boeing 314 started running in
+  cruise with its supercharged engines at full throttle (the takeoff
+  boost), then at the rated boost and at half throttle.
+  Regenerate with `oracle derive`.
+-->
+<runscript name="piston_boost_boeing314">
+  <use aircraft="Boeing314" initialize="cruise"/>
+  <run start="0.0" end="20" dt="0.008333333333333333">
+    <event name="start running">
+      <condition> simulation/sim-time-sec ge 0.05 </condition>
+      <set name="fcs/throttle-cmd-norm[0]" value="1"/>
+      <set name="fcs/throttle-cmd-norm[1]" value="1"/>
+      <set name="fcs/throttle-cmd-norm[2]" value="1"/>
+      <set name="fcs/throttle-cmd-norm[3]" value="1"/>
+      <set name="fcs/mixture-cmd-norm[0]" value="1"/>
+      <set name="fcs/advance-cmd-norm[0]" value="1"/>
+      <set name="fcs/mixture-cmd-norm[1]" value="1"/>
+      <set name="fcs/advance-cmd-norm[1]" value="1"/>
+      <set name="fcs/mixture-cmd-norm[2]" value="1"/>
+      <set name="fcs/advance-cmd-norm[2]" value="1"/>
+      <set name="fcs/mixture-cmd-norm[3]" value="1"/>
+      <set name="fcs/advance-cmd-norm[3]" value="1"/>
+      <set name="propulsion/set-running" value="-1"/>
+    </event>
+    <event name="rated boost">
+      <condition> simulation/sim-time-sec ge 8 </condition>
+      <set name="fcs/throttle-cmd-norm[0]" value="0.9"/>
+      <set name="fcs/throttle-cmd-norm[1]" value="0.9"/>
+      <set name="fcs/throttle-cmd-norm[2]" value="0.9"/>
+      <set name="fcs/throttle-cmd-norm[3]" value="0.9"/>
+    </event>
+    <event name="half throttle">
+      <condition> simulation/sim-time-sec ge 14 </condition>
+      <set name="fcs/throttle-cmd-norm[0]" value="0.5"/>
+      <set name="fcs/throttle-cmd-norm[1]" value="0.5"/>
+      <set name="fcs/throttle-cmd-norm[2]" value="0.5"/>
+      <set name="fcs/throttle-cmd-norm[3]" value="0.5"/>
+    </event>
+  </run>
+</runscript>

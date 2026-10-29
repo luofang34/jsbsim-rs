@@ -4,7 +4,8 @@
 //! owner forgot `cache_derived`: such a read recomputes the values on every
 //! call. The library reports each such read as a trace event under
 //! `jsbsim::math::UNCACHED_DERIVED_TARGET`; this test counts them over the
-//! corpus aircraft that load `ok` and the vendored scripts.
+//! corpus aircraft that load `ok`, the vendored scripts and the derived
+//! piston scripts.
 
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
@@ -74,16 +75,29 @@ fn steady_state_frames_read_only_cached_derived_values() {
             fdm.load_model(&resolver, "aircraft", &name).unwrap();
             fdm.set_property("ic/h-sl-ft", 10000.0).unwrap();
             fdm.set_property("ic/u-fps", 500.0).unwrap();
+            if let Some((_, missing)) = oracle::bench::UNRUNNABLE.iter().find(|(n, _)| *n == name) {
+                let err = fdm.run_ic().err();
+                assert!(
+                    err.as_ref()
+                        .is_some_and(|e| format!("{e:?}").contains(missing)),
+                    "{name} was expected to stop at {missing}: {err:?}"
+                );
+                continue;
+            }
             fdm.run_ic().unwrap();
             report.push((format!("aircraft {name}"), misses(&mut fdm, &count, FRAMES)));
         }
-        for (script, frames) in [
-            ("scripts/ball_orbit_phase.xml", 3000),
-            ("scripts/ball.xml", FRAMES),
-            ("scripts/mk82_script.xml", FRAMES),
+        let derived = FileResolver::new(oracle_dir().join("derived"));
+        for (resolver, script, frames) in [
+            (&resolver, "scripts/ball_orbit_phase.xml", 3000),
+            (&resolver, "scripts/ball.xml", FRAMES),
+            (&resolver, "scripts/mk82_script.xml", FRAMES),
+            (&derived, "scripts/c1724.xml", FRAMES),
+            (&derived, "scripts/piston_start_c310.xml", 3000),
+            (&derived, "scripts/piston_governor_c310.xml", 5000),
         ] {
             let mut fdm = Fdm::new().unwrap();
-            fdm.load_script(&resolver, script).unwrap();
+            fdm.load_script(resolver, script).unwrap();
             fdm.run_ic().unwrap();
             report.push((format!("script {script}"), misses(&mut fdm, &count, frames)));
         }

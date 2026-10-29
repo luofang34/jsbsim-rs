@@ -107,13 +107,18 @@ pub trait EngineFamily: Sized {
         0.0
     }
 
-    /// `InitRunning`.
-    fn init_running(&mut self, _base: &mut EngineBase) -> i32 {
+    /// `InitRunning`, which may change the engine inputs.
+    fn init_running(
+        &mut self,
+        _base: &mut EngineBase,
+        _thruster: &mut Thruster,
+        _input: &mut Inputs,
+    ) -> i32 {
         1
     }
 
     /// `ResetToIC`, which also resets the thruster.
-    fn reset_to_ic(&mut self, base: &mut EngineBase, thruster: &mut Thruster) {
+    fn reset_to_ic(&mut self, base: &mut EngineBase, thruster: &mut Thruster, _input: &Inputs) {
         base.reset_to_ic();
         thruster.reset_to_ic();
     }
@@ -232,16 +237,21 @@ macro_rules! engines {
             }
 
             /// `InitRunning`.
-            pub fn init_running(&mut self, base: &mut EngineBase) -> i32 {
+            pub fn init_running(
+                &mut self,
+                base: &mut EngineBase,
+                thruster: &mut Thruster,
+                input: &mut Inputs,
+            ) -> i32 {
                 match *self {
-                    $($(#[$cfg])* Self::$variant(ref mut f) => f.init_running(base),)*
+                    $($(#[$cfg])* Self::$variant(ref mut f) => f.init_running(base, thruster, input),)*
                 }
             }
 
             /// `ResetToIC`.
-            pub fn reset_to_ic(&mut self, base: &mut EngineBase, thruster: &mut Thruster) {
+            pub fn reset_to_ic(&mut self, base: &mut EngineBase, thruster: &mut Thruster, input: &Inputs) {
                 match *self {
-                    $($(#[$cfg])* Self::$variant(ref mut f) => f.reset_to_ic(base, thruster),)*
+                    $($(#[$cfg])* Self::$variant(ref mut f) => f.reset_to_ic(base, thruster, input),)*
                 }
             }
 
@@ -450,6 +460,7 @@ macro_rules! thrusters {
 }
 
 engines! {
+    Piston(super::piston::Piston) = "piston_engine";
     #[cfg(test)]
     Test(super::test_engine::TestEngine) = "test_engine";
 }

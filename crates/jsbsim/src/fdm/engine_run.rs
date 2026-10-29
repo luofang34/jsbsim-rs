@@ -45,8 +45,10 @@ impl Fdm {
         let throttles = &mut self.models.fcs.throttles;
         throttles.set_mixture_pos(n, 1.0);
         throttles.set_mixture_cmd(n, 1.0);
-        if let Some(e) = self.models.propulsion.engines.get_mut(i) {
-            e.kind.init_running(&mut e.base);
+        let p = &mut self.models.propulsion;
+        if let Some(e) = p.engines.get_mut(i) {
+            e.kind
+                .init_running(&mut e.base, &mut e.thruster, &mut p.input);
         }
     }
 

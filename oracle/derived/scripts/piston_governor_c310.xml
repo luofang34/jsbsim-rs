@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  piston_governor_c310.xml: the c310 started running in
+  flight, its governors moved through their range, one propeller feathered
+  and unfeathered, the other engine's magnetos cut to windmill and restored.
+  Regenerate with `oracle derive`.
+-->
+<runscript name="piston_governor_c310">
+  <use aircraft="c310" initialize="reset00"/>
+  <run start="0.0" end="50" dt="0.008333333333333333">
+    <property value="6000"> ic/h-sl-ft </property>
+    <property value="280"> ic/u-fps </property>
+    <property value="2"> ic/theta-deg </property>
+    <event name="start running">
+      <condition> simulation/sim-time-sec ge 0.05 </condition>
+      <set name="fcs/throttle-cmd-norm[0]" value="1"/>
+      <set name="fcs/throttle-cmd-norm[1]" value="1"/>
+      <set name="fcs/mixture-cmd-norm[0]" value="1"/>
+      <set name="fcs/mixture-cmd-norm[1]" value="1"/>
+      <set name="fcs/advance-cmd-norm[0]" value="1"/>
+      <set name="fcs/advance-cmd-norm[1]" value="1"/>
+      <set name="propulsion/set-running" value="-1"/>
+    </event>
+    <event name="governor half">
+      <condition> simulation/sim-time-sec ge 5 </condition>
+      <set name="fcs/advance-cmd-norm[0]" value="0.5"/>
+    </event>
+    <event name="governor low">
+      <condition> simulation/sim-time-sec ge 10 </condition>
+      <set name="fcs/advance-cmd-norm[0]" value="0"/>
+    </event>
+    <event name="feather">
+      <condition> simulation/sim-time-sec ge 15 </condition>
+      <set name="fcs/feather-cmd-norm[1]" value="1"/>
+    </event>
+    <event name="magnetos off">
+      <condition> simulation/sim-time-sec ge 25 </condition>
+      <set name="propulsion/active_engine" value="0"/>
+      <set name="propulsion/magneto_cmd" value="0"/>
+    </event>
+    <event name="windmill restart">
+      <condition> simulation/sim-time-sec ge 27 </condition>
+      <set name="propulsion/magneto_cmd" value="3"/>
+      <set name="propulsion/active_engine" value="-1"/>
+    </event>
+    <event name="unfeather">
+      <condition> simulation/sim-time-sec ge 40 </condition>
+      <set name="fcs/feather-cmd-norm[1]" value="0"/>
+    </event>
+  </run>
+</runscript>
