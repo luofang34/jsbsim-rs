@@ -110,6 +110,15 @@ impl<'r> DocumentLoader<'r> {
         Ok(Some(document))
     }
 
+    /// `FGOutput::FindFullPathName`: `file` in `include_dir` when there is
+    /// one and it is there, else in the aircraft directory.
+    #[must_use]
+    pub fn find_output_include(&self, include_dir: Option<&str>, file: &str) -> Option<String> {
+        include_dir
+            .and_then(|dir| self.check_path_name(dir, file))
+            .or_else(|| self.check_path_name(&self.aircraft_dir, file))
+    }
+
     fn find_full_path(&self, file: &str, kind: IncludeKind) -> Option<String> {
         let aircraft = self.aircraft_dir.as_str();
         let mut dirs = Vec::new();

@@ -151,8 +151,34 @@ fn types_jsbsim_cannot_make_fail_the_load() {
     }
 }
 
+fn load_with(outputs: &str, files: &[(&str, &str)]) -> Result<Fdm, Error> {
+    let mut fdm = Fdm::with_options(LoadOptions::default())?;
+    let mut resolver = MemoryResolver::new();
+    resolver.insert("aircraft/t/t.xml", aircraft(outputs).into_bytes());
+    for (path, text) in files {
+        resolver.insert(*path, text.as_bytes().to_vec());
+    }
+    fdm.load_model(&resolver, "aircraft", "t")?;
+    Ok(fdm)
+}
+
 #[test]
-fn an_included_output_file_is_refused() {
+fn an_included_output_file_adds_its_attributes() {
+    let output = r#"<output name="x" file="more.xml"/>"#;
+    let more = r#"<output type="CSV" rate="5"><property>velocities/u-fps</property></output>"#;
+    let mut fdm = load_with(output, &[("aircraft/t/more.xml", more)]).unwrap();
+    let dt = fdm.models.exec.dt;
+    assert_eq!(
+        fdm.get_property("simulation/output/log_rate_hz").unwrap(),
+        1.0 / (f64::from((0.5 + 1.0 / (dt * 5.0)) as u32) * dt)
+    );
+}
+
+#[test]
+fn an_output_file_that_is_missing_or_not_an_output_fails() {
     let output = r#"<output name="x" type="CSV" file="more.xml"/>"#;
-    assert!(matches!(load(output), Err(Error::Unsupported { .. })));
+    assert!(load_with(output, &[]).is_err());
+    let other = r#"<input type="CSV"/>"#;
+    let err = load_with(output, &[("aircraft/t/more.xml", other)]).err();
+    assert!(matches!(err, Some(Error::Model { .. })), "{err:?}");
 }

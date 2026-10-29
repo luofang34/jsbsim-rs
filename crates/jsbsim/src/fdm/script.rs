@@ -186,7 +186,13 @@ impl Fdm {
         )? {
             return Err(script_error("Initialization unsuccessful"));
         }
-        self.io_directives(&document)?;
+        let script_dir = match script_path.rfind('/') {
+            Some(at) => &script_path[..at],
+            None => ".",
+        };
+        // An output's include falls back on the full aircraft path.
+        let outputs = DocumentLoader::new(resolver, format!("{aircraft_path}/{aircraft}"));
+        self.io_directives(&document, &outputs, Some(script_dir))?;
         script.local_properties = self.declare_script_properties(run)?;
         for event_el in run.find_elements("event") {
             script.events.push(parse_event(event_el, self)?);

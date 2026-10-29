@@ -274,7 +274,7 @@ impl Fdm {
             self.load_aerodynamics(&aero)?;
             self.post_load(&aero, "", Model::Aerodynamics)?;
         }
-        self.io_directives(document)?;
+        self.io_directives(document, loader, None)?;
         unsupported_if_present(document, "child")?;
         self.load_model_constants();
         self.load_all_inputs();
@@ -284,8 +284,15 @@ impl Fdm {
     /// The `<input>` and then the `<output>` children of `document`.
     /// They describe sockets and files, which the core does not open; the
     /// harness logs properties itself. Each `<output>` still makes its
-    /// output type and that type's properties, as `FGOutput::Load` does.
-    pub(super) fn io_directives(&mut self, document: &Element) -> Result<(), Error> {
+    /// output type and that type's properties, as `FGOutput::Load` does;
+    /// an output's `file` is looked for in `include_dir` (the script's
+    /// directory, for a script's outputs), then in the aircraft directory.
+    pub(super) fn io_directives(
+        &mut self,
+        document: &Element,
+        loader: &DocumentLoader<'_>,
+        include_dir: Option<&str>,
+    ) -> Result<(), Error> {
         for name in ["input", "output"] {
             for el in document.find_elements(name) {
                 if self.options.strict {
@@ -299,25 +306,56 @@ impl Fdm {
                     el.location()
                 );
                 if name == "output" {
-                    self.load_output(el)?;
+                    self.load_output(el, loader, include_dir)?;
                 }
             }
         }
         Ok(())
     }
 
-    /// `FGOutput::Load(element)`. A `file` include is refused, since the
-    /// output type's attributes may come from it. The output's own
-    /// functions are not loaded: JSBSim ties each named one to a property
-    /// whose value it caches only when the type prints, which the port
-    /// never does, so the port leaves those properties out.
-    fn load_output(&mut self, el: &Element) -> Result<(), Error> {
-        if el.has_attribute("file") {
-            return Err(Error::Unsupported {
-                construct: "<output file=...>".to_owned(),
-                path: el.location().to_string(),
-            });
-        }
+    /// `FGOutput::Load(element)`: a `file` include is merged into the
+    /// element (`FGModel::Upload`), its attributes and children added. The
+    /// output's own functions, and the included file's, are not loaded:
+    /// JSBSim ties each named one to a property whose value it caches only
+    /// when the type prints, which the port never does, so the port leaves
+    /// those properties out; templates there only serve the output's
+    /// `apply` conversions.
+    fn load_output(
+        &mut self,
+        el: &Element,
+        loader: &DocumentLoader<'_>,
+        include_dir: Option<&str>,
+    ) -> Result<(), Error> {
+        let merged;
+        let el = if el.has_attribute("file") {
+            let file = el.attribute("file");
+            let path = loader
+                .find_output_include(include_dir, file)
+                .ok_or_else(|| crate::xml::XmlError::IncludeNotFound {
+                    file: file.to_owned(),
+                    at: el.location(),
+                })?;
+            let doc = loader.load_document(&path)?;
+            if doc.name() != el.name() {
+                return Err(Error::Model {
+                    message: format!(
+                        "{}: Read model '{}' while expecting model '{}'",
+                        el.location(),
+                        doc.name(),
+                        el.name()
+                    ),
+                });
+            }
+            let mut copy = el.clone();
+            copy.merge_attributes(&doc);
+            for child in doc.children() {
+                copy.add_child(child.clone());
+            }
+            merged = copy;
+            &merged
+        } else {
+            el
+        };
         if el.find_element("function").is_some() {
             tracing::warn!(
                 "{}: the functions of an <output> are not loaded",
