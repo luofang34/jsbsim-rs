@@ -4,8 +4,8 @@
 //! - `tripod_ground` is `tests/tripod.xml` as `tests/TestGndReactions.py`
 //!   flies it, from the test's initial conditions (0.1 ft above sea level
 //!   at the North pole, which compresses each contact by its share of the
-//!   weight). The test trims it, which the port does not do; untrimmed,
-//!   its 1 slug ft2 inertias tumble it off its contacts within 0.2 s at
+//!   weight), but untrimmed: the `trim` golden runs the test's own trimmed
+//!   tripod. Untrimmed, its 1 slug ft2 inertias tumble it off its contacts within 0.2 s at
 //!   120 Hz, so it takes the 1000 slug ft2 of `TestMassChangeOnGround.py`
 //!   for that reason. `tripod_ground_centered.xml` stands it as
 //!   `test_centered_mass`, `tripod_ground_eccentric.xml` with the 1000 lb

@@ -22,6 +22,7 @@ pub mod piston_fuel;
 pub mod piston_scenarios;
 pub mod systems;
 pub mod tanks;
+pub mod trim_tests;
 pub mod tripod;
 
 use std::path::Path;

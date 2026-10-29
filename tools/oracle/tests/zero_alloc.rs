@@ -180,7 +180,7 @@ fn steady_state_frames_allocate_nothing() {
     // up and lands back on its wheels; piston_start_c310's cranks, starts,
     // runs on each magneto, cuts off and restarts its engines, and
     // piston_governor_c310's governs, feathers, windmills and restarts in
-    // flight; c1722_untrimmed's starts running from its initial
+    // flight; c1722_inertia's trims, starts running from its initial
     // conditions and burns its tanks down to the unusable fuel.
     let scenarios = FileResolver::new(oracle_dir().join("scenarios"));
     let derived = FileResolver::new(oracle_dir().join("derived"));
@@ -204,7 +204,7 @@ fn steady_state_frames_allocate_nothing() {
         (&scenarios, "scripts/gear_rover_retract.xml", 1000),
         (&derived, "scripts/piston_start_c310.xml", 3000),
         (&derived, "scripts/piston_governor_c310.xml", 5000),
-        (&derived, "scripts/c1722_untrimmed.xml", 12000),
+        (&derived, "scripts/c1722_inertia.xml", 12000),
     ] {
         let mut fdm = Fdm::new().unwrap();
         fdm.load_script(resolver, script).unwrap();

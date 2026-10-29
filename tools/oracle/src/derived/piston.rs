@@ -397,5 +397,6 @@ pub fn files(read: Read<'_>) -> Result<Vec<(String, String)>, OracleError> {
     takeoff_files(read, &mut files)?;
     test_files(read, &mut files)?;
     super::piston_fuel::files(read, &mut files)?;
+    super::trim_tests::files(read, &mut files)?;
     Ok(files)
 }

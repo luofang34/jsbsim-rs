@@ -1,0 +1,147 @@
+# FGTrim on every corpus script that trims through
+# simulation/do_simple_trim and whose aircraft loads (the c172x ones on the
+# noise-free c172x of oracle/derived), and on JSBSim's Python trim tests
+# driven as they drive the FDM. Each trim prints its result, cycles and,
+# per axis, its control and state, solver runs, successful cycles and
+# frames; then the watched state as the frame ends.
+#
+# The scripts, run past their trims.
+paths ../../derived aircraft systems
+new
+watch simulation/sim-time-sec position/h-agl-ft attitude/phi-rad attitude/theta-rad attitude/psi-rad velocities/u-fps velocities/v-fps velocities/w-fps velocities/p-rad_sec velocities/q-rad_sec velocities/r-rad_sec accelerations/udot-ft_sec2 accelerations/vdot-ft_sec2 accelerations/wdot-ft_sec2 accelerations/pdot-rad_sec2 accelerations/qdot-rad_sec2 accelerations/rdot-rad_sec2 aero/alpha-rad aero/beta-rad fcs/elevator-cmd-norm fcs/aileron-cmd-norm fcs/rudder-cmd-norm fcs/pitch-trim-cmd-norm fcs/throttle-cmd-norm simulation/trim-completed ic/h-agl-ft ic/theta-rad ic/alpha-rad
+script scripts/c1722.xml
+runic
+until 1
+new
+script scripts/c172_cruise_8K.xml
+runic
+until 40
+new
+script scripts/c172_cross_wind.xml
+runic
+until 0.5
+new
+script scripts/c172_head_wind.xml
+runic
+until 0.5
+new
+script scripts/c172_elevator_doublet.xml
+runic
+until 1.5
+new
+script scripts/c1722_inertia.xml
+runic
+until 1
+paths ../../inputs aircraft systems
+new
+script scripts/p51d_tail_wind.xml
+runic
+until 0.5
+new
+script scripts/Short_S23_2.xml
+runic
+until 1.5
+new
+script scripts/Short_S23_3.xml
+runic
+until 1.5
+new
+script scripts/Short_S23_4.xml
+runic
+until 1.5
+# TestKinematic.testKinematicAndTrim: the gear's <kinematic> does not upset
+# the ground trim, and the gear stays down after it.
+new
+watch gear/gear-pos-norm gear/gear-cmd-norm simulation/trim-completed position/h-agl-ft attitude/theta-rad attitude/phi-rad velocities/w-fps accelerations/wdot-ft_sec2 accelerations/qdot-rad_sec2 accelerations/pdot-rad_sec2
+model p51d
+ic reset01
+print
+set gear/gear-pos-norm 0
+runic
+set simulation/do_simple_trim 2
+run 1
+# TestGndReactions: the tripod at the North pole, trimmed on the ground,
+# with and without its point mass.
+paths ../../derived aircraft systems
+new
+watch forces/fbx-gear-lbs forces/fby-gear-lbs forces/fbz-gear-lbs forces/fbx-weight-lbs forces/fby-weight-lbs forces/fbz-weight-lbs contact/unit[0]/compression-ft contact/unit[1]/compression-ft contact/unit[2]/compression-ft attitude/theta-rad attitude/phi-rad position/h-agl-ft
+model tripod
+set ic/h-sl-ft 0.1
+set ic/lat-gc-deg 90
+runic
+set simulation/do_simple_trim 2
+new
+model tripod
+set ic/h-sl-ft 0.1
+set ic/lat-gc-deg 90
+set inertia/pointmass-weight-lbs 1000
+runic
+set simulation/do_simple_trim 2
+run 1
+# CheckTrim.test_trim_on_ground: the trim starts from the initial conditions
+# as they are now, not as RunIC found them; the trimmed c172x stays still.
+new
+watch simulation/sim-time-sec velocities/u-fps velocities/v-fps velocities/w-fps velocities/p-rad_sec velocities/q-rad_sec velocities/r-rad_sec attitude/theta-rad attitude/phi-rad position/h-agl-ft
+model c172x_noise0
+set ic/theta-deg 90
+runic
+set ic/theta-deg 0
+set simulation/do_simple_trim 2
+until 0.5
+until 1.0001
+# CheckTrim.test_trim_with_actuator_delay: the elevator's delay does not
+# hold the trim back.
+new
+watch simulation/sim-time-sec simulation/trim-completed fcs/elevator-cmd-norm fcs/elevator-pos-rad fcs/pitch-trim-cmd-norm accelerations/qdot-rad_sec2
+script scripts/c1722_elevator_delay.xml
+runic
+until 1
+# TestAccelerometer.testSteadyFlight: the accelerometer of the trimmed c172x.
+new
+watch simulation/sim-time-sec fcs/accelerometer/X fcs/accelerometer/Y fcs/accelerometer/Z accelerations/udot-ft_sec2 accelerations/vdot-ft_sec2 accelerations/wdot-ft_sec2 position/radius-to-vehicle-ft attitude/theta-rad attitude/phi-rad position/lat-gc-rad position/lat-geod-rad accelerations/gravity-ft_sec2 velocities/u-fps velocities/v-fps velocities/w-fps
+script scripts/c1722_accelerometers.xml
+set fcs/accelerometer/on 1
+set simulation/gravity-model 0
+set ic/psi-true-rad 0
+runic
+until 0.1
+set simulation/do_simple_trim 1
+# CheckSimTimeReset.test_no_script: a trim does not move the time, and a
+# reset after it goes back to 0.
+new
+watch simulation/sim-time-sec simulation/trim-completed fcs/throttle-cmd-norm attitude/theta-rad
+model c172x_noise0
+ic reset01
+runic
+until 5
+set simulation/do_simple_trim 1
+set simulation/reset 1
+# Modes through the property: out of range, none and custom (no axes).
+new
+model c172x_noise0
+ic reset01
+runic
+set simulation/do_simple_trim 7
+set simulation/do_simple_trim -1
+set simulation/do_simple_trim 6
+set simulation/do_simple_trim 4
+# A longitudinal trim on the ground cannot converge: the failure puts the
+# commands back.
+new
+watch simulation/trim-completed fcs/elevator-cmd-norm fcs/pitch-trim-cmd-norm fcs/throttle-cmd-norm attitude/theta-rad position/h-agl-ft
+model c172x_noise0
+ic reset00
+set fcs/elevator-cmd-norm 0.1
+runic
+set simulation/do_simple_trim 0
+print
+# TestChannelRate: the trim of the ground test vehicle fails, and the
+# channels keep their rates after it.
+paths ../../inputs/check_cases/ground_tests aircraft systems
+new
+watch simulation/sim-time-sec simulation/frame tests/rate-1 tests/rate-4 tests/rate-1-dt-sum tests/rate-4-dt-sum simulation/trim-completed
+script scripts/systems-rate-test-0.xml
+runic
+until 30
+set simulation/do_simple_trim 1
+until 40

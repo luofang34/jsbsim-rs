@@ -4,10 +4,10 @@
 //!
 //! - [`INERTIA`]: the noise-free c172x with the `<inertia_factor>` that
 //!   `TestFuelTanksInertia` adds to its first tank, and `scripts/c1722.xml`
-//!   on it without its trim (FGTrim is not ported yet);
+//!   on it;
 //! - `unusable_fuel.xml`: `TestUnusableFuel`'s settings as a script.
 
-use super::piston::{NOISE0, Read, fail, quiet_autopilot, replace_once, with_header};
+use super::piston::{NOISE0, Read, fail, quiet_autopilot, renamed_script, with_header};
 use crate::OracleError;
 
 /// The noise-free c172x with an inertia factor on its first tank.
@@ -31,37 +31,6 @@ pub fn inertia_aircraft(text: &str) -> Result<String, OracleError> {
         "fdm_config",
         &format!(
             "{INERTIA}: {source} with an <inertia_factor> of 1.0 appended to\n  its first tank, as JSBSim's tests/TestFuelTanksInertia.py edits it; its\n  autopilot c172ap.xml has its sensor noise set to 0."
-        ),
-        source,
-    )
-}
-
-/// `c1722_untrimmed.xml`: `scripts/c1722.xml` on [`INERTIA`] without its
-/// `Trim` event, the 200 s consumption run of `test_fuel_tanks_inertia`
-/// short of FGTrim.
-pub fn untrimmed_c1722(text: &str) -> Result<String, OracleError> {
-    let source = "scripts/c1722.xml";
-    let start = text
-        .find("    <event name=\"Trim\">")
-        .ok_or_else(|| fail(source, "no Trim event"))?;
-    let end = text[start..]
-        .find("</event>\n")
-        .ok_or_else(|| fail(source, "unterminated Trim event"))?
-        + start
-        + "</event>\n".len();
-    let mut body = text.to_owned();
-    body.replace_range(start..end, "");
-    let body = replace_once(
-        &body,
-        "aircraft=\"c172x\"",
-        &format!("aircraft=\"{INERTIA}\""),
-        source,
-    )?;
-    with_header(
-        &body,
-        "runscript",
-        &format!(
-            "c1722_untrimmed.xml: {source} on {INERTIA} without its Trim\n  event, as JSBSim's tests/TestFuelTanksInertia.py runs it but for the\n  trim, which the port does not have yet."
         ),
         source,
     )
@@ -114,8 +83,8 @@ pub fn files(read: Read<'_>, files: &mut Vec<(String, String)>) -> Result<(), Or
         read("aircraft/c172x/reset01.xml")?,
     ));
     files.push((
-        "scripts/c1722_untrimmed.xml".to_owned(),
-        untrimmed_c1722(&read("scripts/c1722.xml")?)?,
+        "scripts/c1722_inertia.xml".to_owned(),
+        renamed_script(&read("scripts/c1722.xml")?, "c1722", "c172x", INERTIA)?,
     ));
     files.push((
         "scripts/unusable_fuel.xml".to_owned(),

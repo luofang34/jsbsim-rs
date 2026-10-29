@@ -2,15 +2,13 @@
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
 <!--
   SPDX-License-Identifier: LGPL-2.1-or-later
-  c1722_untrimmed.xml: scripts/c1722.xml on c172x_inertia without its Trim
-  event, as JSBSim's tests/TestFuelTanksInertia.py runs it but for the
-  trim, which the port does not have yet. Regenerate with `oracle derive`.
+  c1722.xml: scripts/c1722.xml on c172x_elevator_delay. Regenerate with `oracle derive`.
 -->
 <runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
     name="At-altitude autopilot test setup.">
     
-  <use aircraft="c172x_inertia" initialize="reset01"/>
+  <use aircraft="c172x_elevator_delay" initialize="reset01"/>
   <run start="0.0" end="200" dt="0.00833333">
     <property value="19.65"> propulsion/tank[0]/unusable-volume-gal </property>
     <property value="19.65"> propulsion/tank[1]/unusable-volume-gal </property>
@@ -49,6 +47,20 @@
       </notify>
     </event>
     
+    <event name="Trim">
+      <condition>simulation/sim-time-sec  ge  0.50</condition>
+      <set name="simulation/do_simple_trim" value="0"/>
+      <notify>
+        <property>velocities/vc-kts</property>
+        <property>position/h-agl-ft</property>
+        <property>propulsion/tank[0]/contents-lbs</property>
+        <property>propulsion/tank[1]/contents-lbs</property>
+        <property>propulsion/engine/set-running</property>
+        <property>propulsion/engine/fuel-flow-rate-gph</property>
+        <property>propulsion/engine/engine-rpm</property>
+        <property>propulsion/engine/power-hp</property>
+      </notify>
+    </event>
 
     <event name="Set roll autopilot">
       <condition>simulation/sim-time-sec  ge  5.0</condition>

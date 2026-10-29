@@ -15,6 +15,7 @@ pub mod models;
 mod properties;
 mod propulsion;
 mod table;
+mod trim;
 mod units;
 mod winds;
 mod xml;
@@ -56,6 +57,7 @@ pub fn run(name: &str, input: &str, context: &ProbeContext) -> Result<String, Or
         "fcs" => Ok(fcs::run(input, context)),
         "propulsion" => Ok(propulsion::run(input, context)),
         "geodesic" => Ok(geodesic::run(input, context)),
+        "trim" => Ok(trim::run(input, context)),
         other => Err(OracleError::Provenance(format!("unknown probe {other}"))),
     }
 }
