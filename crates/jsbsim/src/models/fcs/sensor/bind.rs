@@ -102,7 +102,7 @@ pub(super) fn bind(
         },
         move |m, v| {
             if let Some(s) = signal_mut(m, at) {
-                s.random_seed = Some(v as i32);
+                s.set_random_seed(v as i32);
             }
         },
     )?;

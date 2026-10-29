@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 use crate::models::fcs::tests::{load_error, load_system};
+use crate::random::RandomNumberGenerator;
 use crate::{Error, LoadOptions};
 
 fn sensor(body: &str) -> String {
@@ -16,13 +17,39 @@ fn sensor(body: &str) -> String {
 }
 
 #[test]
-fn a_non_zero_noise_is_refused_as_random() {
+fn absolute_gaussian_noise_draws_from_the_executive() {
     let system = sensor(r#"<noise variation="ABSOLUTE" distribution="GAUSSIAN"> 0.1 </noise>"#);
-    match load_error(&system, LoadOptions::default()) {
-        Error::Unsupported { construct, .. } => {
-            assert!(construct.contains("<noise>"), "{construct}");
-        }
-        e => panic!("{e}"),
+    let mut fdm = load_system(&system, LoadOptions::default()).unwrap();
+    fdm.set_property("simulation/randomseed", 3.0).unwrap();
+    fdm.set_property("test/in", 2.5).unwrap();
+    let expected = RandomNumberGenerator::new(3);
+    for _ in 0..4 {
+        fdm.run().unwrap();
+        let value = 2.5 + 0.1 * expected.normal();
+        assert_eq!(
+            fdm.get_property("test/s").unwrap().to_bits(),
+            value.to_bits()
+        );
+    }
+}
+
+#[test]
+fn percent_uniform_noise_draws_from_the_sensor_once_seeded() {
+    let system = sensor(r#"<noise variation="PERCENT" distribution="UNIFORM"> 0.2 </noise>"#);
+    let mut fdm = load_system(&system, LoadOptions::default()).unwrap();
+    fdm.set_property("test/s/randomseed", 5.0).unwrap();
+    fdm.set_property("test/in", 2.5).unwrap();
+    let expected = RandomNumberGenerator::new(5);
+    for exec_seed in [1.0, 2.0, 3.0] {
+        // The executive's seed no longer reaches the sensor.
+        fdm.set_property("simulation/randomseed", exec_seed)
+            .unwrap();
+        fdm.run().unwrap();
+        let value = 2.5 * (1.0 + 0.2 * expected.uniform());
+        assert_eq!(
+            fdm.get_property("test/s").unwrap().to_bits(),
+            value.to_bits()
+        );
     }
 }
 

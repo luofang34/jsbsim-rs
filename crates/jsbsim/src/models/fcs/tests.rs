@@ -142,9 +142,11 @@ fn base_with_delay(frames: usize) -> Base {
 #[test]
 fn the_delay_holds_outputs_back_by_its_length_and_fills_while_trimming() {
     let mut base = base_with_delay(3);
+    let rng = crate::random::RandomNumberGenerator::default();
     let run = Tick {
         clip: None,
         trim_status: false,
+        rng: &rng,
     };
     let mut seen = Vec::new();
     for v in [1.0, 2.0, 3.0, 4.0, 5.0] {
@@ -157,6 +159,7 @@ fn the_delay_holds_outputs_back_by_its_length_and_fills_while_trimming() {
     base.delay(&Tick {
         clip: None,
         trim_status: true,
+        rng: &rng,
     });
     assert_eq!((base.output, base.delay.as_slice()), (9.0, &[9.0; 3][..]));
     base.reset_past_states();

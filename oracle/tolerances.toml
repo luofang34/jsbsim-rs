@@ -30372,3 +30372,38 @@ property = "draws/=>"
 abs = 0.0
 rel = 4e-15
 reason = "Polar method: sqrt(-2 log(s) / s) takes log from Rust libm, which differs from Apple libm in the last digit of some logarithms; with Apple libm (scripts/oracle-sincos.sh) the case is bit-identical. Observed max rel 3.3e-16 (102 of the normal deviates); bound 10x that."
+
+[[tolerance]]
+case = "fcs-sensor-noise"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the uniform deviates and the sensor's signal processing are IEEE basic operations in JSBSim's order; the tags listed differ."
+
+[[tolerance]]
+case = "fcs-sensor-noise"
+property = "*/test/absolute-gaussian"
+abs = 2.2e-15
+rel = 0.0
+reason = "The normal deviate's polar method takes log from Rust libm, which differs from Apple libm in the last digit of some logarithms; with Apple libm (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 2.2e-16; bound 10x that."
+
+[[tolerance]]
+case = "fcs-sensor-noise"
+property = "*/test/own-seed"
+abs = 1.1e-15
+rel = 0.0
+reason = "The normal deviate's polar method takes log from Rust libm, which differs from Apple libm in the last digit of some logarithms; with Apple libm (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 1.1e-16; bound 10x that."
+
+[[tolerance]]
+case = "sensor-random-seed"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the uniform noise, bias and quantization of the sensor are IEEE basic operations in JSBSim's order; the tags listed differ."
+
+[[tolerance]]
+case = "sensor-random-seed"
+property = "*/aero/qbar-psf"
+abs = 2.9e-13
+rel = 0.0
+reason = "The falling tripod's density and speed go through pow, exp and the geodetic conversions, where Rust libm and Apple libm differ in the last digit; the sensor's 12-bit quantization absorbs it. With Apple libm (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 2.8e-14; bound 10x that."

@@ -37,7 +37,7 @@ ballx ok
 blank load-error
 c172p ok
 c172r ok
-c172x unsupported <noise> of variance 0.05 in sensor fcs/attitude/sensor/phi-rad (FGSensor random noise) (In file aircraft/c172x/c172ap.xml: line 59)
+c172x ok
 c182 ok
 c310 ok
 dr1 ok
@@ -47,7 +47,7 @@ f16 ok
 f22 ok
 fokker100 ok
 fokker50 ok
-global5000 unsupported <noise> of variance 0.05 in sensor fcs/attitude/sensor/phi-rad (FGSensor random noise) (In file aircraft/global5000/global5000ap.xml: line 68)
+global5000 ok
 minisgs ok
 mk82 ok
 p51d ok

@@ -1,0 +1,64 @@
+# oracle/scenarios/systems/fcs_sensor_noise.xml on tripod_fcs_sensor_noise:
+# uniform and Gaussian noise, percent and absolute, unknown types, noise
+# among the other degradations and in a gyro and an accelerometer, drawn
+# from the executive's generator and from a sensor's own, through reseeds
+# and a reset.
+# The tripod starts at 10000 ft so that its contacts stay clear of the
+# ground.
+paths ../.. derived/aircraft scenarios/systems
+new
+load tripod_fcs_sensor_noise
+watch test/input test/percent-uniform test/percent-gaussian test/absolute-uniform test/absolute-gaussian test/unknown-types test/own-seed test/everything fcs/everything-steps test/gyro test/accelerometer test/own-seed/randomseed test/everything/randomseed simulation/randomseed
+print
+set ic/h-sl-ft 10000
+runic
+set test/input 1.0
+run
+run
+run
+run
+run
+run
+set test/input -0.37
+run
+run
+run
+run
+run
+# The executive's seed: every sensor without its own restarts its sequence.
+set simulation/randomseed 7
+run
+run
+run
+run
+set test/own-seed/randomseed 5
+set test/input 2.6
+run
+run
+run
+run
+run
+run
+# Reseeding the executive leaves the sensor with its own seed alone.
+set simulation/randomseed 7
+run
+run
+run
+run
+set test/own-seed/randomseed 5
+run
+run
+run
+set test/input 0
+run
+run
+run
+set test/input -3.25
+set simulation/reset 0
+print
+run
+run
+run
+run
+run
+run

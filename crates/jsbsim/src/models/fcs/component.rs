@@ -11,6 +11,7 @@ use crate::fdm::LoadContext;
 use crate::fdm::ModelEvaluator;
 use crate::functions::{Parameter, PropertyValue};
 use crate::properties::{NodeId, mk_property_name};
+use crate::random::RandomNumberGenerator;
 use crate::units::constrain;
 use crate::xml::Element;
 
@@ -30,11 +31,14 @@ pub type Limits = (f64, f64);
 
 /// What a family's `step` may read besides its own state and sample.
 #[derive(Debug, Clone, Copy)]
-pub struct Tick {
+pub struct Tick<'a> {
     /// The clip limits read this run, when the component clips.
     pub clip: Option<Limits>,
     /// `GetTrimStatus`.
     pub trim_status: bool,
+    /// The executive's generator, which a sensor without a seed of its own
+    /// draws its noise from.
+    pub rng: &'a RandomNumberGenerator,
 }
 
 /// `FGFCSComponent`'s members.

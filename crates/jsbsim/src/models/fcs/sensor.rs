@@ -6,9 +6,9 @@
 //! delay, failures and quantization. [`Signal`] is the degradation every
 //! sensor family shares (`FGSensor`'s members and `ProcessSensorSignal`).
 //!
-//! JSBSim draws a random number in `FGSensor::Noise` only, on every run
-//! of a sensor whose `<noise>` value is non-zero; such a sensor is refused
-//! with [`Error::Unsupported`]. A `<noise>` of 0 draws nothing and loads.
+//! A sensor whose `<noise>` is non-zero draws one random number on every
+//! run, from the executive's generator until its `randomseed` property
+//! gives it a generator of its own.
 
 mod bind;
 pub mod orientation;
@@ -20,7 +20,21 @@ use super::families::{ComponentAt, Family};
 use crate::Error;
 use crate::fdm::LoadContext;
 use crate::fdm::ModelEvaluator;
+use crate::random::RandomNumberGenerator;
 use crate::xml::Element;
+
+/// `<noise>`: `noise_variance`, `NoiseType` and `DistributionType`.
+#[derive(Debug, Clone, Copy, Default, PartialEq)]
+pub struct Noise {
+    /// The `<noise>` value; 0 draws nothing.
+    pub variance: f64,
+    /// `eAbsolute`: the deviate scaled by the variance is added; otherwise
+    /// (`ePercent`) the output is scaled by one plus it.
+    pub absolute: bool,
+    /// `eGaussian`: a normal deviate; otherwise (`eUniform`) a uniform
+    /// one over `[-1, 1)`.
+    pub gaussian: bool,
+}
 
 /// `FGSensor`'s members.
 #[derive(Debug, Clone, Default)]
@@ -61,8 +75,12 @@ pub struct Signal {
     pub fail_high: bool,
     /// `malfunction/fail_stuck`: the output keeps its last value.
     pub fail_stuck: bool,
+    /// `<noise>`.
+    pub noise: Noise,
     /// The sensor's own seed once `randomseed` is written.
     pub random_seed: Option<i32>,
+    /// The generator `SetNoiseRandomSeed` makes from that seed.
+    pub generator: Option<RandomNumberGenerator>,
 }
 
 /// `(int)` of a `<bits>` value, refusing the values for which C++'s
@@ -116,7 +134,7 @@ impl Signal {
             s.cb = (2.00 - base.dt * s.lag) / denom;
         }
         if let Some(noise_el) = el.find_element("noise") {
-            noise(el, noise_el, &base.name, ctx)?;
+            s.noise = noise(el, noise_el, &base.name, ctx)?;
         }
         bind::bind(el, base, quant_property, ctx, at)?;
         Ok(s)
@@ -133,6 +151,9 @@ impl Signal {
                 self.ca * (base.output + self.previous_input) + self.previous_output * self.cb;
             self.previous_output = base.output;
             self.previous_input = base.input;
+        }
+        if self.noise.variance != 0.0 {
+            self.apply_noise(base, tick.rng);
         }
         if self.drift_rate != 0.0 {
             self.drift += self.drift_rate * base.dt;
@@ -159,6 +180,27 @@ impl Signal {
         base.clip(tick);
     }
 
+    /// `Noise`, from the sensor's own generator if it has one.
+    fn apply_noise(&self, base: &mut Base, exec_rng: &RandomNumberGenerator) {
+        let rng = self.generator.as_ref().unwrap_or(exec_rng);
+        let random_value = if self.noise.gaussian {
+            rng.normal()
+        } else {
+            rng.uniform()
+        };
+        if self.noise.absolute {
+            base.output += self.noise.variance * random_value;
+        } else {
+            base.output *= 1.0 + self.noise.variance * random_value;
+        }
+    }
+
+    /// `SetNoiseRandomSeed`: a new generator of the sensor's own.
+    pub fn set_random_seed(&mut self, seed: i32) {
+        self.random_seed = Some(seed);
+        self.generator = Some(RandomNumberGenerator::new(seed as u32));
+    }
+
     /// `Quantize`. `(int)` of an out-of-range quotient is undefined in
     /// C++; Rust's saturating conversion is what arm64 hardware does.
     fn quantize(&mut self, base: &mut Base) {
@@ -182,24 +224,25 @@ impl Signal {
     }
 }
 
-/// `<noise>`: its attributes are checked as JSBSim checks them, and a
-/// non-zero variance, which draws a random number on every run, is
-/// refused.
+/// `<noise>`: an unknown variation is `PERCENT` and an unknown
+/// distribution `UNIFORM`, each logged.
 fn noise(
     el: &Element,
     noise_el: &Element,
     name: &str,
     ctx: &mut LoadContext<'_>,
-) -> Result<(), Error> {
+) -> Result<Noise, Error> {
     let variance = el.find_element_value_as_number("noise")?;
-    if !matches!(noise_el.attribute("variation"), "PERCENT" | "ABSOLUTE") {
+    let variation = noise_el.attribute("variation");
+    let distribution = noise_el.attribute("distribution");
+    if !matches!(variation, "PERCENT" | "ABSOLUTE") {
         lenient(
             noise_el,
             ctx,
             &format!("Unknown noise type in sensor: {name}\n  defaulting to PERCENT."),
         )?;
     }
-    if !matches!(noise_el.attribute("distribution"), "UNIFORM" | "GAUSSIAN") {
+    if !matches!(distribution, "UNIFORM" | "GAUSSIAN") {
         lenient(
             noise_el,
             ctx,
@@ -208,15 +251,11 @@ fn noise(
             ),
         )?;
     }
-    if variance != 0.0 {
-        return Err(Error::Unsupported {
-            construct: format!(
-                "<noise> of variance {variance} in sensor {name} (FGSensor random noise)"
-            ),
-            path: noise_el.location().to_string(),
-        });
-    }
-    Ok(())
+    Ok(Noise {
+        variance,
+        absolute: variation == "ABSOLUTE",
+        gaussian: distribution == "GAUSSIAN",
+    })
 }
 
 /// The error of a sensor family's [`Family::sample`], which needs the

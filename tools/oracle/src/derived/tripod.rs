@@ -41,6 +41,8 @@ pub const SYSTEMS: &[System] = &[
     scenario("fcs_switch", "fcs_switch.xml"),
     scenario("fcs_filter", "fcs_filter.xml"),
     scenario("fcs_sensor", "fcs_sensor.xml"),
+    scenario("fcs_sensor_noise", "fcs_sensor_noise.xml"),
+    upstream("sensorrandomseed", "sensorrandomseed.xml"),
     scenario("fcs_accelerometer", "fcs_accelerometer.xml"),
     System {
         loads: false,

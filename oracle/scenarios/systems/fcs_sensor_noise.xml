@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  FGSensor noise: uniform and Gaussian deviates, as a percentage of the
+  signal and as an absolute value, unknown variation and distribution
+  types (PERCENT and UNIFORM), noise among the other degradations, on the
+  executive's generator and on a sensor's own, and noise in the sensor
+  families that share FGSensor's signal processing. The fcs-sensor-noise
+  golden drives it.
+-->
+<system name="fcs-sensor-noise">
+  <property>test/input</property>
+  <channel name="noisy sensors">
+    <sensor name="test/percent-uniform">
+      <input>test/input</input>
+      <noise variation="PERCENT" distribution="UNIFORM">0.1</noise>
+    </sensor>
+    <sensor name="test/percent-gaussian">
+      <input>test/input</input>
+      <noise variation="PERCENT" distribution="GAUSSIAN">0.05</noise>
+    </sensor>
+    <sensor name="test/absolute-uniform">
+      <input>test/input</input>
+      <noise variation="ABSOLUTE" distribution="UNIFORM">0.25</noise>
+    </sensor>
+    <sensor name="test/absolute-gaussian">
+      <input>test/input</input>
+      <noise variation="ABSOLUTE" distribution="GAUSSIAN">0.5</noise>
+    </sensor>
+    <sensor name="test/unknown-types">
+      <input>test/input</input>
+      <noise variation="RELATIVE" distribution="TRIANGULAR">0.2</noise>
+    </sensor>
+    <sensor name="test/own-seed">
+      <input>test/input</input>
+      <noise variation="ABSOLUTE" distribution="GAUSSIAN">1.0</noise>
+    </sensor>
+    <sensor name="test/everything">
+      <input>test/input</input>
+      <lag>5.0</lag>
+      <noise variation="PERCENT" distribution="GAUSSIAN">0.3</noise>
+      <drift_rate>-0.1</drift_rate>
+      <gain>2.0</gain>
+      <bias>-0.3</bias>
+      <delay type="frames">2</delay>
+      <quantization name="everything-steps">
+        <bits>10</bits>
+        <min>-4</min>
+        <max>4</max>
+      </quantization>
+      <clipto>
+        <min>-3</min>
+        <max>3</max>
+      </clipto>
+    </sensor>
+    <gyro name="test/gyro">
+      <axis>Y</axis>
+      <noise variation="ABSOLUTE" distribution="GAUSSIAN">0.01</noise>
+    </gyro>
+    <accelerometer name="test/accelerometer">
+      <location unit="IN">
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </location>
+      <axis>Z</axis>
+      <noise variation="ABSOLUTE" distribution="UNIFORM">0.02</noise>
+    </accelerometer>
+  </channel>
+</system>

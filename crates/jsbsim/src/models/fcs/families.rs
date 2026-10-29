@@ -162,7 +162,7 @@ macro_rules! families {
                         let sample = family.sample_models(base, models, ev)?;
                         Ok((sample, base.clip_limits(ev)?))
                     })?;
-                    let tick = Tick { clip, trim_status };
+                    let tick = Tick { clip, trim_status, rng: &models.exec.rng };
                     if let Some(Component { base, kind: Kind::$variant(family) }) =
                         component_mut(&mut models.fcs, at)
                     {
