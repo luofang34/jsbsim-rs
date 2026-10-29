@@ -14,6 +14,7 @@ pub mod forces;
 pub mod ground_reactions;
 pub mod inertial;
 pub mod mass_balance;
+pub mod output;
 pub mod propagate;
 pub mod propulsion;
 pub mod winds;

@@ -186,11 +186,7 @@ impl Fdm {
         )? {
             return Err(script_error("Initialization unsuccessful"));
         }
-        for name in ["input", "output"] {
-            for el in document.find_elements(name) {
-                self.io_directive(el)?;
-            }
-        }
+        self.io_directives(&document)?;
         script.local_properties = self.declare_script_properties(run)?;
         for event_el in run.find_elements("event") {
             script.events.push(parse_event(event_el, self)?);

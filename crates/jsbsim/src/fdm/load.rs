@@ -274,32 +274,58 @@ impl Fdm {
             self.load_aerodynamics(&aero)?;
             self.post_load(&aero, "", Model::Aerodynamics)?;
         }
-        for name in ["input", "output"] {
-            for el in document.find_elements(name) {
-                self.io_directive(el)?;
-            }
-        }
+        self.io_directives(document)?;
         unsupported_if_present(document, "child")?;
         self.load_model_constants();
         self.load_all_inputs();
         Ok(())
     }
 
-    /// `<input>` and `<output>` describe sockets and files, which the core
-    /// does not open; the harness logs properties itself.
-    pub(super) fn io_directive(&self, el: &Element) -> Result<(), Error> {
-        if self.options.strict {
+    /// The `<input>` and then the `<output>` children of `document`.
+    /// They describe sockets and files, which the core does not open; the
+    /// harness logs properties itself. Each `<output>` still makes its
+    /// output type and that type's properties, as `FGOutput::Load` does.
+    pub(super) fn io_directives(&mut self, document: &Element) -> Result<(), Error> {
+        for name in ["input", "output"] {
+            for el in document.find_elements(name) {
+                if self.options.strict {
+                    return Err(Error::Unsupported {
+                        construct: format!("<{name}> (file and socket I/O)"),
+                        path: el.location().to_string(),
+                    });
+                }
+                tracing::warn!(
+                    "{}: <{name}> writes nothing: the core does no file or socket I/O",
+                    el.location()
+                );
+                if name == "output" {
+                    self.load_output(el)?;
+                }
+            }
+        }
+        Ok(())
+    }
+
+    /// `FGOutput::Load(element)`. A `file` include is refused, since the
+    /// output type's attributes may come from it. The output's own
+    /// functions are not loaded: JSBSim ties each named one to a property
+    /// whose value it caches only when the type prints, which the port
+    /// never does, so the port leaves those properties out.
+    fn load_output(&mut self, el: &Element) -> Result<(), Error> {
+        if el.has_attribute("file") {
             return Err(Error::Unsupported {
-                construct: format!("<{}> (file and socket I/O)", el.name()),
+                construct: "<output file=...>".to_owned(),
                 path: el.location().to_string(),
             });
         }
-        tracing::warn!(
-            "{}: <{}> is ignored: the core does no file or socket I/O",
-            el.location(),
-            el.name()
-        );
-        Ok(())
+        if el.find_element("function").is_some() {
+            tracing::warn!(
+                "{}: the functions of an <output> are not loaded",
+                el.location()
+            );
+        }
+        let dt = self.models.exec.dt;
+        self.models.output.load(el, &mut self.env.binder(), dt)
     }
 
     /// `LoadPlanet(element)`.

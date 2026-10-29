@@ -32,9 +32,6 @@ const char* const kPrefixes[] = {
   "propulsion/",
 };
 
-// Output types made by <output> I/O directives, which the port ignores.
-const char* const kExcluded = "simulation/output";
-
 // Contact properties tied to FGLGear members the constructor leaves
 // uninitialized until the first force calculation (AGL, FGLGear.h:369;
 // FCoeff, FGLGear.h:350); before any frame they read indeterminate memory.
@@ -75,8 +72,7 @@ void Walk(SGPropertyNode* node, std::vector<std::string>& lines)
       continue;
     }
     std::string path = JSBSim::GetRelativeName(child, "/fdm/jsbsim/");
-    if (!Covered(path) || path.compare(0, std::string(kExcluded).size(), kExcluded) == 0 ||
-        Uninitialized(path))
+    if (!Covered(path) || Uninitialized(path))
       continue;
     switch (child->getType()) {
     case simgear::props::BOOL:

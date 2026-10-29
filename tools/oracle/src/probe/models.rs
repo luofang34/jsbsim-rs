@@ -32,9 +32,6 @@ pub const PREFIXES: [&str; 17] = [
     "propulsion/",
 ];
 
-/// Output types made by `<output>` I/O directives, which the port ignores.
-pub const EXCLUDED: &str = "simulation/output";
-
 /// Contact properties tied to `FGLGear` members its constructor leaves
 /// uninitialized until the first force calculation (`AGL`, FGLGear.h:369,
 /// first set at FGLGear.cpp:304; `FCoeff`, FGLGear.h:350), so before any
@@ -56,7 +53,6 @@ fn walk(fdm: &mut Fdm, node: NodeId, lines: &mut Vec<String>) -> Result<(), jsbs
         }
         let path = fdm.tree().relative_name(child, INSTANCE_PREFIX);
         if !PREFIXES.iter().any(|p| path.starts_with(p))
-            || path.starts_with(EXCLUDED)
             || UNINITIALIZED.iter().any(|s| path.ends_with(s))
         {
             continue;

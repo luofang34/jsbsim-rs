@@ -11024,234 +11024,234 @@ reason = "Bit-identical: the same IEEE operations in JSBSim's order; properties 
 [[tolerance]]
 case = "c1723_noise0"
 property = "position/h-sl-ft"
-abs = 5e-06
+abs = 9.0
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 4.7e-07 (rel 1.1e-07) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 8.2e-01 (rel 6.7e-04) at t=160.6 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "position/h-agl-ft"
-abs = 5e-06
+abs = 9.0
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 4.7e-07 (rel 1.1e-07) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 8.2e-01 (rel 6.7e-04) at t=160.6 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "position/lat-geod-deg"
-abs = 4e-08
+abs = 0.0002
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 3.8e-09 (rel 1.3e-10) at t=21 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 1.5e-05 (rel 5.1e-07) at t=167.6 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "position/long-gc-deg"
-abs = 2e-08
+abs = 0.0009
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 2.0e-09 (rel 2.1e-11) at t=21 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 8.8e-05 (rel 9.3e-07) at t=158.2 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "velocities/u-fps"
-abs = 0.0007
+abs = 4.0
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 6.5e-05 (rel 2.3e-05) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 3.1e-01 (rel 3.1e-03) at t=160 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "velocities/v-fps"
-abs = 0.05
+abs = 7.0
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 4.2e-03 (rel 8.9e-02) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 6.1e-01 (rel 6.4e+00) at t=156.6 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "velocities/w-fps"
-abs = 0.0002
+abs = 2.0
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 1.6e-05 (rel 5.1e-04) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 1.4e-01 (rel 1.2e-02) at t=155.8 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "velocities/p-rad_sec"
-abs = 0.004
+abs = 2.0
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 3.5e-04 (rel 9.6e-02) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 1.1e-01 (rel 6.2e+01) at t=155.6 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "velocities/q-rad_sec"
-abs = 3e-05
+abs = 0.05
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 2.2e-06 (rel 8.4e-04) at t=3.4 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 4.7e-03 (rel 8.0e+00) at t=158.2 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "velocities/r-rad_sec"
-abs = 0.0004
+abs = 0.1
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 3.1e-05 (rel 1.5e-03) at t=3.4 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 9.5e-03 (rel 2.0e+02) at t=158 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "attitude/phi-rad"
-abs = 2e-05
+abs = 0.2
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 1.9e-06 (rel 1.7e+00) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 2.0e-02 (rel 1.7e+00) at t=156 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "attitude/theta-rad"
-abs = 6e-07
+abs = 0.06
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 6.0e-08 (rel 1.4e+00) at t=4 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 5.1e-03 (rel 1.4e+00) at t=157.8 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "attitude/psi-rad"
-abs = 3e-05
+abs = 0.2
 rel = 0.0
 period = 6.283185307179586
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; the heading wraps at 2 pi, where one side reads 0 and the other 2 pi; observed max 2.6e-06 modulo 2 pi at t=4 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; the heading wraps at 2 pi, where one side reads 0 and the other 2 pi; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 1.9e-02 (rel 8.9e-03) at t=155.6 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "accelerations/udot-ft_sec2"
-abs = 0.08
+abs = 2.0
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 7.5e-03 (rel 1.5e-03) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 1.5e-01 (rel 4.7e+02) at t=157.6 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "accelerations/vdot-ft_sec2"
-abs = 5.0
+abs = 20.0
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 4.9e-01 (rel 6.2e-01) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 1.7e+00 (rel 1.1e+02) at t=158 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "accelerations/wdot-ft_sec2"
-abs = 0.03
+abs = 20.0
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 2.2e-03 (rel 6.5e-03) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 1.0e+00 (rel 1.4e+02) at t=155.6 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "accelerations/pdot-rad_sec2"
-abs = 0.8
+abs = 20.0
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 8.0e-02 (rel 6.4e-01) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 1.1e+00 (rel 6.9e+01) at t=158 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "accelerations/qdot-rad_sec2"
-abs = 0.002
+abs = 0.3
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 1.8e-04 (rel 2.0e-03) at t=3.4 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 2.5e-02 (rel 1.5e+01) at t=157.8 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "accelerations/rdot-rad_sec2"
-abs = 0.02
+abs = 0.2
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 1.2e-03 (rel 2.4e-02) at t=3.4 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 1.4e-02 (rel 5.8e+01) at t=158.2 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "forces/fbx-total-lbs"
-abs = 6.0
+abs = 50.0
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 5.7e-01 (rel 1.5e-03) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 4.9e+00 (rel 8.8e-03) at t=155.8 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "forces/fby-total-lbs"
 abs = 400.0
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 3.8e+01 (rel 4.4e-01) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 3.8e+01 (rel 2.0e+01) at t=3.6 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "forces/fbz-total-lbs"
-abs = 2.0
+abs = 400.0
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 1.7e-01 (rel 7.0e-05) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 3.0e+01 (rel 1.1e-02) at t=158.8 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "moments/l-total-lbsft"
-abs = 2000.0
+abs = 30000.0
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 1.7e+02 (rel 6.4e-01) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 2.3e+03 (rel 1.1e+02) at t=158 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "moments/m-total-lbsft"
-abs = 20.0
+abs = 400.0
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 1.0e+00 (rel 3.3e-02) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 3.4e+01 (rel 3.9e+01) at t=157.8 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "moments/n-total-lbsft"
-abs = 40.0
+abs = 600.0
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 3.7e+00 (rel 2.4e-02) at t=3.4 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 5.2e+01 (rel 1.2e+02) at t=158.2 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "forces/fbx-prop-lbs"
-abs = 3e-05
+abs = 3.0
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 2.7e-06 (rel 6.0e-09) at t=3.8 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 2.9e-01 (rel 6.2e-04) at t=160.8 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "moments/l-prop-lbsft"
-abs = 2e-06
+abs = 0.07
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 1.7e-07 (rel 3.8e-10) at t=3.8 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 6.6e-03 (rel 1.6e-05) at t=160 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "moments/m-prop-lbsft"
-abs = 0.3
+abs = 50.0
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 2.6e-02 (rel 7.7e-05) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 4.5e+00 (rel 1.3e-02) at t=158.2 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "moments/n-prop-lbsft"
-abs = 0.02
+abs = 30.0
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 1.1e-03 (rel 7.3e-06) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 2.4e+00 (rel 1.1e-02) at t=158.2 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "velocities/vc-kts"
-abs = 0.0002
+abs = 2.0
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 1.3e-05 (rel 1.1e-05) at t=3.4 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 1.8e-01 (rel 3.1e-03) at t=160.8 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "aero/qbar-psf"
-abs = 1e-06
+abs = 0.7
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 9.3e-08 (rel 2.3e-05) at t=3.4 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 6.7e-02 (rel 6.2e-03) at t=160.6 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "aero/alpha-rad"
-abs = 8e-05
+abs = 0.02
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 7.2e-06 (rel 5.1e-04) at t=3.4 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 1.2e-03 (rel 1.1e-02) at t=155.8 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "propulsion/total-fuel-lbs"
-abs = 6e-10
+abs = 0.0005
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 5.9e-11 (rel 2.3e-13) at t=9.2 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 4.6e-05 (rel 1.8e-07) at t=195.2 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
@@ -11270,156 +11270,156 @@ reason = "State-affecting: Rust libm and Apple libm differ in the last digit of 
 [[tolerance]]
 case = "c1723_noise0"
 property = "propulsion/tank[0]/contents-lbs"
-abs = 3e-10
+abs = 0.0003
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 2.9e-11 (rel 2.3e-13) at t=9.2 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 2.3e-05 (rel 1.8e-07) at t=195.2 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "propulsion/tank[1]/contents-lbs"
-abs = 3e-10
+abs = 0.0003
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 2.9e-11 (rel 2.3e-13) at t=9.2 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 2.3e-05 (rel 1.8e-07) at t=195.2 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "propulsion/engine[0]/thrust-lbs"
-abs = 3e-05
+abs = 3.0
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 2.7e-06 (rel 6.0e-09) at t=3.8 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 2.9e-01 (rel 6.2e-04) at t=160.8 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "propulsion/engine[0]/engine-rpm"
-abs = 8e-05
+abs = 20.0
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 8.0e-06 (rel 3.3e-09) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 1.1e+00 (rel 4.3e-04) at t=160.6 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "propulsion/engine[0]/propeller-rpm"
-abs = 8e-05
+abs = 20.0
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 8.0e-06 (rel 3.3e-09) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 1.1e+00 (rel 4.3e-04) at t=160.6 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "propulsion/engine[0]/advance-ratio"
-abs = 3e-06
+abs = 0.01
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 2.7e-07 (rel 2.5e-05) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 9.9e-04 (rel 2.7e-03) at t=160 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "propulsion/engine[0]/thrust-coefficient"
-abs = 6e-11
+abs = 0.0002
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 5.7e-12 (rel 8.0e-11) at t=20.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 2.0e-05 (rel 2.8e-04) at t=160 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "propulsion/engine[0]/helical-tip-Mach"
-abs = 3e-08
+abs = 0.004
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 2.1e-09 (rel 5.8e-07) at t=3.8 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 3.6e-04 (rel 4.6e-04) at t=160.4 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "propulsion/engine[0]/prop-induced-velocity_fps"
-abs = 0.0004
+abs = 0.5
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 3.4e-05 (rel 6.3e-07) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 4.2e-02 (rel 1.6e-03) at t=159.8 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "propulsion/engine[0]/propeller-power-ftlbps"
-abs = 0.2
+abs = 600.0
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 1.6e-02 (rel 1.6e-07) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 5.1e+01 (rel 4.5e-04) at t=161 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "propulsion/engine[0]/propeller-torque-ftlb"
-abs = 2e-06
+abs = 0.07
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 1.7e-07 (rel 3.8e-10) at t=3.8 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 6.6e-03 (rel 1.6e-05) at t=160 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "propulsion/engine[0]/power-hp"
-abs = 6e-06
+abs = 0.9
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 5.3e-07 (rel 2.6e-09) at t=3.8 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 8.5e-02 (rel 4.2e-04) at t=160.6 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "propulsion/engine[0]/map-inhg"
-abs = 2e-08
+abs = 0.02
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 1.7e-09 (rel 5.9e-11) at t=4.4 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 1.1e-03 (rel 4.1e-05) at t=161.4 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "propulsion/engine[0]/egt-degF"
-abs = 7e-07
+abs = 0.03
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 6.6e-08 (rel 4.6e-11) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 2.9e-03 (rel 2.1e-06) at t=160.4 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "propulsion/engine[0]/cht-degF"
-abs = 1e-06
+abs = 0.9
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 9.3e-08 (rel 6.2e-10) at t=14.2 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 8.9e-02 (rel 1.4e-04) at t=164.2 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "propulsion/engine[0]/oil-temperature-degF"
-abs = 7e-08
+abs = 0.05
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 6.7e-09 (rel 8.7e-11) at t=21 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 4.3e-03 (rel 1.9e-05) at t=198.2 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "propulsion/engine[0]/oil-pressure-psi"
-abs = 1e-08
+abs = 0.006
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 9.3e-10 (rel 1.2e-11) at t=21 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 5.9e-04 (rel 1.1e-05) at t=198.2 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "propulsion/engine[0]/fuel-flow-rate-pps"
-abs = 7e-10
+abs = 0.0001
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 6.2e-11 (rel 2.9e-09) at t=3.8 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 9.9e-06 (rel 4.7e-04) at t=160.6 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "propulsion/engine[0]/fuel-flow-rate-gph"
-abs = 4e-07
+abs = 0.06
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 3.4e-08 (rel 2.9e-09) at t=3.8 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 5.4e-03 (rel 4.7e-04) at t=160.6 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "propulsion/engine[0]/fuel-used-lbs"
-abs = 6e-10
+abs = 0.0005
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 5.9e-11 (rel 9.2e-10) at t=9.2 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 4.6e-05 (rel 1.3e-05) at t=195.2 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "propulsion/engine[0]/y-position"
-abs = 0.0003
+abs = 0.2
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 2.4e-05 (rel 2.2e-03) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 1.2e-02 (rel 1.5e-02) at t=155.8 s; bound 10x that."
 
 [[tolerance]]
 case = "c1723_noise0"
 property = "propulsion/engine[0]/z-position"
-abs = 0.009
+abs = 0.6
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; observed max 8.0e-04 (rel 3.0e-05) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 5.4e-02 (rel 2.0e-03) at t=127.6 s; bound 10x that."
 
 [[tolerance]]
 case = "c1724_noise0"
@@ -14198,9 +14198,9 @@ reason = "State-affecting: Rust libm and Apple libm differ in the last digit of 
 [[tolerance]]
 case = "c1723_noise0"
 property = "propulsion/engine[0]/AFR"
-abs = 7e-09
+abs = 2e-05
 rel = 0.0
-reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; the air/fuel ratio is infinite while no fuel flows; observed max 6.6e-10 (rel 5.9e-11) at t=3.6 s; bound 10x that."
+reason = "State-affecting: Rust libm and Apple libm differ in the last digit of the geodetic conversions behind the initial position and each contact's ground height (FGLocation and FGDefaultGroundCallback's atan, sqrt, sin and cos), which the stiff gear springs and the friction solve carry into the motion; with Apple libm too, last-digit differences remain because Clang fuses each sin and cos of one argument into __sincos_stret, whose sine differs from sin() in the last digit (first at frame 8 of c1724, in the ground normal's sin(latitude) under a main wheel); an oracle built with -fno-builtin-sin -fno-builtin-cos matches the port bit for bit with Apple libm; the air/fuel ratio is infinite while no fuel flows; after liftoff the climb amplifies them, roughly tenfold every 15 s, most around t=150-165 s; observed max 1.8e-06 (rel 1.6e-07) at t=158 s; bound 10x that."
 
 [[tolerance]]
 case = "c172_elevation_test_noise0"

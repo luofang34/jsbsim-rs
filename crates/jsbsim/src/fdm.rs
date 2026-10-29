@@ -142,7 +142,7 @@ pub struct Models {
     /// `FGInput`, which has no inputs in the core.
     pub input: ForceModel,
     /// `FGOutput`, which writes no files in the core.
-    pub output: ForceModel,
+    pub output: crate::models::output::Output,
     /// `FGInitialCondition`, which `run_ic` applies.
     pub ic: crate::initial_condition::InitialCondition,
 }
@@ -237,8 +237,7 @@ impl Fdm {
         accelerations::bind(b)?;
         enable!("FGOutput", output);
         // `FGOutput::ForceOutput(idx)` prints output type `idx`; the port
-        // keeps no output types (`<output>` is an I/O directive), so a
-        // write has nothing to print.
+        // prints nothing, so a write has no effect.
         b.setter_only("simulation/force-output", Kind::Int, |_, _| {})?;
         crate::initial_condition::bind(b)?;
         exec_bind::bind_exec(b)
