@@ -103,3 +103,67 @@ fn takeoff_throttle_follows_the_first_engine_above_ninety_percent() {
     fdm.models.load_inputs(super::order::Model::GroundReactions);
     assert!(fdm.models.ground_reactions.input.takeoff_throttle);
 }
+
+/// A reset set by a script event resets the events at once (`ResetEvents`
+/// inside `RunScript`): the event that reset sees it, and every event fires
+/// again in the next run.
+#[test]
+fn a_reset_from_a_script_event_rearms_the_events() {
+    let aircraft = r#"<fdm_config name="box">
+  <metrics/>
+  <mass_balance>
+    <ixx>10</ixx><iyy>10</iyy><izz>10</izz><emptywt>100</emptywt>
+    <location name="CG" unit="IN"><x>0</x><y>0</y><z>0</z></location>
+  </mass_balance>
+  <ground_reactions/>
+</fdm_config>"#;
+    let ic = r#"<initialize><altitude unit="FT">10000</altitude></initialize>"#;
+    let script = r#"<runscript name="reset">
+  <use aircraft="box" initialize="ic"/>
+  <run start="0.0" end="1" dt="0.01">
+    <property value="0" persistent="true"> test/runs </property>
+    <property value="0"> test/fired </property>
+    <property value="0"> test/after </property>
+    <event name="fire">
+      <condition> simulation/sim-time-sec ge 0.05 </condition>
+      <set name="test/fired" type="FG_DELTA" value="1"/>
+    </event>
+    <event name="reset">
+      <condition logic="AND">
+        simulation/sim-time-sec ge 0.1
+        test/runs lt 2
+      </condition>
+      <set name="simulation/reset" value="1"/>
+      <set name="test/runs" type="FG_DELTA" value="1"/>
+      <set name="test/after" value="1"/>
+    </event>
+  </run>
+</runscript>"#;
+    let mut r = crate::MemoryResolver::new();
+    r.insert("aircraft/box/box.xml", aircraft);
+    r.insert("aircraft/box/ic.xml", ic);
+    r.insert("scripts/reset.xml", script);
+    let mut fdm = Fdm::new().unwrap();
+    fdm.set_property("simulation/models/FGAerodynamics/enabled", 0.0)
+        .unwrap();
+    fdm.load_script(&r, "scripts/reset.xml").unwrap();
+    fdm.run_ic().unwrap();
+    let mut resets = 0;
+    let mut last = 0.0;
+    for _ in 0..40 {
+        fdm.run().unwrap();
+        let t = fdm.models.exec.sim_time;
+        if t < last {
+            resets += 1;
+            // The reset restored the declared property before the event's
+            // later sets wrote theirs.
+            assert_eq!(fdm.get_property("test/fired").unwrap(), 0.0);
+            assert_eq!(fdm.get_property("test/after").unwrap(), 1.0);
+        }
+        last = t;
+    }
+    assert_eq!(resets, 2);
+    assert_eq!(fdm.get_property("test/runs").unwrap(), 2.0);
+    // The third run fired the first event again.
+    assert_eq!(fdm.get_property("test/fired").unwrap(), 1.0);
+}

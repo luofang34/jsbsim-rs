@@ -109,4 +109,7 @@ pub struct Script {
     pub events: Vec<Event>,
     /// `<property>` declarations of `<run>` and their initial values.
     pub local_properties: NodeMap<f64>,
+    /// Set when `ResetEvents` runs while the events are out running, so
+    /// the run resets them on its return.
+    pub events_reset: bool,
 }

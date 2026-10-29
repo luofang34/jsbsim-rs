@@ -231,44 +231,72 @@ impl Fdm {
         self.models.inertial.time = t;
     }
 
-    /// `FGScript::ResetEvents`.
+    /// `FGScript::ResetEvents`. While [`run_script`](Self::run_script)
+    /// has the events out, they are reset when it gets them back.
     pub(super) fn reset_events(&mut self) -> Result<(), Error> {
-        let Some(mut script) = self.script.take() else {
+        let Some(script) = self.script.as_mut() else {
             return Ok(());
         };
-        for (node, &value) in script.local_properties.iter() {
+        let declared = std::mem::take(&mut script.local_properties);
+        let start_time = script.start_time;
+        let mut result = Ok(());
+        for (node, &value) in declared.iter() {
             if !self
                 .env
                 .tree
                 .attribute(node, crate::properties::Attribute::PRESERVE)
+                && let Err(e) = self.write_node(node, value)
             {
-                self.write_node(node, value)?;
+                result = Err(e);
+                break;
             }
         }
-        self.set_sim_time(script.start_time);
-        for event in &mut script.events {
-            event.reset();
+        if let Some(script) = self.script.as_mut() {
+            script.local_properties = declared;
+            script.events.iter_mut().for_each(Event::reset);
+            script.events_reset = true;
         }
-        self.script = Some(script);
+        result?;
+        self.set_sim_time(start_time);
         Ok(())
     }
 
-    /// `FGScript::RunScript`: false once the end time is passed.
+    /// Whether `ResetEvents` ran since the last call.
+    fn take_events_reset(&mut self) -> bool {
+        self.script
+            .as_mut()
+            .is_some_and(|s| std::mem::take(&mut s.events_reset))
+    }
+
+    /// `FGScript::RunScript`: false once the end time is passed. The
+    /// events are taken out while they run, since their sets write
+    /// properties whose setters reach the executive.
     pub(super) fn run_script(&mut self) -> Result<bool, Error> {
-        let Some(mut script) = self.script.take() else {
+        let Some(script) = self.script.as_mut() else {
             return Ok(true);
         };
-        let result = self.run_events(&mut script);
-        self.script = Some(script);
+        let mut events = std::mem::take(&mut script.events);
+        let end_time = script.end_time;
+        script.events_reset = false;
+        let result = self.run_events(&mut events, end_time);
+        if self.take_events_reset() {
+            events.iter_mut().for_each(Event::reset);
+        }
+        if let Some(script) = self.script.as_mut() {
+            script.events = events;
+        }
         result
     }
 
-    fn run_events(&mut self, script: &mut Script) -> Result<bool, Error> {
+    fn run_events(&mut self, events: &mut [Event], end_time: f64) -> Result<bool, Error> {
         let now = self.models.exec.sim_time;
-        if now > script.end_time {
+        if now > end_time {
             return Ok(false);
         }
-        for (counter, event) in script.events.iter_mut().enumerate() {
+        for counter in 0..events.len() {
+            let Some(event) = events.get_mut(counter) else {
+                continue;
+            };
             let condition = &event.condition;
             let fired = self.env.eval(&self.models, |ev| condition.evaluate(ev))?;
             if fired {
@@ -281,8 +309,14 @@ impl Fdm {
                 event.notified = false;
             }
             if now >= event.start_time && event.triggered {
-                self.act(event, now)?;
-                self.notify(event, counter, now)?;
+                let reset = self.act(event, now)?;
+                if reset {
+                    // The events after this one see the reset too.
+                    events.iter_mut().for_each(Event::reset);
+                }
+                if let Some(event) = events.get_mut(counter) {
+                    self.notify(event, counter, now)?;
+                }
             }
         }
         Ok(true)
@@ -324,8 +358,14 @@ impl Fdm {
         Ok(())
     }
 
-    fn act(&mut self, event: &mut Event, now: f64) -> Result<(), Error> {
-        for set in &mut event.sets {
+    /// The event's transiting sets, written; true when one of them reset
+    /// the events, which this event then already shows.
+    fn act(&mut self, event: &mut Event, now: f64) -> Result<bool, Error> {
+        let mut reset = false;
+        for i in 0..event.sets.len() {
+            let Some(set) = event.sets.get_mut(i) else {
+                continue;
+            };
             if !set.transiting {
                 continue;
             }
@@ -354,9 +394,13 @@ impl Fdm {
             };
             if let Some(node) = set.node {
                 self.write_node(node, value)?;
+                if self.take_events_reset() {
+                    event.reset();
+                    reset = true;
+                }
             }
         }
-        Ok(())
+        Ok(reset)
     }
 
     fn notify(&mut self, event: &mut Event, counter: usize, now: f64) -> Result<(), Error> {
