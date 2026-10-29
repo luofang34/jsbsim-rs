@@ -7,6 +7,7 @@
 //! properties expose.
 
 use super::Surface;
+use super::force::{ContactForce, Multipliers, Reporting};
 use crate::Error;
 use crate::fdm::LoadContext;
 use crate::functions::{FnId, TableId};
@@ -171,6 +172,10 @@ pub struct Contact {
     pub surface: Surface,
     /// Per-frame state.
     pub state: ContactState,
+    /// What the contact computes while compressed.
+    pub force: ContactForce,
+    /// Takeoff and landing reporting.
+    pub reporting: Reporting,
 }
 
 /// JSBSim logs `message` and goes on; strict loading refuses it.
@@ -273,6 +278,8 @@ impl Contact {
             use_fcs_gear_pos: false,
             surface: Surface::default(),
             state: ContactState::default(),
+            force: ContactForce::default(),
+            reporting: Reporting::default(),
         }
     }
 
@@ -383,6 +390,8 @@ impl Contact {
         s.compress_speed = 0.0;
         s.wheel_slip = 0.0;
         self.steering.angle = 0.0;
+        self.reporting.reset_to_ic();
+        self.force.multipliers = Multipliers::default();
     }
 
     /// `GetGearUnitPos`: the FCS gear position once it has left 1.

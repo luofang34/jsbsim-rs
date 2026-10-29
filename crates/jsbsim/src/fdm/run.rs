@@ -14,6 +14,7 @@ use crate::math::{ColumnVector3, E_PHI, E_THT, Location, Matrix33, Quaternion};
 use crate::models::aircraft;
 use crate::models::atmosphere::Overrides;
 use crate::properties::NodeId;
+use crate::units::FPSTOKTS;
 
 /// What the initial conditions give the models: the `FGInitialCondition`
 /// getters that `FGFDMExec::Initialize` hands to `SetInitialState`.
@@ -81,21 +82,36 @@ impl Models {
                 a.tw2b = x.tw2b;
                 a.rp_body = self.mass_balance.structural_to_body(self.aircraft.xyz_rp);
             }
-            Model::GroundReactions => {
-                let g = &mut self.ground_reactions.input;
-                g.fcs_gear_pos = self.fcs.gear_pos;
-                g.empty_weight = self.mass_balance.empty_weight;
-                g.tb2l = self.propagate.frames.tb2l;
-                g.total_delta_t = self.exec.dt * f64::from(self.ground_reactions.base.rate);
-                g.location.clone_from(&self.propagate.state.location);
-                g.xyz_cg = self.mass_balance.xyz_cg;
-            }
+            Model::GroundReactions => self.load_ground_reactions_inputs(),
             Model::MassBalance => self.load_mass_balance_inputs(),
             Model::Propulsion => self.load_propulsion_inputs(),
             Model::Accelerations => self.load_accelerations_inputs(),
             Model::Auxiliary => self.load_auxiliary_inputs(),
             _ => {}
         }
+    }
+
+    fn load_ground_reactions_inputs(&mut self) {
+        let wow = self.ground_reactions.wow();
+        let (p, f) = (&self.propagate, &self.propagate.frames);
+        let g = &mut self.ground_reactions.input;
+        g.vground = self.auxiliary.airspeed.vground;
+        g.vcalibrated_kts = self.auxiliary.airspeed.vcas * FPSTOKTS;
+        g.temperature = self.atmosphere.temperature;
+        g.brake_pos = self.fcs.brake_pos;
+        g.fcs_gear_pos = self.fcs.gear_pos;
+        g.empty_weight = self.mass_balance.empty_weight;
+        g.tb2l = f.tb2l;
+        g.tec2l = f.tec2l;
+        g.tec2b = f.tec2b;
+        g.pqr = p.state.pqr;
+        g.uvw = p.state.uvw;
+        g.distance_agl = p.distance_agl(&self.inertial);
+        g.distance_asl = p.altitude_asl();
+        g.total_delta_t = self.exec.dt * f64::from(self.ground_reactions.base.rate);
+        g.wow = wow;
+        g.location.clone_from(&p.state.location);
+        g.xyz_cg = self.mass_balance.xyz_cg;
     }
 
     /// The executive supplies no lifting gas inputs, so they contribute

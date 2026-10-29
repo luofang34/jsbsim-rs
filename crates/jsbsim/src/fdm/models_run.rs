@@ -17,6 +17,7 @@ use crate::math::{Axis, ColumnVector3};
 use crate::models::aerodynamics::Values;
 use crate::models::external_reactions::{Magnitude, Transforms};
 use crate::models::fcs::{ComponentAt, Fcs, families};
+use crate::models::ground_reactions::FrameContext;
 use crate::properties::{Attribute, NodeId};
 
 use crate::xml::{DocumentLoader, Element, IncludeKind};
@@ -236,26 +237,71 @@ impl Fdm {
         self.run_model_functions(Model::ExternalReactions, false)
     }
 
-    /// `FGGroundReactions::Run`: no gear forces yet; a touching contact is
-    /// an error.
+    /// `FGGroundReactions::Run`: every contact's forces, in load order.
     pub(super) fn run_ground_reactions(&mut self) -> Result<(), Error> {
         let m = &mut self.models;
         if m.ground_reactions.base.skip() || m.exec.holding {
             return Ok(());
         }
-        let (trim, time) = (m.exec.trim_status, m.exec.sim_time);
-        if m.ground_reactions.surface.bumpiness >= 0.001 && !trim {
-            return Err(Error::Unsupported {
-                construct: "ground/bumpiness (FGSurface bumps)".to_owned(),
-                path: "ground_reactions".to_owned(),
+        self.run_model_functions(Model::GroundReactions, true)?;
+        let gr = &mut self.models.ground_reactions;
+        gr.forces = ColumnVector3::zero();
+        gr.moments = ColumnVector3::zero();
+        gr.multipliers.clear();
+        for index in 0..gr.contacts.len() {
+            self.run_contact(index)?;
+        }
+        let m = &self.models;
+        if let Some(c) = m.ground_reactions.contacts.iter().find(|c| c.state.wow) {
+            return Err(Error::Touchdown {
+                contact: c.name.clone(),
+                time: m.exec.sim_time,
             });
         }
-        self.run_model_functions(Model::GroundReactions, true)?;
-        let m = &mut self.models;
-        m.ground_reactions.forces = ColumnVector3::zero();
-        m.ground_reactions.moments = ColumnVector3::zero();
-        m.ground_reactions.check_contacts(&m.inertial, trim, time)?;
         self.run_model_functions(Model::GroundReactions, false)
+    }
+
+    /// `FGLGear::GetBodyForces` of contact `index`, summed into the
+    /// model's force and moment. A `<strut_force>` function is evaluated
+    /// once the contact's compression and its speed are set, since it may
+    /// read them.
+    fn run_contact(&mut self, index: usize) -> Result<(), Error> {
+        let m = &mut self.models;
+        let frame = FrameContext {
+            trim_status: m.exec.trim_status,
+            sim_time: m.exec.sim_time,
+            integration_suspended: m.exec.integration_suspended(),
+        };
+        let gr = &mut m.ground_reactions;
+        let (surface, bump) = (gr.surface, gr.surface.bump_height());
+        let Some(contact) = gr.contacts.get_mut(index) else {
+            return Ok(());
+        };
+        let compressed =
+            contact.begin_frame(&gr.input, &m.inertial, &surface, bump, frame.trim_status);
+        let function = contact.strut.function;
+        if let Some(compressed) = compressed {
+            let strut = match function {
+                Some(id) => Some(self.env.eval(&self.models, |ev| ev.function(id))?),
+                None => None,
+            };
+            let gr = &mut self.models.ground_reactions;
+            if let Some(contact) = gr.contacts.get_mut(index) {
+                let registry = &mut gr.multipliers;
+                let functions = &self.env.functions;
+                contact
+                    .finish_compressed(compressed, strut, &gr.input, functions, registry, index)?;
+            }
+        }
+        let m = &mut self.models;
+        let gr = &mut m.ground_reactions;
+        if let Some(contact) = gr.contacts.get_mut(index) {
+            let mass_balance = &m.mass_balance;
+            contact.end_frame(&gr.input, &frame, |r| mass_balance.structural_to_body(r));
+            gr.forces += contact.force.body_force;
+            gr.moments += contact.force.moment;
+        }
+        Ok(())
     }
 }
 

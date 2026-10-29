@@ -3,16 +3,18 @@
 // FGLGear: Copyright (C) 1999 Jon S. Berndt (jon@jsbsim.org).
 // FGSurface: Copyright (C) 2013 Ansgar Schwarz, Bertrand Coconnier.
 // Derived from JSBSim src/models/FGGroundReactions.{h,cpp},
-// FGLGear.{h,cpp} (GetBodyForces up to the contact test) and
-// FGSurface.{h,cpp}.
+// FGLGear.{h,cpp} and FGSurface.{h,cpp}.
 //
-//! Ground contacts. Everything `FGLGear` loads and binds is ported, and
-//! each frame runs `GetBodyForces` as far as a contact that is not
-//! compressed goes; a contact that touches the terrain stops the
-//! simulation with [`Error::Touchdown`] until the gear forces are.
+//! Ground contacts: what `FGLGear` loads and binds, the forces each
+//! computes every frame, and the friction constraints it hands the
+//! accelerations solver.
 
 mod contact;
 mod contact_bind;
+mod force;
+mod frame;
+mod friction;
+mod reporting;
 #[cfg(test)]
 mod tests;
 
@@ -20,13 +22,14 @@ pub use contact::{
     BrakeGroup, Contact, ContactState, ContactType, DampType, Friction, SteerType, Steering, Strut,
 };
 pub use contact_bind::indexed_name;
+pub use force::{ContactForce, FrictionType, Multipliers, Reporting};
+pub use frame::{Compressed, FrameContext};
 
+use super::accelerations::LagrangeMultiplier;
 use super::base::ModelBase;
-use super::inertial::Inertial;
 use crate::Error;
 use crate::fdm::{Binder, Kind, LoadContext};
-use crate::math::{ColumnVector3, E_X, Location, Matrix33};
-use crate::units::INCHTOFT;
+use crate::math::{ColumnVector3, Location, Matrix33};
 use crate::xml::Element;
 
 /// Surface properties (`FGSurface`).
@@ -42,6 +45,8 @@ pub struct Surface {
     pub rolling_factor: f64,
     /// `ground/static-friction-factor`.
     pub static_factor: f64,
+    /// `pos`: where bumps are evaluated, which JSBSim itself never moves.
+    pub pos: [f64; 3],
 }
 
 impl Default for Surface {
@@ -52,27 +57,50 @@ impl Default for Surface {
             maximum_force: f64::MAX,
             rolling_factor: 1.0,
             static_factor: 1.0,
+            pos: [0.0; 3],
         }
     }
 }
 
-/// What the executive loads before each run (`FGGroundReactions::in`,
-/// the fields the airborne part of `FGLGear::GetBodyForces` and the
-/// constructor read).
+/// What the executive loads before each run (`FGLGear::Inputs`).
 #[derive(Debug, Clone, Default)]
 pub struct Inputs {
-    /// Vehicle location.
-    pub location: Location,
+    /// Ground speed, ft/s.
+    pub vground: f64,
+    /// Calibrated airspeed, kt.
+    pub vcalibrated_kts: f64,
+    /// Ambient temperature, R.
+    pub temperature: f64,
+    /// Height of the CG above the ground, ft.
+    pub distance_agl: f64,
+    /// Altitude above sea level, ft.
+    pub distance_asl: f64,
+    /// `dt` times the model rate, s.
+    pub total_delta_t: f64,
+    /// `TakeoffThrottle`: whether the first throttle is past 0.9.
+    pub takeoff_throttle: bool,
+    /// `WOW` of the vehicle, as the previous frame left it.
+    pub wow: bool,
     /// Body to local.
     pub tb2l: Matrix33,
+    /// ECEF to local.
+    pub tec2l: Matrix33,
+    /// ECEF to body.
+    pub tec2b: Matrix33,
+    /// Body rates relative to ECEF, rad/s.
+    pub pqr: ColumnVector3,
+    /// Body velocity relative to ECEF, ft/s.
+    pub uvw: ColumnVector3,
     /// CG, structural frame, in.
     pub xyz_cg: ColumnVector3,
+    /// Vehicle location.
+    pub location: Location,
+    /// FCS brake positions by brake group (`BrakePos`).
+    pub brake_pos: [f64; 6],
     /// FCS gear position.
     pub fcs_gear_pos: f64,
     /// Empty weight, lbs.
     pub empty_weight: f64,
-    /// `dt` times the model rate, s.
-    pub total_delta_t: f64,
 }
 
 /// `FGGroundReactions`.
@@ -88,15 +116,13 @@ pub struct GroundReactions {
     pub surface: Surface,
     /// Steering command.
     pub ds_cmd: f64,
-    /// Force, body frame (zero: no contact force is computed).
+    /// Force, body frame, lbs.
     pub forces: ColumnVector3,
-    /// Moment (zero).
+    /// Moment about the CG, lbs ft.
     pub moments: ColumnVector3,
-}
-
-/// `FGLGear::Ts2b`: structural to body, inches to feet.
-fn ts2b() -> Matrix33 {
-    Matrix33::new(-INCHTOFT, 0., 0., 0., INCHTOFT, 0., 0., 0., -INCHTOFT)
+    /// `multipliers`: the friction constraints registered this frame, as
+    /// the contact (by index) and constraint that own each.
+    pub multipliers: Vec<(usize, FrictionType)>,
 }
 
 impl GroundReactions {
@@ -106,6 +132,7 @@ impl GroundReactions {
         self.forces = ColumnVector3::zero();
         self.moments = ColumnVector3::zero();
         self.ds_cmd = 0.0;
+        self.multipliers.clear();
         for contact in &mut self.contacts {
             contact.reset_to_ic();
         }
@@ -139,109 +166,46 @@ impl GroundReactions {
         }
     }
 
-    /// `FGLGear::GetBodyForces` for every contact in order, up to the
-    /// point where a contact first compresses against the terrain, which is
-    /// refused with [`Error::Touchdown`].
-    pub fn check_contacts(
-        &mut self,
-        inertial: &Inertial,
-        trim_status: bool,
-        sim_time: f64,
-    ) -> Result<(), Error> {
-        let bump = self.surface.bump_height();
-        for contact in &mut self.contacts {
-            if contact.airborne_frame(
-                &self.input,
-                inertial,
-                &self.surface,
-                bump,
-                trim_status,
-                sim_time,
-            ) {
-                return Err(Error::Touchdown {
-                    contact: contact.name.clone(),
-                    time: sim_time,
-                });
+    /// The registered friction constraints, copied in order into `out`
+    /// for the solver (`GetMultipliersList`).
+    pub fn load_multipliers(&self, out: &mut Vec<LagrangeMultiplier>) {
+        out.clear();
+        for &(c, kind) in &self.multipliers {
+            if let Some(contact) = self.contacts.get(c) {
+                out.push(*contact.force.multipliers.get(kind));
             }
         }
-        Ok(())
     }
-}
 
-/// `std::max(a, b)`, which is `a < b ? b : a`: unlike [`f64::max`], it
-/// keeps `a` when either is NaN and when both are zeros.
-fn cpp_max(a: f64, b: f64) -> f64 {
-    if a < b { b } else { a }
-}
-
-impl Contact {
-    /// `GetBodyForces` while the contact is not compressed. Returns true,
-    /// having changed nothing past the height test, where JSBSim would
-    /// start computing the gear forces.
-    fn airborne_frame(
-        &mut self,
-        input: &Inputs,
-        inertial: &Inertial,
-        surface: &Surface,
-        bump: f64,
-        trim_status: bool,
-        sim_time: f64,
-    ) -> bool {
-        let mut gear_pos = 1.0;
-        let body = ts2b() * (self.location - input.xyz_cg);
-        self.state.local_gear = input.tb2l * body;
-        let gear_loc = input.location.local_to_location(self.state.local_gear);
-        let mut height = inertial.contact(&gear_loc).agl;
-        self.state.agl = cpp_max(height, 0.0);
-        if self.retractable {
-            gear_pos = self.gear_unit_pos(input.fcs_gear_pos);
-        }
-        if gear_pos > 0.99 {
-            if !trim_status {
-                height -= bump;
-            }
-            self.surface.static_factor = surface.static_factor;
-            self.surface.rolling_factor = surface.rolling_factor;
-            self.surface.maximum_force = surface.maximum_force;
-            self.surface.bumpiness = surface.bumpiness;
-            self.surface.solid = surface.solid;
-            if height < 0.0 {
-                return true;
-            }
-            let s = &mut self.state;
-            s.wow = false;
-            s.compress_length = 0.0;
-            s.compress_speed = 0.0;
-            s.wheel_slip = 0.0;
-            s.strut_force = 0.0;
-            self.steering.angle *= cpp_max(gear_pos - 0.8, 0.0) / 0.2;
-        }
-        let s = &mut self.state;
-        if !s.wow {
-            s.wheel_vel[E_X] -= 13.0 * input.total_delta_t;
-            if s.wheel_vel[E_X] < 0.0 {
-                s.wheel_vel[E_X] = 0.0;
+    /// The solver's values back into the constraints `load_multipliers`
+    /// copied them from.
+    pub fn store_multipliers(&mut self, solved: &[LagrangeMultiplier]) {
+        for (&(c, kind), m) in self.multipliers.iter().zip(solved) {
+            if let Some(contact) = self.contacts.get_mut(c) {
+                contact.force.multipliers.get_mut(kind).value = m.value;
             }
         }
-        if !trim_status {
-            if s.last_wow != s.wow {
-                tracing::info!(
-                    "GEAR_CONTACT: {sim_time:.6} seconds: {} {}",
-                    self.name,
-                    u8::from(s.wow)
-                );
-            }
-            s.last_wow = s.wow;
-        }
-        false
     }
 }
 
 impl Surface {
-    /// `GetBumpHeight` for a flat surface; the executive refuses a
-    /// bumpiness of 0.001 or more before the test runs.
-    fn bump_height(&self) -> f64 {
-        0.0
+    /// `GetBumpHeight`.
+    #[must_use]
+    pub fn bump_height(&self) -> f64 {
+        if self.bumpiness < 0.001 {
+            return 0.0;
+        }
+        let mut x = self.pos[0] * 0.1;
+        let mut y = self.pos[1] * 0.1;
+        x -= libm::floor(x);
+        y -= libm::floor(y);
+        x *= 2.0 * std::f64::consts::PI;
+        y *= 2.0 * std::f64::consts::PI;
+        const MAX_GROUND_BUMP_AMPLITUDE: f64 = 0.4;
+        let sin = libm::sin;
+        let mut h = sin(x) + sin(7.0 * x) + sin(8.0 * x) + sin(13.0 * x);
+        h += sin(2.0 * y) + sin(5.0 * y) + sin(9.0 * y * x) + sin(17.0 * y);
+        h * (1.0 / 8.) * self.bumpiness * MAX_GROUND_BUMP_AMPLITUDE
     }
 }
 
