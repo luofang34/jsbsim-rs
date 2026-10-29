@@ -8,7 +8,7 @@
 //! density altitudes they invert to.
 
 use super::standard::RDRY;
-use super::{Atmosphere, G0, PressureUnit};
+use super::{Atmosphere, AtmosphereModel, G0, PressureUnit};
 
 /// Layer `b` of a per-layer profile; NaN past its end, where JSBSim reads
 /// past its vector.
@@ -51,6 +51,9 @@ impl Atmosphere {
     /// psf.
     #[must_use]
     pub fn get_pressure(&self, altitude: f64) -> f64 {
+        if self.model == AtmosphereModel::Mars {
+            return self.pressure;
+        }
         let geo_pot_alt = self.geopotential_altitude(altitude);
         let (b, base_alt) = self.layer_of(geo_pot_alt);
         let tmb = self.get_temperature(self.geometric_altitude(base_alt));

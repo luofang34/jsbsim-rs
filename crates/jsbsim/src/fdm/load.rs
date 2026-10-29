@@ -187,6 +187,7 @@ impl Fdm {
         model: &str,
     ) -> Result<(), Error> {
         let dir = format!("{aircraft_path}/{model}");
+        self.full_aircraft_path.clone_from(&dir);
         let mut loader =
             DocumentLoader::new(resolver, dir.clone()).with_systems_dir(self.systems_path.clone());
         let document = loader.load_document(&format!("{dir}/{model}.xml"))?;
@@ -198,8 +199,8 @@ impl Fdm {
         loader: &mut DocumentLoader<'_>,
         document: Element,
     ) -> Result<(), Error> {
-        if let Some(planet) = document.find_element("planet").cloned() {
-            self.load_planet(&planet)?;
+        if let Some(mut planet) = document.find_element("planet").cloned() {
+            self.load_planet(loader, &mut planet)?;
         }
         let take = |name: &str| document.find_element(name).cloned();
         let Some(mut metrics) = take("metrics") else {
@@ -377,26 +378,6 @@ impl Fdm {
         if let Some(t) = self.models.output.types.last_mut() {
             t.pre = pre;
             t.post = post;
-        }
-        Ok(())
-    }
-
-    /// `LoadPlanet(element)`.
-    fn load_planet(&mut self, el: &Element) -> Result<(), Error> {
-        self.models.inertial.load(el)?;
-        self.load_planet_constants();
-        self.models.ic.initialize_ic(&self.models.inertial);
-        self.initialize_models()?;
-        if let Some(atm) = el.find_element("atmosphere")
-            && atm.has_attribute("model")
-        {
-            let model = atm.attribute("model").to_ascii_lowercase();
-            if model == "msis" || model == "mars" {
-                return Err(Error::Unsupported {
-                    construct: format!("<atmosphere model=\"{model}\">"),
-                    path: atm.location().to_string(),
-                });
-            }
         }
         Ok(())
     }

@@ -17,6 +17,7 @@ mod exec_bind;
 mod load;
 mod models_run;
 mod order;
+mod planet;
 mod propulsion;
 mod run;
 mod script;
@@ -163,6 +164,9 @@ pub struct Fdm {
     options: crate::LoadOptions,
     script: Option<crate::script::Script>,
     aircraft_path: String,
+    /// `FullAircraftPath`: the loaded aircraft's directory, where model
+    /// includes are found.
+    full_aircraft_path: String,
     systems_path: String,
     last_trim: Option<crate::trim::TrimReport>,
     trims_run: u32,
@@ -191,6 +195,7 @@ impl Fdm {
             options: crate::LoadOptions::default(),
             script: None,
             aircraft_path: "aircraft".to_owned(),
+            full_aircraft_path: String::new(),
             systems_path: "systems".to_owned(),
             last_trim: None,
             trims_run: 0,
@@ -222,7 +227,7 @@ impl Fdm {
         enable!("FGPropagate", propagate);
         propagate::bind(b)?;
         enable!("FGInput", input);
-        enable!("FGAtmosphere", atmosphere);
+        exec_bind::bind_atmosphere_enable(b)?;
         crate::models::atmosphere::bind(b)?;
         enable!("FGWinds", winds);
         crate::models::winds::bind(b)?;

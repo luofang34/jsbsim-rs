@@ -141,6 +141,10 @@ impl Probe {
                 let loaded = fdm.load_initial_conditions(&resolver, &dir, arg(0))?;
                 Ok(format!(" {loaded}"))
             }
+            "planet" => {
+                fdm.load_planet_file(&resolver, arg(0), arg(1) != "0")?;
+                Ok(" true".to_owned())
+            }
             "set" => {
                 fdm.set_property(arg(0), number_at(1))?;
                 self.collect()?;
@@ -251,6 +255,11 @@ impl Probe {
 
 fn load_failure(e: jsbsim::Error) -> String {
     match e {
+        // GeographicLib throws out of LoadModel rather than returning false.
+        jsbsim::Error::Geographic { message } => {
+            tracing::debug!("error: {message}");
+            " error".to_owned()
+        }
         jsbsim::Error::Unsupported { construct, path } => {
             format!(" unsupported {construct} ({path})")
         }

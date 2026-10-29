@@ -100,6 +100,7 @@ impl Inertial {
         } else if el.find_element("polar_radius").is_some() {
             self.b = el.find_element_value_as_number_convert_to("polar_radius", "FT")?;
         }
+        check_ellipsoid(self.a, self.b)?;
         if el.find_element("rotation_rate").is_some() {
             let rate = el.find_element_value_as_number_convert_to("rotation_rate", "RAD/SEC")?;
             self.omega_planet = ColumnVector3::new(0.0, 0.0, rate);
@@ -203,6 +204,24 @@ impl Inertial {
         }
         self.grav_type = gt;
     }
+}
+
+/// `GeographicLib::Geodesic(a, 1 - b/a)`, which `Load` constructs so that
+/// an ill-defined ellipsoid throws there.
+fn check_ellipsoid(a: f64, b: f64) -> Result<(), Error> {
+    let f = 1.0 - b / a;
+    let polar = a * (1.0 - f);
+    if !(a.is_finite() && a > 0.0) {
+        return Err(Error::Geographic {
+            message: "Equatorial radius is not positive".to_owned(),
+        });
+    }
+    if !(polar.is_finite() && polar > 0.0) {
+        return Err(Error::Geographic {
+            message: "Polar semi-axis is not positive".to_owned(),
+        });
+    }
+    Ok(())
 }
 
 /// `FGInertial::bind`.

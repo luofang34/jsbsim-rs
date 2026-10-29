@@ -6,7 +6,9 @@
 //! The 1976 standard temperature profile, and the bias and graded delta
 //! that shift it.
 
-use super::{Atmosphere, Overrides, RENG0, SH_RATIO, StandardProfile, TemperatureUnit};
+use super::{
+    Atmosphere, AtmosphereModel, Overrides, RENG0, SH_RATIO, StandardProfile, TemperatureUnit,
+};
 use crate::c_numeric::format_g;
 use crate::functions::Table;
 use crate::units::{FTTOM, kelvin_to_rankine};
@@ -105,6 +107,9 @@ impl Atmosphere {
     /// ASL), °R, with the bias and graded delta.
     #[must_use]
     pub fn get_temperature(&self, altitude: f64) -> f64 {
+        if self.model == AtmosphereModel::Mars {
+            return self.temperature;
+        }
         let p = &self.profile;
         let geo_pot_alt = self.geopotential_altitude(altitude);
         let mut t;
@@ -182,6 +187,9 @@ impl Atmosphere {
     /// `SetTemperature`: biases the profile so altitude `h` (ft ASL) is at
     /// `t`.
     pub fn set_temperature(&mut self, t: f64, h: f64, unit: TemperatureUnit) {
+        if self.model == AtmosphereModel::Mars {
+            return;
+        }
         let target_temp = Self::convert_to_rankine(t, unit);
         let geo_pot_alt = self.geopotential_altitude(h);
         let mut bias = target_temp - self.get_std_temperature(h);

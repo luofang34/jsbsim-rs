@@ -37,6 +37,19 @@ const BASE_GETTERS: [(&str, Get); 13] = [
     }),
 ];
 
+/// The properties `FGStandardAtmosphere::bind` adds to `FGAtmosphere`'s,
+/// which an atmosphere that is not a standard one leaves untied.
+pub const STANDARD_PROPERTIES: [&str; 8] = [
+    "atmosphere/delta-T",
+    "atmosphere/SL-graded-delta-T",
+    "atmosphere/P-sl-psf",
+    "atmosphere/dew-point-R",
+    "atmosphere/vapor-pressure-psf",
+    "atmosphere/saturated-vapor-pressure-psf",
+    "atmosphere/RH",
+    "atmosphere/vapor-fraction-ppm",
+];
+
 /// Binds the atmosphere's properties in JSBSim's order.
 pub fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
     for (path, get) in BASE_GETTERS {

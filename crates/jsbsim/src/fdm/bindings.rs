@@ -45,6 +45,12 @@ impl Bindings {
         self.setters.get(node)
     }
 
+    /// Forgets the getter and setter of `node` (`Unbind`).
+    pub(crate) fn unbind(&mut self, node: NodeId) {
+        self.getters.remove(node);
+        self.setters.remove(node);
+    }
+
     /// Whether `node` has a getter.
     #[must_use]
     pub fn is_bound(&self, node: NodeId) -> bool {

@@ -12,7 +12,7 @@ use super::{Fdm, Models};
 use crate::Error;
 use crate::math::{ColumnVector3, E_PHI, E_THT, Location, Quaternion};
 use crate::models::aircraft;
-use crate::models::atmosphere::Overrides;
+use crate::models::atmosphere::{AtmosphereModel, Overrides};
 use crate::properties::NodeId;
 use crate::units::FPSTOKTS;
 
@@ -259,6 +259,11 @@ impl Fdm {
             self.models.load_inputs(model);
             if model == Model::Atmosphere {
                 self.init_atmosphere()?;
+                // Only `FGAtmosphere::InitModel` chains to
+                // `FGModel::InitModel`; the standard atmosphere's does not.
+                if self.models.atmosphere.model == AtmosphereModel::Standard {
+                    continue;
+                }
             } else {
                 self.models.init_model(model);
             }
@@ -286,8 +291,12 @@ impl Fdm {
         Ok(())
     }
 
-    /// The `atmosphere/override/*` properties found so far.
+    /// The `atmosphere/override/*` properties found so far, which only
+    /// `FGAtmosphere::Calculate` reads.
     fn atmosphere_overrides(&mut self) -> Result<Overrides, Error> {
+        if self.models.atmosphere.model != AtmosphereModel::Standard {
+            return Ok(Overrides::default());
+        }
         let nodes = &mut self.models.atmosphere.override_nodes;
         nodes.resolve(&self.env.tree);
         let nodes = *nodes;

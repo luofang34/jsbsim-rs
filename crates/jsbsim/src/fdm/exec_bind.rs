@@ -43,6 +43,28 @@ pub fn bind_enable(
     Ok(())
 }
 
+/// `simulation/models/FGAtmosphere/enabled`, which keeps reading and
+/// writing the replaced model's flag after a planet replaces the
+/// atmosphere.
+pub fn bind_atmosphere_enable(b: &mut Binder<'_>) -> Result<(), Error> {
+    b.property(
+        "simulation/models/FGAtmosphere/enabled",
+        Kind::Bool,
+        |m| {
+            let a = &m.atmosphere;
+            flag(a.orphaned_enabled.unwrap_or(a.base.enabled))
+        },
+        |m, v| {
+            let a = &mut m.atmosphere;
+            match &mut a.orphaned_enabled {
+                Some(orphan) => *orphan = v != 0.0,
+                None => a.base.enabled = v != 0.0,
+            }
+        },
+    )?;
+    Ok(())
+}
+
 /// The executive's own properties, bound after the models.
 pub fn bind_exec(b: &mut Binder<'_>) -> Result<(), Error> {
     b.setter_only("simulation/do_simple_trim", Kind::Int, |m, v| {

@@ -14,13 +14,15 @@
 
 mod bind;
 mod humidity;
+mod mars;
 mod override_nodes;
 mod pressure;
 mod standard;
 #[cfg(test)]
 mod tests;
 
-pub use bind::bind;
+pub use bind::{STANDARD_PROPERTIES, bind};
+pub use mars::MMARS;
 pub use override_nodes::OverrideNodes;
 
 use super::base::ModelBase;
@@ -134,9 +136,23 @@ pub struct StandardProfile {
     pub std_lapse_rates: Vec<f64>,
 }
 
+/// Which atmosphere model the executive runs: the standard one it
+/// constructs, or the one a planet's `<atmosphere model="...">` replaces it
+/// with.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum AtmosphereModel {
+    /// `FGStandardAtmosphere`.
+    #[default]
+    Standard,
+    /// `FGMars`.
+    Mars,
+}
+
 /// The atmosphere.
 #[derive(Debug, Clone)]
 pub struct Atmosphere {
+    /// The model whose overrides of `FGAtmosphere`'s virtual methods apply.
+    pub model: AtmosphereModel,
     /// Scheduling.
     pub base: ModelBase,
     /// Inputs of the current frame.
@@ -177,12 +193,17 @@ pub struct Atmosphere {
     pub profile: StandardProfile,
     /// The `atmosphere/override/*` nodes found so far.
     pub override_nodes: OverrideNodes,
+    /// What `simulation/models/FGAtmosphere/enabled` holds once a planet
+    /// has replaced the atmosphere: the flag stays tied to the replaced
+    /// model, so it no longer enables or disables this one.
+    pub orphaned_enabled: Option<bool>,
 }
 
 impl Default for Atmosphere {
     /// `FGStandardAtmosphere(FGFDMExec*)`.
     fn default() -> Self {
         let mut atmosphere = Self {
+            model: AtmosphereModel::Standard,
             base: ModelBase::default(),
             input: Inputs::default(),
             sl_temperature: 1.8,
@@ -203,6 +224,7 @@ impl Default for Atmosphere {
             saturated_vapor_pressure: STD_DAY_SL_PRESSURE,
             profile: StandardProfile::new(),
             override_nodes: OverrideNodes::default(),
+            orphaned_enabled: None,
         };
         atmosphere.construct_profile();
         atmosphere
@@ -213,6 +235,10 @@ impl Atmosphere {
     /// `FGStandardAtmosphere::InitModel`. Unlike other models it does not
     /// chain to `FGModel::InitModel`, so the rate counter is left alone.
     pub fn init_model(&mut self, overrides: &Overrides) {
+        if self.model == AtmosphereModel::Mars {
+            self.mars_init_model();
+            return;
+        }
         let p = &mut self.profile;
         p.gradient_fadeout_altitude = p
             .temperature_table
@@ -229,9 +255,13 @@ impl Atmosphere {
         self.calculate(0.0, overrides);
     }
 
-    /// `FGStandardAtmosphere::Calculate`: the atmosphere at `altitude`
-    /// (ft ASL), then the humidity limits there.
+    /// `Calculate`: the atmosphere at `altitude` (ft ASL), then, for the
+    /// standard atmosphere, the humidity limits there.
     pub fn calculate(&mut self, altitude: f64, overrides: &Overrides) {
+        if self.model == AtmosphereModel::Mars {
+            self.mars_calculate(altitude);
+            return;
+        }
         self.calculate_base(altitude, overrides);
         self.saturated_vapor_pressure = Self::calculate_vapor_pressure(self.temperature);
         self.validate_vapor_mass_fraction(altitude);
@@ -373,6 +403,9 @@ impl Atmosphere {
     /// `GetDensity(altitude)`, slug/ft^3, with the current gas constant.
     #[must_use]
     pub fn get_density(&self, altitude: f64) -> f64 {
+        if self.model == AtmosphereModel::Mars {
+            return self.pressure / (self.reng * self.temperature);
+        }
         self.get_pressure(altitude) / (self.reng * self.get_temperature(altitude))
     }
 
@@ -391,6 +424,9 @@ impl Atmosphere {
     /// `GetSoundSpeed(altitude)`, ft/s.
     #[must_use]
     pub fn get_sound_speed(&self, altitude: f64) -> f64 {
+        if self.model == AtmosphereModel::Mars {
+            return self.mars_sound_speed();
+        }
         (SH_RATIO * self.reng * self.get_temperature(altitude)).sqrt()
     }
 

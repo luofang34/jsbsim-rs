@@ -19,6 +19,8 @@
 //   script <path>           LoadScript(<root>/<path>): ok or load-error
 //   model <name>            LoadModel(<name>): ok or load-error
 //   ic <name>               IC->Load(<name>, true): its result
+//   planet <path> <0|1>     LoadPlanet(<root>/<path>, useAircraftPath): its
+//                           result
 //   watch <property>...     the properties a print lists, in order
 //   set <property> <v>      setDoubleValue on the (created) node
 //   dt <s>                  Setdt(s)
@@ -165,6 +167,14 @@ std::string Probe::Op(const std::string& op, std::istringstream& args)
     std::string name;
     args >> name;
     return exec->GetIC()->Load(SGPath(name), true) ? " true" : " false";
+  }
+  if (op == "planet") {
+    std::string path;
+    int use_aircraft_path = 0;
+    args >> path >> use_aircraft_path;
+    return exec->LoadPlanet(SGPath(list_dir + root + "/" + path), use_aircraft_path != 0)
+               ? " true"
+               : " false";
   }
   if (op == "set") {
     std::string p;

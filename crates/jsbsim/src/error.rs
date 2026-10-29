@@ -45,6 +45,13 @@ pub enum Error {
         /// JSBSim's message.
         message: String,
     },
+    /// `GeographicLib::GeographicErr`: an ellipsoid GeographicLib refuses,
+    /// such as a planet with a radius that is not positive.
+    #[error("{message}")]
+    Geographic {
+        /// GeographicLib's message.
+        message: String,
+    },
     /// A property path SimGear would reject.
     #[error("invalid property path: {0}")]
     PropertyPath(#[from] PathError),
