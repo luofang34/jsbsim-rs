@@ -10,7 +10,11 @@
 # driver binds its sockets on loopback only (tools/oracle/src/sockets.rs);
 # then runs the Rust port on every golden case, compares it with the
 # reference and checks that each tolerance row has the margin over the
-# observed difference its reason claims (tools/oracle/src/margin/claim.rs).
+# observed difference its reason claims (tools/oracle/src/margin/claim.rs);
+# then runs scripts/oracle-sincos.sh, which requires every case it lists to
+# be bit-identical with sin and cos unfused and the platform maths library,
+# so a regression cannot hide inside a tolerance row that libm and sincos
+# differences make wide.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -21,3 +25,4 @@ cargo run --release -q -p oracle -- check-xml
 cargo run --release -q -p oracle -- check-models
 cargo run --release -q -p oracle -- check-sockets
 cargo run --release -q -p oracle -- port
+scripts/oracle-sincos.sh

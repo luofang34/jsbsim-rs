@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: LGPL-2.1-or-later
-# Opt-in diagnostic against the C++ JSBSim in JSBSIM_ROOT (default
+# Run by oracle-ci.sh, or alone, against the C++ JSBSim in JSBSIM_ROOT (default
 # ~/jsbsim): builds it into target/oracle-sincos with -fno-builtin-sin
 # -fno-builtin-cos, so Clang keeps sin and cos as separate calls instead of
 # fusing them into one sincos, regenerates the references of the cases in
@@ -16,10 +16,25 @@ cd "$(dirname "$0")/.."
 export JSBSIM_ROOT="${JSBSIM_ROOT:-$HOME/jsbsim}"
 export NO_COLOR=1
 work=target/oracle-sincos
-mkdir -p "$work"
-# The patch rewrites Cargo.lock's libm entry; put it back afterwards.
-command cp -f Cargo.lock "$work/Cargo.lock.saved"
-trap 'command cp -f "$work/Cargo.lock.saved" Cargo.lock' EXIT
-CARGO_TARGET_DIR="$work/cargo" cargo run --release -q -p oracle \
+# The libm patch rewrites the lock file of the workspace it runs in, so it
+# runs in a throwaway workspace: a copy of the manifest and lock, with the
+# sources linked in. The real Cargo.lock is never written; the check at the
+# end proves it.
+ws="$work/workspace"
+rm -rf "$ws"
+mkdir -p "$ws"
+command cp -f Cargo.toml Cargo.lock "$ws/"
+for entry in crates tools clippy.toml rust-toolchain.toml; do
+  ln -s "$PWD/$entry" "$ws/$entry"
+done
+lock_before=$(shasum -a 256 Cargo.lock)
+status=0
+CARGO_TARGET_DIR="$work/cargo" cargo run --release -q \
+  --manifest-path "$ws/Cargo.toml" -p oracle \
   --config "patch.crates-io.libm.path=\"$PWD/tools/libm-platform\"" \
-  --features jsbsim/platform-libm -- check-sincos "$@"
+  --features jsbsim/platform-libm -- check-sincos "$@" || status=$?
+if [ "$(shasum -a 256 Cargo.lock)" != "$lock_before" ]; then
+  echo "oracle-sincos: Cargo.lock changed during the run" >&2
+  status=1
+fi
+exit "$status"
