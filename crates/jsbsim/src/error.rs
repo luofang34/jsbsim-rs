@@ -25,18 +25,6 @@ pub enum Error {
         /// Resource in which it appeared, with its line when known.
         path: String,
     },
-    /// A contact compressed against the terrain: gear forces are not ported
-    /// yet, so the run stops where JSBSim would first compute one. This is
-    /// the only construct refused while running.
-    #[error(
-        "unsupported ground contact \"{contact}\" touching the terrain at t={time} s (FGLGear forces)"
-    )]
-    Touchdown {
-        /// Name of the contact.
-        contact: String,
-        /// Simulation time, s.
-        time: f64,
-    },
     /// Malformed XML or an invalid value in it.
     #[error(transparent)]
     Xml(#[from] XmlError),

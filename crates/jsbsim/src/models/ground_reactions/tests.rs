@@ -156,10 +156,16 @@ fn airborne_contacts_track_agl_without_weight_on_wheels() {
     fdm.set_property("ic/h-agl-ft", 50.0).unwrap();
     fdm.run_ic().unwrap();
     let mut last = f64::INFINITY;
-    let touchdown = loop {
-        match fdm.run() {
-            Ok(_) => {}
-            Err(e) => break e,
+    loop {
+        fdm.run().unwrap();
+        if fdm
+            .models
+            .ground_reactions
+            .contacts
+            .iter()
+            .any(|c| c.state.wow)
+        {
+            break;
         }
         let agl = fdm.get_property("contact/unit/AGL-ft").unwrap();
         let h = fdm.get_property("position/h-agl-ft").unwrap();
@@ -167,20 +173,23 @@ fn airborne_contacts_track_agl_without_weight_on_wheels() {
         assert!((agl - h).abs() < 1e-6, "{agl} vs {h}");
         last = agl;
         for p in [
-            "contact/unit/WOW",
             "contact/unit/compression-ft",
             "gear/unit[1]/compression-velocity-fps",
-            "gear/wow",
         ] {
             assert_eq!(fdm.get_property(p).unwrap(), 0.0, "{p}");
         }
-    };
-    // The nose wheel sits 2 ft below the CG, so it touches first.
-    assert!(
-        matches!(&touchdown, Error::Touchdown { contact, .. } if contact == "NOSE"),
-        "{touchdown}"
-    );
+    }
+    // The wheels sit 2 ft below the CG, so they touch first.
+    let wow: Vec<_> = fdm
+        .models
+        .ground_reactions
+        .contacts
+        .iter()
+        .map(|c| c.state.wow)
+        .collect();
+    assert_eq!(wow, [false, true, true]);
     assert!(last > 0.0 && last < 3.0, "{last}");
+    assert!(fdm.get_property("gear/unit[1]/compression-ft").unwrap() > 0.0);
 }
 
 #[test]
@@ -219,15 +228,14 @@ fn a_missing_location_is_refused() {
 }
 
 /// One contact at the CG, pressed `depth` ft into the ground by the
-/// initial conditions; the run stops or goes on, the contact's frame is
-/// computed either way.
+/// initial conditions.
 fn pressed(contact: &str, depth: f64, setup: &[(&str, f64)]) -> Fdm {
     let mut fdm = load_with(LoadOptions::default(), contact).unwrap();
     fdm.set_property("ic/h-agl-ft", -depth).unwrap();
     for &(property, value) in setup {
         fdm.set_property(property, value).unwrap();
     }
-    fdm.run_ic().ok();
+    fdm.run_ic().unwrap();
     fdm
 }
 

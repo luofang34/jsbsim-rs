@@ -5,10 +5,6 @@ rate_hz = 10.0
 properties = ["position/h-sl-ft", "position/lat-gc-deg", "position/long-gc-deg", "position/lat-geod-deg", "position/eci-x-ft", "position/eci-y-ft", "position/eci-z-ft", "position/ecef-x-ft", "position/ecef-y-ft", "position/ecef-z-ft", "velocities/eci-x-fps", "velocities/eci-y-fps", "velocities/eci-z-fps", "velocities/u-fps", "velocities/v-fps", "velocities/w-fps", "velocities/p-rad_sec", "velocities/q-rad_sec", "velocities/r-rad_sec", "velocities/pi-rad_sec", "velocities/qi-rad_sec", "velocities/ri-rad_sec", "attitude/phi-rad", "attitude/theta-rad", "attitude/psi-rad", "accelerations/udot-ft_sec2", "accelerations/vdot-ft_sec2", "accelerations/wdot-ft_sec2", "forces/fbx-total-lbs", "forces/fby-total-lbs", "forces/fbz-total-lbs", "moments/l-total-lbsft", "moments/m-total-lbsft", "moments/n-total-lbsft", "aero/qbar-psf", "velocities/vt-fps", "atmosphere/rho-slugs_ft3", "atmosphere/T-R", "aero/alpha-rad", "aero/beta-rad", "velocities/mach", "forces/fbx-aero-lbs", "forces/fby-aero-lbs", "forces/fbz-aero-lbs", "forces/fwx-aero-lbs", "forces/fwy-aero-lbs", "forces/fwz-aero-lbs", "forces/fsx-aero-lbs", "forces/fsy-aero-lbs", "forces/fsz-aero-lbs", "moments/l-aero-lbsft", "moments/m-aero-lbsft", "moments/n-aero-lbsft", "moments/roll-stab-aero-lbsft", "moments/pitch-stab-aero-lbsft", "moments/yaw-stab-aero-lbsft", "moments/roll-wind-aero-lbsft", "moments/pitch-wind-aero-lbsft", "moments/yaw-wind-aero-lbsft"]
 inputs = "oracle/derived"
 
-[case.touchdown]
-contact = "NOSE_CONTACT"
-time = 43.32000000000117
-
 [provenance]
 upstream_commit = "66f7fafc07fe13e7ede9db20873030fed2881713"
 driver = "tools/oracle/cpp"

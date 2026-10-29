@@ -1661,7 +1661,7 @@ property = "position/lat-gc-deg"
 abs = 5e-17
 rel = 0.0
 t_start = 0.0
-t_end = 60.5
+t_end = 36.5
 reason = "Output only, the state being bit-identical here: the geodetic/geocentric conversion's atan2 and sqrt differ in the last digit between Rust libm and Apple libm; observed max 3.5e-18 (rel 2.4e-16) at t=18 s; bound 10x that."
 
 [[tolerance]]
@@ -1671,7 +1671,7 @@ abs = 2e-13
 rel = 0.0
 period = 360.0
 t_start = 0.0
-t_end = 60.5
+t_end = 36.5
 reason = "Output only, the state being bit-identical here: the geodetic/geocentric conversion's atan2 and sqrt differ in the last digit between Rust libm and Apple libm; observed max 1.4e-14 (rel 1.6e-16) at t=2 s; bound 10x that."
 
 [[tolerance]]
@@ -1681,7 +1681,7 @@ abs = 5e-21
 rel = 0.0
 period = 6.283185307179586
 t_start = 0.0
-t_end = 60.5
+t_end = 36.5
 reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 2.1e-22 (rel 1.9e-16) at t=27 s; bound 10x that."
 
 [[tolerance]]
@@ -1691,7 +1691,7 @@ abs = 2e-15
 rel = 0.0
 period = 6.283185307179586
 t_start = 0.0
-t_end = 60.5
+t_end = 36.5
 reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 1.1e-16 (rel 1.6e-16) at t=6 s; bound 10x that."
 
 [[tolerance]]
@@ -1701,7 +1701,7 @@ abs = 2e-15
 rel = 0.0
 period = 6.283185307179586
 t_start = 0.0
-t_end = 60.5
+t_end = 36.5
 reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 1.1e-16 (rel 1.6e-16) at t=6 s; bound 10x that."
 
 [[tolerance]]
@@ -1710,7 +1710,7 @@ property = "aero/qbar-psf"
 abs = 1e-12
 rel = 0.0
 t_start = 0.0
-t_end = 60.5
+t_end = 36.5
 reason = "Output only, the state being bit-identical here: the standard atmosphere's pow/exp differ in the last digit between Rust libm and Apple libm; observed max 5.7e-14 (rel 2.9e-16) at t=19 s; bound 10x that."
 
 [[tolerance]]
@@ -1719,8 +1719,68 @@ property = "atmosphere/rho-slugs_ft3"
 abs = 5e-18
 rel = 0.0
 t_start = 0.0
-t_end = 60.5
+t_end = 36.5
 reason = "Output only, the state being bit-identical here: the standard atmosphere's pow/exp differ in the last digit between Rust libm and Apple libm; observed max 4.3e-19 (rel 2.6e-16) at t=11 s; bound 10x that."
+
+[[tolerance]]
+case = "cannonball"
+property = "position/lat-gc-deg"
+abs = 5e-16
+rel = 0.0
+t_start = 36.5
+reason = "Output only, the state being bit-identical through touchdown, the bounce and the NaN both runs reach at t=217.1 s: the geodetic/geocentric conversion's atan2 and sqrt differ in the last digit between Rust libm and Apple libm; observed max 2.8e-17 (rel 2.5e-16) at t=142 s; bound 10x that."
+
+[[tolerance]]
+case = "cannonball"
+property = "position/long-gc-deg"
+abs = 2e-13
+rel = 0.0
+period = 360.0
+t_start = 36.5
+reason = "Output only, the state being bit-identical through touchdown, the bounce and the NaN both runs reach at t=217.1 s: the geodetic/geocentric conversion's atan2 and sqrt differ in the last digit between Rust libm and Apple libm; observed max 1.4e-14 (rel 1.6e-16) at t=37 s; bound 10x that."
+
+[[tolerance]]
+case = "cannonball"
+property = "attitude/phi-rad"
+abs = 5e-15
+rel = 0.0
+period = 6.283185307179586
+t_start = 36.5
+reason = "Output only, the state being bit-identical through touchdown, the bounce and the NaN both runs reach at t=217.1 s: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm, on the larger angles the bounce spins the ball to; observed max 4.4e-16 (rel 2.2e-16) at t=38 s; bound 10x that."
+
+[[tolerance]]
+case = "cannonball"
+property = "attitude/theta-rad"
+abs = 3e-15
+rel = 0.0
+period = 6.283185307179586
+t_start = 36.5
+reason = "Output only, the state being bit-identical through touchdown, the bounce and the NaN both runs reach at t=217.1 s: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm, on the larger angles the bounce spins the ball to; observed max 2.2e-16 (rel 2.1e-16) at t=48 s; bound 10x that."
+
+[[tolerance]]
+case = "cannonball"
+property = "attitude/psi-rad"
+abs = 5e-15
+rel = 0.0
+period = 6.283185307179586
+t_start = 36.5
+reason = "Output only, the state being bit-identical through touchdown, the bounce and the NaN both runs reach at t=217.1 s: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm, on the larger angles the bounce spins the ball to; observed max 4.4e-16 (rel 1.9e-16) at t=39 s; bound 10x that."
+
+[[tolerance]]
+case = "cannonball"
+property = "aero/qbar-psf"
+abs = 1e-11
+rel = 0.0
+t_start = 36.5
+reason = "Output only, the state being bit-identical through touchdown, the bounce and the NaN both runs reach at t=217.1 s: the standard atmosphere's pow/exp differ in the last digit between Rust libm and Apple libm; observed max 9.1e-13 (rel 6.2e-16) at t=209 s; bound 10x that."
+
+[[tolerance]]
+case = "cannonball"
+property = "atmosphere/rho-slugs_ft3"
+abs = 3e-18
+rel = 0.0
+t_start = 36.5
+reason = "Output only, the state being bit-identical through touchdown, the bounce and the NaN both runs reach at t=217.1 s: the standard atmosphere's pow/exp differ in the last digit between Rust libm and Apple libm; observed max 2.2e-19 (rel 5.7e-16) at t=209 s; bound 10x that."
 
 [[tolerance]]
 case = "cannonball-60s"
@@ -1750,6 +1810,8 @@ property = "attitude/phi-rad"
 abs = 5e-21
 rel = 0.0
 period = 6.283185307179586
+t_start = 0.0
+t_end = 36.95
 reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 2.1e-22 (rel 2.2e-16) at t=13 s; bound 10x that."
 
 [[tolerance]]
@@ -1758,6 +1820,8 @@ property = "attitude/theta-rad"
 abs = 2e-15
 rel = 0.0
 period = 6.283185307179586
+t_start = 0.0
+t_end = 36.95
 reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 1.1e-16 (rel 1.6e-16) at t=1 s; bound 10x that."
 
 [[tolerance]]
@@ -1766,6 +1830,8 @@ property = "attitude/psi-rad"
 abs = 2e-15
 rel = 0.0
 period = 6.283185307179586
+t_start = 0.0
+t_end = 36.95
 reason = "Output only, the state being bit-identical here: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm; observed max 1.1e-16 (rel 1.6e-16) at t=0 s; bound 10x that."
 
 [[tolerance]]
@@ -1773,6 +1839,8 @@ case = "cannonball-60s"
 property = "aero/qbar-psf"
 abs = 2e-12
 rel = 0.0
+t_start = 0.0
+t_end = 36.95
 reason = "Output only, the state being bit-identical here: the standard atmosphere's pow/exp differ in the last digit between Rust libm and Apple libm; observed max 1.1e-13 (rel 4.4e-16) at t=28 s; bound 10x that."
 
 [[tolerance]]
@@ -1781,6 +1849,41 @@ property = "atmosphere/rho-slugs_ft3"
 abs = 5e-18
 rel = 0.0
 reason = "Output only, the state being bit-identical here: the standard atmosphere's pow/exp differ in the last digit between Rust libm and Apple libm; observed max 4.3e-19 (rel 2.6e-16) at t=2 s; bound 10x that."
+
+[[tolerance]]
+case = "cannonball-60s"
+property = "attitude/phi-rad"
+abs = 5e-15
+rel = 0.0
+period = 6.283185307179586
+t_start = 36.95
+reason = "Output only, the state being bit-identical through touchdown and the bounce: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm, on the larger angles the bounce spins the ball to; observed max 4.4e-16 (rel 2.2e-16) at t=37.9 s; bound 10x that."
+
+[[tolerance]]
+case = "cannonball-60s"
+property = "attitude/theta-rad"
+abs = 3e-15
+rel = 0.0
+period = 6.283185307179586
+t_start = 36.95
+reason = "Output only, the state being bit-identical through touchdown and the bounce: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm, on the larger angles the bounce spins the ball to; observed max 2.2e-16 (rel 2.1e-16) at t=45.8 s; bound 10x that."
+
+[[tolerance]]
+case = "cannonball-60s"
+property = "attitude/psi-rad"
+abs = 5e-15
+rel = 0.0
+period = 6.283185307179586
+t_start = 36.95
+reason = "Output only, the state being bit-identical through touchdown and the bounce: the Euler-angle extraction's atan2/asin differ in the last digit between Rust libm and Apple libm, on the larger angles the bounce spins the ball to; observed max 4.4e-16 (rel 2.0e-16) at t=37.9 s; bound 10x that."
+
+[[tolerance]]
+case = "cannonball-60s"
+property = "aero/qbar-psf"
+abs = 2e-11
+rel = 0.0
+t_start = 36.95
+reason = "Output only, the state being bit-identical through touchdown and the bounce: the standard atmosphere's pow/exp differ in the last digit between Rust libm and Apple libm; observed max 1.8e-12 (rel 2.7e-16) at t=38.3 s; bound 10x that."
 
 [[tolerance]]
 case = "nasa-atmos-02"

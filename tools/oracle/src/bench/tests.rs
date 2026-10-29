@@ -143,8 +143,8 @@ fn a_case_names_exactly_one_workload() {
     }
 }
 
-/// The frame budget of every case stays clear of its script's end and of
-/// any touchdown, so a bench run times the same work on every repeat.
+/// The frame budget of every case stays clear of its script's end, so a
+/// bench run times the same work on every repeat.
 #[test]
 fn every_case_runs_its_frames_in_the_port() {
     let root = rust_root(&repo_root());

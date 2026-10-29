@@ -56,20 +56,6 @@ pub struct ScriptSpec {
     /// checkout and Rust its vendored subset in `oracle/inputs`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub inputs: Option<String>,
-    /// Where the Rust run is expected to stop at the touchdown cut-off;
-    /// the comparison then runs up to its last row before it.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub touchdown: Option<Touchdown>,
-}
-
-/// The contact and simulation time of an expected `Error::Touchdown`.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct Touchdown {
-    /// Contact name.
-    pub contact: String,
-    /// Simulation time, s; sums of dt in JSBSim's order, so exact.
-    pub time: f64,
 }
 
 impl ScriptSpec {

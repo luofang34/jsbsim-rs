@@ -251,13 +251,6 @@ impl Fdm {
         for index in 0..gr.contacts.len() {
             self.run_contact(index)?;
         }
-        let m = &self.models;
-        if let Some(c) = m.ground_reactions.contacts.iter().find(|c| c.state.wow) {
-            return Err(Error::Touchdown {
-                contact: c.name.clone(),
-                time: m.exec.sim_time,
-            });
-        }
         self.run_model_functions(Model::GroundReactions, false)
     }
 
