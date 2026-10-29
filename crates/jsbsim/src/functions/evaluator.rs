@@ -141,12 +141,20 @@ impl<'a, G: GetterSource> Evaluator<'a, G> {
     }
 
     /// `GetValue()` of function `id`.
+    #[inline]
     pub fn function(&mut self, id: FnId) -> Result<f64, Error> {
         let set = self.set;
         let function = set.function(id)?;
         if let Some(cached) = function.cached {
             return Ok(cached);
         }
+        self.evaluate(function)
+    }
+
+    /// `GetValue()` of an uncached function. Out of line, so that a cached
+    /// read does not pay for the registers and stack its operations take.
+    #[inline(never)]
+    fn evaluate(&mut self, function: &super::Function) -> Result<f64, Error> {
         let value = self.apply(function)?;
         if let Some(node) = function.copy_to {
             self.tree.set_double(node, value);

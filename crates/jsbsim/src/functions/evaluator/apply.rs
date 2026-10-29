@@ -4,7 +4,9 @@
 // Derived from JSBSim src/math/FGFunction.cpp (operation lambdas).
 //
 //! Applying each operation to its operands, evaluating operands in the
-//! order and number JSBSim does.
+//! order and number JSBSim does. The operations with many operands or
+//! locals are kept out of line, so that `apply`, which every
+//! uncached function runs, saves and restores few registers.
 
 use std::f64::consts::PI;
 
@@ -203,6 +205,7 @@ fn unary(op: Op, x: f64) -> f64 {
 }
 
 impl<G: GetterSource> Evaluator<'_, G> {
+    #[inline(never)]
     fn logical(&mut self, f: &Function) -> Result<f64, Error> {
         let short = f.op == Op::Or;
         for param in &f.params {
@@ -227,6 +230,7 @@ impl<G: GetterSource> Evaluator<'_, G> {
         Ok(f64::from(u8::from(pass)))
     }
 
+    #[inline(never)]
     fn switch(&mut self, f: &Function) -> Result<f64, Error> {
         let temp = self.p(f, 0)?;
         if temp < 0.0 {
@@ -254,6 +258,7 @@ impl<G: GetterSource> Evaluator<'_, G> {
 
     /// Bisection over `x, x1, y1, x2, y2, ...`, evaluating each operand
     /// at most once.
+    #[inline(never)]
     fn interpolate1d(&mut self, f: &Function) -> Result<f64, Error> {
         let n = f.params.len();
         let x = self.p(f, 0)?;
@@ -288,6 +293,7 @@ impl<G: GetterSource> Evaluator<'_, G> {
         Ok(ymin + (x - xmin) * (ymax - ymin) / (xmax - xmin))
     }
 
+    #[inline(never)]
     fn rotation_local(&mut self, f: &Function) -> Result<f64, Error> {
         let alpha = self.p(f, 0)? * DEGTORAD;
         let beta = self.p(f, 1)? * DEGTORAD;
@@ -312,6 +318,7 @@ impl<G: GetterSource> Evaluator<'_, G> {
         })
     }
 
+    #[inline(never)]
     fn rotation_frame(&mut self, f: &Function) -> Result<f64, Error> {
         let rx = self.p(f, 0)?;
         let ry = self.p(f, 1)?;
