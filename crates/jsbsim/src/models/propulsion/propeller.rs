@@ -330,4 +330,20 @@ impl ThrusterFamily for Propeller {
     fn set_feather(&mut self, feather: bool) {
         self.feathered = feather;
     }
+
+    fn is_propeller(&self) -> bool {
+        true
+    }
+
+    fn set_reverse(&mut self, reversed: bool) {
+        self.reversed = reversed;
+    }
+
+    fn set_reverse_coef(&mut self, coef: f64) {
+        self.reverse_coef = coef;
+    }
+
+    fn torque(&self) -> f64 {
+        self.torque[E_X]
+    }
 }

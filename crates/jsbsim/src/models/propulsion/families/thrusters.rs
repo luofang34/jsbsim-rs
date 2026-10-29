@@ -65,6 +65,23 @@ pub trait ThrusterFamily: Sized {
 
     /// `FGPropeller::SetFeather`.
     fn set_feather(&mut self, _feather: bool) {}
+
+    /// Whether it is a propeller (`GetType() == ttPropeller`), which
+    /// engines set the propeller's controls on.
+    fn is_propeller(&self) -> bool {
+        false
+    }
+
+    /// `FGPropeller::SetReverse`.
+    fn set_reverse(&mut self, _reversed: bool) {}
+
+    /// `FGPropeller::SetReverseCoef`.
+    fn set_reverse_coef(&mut self, _coef: f64) {}
+
+    /// `GetTorque` of a propeller: the engine torque on the shaft, lbs·ft.
+    fn torque(&self) -> f64 {
+        0.0
+    }
 }
 
 macro_rules! thrusters {
@@ -191,6 +208,36 @@ macro_rules! thrusters {
             pub fn set_feather(&mut self, feather: bool) {
                 match self.kind {
                     $($(#[$cfg])* ThrusterKind::$variant(ref mut f) => f.set_feather(feather),)*
+                }
+            }
+
+            /// Whether it is a propeller.
+            #[must_use]
+            pub fn is_propeller(&self) -> bool {
+                match self.kind {
+                    $($(#[$cfg])* ThrusterKind::$variant(ref f) => f.is_propeller(),)*
+                }
+            }
+
+            /// `SetReverse` of a propeller.
+            pub fn set_reverse(&mut self, reversed: bool) {
+                match self.kind {
+                    $($(#[$cfg])* ThrusterKind::$variant(ref mut f) => f.set_reverse(reversed),)*
+                }
+            }
+
+            /// `SetReverseCoef` of a propeller.
+            pub fn set_reverse_coef(&mut self, coef: f64) {
+                match self.kind {
+                    $($(#[$cfg])* ThrusterKind::$variant(ref mut f) => f.set_reverse_coef(coef),)*
+                }
+            }
+
+            /// `GetTorque` of a propeller.
+            #[must_use]
+            pub fn torque(&self) -> f64 {
+                match self.kind {
+                    $($(#[$cfg])* ThrusterKind::$variant(ref f) => f.torque(),)*
                 }
             }
         }

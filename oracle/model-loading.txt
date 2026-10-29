@@ -11,14 +11,14 @@ Boeing314 ok
 C130 ok
 Camel ok
 Concorde ok
-DHC6 unsupported <turboprop_engine> (In file aircraft/DHC6/Engines/PT6A-27.xml: line 23)
+DHC6 ok
 F450 unsupported <brushless_dc_motor> (In file engine/DJI_E305.xml: line 3)
 F4N ok
 F80C ok
 J246 unsupported <rocket_engine> (In file engine/SRB.xml: line 2)
 J3Cub ok
 L17 ok
-L410 unsupported <turboprop_engine> (In file engine/engtm601.xml: line 28)
+L410 ok
 MD11 ok
 OV10 ok
 Pterosaur unsupported <electric_engine> (In file engine/dummy.xml: line 13)
@@ -46,15 +46,15 @@ f15 ok
 f16 ok
 f22 ok
 fokker100 ok
-fokker50 unsupported <turboprop_engine> (In file engine/PW125BX.xml: line 28)
+fokker50 ok
 global5000 unsupported <noise> of variance 0.05 in sensor fcs/attitude/sensor/phi-rad (FGSensor random noise) (In file aircraft/global5000/global5000ap.xml: line 68)
 minisgs ok
 mk82 ok
 p51d ok
 pa28 ok
 paraglider ok
-pc7 unsupported <turboprop_engine> (In file aircraft/pc7/Engines/PT6A.xml: line 23)
-pogo-jsbsim unsupported <turboprop_engine> (In file aircraft/pogo-jsbsim/Engines/YT40-A-16.xml: line 32)
+pc7 ok
+pogo-jsbsim ok
 sgs126 ok
 sgs233 ok
 t6texan2 ok

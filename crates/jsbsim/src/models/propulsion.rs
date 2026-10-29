@@ -25,6 +25,7 @@ mod test_engine;
 mod tests;
 pub mod thruster;
 pub mod turbine;
+pub mod turboprop;
 
 pub use bind::{bind, bind_engine};
 pub use engine::{Engine, EngineBase, EngineType};
