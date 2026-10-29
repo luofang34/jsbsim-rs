@@ -22,6 +22,30 @@ fn every_listed_and_excepted_case_is_a_golden_named_once() {
 }
 
 #[test]
+fn every_golden_is_listed_or_excepted() {
+    // A golden in neither list is one check-sincos never runs.
+    let mut listed: Vec<&str> = CASES.to_vec();
+    listed.extend(EXCEPTIONS.iter().map(|e| e.case));
+    listed.sort_unstable();
+    let goldens = goldens();
+    let unlisted: Vec<&String> = goldens
+        .iter()
+        .filter(|g| listed.binary_search(&g.as_str()).is_err())
+        .collect();
+    assert!(
+        unlisted.is_empty(),
+        "goldens in neither CASES nor EXCEPTIONS: {unlisted:?}"
+    );
+}
+
+#[test]
+fn cases_are_sorted_and_named_once() {
+    for pair in CASES.windows(2) {
+        assert!(pair[0] < pair[1], "{} is not before {}", pair[0], pair[1]);
+    }
+}
+
+#[test]
 fn every_exception_states_its_reason() {
     for exception in EXCEPTIONS {
         assert!(!exception.reason.trim().is_empty(), "{}", exception.case);
