@@ -173,8 +173,9 @@ impl Winds {
             self.psiw = 0.0;
             self.wind_ned[E_NORTH] = speed;
         } else {
-            self.wind_ned[E_NORTH] = speed * libm::cos(self.psiw);
-            self.wind_ned[E_EAST] = speed * libm::sin(self.psiw);
+            let (sin_psiw, cos_psiw) = libm::sincos(self.psiw);
+            self.wind_ned[E_NORTH] = speed * cos_psiw;
+            self.wind_ned[E_EAST] = speed * sin_psiw;
             self.wind_ned[E_DOWN] = 0.0;
         }
     }

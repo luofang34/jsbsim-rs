@@ -71,7 +71,7 @@ impl InitialCondition {
     /// gives `alfa` at the current roll angle.
     fn calc_theta_beta(&mut self, alfa: f64, vt_ned: ColumnVector3) {
         let mut orient = self.orientation.euler();
-        let (calpha, salpha) = (libm::cos(alfa), libm::sin(alfa));
+        let (salpha, calpha) = libm::sincos(alfa);
         let o = &self.orientation;
         let (cpsi, spsi) = (o.cos_euler(E_PSI), o.sin_euler(E_PSI));
         let (cphi, sphi) = (o.cos_euler(E_PHI), o.sin_euler(E_PHI));
@@ -122,8 +122,8 @@ impl InitialCondition {
         let vt_ned = self.vt_ned();
         let mut orient = self.orientation.euler();
         self.beta = bta;
-        let (calpha, salpha) = (libm::cos(self.alpha), libm::sin(self.alpha));
-        let (cbeta, sbeta) = (libm::cos(self.beta), libm::sin(self.beta));
+        let (salpha, calpha) = libm::sincos(self.alpha);
+        let (sbeta, cbeta) = libm::sincos(self.beta);
         let o = &self.orientation;
         let (cphi, sphi) = (o.cos_euler(E_PHI), o.sin_euler(E_PHI));
         let tphi_inv = Matrix33::new(1., 0., 0., 0., cphi, -sphi, 0., sphi, cphi);

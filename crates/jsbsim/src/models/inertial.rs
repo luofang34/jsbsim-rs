@@ -159,13 +159,10 @@ impl Inertial {
         l.set_ellipse(self.a, self.b);
         l.cache_derived();
         let latitude = l.geod_latitude_rad();
-        let cos_lat = libm::cos(latitude);
+        let (sin_lat, cos_lat) = libm::sincos(latitude);
         let longitude = l.longitude();
-        let normal = ColumnVector3::new(
-            cos_lat * libm::cos(longitude),
-            cos_lat * libm::sin(longitude),
-            libm::sin(latitude),
-        );
+        let (sin_lon, cos_lon) = libm::sincos(longitude);
+        let normal = ColumnVector3::new(cos_lat * cos_lon, cos_lat * sin_lon, sin_lat);
         let mut point = Location::default();
         point.set_ellipse(self.a, self.b);
         point.set_position_geodetic(longitude, latitude, self.terrain_elevation);

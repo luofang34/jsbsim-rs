@@ -17,7 +17,7 @@ use crate::xml::Element;
 
 /// ECI to ECEF for the planet position angle `epa`.
 fn inertial_to_ecef(epa: f64) -> Matrix33 {
-    let (c, s) = (libm::cos(epa), libm::sin(epa));
+    let (s, c) = libm::sincos(epa);
     Matrix33::new(c, s, 0.0, -s, c, 0.0, 0.0, 0.0, 1.0)
 }
 

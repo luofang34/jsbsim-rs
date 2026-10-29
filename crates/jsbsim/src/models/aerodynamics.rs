@@ -349,7 +349,7 @@ impl Aerodynamics {
             }
         }
         s.fw = ColumnVector3::zero();
-        let (ca, sa) = (libm::cos(i.alpha), libm::sin(i.alpha));
+        let (sa, ca) = libm::sincos(i.alpha);
         s.ts2b = Matrix33::new(ca, 0.0, -sa, 0.0, 1.0, 0.0, sa, 0.0, ca);
         s.tb2s = s.ts2b.transposed();
     }

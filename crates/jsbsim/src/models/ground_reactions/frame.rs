@@ -237,7 +237,8 @@ impl Contact {
     fn compute_ground_frame(&mut self) {
         let a = self.steering.angle;
         let normal = self.force.ground_normal;
-        let mut roll = self.t_gear * ColumnVector3::new(libm::cos(a), libm::sin(a), 0.);
+        let (sin_a, cos_a) = libm::sincos(a);
+        let mut roll = self.t_gear * ColumnVector3::new(cos_a, sin_a, 0.);
         let mut side = normal.cross(roll);
         roll -= crate::math::dot_product(roll, normal) * normal;
         roll.normalize();

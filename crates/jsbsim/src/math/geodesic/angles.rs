@@ -115,7 +115,7 @@ pub(super) fn ang_round(x: f64) -> f64 {
 pub(super) fn sincosd(x: f64) -> (f64, f64) {
     let (r, q) = libm::remquo(x, 90.0);
     let r = r * DEGREE;
-    let (s, c) = (libm::sin(r), libm::cos(r));
+    let (s, c) = libm::sincos(r);
     let (mut sinx, mut cosx) = match q.cast_unsigned() & 3 {
         0 => (s, c),
         1 => (c, -s),

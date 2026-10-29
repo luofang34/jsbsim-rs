@@ -76,3 +76,11 @@ pub fn modf(x: f64) -> (f64, f64) {
     let frac = unsafe { c_modf(x, &raw mut int) };
     (frac, int)
 }
+
+/// `sincos(x)`: the platform's `sin` and `cos`, called one after the other
+/// as the oracle built without sin/cos builtins calls them, not its fused
+/// `__sincos_stret`.
+#[must_use]
+pub fn sincos(x: f64) -> (f64, f64) {
+    (sin(x), cos(x))
+}

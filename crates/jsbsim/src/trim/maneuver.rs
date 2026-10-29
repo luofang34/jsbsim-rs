@@ -45,9 +45,11 @@ impl Trim {
             if phi.abs() > 0.001 && phi.abs() < 1.56 {
                 let theta = self.fgic.euler_rad(E_THT);
                 self.psidot = g() * libm::tan(phi) / vtrue;
-                p = -self.psidot * libm::sin(theta);
-                q = self.psidot * libm::cos(theta) * libm::sin(phi);
-                r = self.psidot * libm::cos(theta) * libm::cos(phi);
+                let (sin_theta, cos_theta) = libm::sincos(theta);
+                let (sin_phi, cos_phi) = libm::sincos(phi);
+                p = -self.psidot * sin_theta;
+                q = self.psidot * cos_theta * sin_phi;
+                r = self.psidot * cos_theta * cos_phi;
             }
             self.fgic.set_pqr_radps(E_P, p);
             self.fgic.set_pqr_radps(E_Q, q);

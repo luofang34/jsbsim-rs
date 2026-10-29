@@ -179,8 +179,7 @@ fn coefficients(yearfrac: f64) -> (Grid, Grid) {
 #[must_use]
 pub fn calc_magvar(lat: f64, lon: f64, h: f64, dat: i64) -> [f64; 6] {
     let date0_wmm2005 = yymmdd_to_julian_days(5, 1, 1);
-    let sinlat = libm::sin(lat);
-    let coslat = libm::cos(lat);
+    let (sinlat, coslat) = libm::sincos(lat);
     let sr = libm::sqrt(A * A * coslat * coslat + B * B * sinlat * sinlat);
     let theta = libm::atan2(coslat * (h * sr + A * A), sinlat * (h * sr + B * B));
     let a4 = A * A * A * A;
@@ -189,8 +188,7 @@ pub fn calc_magvar(lat: f64, lon: f64, h: f64, dat: i64) -> [f64; 6] {
         + (a4 - (a4 - B * B * B * B) * sinlat * sinlat)
             / (A * A - (A * A - B * B) * sinlat * sinlat);
     let r = libm::sqrt(r);
-    let c = libm::cos(theta);
-    let s = libm::sin(theta);
+    let (s, c) = libm::sincos(theta);
     let inv_s = 1.0 / (s + if s == 0.0 { 1.0e-8 } else { 0.0 });
     let (p, dp) = legendre(c, s);
     let yearfrac = (dat - date0_wmm2005) as f64 / 365.25;
@@ -198,8 +196,7 @@ pub fn calc_magvar(lat: f64, lon: f64, h: f64, dat: i64) -> [f64; 6] {
     let mut sm = [0.0; 13];
     let mut cm = [0.0; 13];
     for (m, (sm, cm)) in sm.iter_mut().zip(cm.iter_mut()).enumerate() {
-        *sm = libm::sin(m as f64 * lon);
-        *cm = libm::cos(m as f64 * lon);
+        (*sm, *cm) = libm::sincos(m as f64 * lon);
     }
     let (mut b_r, mut b_theta, mut b_phi) = (0.0, 0.0, 0.0);
     let fn_0 = R_0 / r;
@@ -219,7 +216,7 @@ pub fn calc_magvar(lat: f64, lon: f64, h: f64, dat: i64) -> [f64; 6] {
         b_phi += c3_n * fnn * inv_s;
     }
     let psi = theta - (std::f64::consts::PI / 2.0 - lat);
-    let (sinpsi, cospsi) = (libm::sin(psi), libm::cos(psi));
+    let (sinpsi, cospsi) = libm::sincos(psi);
     let x = -b_theta * cospsi - b_r * sinpsi;
     let y = b_phi;
     let z = b_theta * sinpsi - b_r * cospsi;

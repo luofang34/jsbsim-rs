@@ -157,8 +157,8 @@ fn local_linearization(pqri: ColumnVector3, pqridot: ColumnVector3, dt: f64) -> 
     let omegak2 = dot_product(pqri, pqri);
     let omegak = if omegak2 > 1E-6 { omegak2.sqrt() } else { 1E-6 };
     let rhok = 0.5 * dt * omegak;
-    let c1 = libm::cos(rhok);
-    let c2 = 2.0 * libm::sin(rhok) / omegak;
+    let (sin_rhok, c1) = libm::sincos(rhok);
+    let c2 = 2.0 * sin_rhok / omegak;
     let c3 = 4.0 * (1.0 - c1) / (omegak * omegak);
     let c4 = 4.0 * (dt - c2) / (omegak * omegak);
     let omega = c2 * wi + c3 * wdoti + (c4 * wi).cross(wdoti);

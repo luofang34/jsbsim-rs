@@ -431,7 +431,8 @@ impl Contact {
     #[must_use]
     pub fn wheel_roll_vel(&self) -> f64 {
         let (v, a) = (&self.state.wheel_vel, self.steering.angle);
-        v[E_X] * libm::cos(a) + v[E_Y] * libm::sin(a)
+        let (sin_a, cos_a) = libm::sincos(a);
+        v[E_X] * cos_a + v[E_Y] * sin_a
     }
 }
 

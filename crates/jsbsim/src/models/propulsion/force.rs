@@ -95,9 +95,9 @@ impl Force {
     /// `UpdateCustomTransformMatrix`.
     pub fn update_custom_transform_matrix(&mut self) {
         let o = &self.orient;
-        let (cp, sp) = (libm::cos(o[E_PITCH]), libm::sin(o[E_PITCH]));
-        let (cr, sr) = (libm::cos(o[E_ROLL]), libm::sin(o[E_ROLL]));
-        let (cy, sy) = (libm::cos(o[E_YAW]), libm::sin(o[E_YAW]));
+        let (sp, cp) = libm::sincos(o[E_PITCH]);
+        let (sr, cr) = libm::sincos(o[E_ROLL]);
+        let (sy, cy) = libm::sincos(o[E_YAW]);
         let srsp = sr * sp;
         let crcy = cr * cy;
         let crsy = cr * sy;

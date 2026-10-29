@@ -179,3 +179,84 @@ fn cached_and_uncached_reads_are_bit_identical() {
     q *= 0.5;
     assert_eq!(read(&q), read(&(&q * 1.0)), "a mutation drops the cache");
 }
+
+/// The port calls `libm::sincos` wherever it takes the sine and the cosine
+/// of one angle, relying on it to return exactly `libm::sin` and
+/// `libm::cos`, which the other sites call.
+#[test]
+fn libm_sincos_is_sin_and_cos_bit_for_bit() {
+    let check = |x: f64| {
+        let (s, c) = libm::sincos(x);
+        let bits = x.to_bits();
+        assert_eq!(
+            s.to_bits(),
+            libm::sin(x).to_bits(),
+            "sin({x:e}) [{bits:#x}]"
+        );
+        assert_eq!(
+            c.to_bits(),
+            libm::cos(x).to_bits(),
+            "cos({x:e}) [{bits:#x}]"
+        );
+    };
+    let neighbours = |x: f64, ulps: u64| {
+        let bits = x.to_bits();
+        for d in 0..=ulps {
+            check(f64::from_bits(bits.wrapping_add(d)));
+            check(f64::from_bits(bits.wrapping_sub(d)));
+        }
+    };
+    for x in [
+        0.0,
+        f64::INFINITY,
+        f64::NAN,
+        f64::MAX,
+        f64::MIN_POSITIVE,
+        f64::EPSILON,
+    ] {
+        check(x);
+        check(-x);
+    }
+    check(f64::from_bits(0x7ff0_0000_0000_0001));
+    check(f64::from_bits(0xfff8_0000_dead_beef));
+    for bits in [1, 2, 0xff, 0x8_0000_0000_0000, 0xf_ffff_ffff_ffff] {
+        check(f64::from_bits(bits));
+        check(-f64::from_bits(bits));
+    }
+    // The small-argument shortcuts of sin (|x| < 2^-26) and of cos and
+    // sincos (|x| < 2^-27 sqrt 2), and the edge of the reduction-free
+    // range, by high word.
+    for high in [0x3e46_a09e_u64, 0x3e50_0000, 0x3fe9_21fb, 0x3fe9_21fc] {
+        let x = f64::from_bits(high << 32);
+        neighbours(x, 4096);
+        neighbours(-x, 4096);
+    }
+    for e in -40..=-20 {
+        neighbours(libm::ldexp(1.0, e), 256);
+    }
+    for k in -4000..=4000_i32 {
+        neighbours(f64::from(k) * core::f64::consts::FRAC_PI_4, 64);
+        neighbours(f64::from(k) * core::f64::consts::FRAC_PI_2, 16);
+    }
+    for e in 0..=300 {
+        let x = libm::pow(10.0, f64::from(e));
+        neighbours(x, 8);
+        neighbours(-x, 8);
+    }
+    // Random bit patterns, which cover every exponent, then angles of the
+    // range a simulation sees.
+    let mut state = 0x9e37_79b9_7f4a_7c15_u64;
+    let mut next = || {
+        state = state.wrapping_add(0x9e37_79b9_7f4a_7c15);
+        let mut z = state;
+        z = (z ^ (z >> 30)).wrapping_mul(0xbf58_476d_1ce4_e5b9);
+        z = (z ^ (z >> 27)).wrapping_mul(0x94d0_49bb_1331_11eb);
+        z ^ (z >> 31)
+    };
+    for _ in 0..200_000 {
+        check(f64::from_bits(next()));
+        let unit = (next() >> 11) as f64 / (1_u64 << 53) as f64;
+        check((unit - 0.5) * 20.0);
+        check((unit - 0.5) * 2.0e6);
+    }
+}

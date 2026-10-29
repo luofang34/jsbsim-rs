@@ -56,9 +56,9 @@ impl Orientation {
 
 /// `CalculateTransformMatrix` of roll, pitch and yaw.
 fn transform(orient: ColumnVector3) -> Matrix33 {
-    let (cp, sp) = (libm::cos(orient[Axis::Y]), libm::sin(orient[Axis::Y]));
-    let (cr, sr) = (libm::cos(orient[Axis::X]), libm::sin(orient[Axis::X]));
-    let (cy, sy) = (libm::cos(orient[Axis::Z]), libm::sin(orient[Axis::Z]));
+    let (sp, cp) = libm::sincos(orient[Axis::Y]);
+    let (sr, cr) = libm::sincos(orient[Axis::X]);
+    let (sy, cy) = libm::sincos(orient[Axis::Z]);
     Matrix33::new(
         cp * cy,
         cp * sy,

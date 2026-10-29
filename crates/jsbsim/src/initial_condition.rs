@@ -219,8 +219,8 @@ impl InitialCondition {
         altitude_agl_ft: f64,
         gamma0: f64,
     ) {
-        let (calpha, cbeta) = (libm::cos(alpha0), libm::cos(beta0));
-        let (salpha, sbeta) = (libm::sin(alpha0), libm::sin(beta0));
+        let (salpha, calpha) = libm::sincos(alpha0);
+        let (sbeta, cbeta) = libm::sincos(beta0);
         self.initialize_ic(env.inertial);
         self.pqr_body = pqr;
         self.alpha = alpha0;

@@ -88,8 +88,9 @@ impl InitialCondition {
     pub fn set_wind_dir_deg(&mut self, dir: f64) {
         let mut wind_ned = self.vt_ned() - self.uvw_ned;
         let mag = wind_ned.magnitude2(E_U, E_V);
-        wind_ned[E_U] = mag * libm::cos(dir * DEGTORAD);
-        wind_ned[E_V] = mag * libm::sin(dir * DEGTORAD);
+        let (sin_dir, cos_dir) = libm::sincos(dir * DEGTORAD);
+        wind_ned[E_U] = mag * cos_dir;
+        wind_ned[E_V] = mag * sin_dir;
         self.apply_wind_ned(wind_ned);
     }
 

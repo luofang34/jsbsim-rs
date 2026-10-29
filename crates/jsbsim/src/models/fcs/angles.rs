@@ -137,10 +137,8 @@ impl Family for Angles {
     fn step(&mut self, base: &mut Base, (source, target): (f64, f64), tick: &Tick) {
         let source_angle = source * self.source_unit;
         let target_angle = target * self.target_unit;
-        let x1 = libm::cos(source_angle);
-        let y1 = libm::sin(source_angle);
-        let x2 = libm::cos(target_angle);
-        let y2 = libm::sin(target_angle);
+        let (y1, x1) = libm::sincos(source_angle);
+        let (y2, x2) = libm::sincos(target_angle);
         let x1x2_y1y2 = cpp_max(-1.0, cpp_min(x1 * x2 + y1 * y2, 1.0));
         let angle_to_heading_rad = libm::acos(x1x2_y1y2);
         let x1y2 = x1 * y2;

@@ -191,7 +191,7 @@ impl Default for Propagate {
 }
 
 fn rotation_z(angle: f64) -> Matrix33 {
-    let (c, s) = (libm::cos(angle), libm::sin(angle));
+    let (s, c) = libm::sincos(angle);
     Matrix33::new(c, s, 0.0, -s, c, 0.0, 0.0, 0.0, 1.0)
 }
 

@@ -167,7 +167,7 @@ impl Geodesic {
             sbetm2 /= sbetm2 + sq(cbet1 + cbet2);
             out.dnm = libm::sqrt(1.0 + self.ep2 * sbetm2);
             let omg12 = k.lam12 / (self.f1 * out.dnm);
-            (libm::sin(omg12), libm::cos(omg12))
+            libm::sincos(omg12)
         } else {
             (k.slam12, k.clam12)
         };
@@ -267,8 +267,8 @@ impl Geodesic {
                 } else {
                     -y * (1.0 + kk) / kk
                 };
-            let somg12 = libm::sin(omg12a);
-            let comg12 = -libm::cos(omg12a);
+            let (somg12, comg12) = libm::sincos(omg12a);
+            let comg12 = -comg12;
             (
                 cbet2 * somg12,
                 sbet12a - cbet2 * sbet1 * sq(somg12) / (1.0 - comg12),

@@ -65,8 +65,9 @@ impl Quaternion {
     #[must_use]
     pub fn from_euler(phi: f64, tht: f64, psi: f64) -> Self {
         let (thtd2, psid2, phid2) = (0.5 * tht, 0.5 * psi, 0.5 * phi);
-        let (sthtd2, spsid2, sphid2) = (libm::sin(thtd2), libm::sin(psid2), libm::sin(phid2));
-        let (cthtd2, cpsid2, cphid2) = (libm::cos(thtd2), libm::cos(psid2), libm::cos(phid2));
+        let (sthtd2, cthtd2) = libm::sincos(thtd2);
+        let (spsid2, cpsid2) = libm::sincos(psid2);
+        let (sphid2, cphid2) = libm::sincos(phid2);
         let cphid2_cthtd2 = cphid2 * cthtd2;
         let cphid2_sthtd2 = cphid2 * sthtd2;
         let sphid2_sthtd2 = sphid2 * sthtd2;
@@ -91,7 +92,7 @@ impl Quaternion {
     #[must_use]
     pub fn from_axis_index(idx: Axis, angle: f64) -> Self {
         let angle2 = 0.5 * angle;
-        let (s, c) = (libm::sin(angle2), libm::cos(angle2));
+        let (s, c) = libm::sincos(angle2);
         match idx {
             Axis::X => Self::from_components(c, s, 0.0, 0.0),
             Axis::Y => Self::from_components(c, 0.0, s, 0.0),
@@ -104,8 +105,8 @@ impl Quaternion {
     pub fn from_angle_axis(angle: f64, axis: ColumnVector3) -> Self {
         let angle2 = 0.5 * angle;
         let length = axis.magnitude();
-        let s = libm::sin(angle2) / length;
-        let c = libm::cos(angle2);
+        let (s, c) = libm::sincos(angle2);
+        let s = s / length;
         let [x, y, z] = axis.to_array();
         Self::from_components(c, s * x, s * y, s * z)
     }
@@ -192,13 +193,10 @@ impl Quaternion {
     #[must_use]
     pub fn exp(omega: ColumnVector3) -> Self {
         let angle = omega.magnitude();
-        let sina_a = if angle > 0.0 {
-            libm::sin(angle) / angle
-        } else {
-            1.0
-        };
+        let (sina, cosa) = libm::sincos(angle);
+        let sina_a = if angle > 0.0 { sina / angle } else { 1.0 };
         let [x, y, z] = omega.to_array();
-        Self::from_components(libm::cos(angle), x * sina_a, y * sina_a, z * sina_a)
+        Self::from_components(cosa, x * sina_a, y * sina_a, z * sina_a)
     }
 
     /// Computes and stores the matrices and Euler angles unless already
@@ -274,19 +272,13 @@ fn compute_derived(d: &[f64; 4]) -> Derived {
         q0q0 - q1q1 - q2q2 + q3q3,
     );
     let euler = t.euler();
+    let (sin_phi, cos_phi) = libm::sincos(euler[E_PHI]);
+    let (sin_psi, cos_psi) = libm::sincos(euler[E_PSI]);
     Derived {
         t,
         t_inv: t.transposed(),
-        sines: ColumnVector3::new(
-            libm::sin(euler[E_PHI]),
-            -t[(Axis::X, Axis::Z)],
-            libm::sin(euler[E_PSI]),
-        ),
-        cosines: ColumnVector3::new(
-            libm::cos(euler[E_PHI]),
-            libm::cos(euler[E_THT]),
-            libm::cos(euler[E_PSI]),
-        ),
+        sines: ColumnVector3::new(sin_phi, -t[(Axis::X, Axis::Z)], sin_psi),
+        cosines: ColumnVector3::new(cos_phi, libm::cos(euler[E_THT]), cos_psi),
         euler,
     }
 }

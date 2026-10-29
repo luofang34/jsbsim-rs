@@ -292,12 +292,10 @@ impl<G: GetterSource> Evaluator<'_, G> {
         let t = Quaternion::from_euler(phi, theta, psi).t();
         Ok(match f.op {
             Op::RotationAlphaLocal | Op::RotationBetaLocal => {
-                let cos_beta = libm::cos(beta);
-                let wind = t * ColumnVector3::new(
-                    libm::cos(alpha) * cos_beta,
-                    libm::sin(beta),
-                    libm::sin(alpha) * cos_beta,
-                );
+                let (sin_alpha, cos_alpha) = libm::sincos(alpha);
+                let (sin_beta, cos_beta) = libm::sincos(beta);
+                let wind =
+                    t * ColumnVector3::new(cos_alpha * cos_beta, sin_beta, sin_alpha * cos_beta);
                 local_alpha_beta(f.op, wind)
             }
             _ => local_gamma(&t, alpha, beta, gamma),
@@ -344,7 +342,7 @@ fn local_alpha_beta(op: Op, wind: ColumnVector3) -> f64 {
         return if wind[E_Y] > 0.0 { 0.5 * PI } else { -0.5 * PI };
     }
     let alpha_local = libm::atan2(wind[E_Z], wind[E_X]);
-    let (cosa, sina) = (libm::cos(alpha_local), libm::sin(alpha_local));
+    let (sina, cosa) = libm::sincos(alpha_local);
     let cosb = if cosa.abs() > sina.abs() {
         wind[E_X] / cosa
     } else {
@@ -354,9 +352,9 @@ fn local_alpha_beta(op: Op, wind: ColumnVector3) -> f64 {
 }
 
 fn local_gamma(t: &crate::math::Matrix33, alpha: f64, beta: f64, gamma: f64) -> f64 {
-    let (cos_alpha, sin_alpha) = (libm::cos(alpha), libm::sin(alpha));
-    let (cos_beta, sin_beta) = (libm::cos(beta), libm::sin(beta));
-    let (cos_gamma, sin_gamma) = (libm::cos(gamma), libm::sin(gamma));
+    let (sin_alpha, cos_alpha) = libm::sincos(alpha);
+    let (sin_beta, cos_beta) = libm::sincos(beta);
+    let (sin_gamma, cos_gamma) = libm::sincos(gamma);
     let x = *t * ColumnVector3::new(cos_alpha * cos_beta, sin_beta, sin_alpha * cos_beta);
     let y = *t
         * ColumnVector3::new(

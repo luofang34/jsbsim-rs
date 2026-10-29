@@ -246,8 +246,8 @@ impl Auxiliary {
     /// `UpdateWindMatrices`: Stevens and Lewis' wind-to-body transform
     /// and its transpose.
     fn update_wind_matrices(&mut self) {
-        let (ca, sa) = (libm::cos(self.alpha), libm::sin(self.alpha));
-        let (cb, sb) = (libm::cos(self.beta), libm::sin(self.beta));
+        let (sa, ca) = libm::sincos(self.alpha);
+        let (sb, cb) = libm::sincos(self.beta);
         self.tw2b = Matrix33::new(ca * cb, -ca * sb, -sa, sb, cb, 0.0, sa * cb, -sa * sb, ca);
         self.tb2w = self.tw2b.transposed();
     }

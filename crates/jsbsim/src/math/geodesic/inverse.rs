@@ -251,7 +251,7 @@ impl Geodesic {
             bracket.update(v, salp1, calp1, numit > MAXIT1);
             if numit < MAXIT1 && l.dlam12 > 0.0 {
                 let dalp1 = -v / l.dlam12;
-                let (sdalp1, cdalp1) = (libm::sin(dalp1), libm::cos(dalp1));
+                let (sdalp1, cdalp1) = libm::sincos(dalp1);
                 let nsalp1 = salp1 * cdalp1 + calp1 * sdalp1;
                 if nsalp1 > 0.0 && dalp1.abs() < super::angles::PI {
                     calp1 = calp1 * cdalp1 - salp1 * sdalp1;

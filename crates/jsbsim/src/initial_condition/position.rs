@@ -260,8 +260,7 @@ impl InitialCondition {
 fn geodetic_altitude_for_asl(inertial: &Inertial, geod_latitude: f64, alt: f64) -> f64 {
     let (a, b) = (inertial.a, inertial.b);
     let e2 = 1.0 - b * b / (a * a);
-    let cos_geod_lat = libm::cos(geod_latitude);
-    let sin_geod_lat = libm::sin(geod_latitude);
+    let (sin_geod_lat, cos_geod_lat) = libm::sincos(geod_latitude);
     let big_n = a / (1.0 - e2 * sin_geod_lat * sin_geod_lat).sqrt();
     let mut n = e2;
     let mut prev_n = 1.0;

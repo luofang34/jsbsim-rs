@@ -140,8 +140,9 @@ impl Location {
         if rtmp == 0.0 {
             return;
         }
-        self.ec_loc[E_X] = rtmp * libm::cos(longitude);
-        self.ec_loc[E_Y] = rtmp * libm::sin(longitude);
+        let (sin_lon, cos_lon) = libm::sincos(longitude);
+        self.ec_loc[E_X] = rtmp * cos_lon;
+        self.ec_loc[E_Y] = rtmp * sin_lon;
         self.invalidate();
     }
 
@@ -153,15 +154,16 @@ impl Location {
             r = 1.0;
         }
         let rtmp = self.ec_loc.magnitude2(E_X, E_Y);
+        let (sin_lat, cos_lat) = libm::sincos(latitude);
         if rtmp != 0.0 {
-            let fac = r / rtmp * libm::cos(latitude);
+            let fac = r / rtmp * cos_lat;
             self.ec_loc[E_X] *= fac;
             self.ec_loc[E_Y] *= fac;
         } else {
-            self.ec_loc[E_X] = r * libm::cos(latitude);
+            self.ec_loc[E_X] = r * cos_lat;
             self.ec_loc[E_Y] = 0.0;
         }
-        self.ec_loc[E_Z] = r * libm::sin(latitude);
+        self.ec_loc[E_Z] = r * sin_lat;
         self.invalidate();
     }
 
@@ -178,8 +180,8 @@ impl Location {
 
     /// `SetPosition(lon, lat, radius)`: geocentric coordinates.
     pub fn set_position(&mut self, lon: f64, lat: f64, radius: f64) {
-        let (sin_lat, cos_lat) = (libm::sin(lat), libm::cos(lat));
-        let (sin_lon, cos_lon) = (libm::sin(lon), libm::cos(lon));
+        let (sin_lat, cos_lat) = libm::sincos(lat);
+        let (sin_lon, cos_lon) = libm::sincos(lon);
         self.ec_loc = ColumnVector3::new(
             radius * cos_lat * cos_lon,
             radius * cos_lat * sin_lon,
@@ -195,10 +197,11 @@ impl Location {
             tracing::error!("FGLocation::SetPositionGeodetic called before SetEllipse");
             return;
         };
-        let (slat, clat) = (libm::sin(lat), libm::cos(lat));
+        let (slat, clat) = libm::sincos(lat);
+        let (slon, clon) = libm::sincos(lon);
         let rn = e.a / (1.0 - e.e2 * slat * slat).sqrt();
-        self.ec_loc[E_X] = (rn + height) * clat * libm::cos(lon);
-        self.ec_loc[E_Y] = (rn + height) * clat * libm::sin(lon);
+        self.ec_loc[E_X] = (rn + height) * clat * clon;
+        self.ec_loc[E_Y] = (rn + height) * clat * slon;
         self.ec_loc[E_Z] = ((1.0 - e.e2) * rn + height) * slat;
         self.invalidate();
     }
