@@ -313,6 +313,7 @@ engines! {
     Turbine(super::turbine::Turbine) = "turbine_engine";
     TurboProp(super::turboprop::TurboProp) = "turboprop_engine";
     Electric(super::electric::Electric) = "electric_engine";
+    BrushLessDcMotor(super::brushless::BrushLessDcMotor) = "brushless_dc_motor";
     #[cfg(test)]
     Test(super::test_engine::TestEngine) = "test_engine";
 }

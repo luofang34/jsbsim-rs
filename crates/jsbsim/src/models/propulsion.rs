@@ -11,6 +11,7 @@
 //! [`Error::Unsupported`](crate::Error::Unsupported).
 
 mod bind;
+pub mod brushless;
 pub mod electric;
 pub mod engine;
 pub mod families;

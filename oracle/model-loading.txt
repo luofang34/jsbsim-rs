@@ -12,7 +12,7 @@ C130 ok
 Camel ok
 Concorde ok
 DHC6 ok
-F450 unsupported <brushless_dc_motor> (In file engine/DJI_E305.xml: line 3)
+F450 ok
 F4N ok
 F80C ok
 J246 unsupported <rocket_engine> (In file engine/SRB.xml: line 2)
