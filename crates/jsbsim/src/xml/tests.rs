@@ -160,6 +160,8 @@ fn resolver() -> MemoryResolver {
     r.insert("systems/shared.xml", "<system name=\"shared\"/>");
     r.insert("engine/eng.xml", "<piston_engine/>");
     r.insert("aircraft/x/aero.xml", "<aerodynamics a=\"1\"/>");
+    r.insert("aircraft/x/eng.xml", "<turbine_engine/>");
+    r.insert("aircraft/x/only_here.xml", "<turbine_engine/>");
     r
 }
 
@@ -186,6 +188,8 @@ fn includes_search_jsbsim_directories_in_order() {
     let mut engine = parse("<engine file=\"eng\"/>");
     loader.open(&mut engine, IncludeKind::Engine).unwrap();
     assert_eq!(engine.children()[0].name(), "piston_engine");
+    let mut beside = parse("<engine file=\"only_here\"/>");
+    assert!(loader.open(&mut beside, IncludeKind::Engine).is_err());
     let mut plain = parse("<aerodynamics/>");
     assert_eq!(loader.open(&mut plain, IncludeKind::Model).unwrap(), None);
 }

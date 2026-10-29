@@ -22,9 +22,10 @@ pub enum IncludeKind {
     /// `<system>`: the aircraft directory, its `Systems` and `systems`
     /// subdirectories, then the systems directory.
     System,
-    /// `<engine>` and `<thruster>`: the aircraft directory, its `Engines`,
+    /// `<engine>` and `<thruster>`: the aircraft directory's `Engines`,
     /// `engines`, `Engine` and `engine` subdirectories, then the engine
-    /// directory.
+    /// directory. `FGPropulsion::FindFullPathName` skips the aircraft
+    /// directory itself while it reads engines.
     Engine,
 }
 
@@ -111,7 +112,10 @@ impl<'r> DocumentLoader<'r> {
 
     fn find_full_path(&self, file: &str, kind: IncludeKind) -> Option<String> {
         let aircraft = self.aircraft_dir.as_str();
-        let mut dirs = vec![aircraft.to_owned()];
+        let mut dirs = Vec::new();
+        if kind != IncludeKind::Engine {
+            dirs.push(aircraft.to_owned());
+        }
         let (subdirs, fallback): (&[&str], &str) = match kind {
             IncludeKind::Model => (&[], ""),
             IncludeKind::System => (&["Systems", "systems"], &self.systems_dir),

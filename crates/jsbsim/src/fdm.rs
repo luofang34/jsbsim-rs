@@ -7,6 +7,9 @@
 
 mod bindings;
 mod distribute;
+mod engine_load;
+mod engine_run;
+pub use engine_load::EngineLoad;
 mod env;
 pub(crate) use env::Env;
 mod exec_bind;
@@ -21,6 +24,7 @@ mod script;
 mod tests;
 
 pub use bindings::{Binder, Bindings, Getter, Kind, ModelGetters, Setter, convert_write};
+pub use exec_bind::ExecRequest;
 pub use load::{LoadContext, ModelFunctions};
 pub use run::InitialState;
 

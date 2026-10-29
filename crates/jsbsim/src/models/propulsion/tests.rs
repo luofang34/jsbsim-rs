@@ -135,11 +135,26 @@ fn reset_restores_the_initial_contents() {
 }
 
 #[test]
-fn engines_and_function_grains_are_refused_by_name() {
-    let engine = load("<propulsion><engine file=\"x\"/></propulsion>")
-        .err()
-        .unwrap();
-    assert!(matches!(engine, Error::Unsupported { construct, .. } if construct.contains("engine")));
+fn engine_and_thruster_types_are_refused_by_name() {
+    let piston = r#"<propulsion><engine>
+      <piston_engine name="p"/><thruster><propeller/></thruster>
+    </engine></propulsion>"#;
+    let err = load(piston).err().unwrap();
+    assert!(
+        matches!(&err, Error::Unsupported { construct, path }
+            if construct == "<piston_engine>" && path.contains("line 1")),
+        "{err:?}"
+    );
+    let propeller = r#"<propulsion><engine>
+      <test_engine><sl-fuel-flow>1</sl-fuel-flow></test_engine>
+      <thruster><propeller/></thruster>
+    </engine></propulsion>"#;
+    let err = load(propeller).err().unwrap();
+    assert!(matches!(&err, Error::Unsupported { construct, .. } if construct == "<propeller>"));
+    let unknown = "<propulsion><engine><steam/><thruster/></engine></propulsion>";
+    assert!(matches!(load(unknown).err(), Some(Error::Model { .. })));
+    let no_thruster = "<propulsion><engine><test_engine/></engine></propulsion>";
+    assert!(matches!(load(no_thruster).err(), Some(Error::Model { .. })));
     let grain = load(
         r#"<propulsion><tank type="FUEL">
       <grain_config type="FUNCTION"/><capacity>1</capacity>
@@ -150,4 +165,111 @@ fn engines_and_function_grains_are_refused_by_name() {
     assert!(
         matches!(grain, Error::Unsupported { construct, .. } if construct.contains("FUNCTION"))
     );
+}
+
+/// A rocket fed by two fuel tanks of priorities 1 and 2 and an oxidizer
+/// tank, and a second engine fed by a tank that does not exist.
+const ROCKET: &str = r#"<propulsion>
+  <tank type="FUEL">
+    <location unit="IN"><x>0</x><y>0</y><z>0</z></location>
+    <capacity>100</capacity><contents>12</contents>
+  </tank>
+  <tank type="FUEL">
+    <location unit="IN"><x>0</x><y>0</y><z>0</z></location>
+    <capacity>100</capacity><contents>100</contents><priority>2</priority>
+  </tank>
+  <tank type="OXIDIZER">
+    <location unit="IN"><x>0</x><y>0</y><z>0</z></location>
+    <capacity>100</capacity><contents>100</contents>
+  </tank>
+  <engine>
+    <feed>0</feed><feed>1</feed><feed>2</feed>
+    <test_engine name="r0"><sl-fuel-flow>120</sl-fuel-flow></test_engine>
+    <thruster><test_thruster name="t0"/></thruster>
+  </engine>
+</propulsion>"#;
+
+#[cfg(test)]
+fn running_rocket() -> Fdm {
+    let mut fdm = load(ROCKET).unwrap();
+    fdm.set_property("ic/h-sl-ft", 10000.0).unwrap();
+    fdm.run_ic().unwrap();
+    fdm.set_property("propulsion/set-running", -1.0).unwrap();
+    fdm
+}
+
+#[test]
+fn starting_an_engine_reaches_a_steady_thrust_and_sums_its_force() {
+    let mut fdm = running_rocket();
+    assert_eq!(
+        fdm.get_property("propulsion/engine/set-running").unwrap(),
+        1.0
+    );
+    assert_eq!(
+        fdm.get_property("propulsion/engine/thrust-lbs").unwrap(),
+        1000.0
+    );
+    assert_eq!(fdm.get_property("forces/fbx-prop-lbs").unwrap(), 1000.0);
+    // The thruster at (10, 0, 12) in pushes forward 1 ft above the CG,
+    // pitching the nose down.
+    let pitch = fdm.get_property("moments/m-prop-lbsft").unwrap();
+    assert!((pitch + 1000.0).abs() < 1e-9, "{pitch}");
+    let calculations = match &fdm.models.propulsion.engines[0].kind {
+        super::families::EngineKind::Test(e) => e.calculations,
+    };
+    assert!(calculations > 120, "{calculations}");
+}
+
+#[test]
+fn fuel_is_drawn_by_priority_and_oxidizer_with_it() {
+    let mut fdm = running_rocket();
+    let dt = fdm.models.exec.dt;
+    fdm.run().unwrap();
+    let p = &fdm.models.propulsion;
+    assert!((p.tanks[0].contents - (12.0 - 120.0 * dt)).abs() < 1e-12);
+    assert_eq!(p.tanks[1].contents, 100.0);
+    assert!((p.tanks[2].contents - (100.0 - 60.0 * dt)).abs() < 1e-12);
+    for _ in 0..20 {
+        fdm.run().unwrap();
+    }
+    let p = &fdm.models.propulsion;
+    assert_eq!(p.tanks[0].contents, 0.0);
+    assert!(p.tanks[1].contents < 100.0);
+    let used = fdm.get_property("propulsion/engine/fuel-used-lbs").unwrap();
+    let total = fdm.get_property("propulsion/total-fuel-lbs").unwrap();
+    assert!((used + total - 112.0).abs() < 1e-9, "{used} + {total}");
+    assert_eq!(
+        fdm.get_property("propulsion/engine/fuel-flow-rate-pps")
+            .unwrap(),
+        120.0
+    );
+}
+
+#[test]
+fn an_engine_without_oxidizer_starves_and_freezing_burns_nothing() {
+    let mut fdm = running_rocket();
+    fdm.set_property("propulsion/tank[2]/contents-lbs", 0.0)
+        .unwrap();
+    fdm.run().unwrap();
+    assert!(fdm.models.propulsion.engines[0].base.starved);
+    assert_eq!(fdm.models.propulsion.tanks[0].contents, 12.0);
+    fdm.set_property("propulsion/tank[2]/contents-lbs", 50.0)
+        .unwrap();
+    fdm.set_property("propulsion/fuel_freeze", 1.0).unwrap();
+    fdm.run().unwrap();
+    assert_eq!(fdm.models.propulsion.tanks[0].contents, 12.0);
+}
+
+#[test]
+fn starting_a_missing_engine_fails() {
+    let mut fdm = load(ROCKET).unwrap();
+    assert!(fdm.set_property("propulsion/set-running", 3.0).is_err());
+}
+
+#[test]
+fn an_engine_fed_by_a_missing_tank_fails_to_run() {
+    let rocket = ROCKET.replace("<feed>2</feed>", "<feed>7</feed>");
+    let mut fdm = load(&rocket).unwrap();
+    fdm.set_property("ic/h-sl-ft", 10000.0).unwrap();
+    assert!(matches!(fdm.run_ic(), Err(Error::Model { .. })));
 }

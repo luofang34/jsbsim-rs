@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
-//! The vendored ball loads through the whole-aircraft loader.
+//! The vendored ball loads through the whole-aircraft loader, and an engine
+//! it includes is refused by its type.
 
 use std::path::Path;
 
@@ -27,7 +28,7 @@ fn contact_values_cpp_leaves_uninitialized_start_at_zero() {
 }
 
 #[test]
-fn engines_in_an_included_propulsion_file_are_unsupported() {
+fn engines_in_an_included_propulsion_file_are_refused_by_type() {
     let ball = std::fs::read_to_string(
         Path::new(env!("CARGO_MANIFEST_DIR")).join("../../oracle/inputs/aircraft/ball/ball.xml"),
     )
@@ -42,13 +43,26 @@ fn engines_in_an_included_propulsion_file_are_unsupported() {
     .unwrap();
     std::fs::write(
         dir.join("Propulsion.xml"),
-        "<?xml version=\"1.0\"?>\n<propulsion>\n  <engine file=\"x\"/>\n</propulsion>\n",
+        "<?xml version=\"1.0\"?>\n<propulsion>\n  <engine file=\"x\">\n    <thruster file=\"p\"/>\n  </engine>\n</propulsion>\n",
+    )
+    .unwrap();
+    let engines = root.path().join("engine");
+    std::fs::create_dir_all(&engines).unwrap();
+    std::fs::write(
+        engines.join("x.xml"),
+        "<?xml version=\"1.0\"?>\n<piston_engine name=\"x\"/>\n",
+    )
+    .unwrap();
+    std::fs::write(
+        engines.join("p.xml"),
+        "<?xml version=\"1.0\"?>\n<propeller name=\"p\"/>\n",
     )
     .unwrap();
     let mut fdm = Fdm::new().unwrap();
     match fdm.load_model(&FileResolver::new(root.path()), "aircraft", "prop") {
-        Err(jsbsim::Error::Unsupported { construct, .. }) => {
-            assert!(construct.contains("<engine>"), "{construct}");
+        Err(jsbsim::Error::Unsupported { construct, path }) => {
+            assert_eq!(construct, "<piston_engine>");
+            assert!(path.contains("engine/x.xml"), "{path}");
         }
         other => panic!("expected the included engine to be unsupported, got {other:?}"),
     }

@@ -408,6 +408,7 @@ impl Fdm {
                         path: "property write".to_owned(),
                     });
                 }
+                ExecRequest::InitRunning(n) => self.init_running(n)?,
                 ExecRequest::Linearize => {
                     return Err(Error::Unsupported {
                         construct: "simulation/do_linearization".to_owned(),

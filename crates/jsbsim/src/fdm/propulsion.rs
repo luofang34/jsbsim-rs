@@ -9,7 +9,8 @@ use super::order::Model;
 use super::{Fdm, Models};
 use crate::Error;
 use crate::math::ColumnVector3;
-use crate::models::propulsion::{Tank, TankType, tank};
+use crate::models::external_reactions::Transforms;
+use crate::models::propulsion::{self, Tank, TankType, families, tank};
 use crate::xml::{DocumentLoader, Element, IncludeKind};
 
 impl Models {
@@ -47,22 +48,31 @@ impl Fdm {
         el: &mut Element,
     ) -> Result<(), Error> {
         self.upload(loader, el, IncludeKind::Model, Model::Propulsion)?;
+        let mut fuel_density = 6.0;
         for (n, tank_el) in el.find_elements("tank").enumerate() {
             let tank = Tank::load(tank_el, n)?;
             tank::bind(&mut self.env.binder(), n)?;
-            let unknown = tank.tank_type == TankType::Unknown;
+            let tank_type = tank.tank_type;
+            if tank_type == TankType::Fuel {
+                fuel_density = tank.density;
+            }
             self.models.propulsion.tanks.push(tank);
-            if unknown {
+            if tank_type == TankType::Unknown {
                 return Err(Error::Model {
                     message: format!("{}: Unknown tank type specified.", tank_el.location()),
                 });
             }
         }
-        if let Some(engine) = el.find_element("engine") {
-            return Err(Error::Unsupported {
-                construct: "<engine> in <propulsion>".to_owned(),
-                path: engine.location().to_string(),
-            });
+        let mut engines: Vec<Element> = el.find_elements("engine").cloned().collect();
+        for (n, engine_el) in engines.iter_mut().enumerate() {
+            self.load_engine(loader, engine_el, n)?;
+        }
+        let p = &mut self.models.propulsion;
+        if !p.engines.is_empty() {
+            let types: Vec<_> = p.engines.iter().map(|e| e.kind.engine_type()).collect();
+            let feeds = p.engines.iter().map(|e| e.base.source_tanks.len()).max();
+            p.reserve_feeds(feeds.unwrap_or(0));
+            propulsion::bind(&mut self.env.binder(), &types)?;
         }
         let m = &mut self.models;
         m.propulsion.calculate_tank_inertias(&m.mass_balance);
@@ -72,6 +82,9 @@ impl Fdm {
         }
         if el.find_element("refuel-rate").is_some() {
             p.refuel_rate = el.find_element_value_as_number_convert_to("refuel-rate", "LBS/MIN")?;
+        }
+        for engine in &mut p.engines {
+            engine.base.fuel_density = fuel_density;
         }
         self.post_load(el, "", Model::Propulsion)
     }
@@ -85,7 +98,50 @@ impl Fdm {
         let p = &mut self.models.propulsion;
         p.forces = ColumnVector3::zero();
         p.moments = ColumnVector3::zero();
-        p.run_tanks();
+        for i in 0..self.models.propulsion.engines.len() {
+            self.calculate_engine(i)?;
+            let trim_status = self.models.exec.trim_status;
+            self.models.propulsion.consume_fuel(i, trim_status)?;
+            self.sum_engine_forces(i);
+        }
+        self.models.propulsion.run_tanks();
         self.run_model_functions(Model::Propulsion, false)
+    }
+
+    /// `vForces += engine->GetBodyForces(); vMoments += engine->GetMoments()`.
+    pub(super) fn sum_engine_forces(&mut self, i: usize) {
+        let m = &mut self.models;
+        let t = Transforms {
+            tw2b: m.auxiliary.tw2b,
+            tl2b: m.propagate.frames.tl2b,
+            ti2b: m.propagate.frames.ti2b,
+        };
+        let Some(engine) = m.propulsion.engines.get_mut(i) else {
+            return;
+        };
+        let force = &mut engine.thruster.base.force;
+        let body = force.body_forces(&t, &m.mass_balance);
+        let moment = force.moment;
+        m.propulsion.forces += body;
+        m.propulsion.moments += moment;
+    }
+
+    /// The engine's `Calculate`: its pre-functions, its type's reads and
+    /// update, then its post-functions.
+    pub(super) fn calculate_engine(&mut self, i: usize) -> Result<(), Error> {
+        self.run_engine_functions(i, true)?;
+        families::calculate(&mut self.env, &mut self.models, i)?;
+        self.run_engine_functions(i, false)
+    }
+
+    fn run_engine_functions(&mut self, i: usize, pre: bool) -> Result<(), Error> {
+        let Some(engine) = self.models.propulsion.engines.get(i) else {
+            return Ok(());
+        };
+        let f = &engine.base.functions;
+        for &id in if pre { &f.pre } else { &f.post } {
+            self.env.cache_value(&self.models, id)?;
+        }
+        Ok(())
     }
 }

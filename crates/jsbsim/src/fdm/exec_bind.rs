@@ -18,6 +18,8 @@ pub enum ExecRequest {
     Trim(i32),
     /// `simulation/do_linearization`.
     Linearize,
+    /// `propulsion/set-running` with the engine, -1 for all.
+    InitRunning(i32),
 }
 
 fn flag(b: bool) -> f64 {

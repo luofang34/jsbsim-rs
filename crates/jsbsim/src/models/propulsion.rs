@@ -3,14 +3,29 @@
 // Derived from JSBSim src/models/FGPropulsion.{h,cpp} and the inputs of
 // src/models/propulsion/FGEngine.h.
 //
-//! The propulsion system (`FGPropulsion`): its tanks, the fuel moved
-//! between them, and what they contribute to the mass balance.
+//! The propulsion system (`FGPropulsion`): its engines and their
+//! thrusters, its tanks, the fuel fed and moved between them, and what
+//! they contribute to the forces and the mass balance. [`families`] says
+//! how engine and thruster types are registered; an engine or thruster
+//! no type registers yet is refused with
+//! [`Error::Unsupported`](crate::Error::Unsupported).
 
+mod bind;
+pub mod engine;
+pub mod families;
+pub mod force;
+mod fuel;
 pub mod tank;
 #[cfg(test)]
+mod test_engine;
+#[cfg(test)]
 mod tests;
+pub mod thruster;
 
+pub use bind::{bind, bind_engine};
+pub use engine::{Engine, EngineBase, EngineType};
 pub use tank::{Tank, TankType};
+pub use thruster::{Thruster, ThrusterBase};
 
 use super::base::ModelBase;
 use super::mass_balance::MassBalance;
@@ -54,6 +69,18 @@ pub struct Inputs {
     pub aero_pqr: ColumnVector3,
     /// Inertial body rates, rad/s.
     pub pqri: ColumnVector3,
+    /// Throttle commands, by engine (`FGFCS::GetThrottleCmd`).
+    pub throttle_cmd: Vec<f64>,
+    /// Mixture commands, by engine.
+    pub mixture_cmd: Vec<f64>,
+    /// Throttle positions, by engine.
+    pub throttle_pos: Vec<f64>,
+    /// Mixture positions, by engine.
+    pub mixture_pos: Vec<f64>,
+    /// Propeller advance positions, by engine.
+    pub prop_advance: Vec<f64>,
+    /// Propeller feather positions, by engine.
+    pub prop_feather: Vec<bool>,
     /// The executive step times the model's rate, s.
     pub total_delta_t: f64,
 }
@@ -65,8 +92,12 @@ pub struct Propulsion {
     pub base: ModelBase,
     /// Inputs.
     pub input: Inputs,
+    /// Engines in load order.
+    pub engines: Vec<Engine>,
     /// Tanks in load order.
     pub tanks: Vec<Tank>,
+    /// The engine starter, cutoff and magneto commands reach: -1 for all.
+    pub active_engine: i32,
     /// Force, body frame, lbs.
     pub forces: ColumnVector3,
     /// Moment about the CG, body frame, lbs·ft.
@@ -87,6 +118,8 @@ pub struct Propulsion {
     pub refuel_rate: f64,
     /// Tank inertia of the last [`Propulsion::calculate_tank_inertias`].
     pub tank_j: Matrix33,
+    /// `ConsumeFuel`'s feed lists, kept so feeding allocates nothing.
+    feed: fuel::FeedLists,
 }
 
 impl Default for Propulsion {
@@ -95,7 +128,9 @@ impl Default for Propulsion {
         Self {
             base: ModelBase::default(),
             input: Inputs::default(),
+            engines: Vec::new(),
             tanks: Vec::new(),
+            active_engine: -1,
             forces: ColumnVector3::zero(),
             moments: ColumnVector3::zero(),
             refuel: false,
@@ -106,6 +141,7 @@ impl Default for Propulsion {
             dump_rate: 0.0,
             refuel_rate: 6000.0,
             tank_j: Matrix33::zero(),
+            feed: fuel::FeedLists::default(),
         }
     }
 }
@@ -123,6 +159,16 @@ impl Propulsion {
         self.total_oxidizer_quantity = 0.0;
         self.refuel = false;
         self.dump = false;
+        for engine in &mut self.engines {
+            engine
+                .kind
+                .reset_to_ic(&mut engine.base, &mut engine.thruster);
+        }
+    }
+
+    /// Room for engines fed from up to `n` tanks each.
+    pub(crate) fn reserve_feeds(&mut self, n: usize) {
+        self.feed.reserve(n);
     }
 
     /// The tanks' part of `Run`, after the engines: each tank's flow and

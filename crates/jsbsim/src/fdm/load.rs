@@ -95,7 +95,7 @@ impl Fdm {
 
     /// `FGModelFunctions::Load` and `PreLoad`: declarations, then the
     /// pre-functions and templates.
-    fn load_model_functions(
+    pub(super) fn load_model_functions(
         &mut self,
         el: &Element,
         prefix: &str,
