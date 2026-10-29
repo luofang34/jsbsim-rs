@@ -40,7 +40,7 @@
 //! [`crate::models::fcs::families`]), so an engine never holds its own
 //! state while the property tree, and through it every model's getters,
 //! is read: [`EngineFamily::sample`] reads everything the C++ `Calculate`
-//! reads, through an [`Evaluator`] over `&Models`, into an owned
+//! reads, through a [`ModelEvaluator`] over `&Models`, into an owned
 //! `Sample` (asking its thruster for the thruster's reads with
 //! [`Thruster::sample`], which reads the other models too); [`EngineFamily::step`] then updates the engine
 //! and calls [`Thruster::calculate`] without reading anything. The
@@ -51,8 +51,8 @@ use super::Inputs;
 use super::engine::{EngineBase, EngineType};
 use super::thruster::{Thruster, ThrusterBase};
 use crate::Error;
+use crate::fdm::ModelEvaluator;
 use crate::fdm::{EngineLoad, Env, LoadContext, Models};
-use crate::functions::Evaluator;
 use crate::xml::Element;
 
 /// The engine elements JSBSim's `FGPropulsion::Load` looks for, in order.
@@ -85,7 +85,7 @@ pub trait EngineFamily: Sized {
         base: &EngineBase,
         thruster: &Thruster,
         models: &Models,
-        ev: &mut Evaluator<'_>,
+        ev: &mut ModelEvaluator<'_>,
     ) -> Result<Self::Sample, Error>;
 
     /// The rest of `Calculate`.
@@ -156,7 +156,7 @@ pub trait ThrusterFamily: Sized {
         &self,
         base: &ThrusterBase,
         models: &Models,
-        ev: &mut Evaluator<'_>,
+        ev: &mut ModelEvaluator<'_>,
     ) -> Result<Self::Sample, Error>;
 
     /// `Calculate(power)`: the thrust, lbs.
@@ -384,7 +384,7 @@ macro_rules! thrusters {
             pub fn sample(
                 &self,
                 models: &Models,
-                ev: &mut Evaluator<'_>,
+                ev: &mut ModelEvaluator<'_>,
             ) -> Result<ThrusterSample, Error> {
                 match self.kind {
                     $($(#[$cfg])* ThrusterKind::$variant(ref f) => {

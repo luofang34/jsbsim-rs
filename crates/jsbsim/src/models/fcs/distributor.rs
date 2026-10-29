@@ -23,7 +23,8 @@ use super::component::{Base, Tick, model_error};
 use super::families::{ComponentAt, Family};
 use crate::Error;
 use crate::fdm::LoadContext;
-use crate::functions::{Condition, Evaluator, Parameter, PropertyValue};
+use crate::fdm::ModelEvaluator;
+use crate::functions::{Condition, Parameter, PropertyValue};
 use crate::properties::NodeId;
 use crate::xml::Element;
 
@@ -88,7 +89,7 @@ impl Distributor {
         &self,
         case: usize,
         completed: bool,
-        ev: &mut Evaluator<'_>,
+        ev: &mut ModelEvaluator<'_>,
     ) -> Result<(bool, bool), Error> {
         let Some(case) = self.cases.get(case) else {
             return Ok((false, false));
@@ -109,7 +110,7 @@ impl Distributor {
         &self,
         case: usize,
         pair: usize,
-        ev: &mut Evaluator<'_>,
+        ev: &mut ModelEvaluator<'_>,
     ) -> Result<Option<(NodeId, f64)>, Error> {
         let Some(p) = self.cases.get(case).and_then(|c| c.pairs.get(pair)) else {
             return Ok(None);
@@ -159,7 +160,7 @@ impl Family for Distributor {
         Ok(Self { exclusive, cases })
     }
 
-    fn sample(&self, _base: &Base, _ev: &mut Evaluator<'_>) -> Result<(), Error> {
+    fn sample(&self, _base: &Base, _ev: &mut ModelEvaluator<'_>) -> Result<(), Error> {
         Ok(())
     }
 

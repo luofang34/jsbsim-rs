@@ -22,16 +22,16 @@
 //!
 //! A run has two phases, so a family never holds its own state while the
 //! property tree (and through it every model's getters) is read:
-//! [`Family::sample`] reads everything the C++ `Run` reads, through an
-//! [`Evaluator`] over `&Models`, into an owned `Sample`; [`Family::step`]
+//! [`Family::sample`] reads everything the C++ `Run` reads, through a
+//! [`ModelEvaluator`] over `&Models`, into an owned `Sample`; [`Family::step`]
 //! then updates the state from it without reading anything. Both run
 //! without allocating.
 
 use super::Fcs;
 use super::component::{Base, Tick};
 use crate::Error;
+use crate::fdm::ModelEvaluator;
 use crate::fdm::{Env, LoadContext, Models};
-use crate::functions::Evaluator;
 use crate::xml::Element;
 
 /// Where a component sits: channel index and index in the channel.
@@ -59,7 +59,7 @@ pub trait Family: Sized {
     ) -> Result<Self, Error>;
 
     /// The reads of `Run`, in its order.
-    fn sample(&self, base: &Base, ev: &mut Evaluator<'_>) -> Result<Self::Sample, Error>;
+    fn sample(&self, base: &Base, ev: &mut ModelEvaluator<'_>) -> Result<Self::Sample, Error>;
 
     /// [`Family::sample`] for a family that also reads the models
     /// directly, as the inertial sensors read accelerations and rates.
@@ -67,7 +67,7 @@ pub trait Family: Sized {
         &self,
         base: &Base,
         _models: &Models,
-        ev: &mut Evaluator<'_>,
+        ev: &mut ModelEvaluator<'_>,
     ) -> Result<Self::Sample, Error> {
         self.sample(base, ev)
     }

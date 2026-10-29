@@ -5,7 +5,7 @@
 //! `<test>`-style conditions: comparisons of a property with a number or
 //! property, combined with AND / OR.
 
-use super::{Evaluator, FunctionError, Parameter, PropertyValue};
+use super::{Evaluator, FunctionError, GetterSource, Parameter, PropertyValue};
 use crate::Error;
 use crate::c_numeric::is_c_space;
 use crate::properties::PropertyTree;
@@ -139,7 +139,7 @@ impl Condition {
 
     /// `Evaluate()`: every sub-condition is evaluated, without
     /// short-circuit, as in JSBSim.
-    pub fn evaluate(&self, ev: &mut Evaluator<'_>) -> Result<bool, Error> {
+    pub fn evaluate<G: GetterSource>(&self, ev: &mut Evaluator<'_, G>) -> Result<bool, Error> {
         match self {
             Self::Group { all, conditions } => {
                 let mut pass = *all;

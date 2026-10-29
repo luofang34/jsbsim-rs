@@ -8,7 +8,7 @@ use super::component::{Base, Tick};
 use super::families::{ComponentAt, Family};
 use crate::Error;
 use crate::fdm::LoadContext;
-use crate::functions::Evaluator;
+use crate::fdm::ModelEvaluator;
 use crate::xml::Element;
 
 /// `FGSummer`.
@@ -36,7 +36,7 @@ impl Family for Summer {
         Ok(Self { bias })
     }
 
-    fn sample(&self, base: &Base, ev: &mut Evaluator<'_>) -> Result<f64, Error> {
+    fn sample(&self, base: &Base, ev: &mut ModelEvaluator<'_>) -> Result<f64, Error> {
         let mut sum = 0.0;
         for input in &base.inputs {
             sum += ev.property(input)?;

@@ -10,7 +10,8 @@ use super::component::{Base, Tick, model_error, parameter_value};
 use super::families::{ComponentAt, Family};
 use crate::Error;
 use crate::fdm::LoadContext;
-use crate::functions::{Evaluator, Parameter};
+use crate::fdm::ModelEvaluator;
+use crate::functions::{Evaluator, GetterSource, Parameter};
 use crate::xml::Element;
 
 /// Which filter (`FilterType`).
@@ -118,7 +119,7 @@ pub type Sample = Option<(f64, Option<[f64; 6]>)>;
 
 impl Filter {
     /// The values of the coefficients the filter uses, 0 for the others.
-    fn values(&self, ev: &mut Evaluator<'_>) -> Result<[f64; 6], Error> {
+    fn values<G: GetterSource>(&self, ev: &mut Evaluator<'_, G>) -> Result<[f64; 6], Error> {
         let mut values = [0.0; 6];
         let used = self.kind.coefficients();
         for (value, c) in values.iter_mut().zip(&self.c).take(used) {
@@ -201,7 +202,7 @@ impl Family for Filter {
         Ok(filter)
     }
 
-    fn sample(&self, base: &Base, ev: &mut Evaluator<'_>) -> Result<Sample, Error> {
+    fn sample(&self, base: &Base, ev: &mut ModelEvaluator<'_>) -> Result<Sample, Error> {
         if self.initialize {
             return Ok(None);
         }

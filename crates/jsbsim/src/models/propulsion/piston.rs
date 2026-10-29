@@ -22,8 +22,9 @@ use super::engine::{EngineBase, EngineType};
 use super::families::{EngineFamily, ThrusterSample};
 use super::thruster::Thruster;
 use crate::Error;
+use crate::fdm::ModelEvaluator;
 use crate::fdm::{EngineLoad, Models};
-use crate::functions::{Evaluator, Table};
+use crate::functions::Table;
 use crate::units::{HPTOFTLBSSEC, PSFTOINHG, PSFTOPA, kelvin_to_fahrenheit, rankine_to_kelvin};
 use crate::xml::Element;
 
@@ -316,7 +317,7 @@ impl EngineFamily for Piston {
         _base: &EngineBase,
         thruster: &Thruster,
         models: &Models,
-        ev: &mut Evaluator<'_>,
+        ev: &mut ModelEvaluator<'_>,
     ) -> Result<ThrusterSample, Error> {
         thruster.sample(models, ev)
     }

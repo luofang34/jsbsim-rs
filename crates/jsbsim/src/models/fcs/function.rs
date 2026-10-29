@@ -8,7 +8,8 @@ use super::component::{Base, Tick, model_error};
 use super::families::{ComponentAt, Family};
 use crate::Error;
 use crate::fdm::LoadContext;
-use crate::functions::{Evaluator, FnId};
+use crate::fdm::ModelEvaluator;
+use crate::functions::FnId;
 use crate::xml::Element;
 
 /// `FGFCSFunction`.
@@ -41,7 +42,7 @@ impl Family for FcsFunction {
         Ok(Self { function })
     }
 
-    fn sample(&self, base: &Base, ev: &mut Evaluator<'_>) -> Result<Self::Sample, Error> {
+    fn sample(&self, base: &Base, ev: &mut ModelEvaluator<'_>) -> Result<Self::Sample, Error> {
         let value = ev.function(self.function)?;
         let input = match base.inputs.is_empty() {
             true => None,

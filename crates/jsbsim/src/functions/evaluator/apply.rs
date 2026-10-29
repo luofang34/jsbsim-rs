@@ -8,7 +8,7 @@
 
 use std::f64::consts::PI;
 
-use super::Evaluator;
+use super::{Evaluator, GetterSource};
 use crate::Error;
 use crate::functions::{Function, FunctionError, Op, Parameter};
 use crate::math::{Axis, ColumnVector3, E_X, E_Y, E_Z, Quaternion};
@@ -28,7 +28,7 @@ fn binary(v: f64, at: &Location) -> Result<bool, Error> {
     }
 }
 
-impl Evaluator<'_> {
+impl<G: GetterSource> Evaluator<'_, G> {
     fn p(&mut self, f: &Function, i: usize) -> Result<f64, Error> {
         match f.params.get(i) {
             Some(param) => self.parameter(param),
@@ -192,7 +192,7 @@ fn unary(op: Op, x: f64) -> f64 {
     }
 }
 
-impl Evaluator<'_> {
+impl<G: GetterSource> Evaluator<'_, G> {
     fn logical(&mut self, f: &Function) -> Result<f64, Error> {
         let short = f.op == Op::Or;
         for param in &f.params {

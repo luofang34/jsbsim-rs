@@ -12,7 +12,7 @@ use super::component::{Base, Tick, model_error};
 use super::families::{ComponentAt, Family};
 use crate::Error;
 use crate::fdm::LoadContext;
-use crate::functions::Evaluator;
+use crate::fdm::ModelEvaluator;
 use crate::units::{constrain, equal_to_roundoff};
 use crate::xml::Element;
 
@@ -137,7 +137,7 @@ impl Family for Kinemat {
         })
     }
 
-    fn sample(&self, base: &Base, ev: &mut Evaluator<'_>) -> Result<Sample, Error> {
+    fn sample(&self, base: &Base, ev: &mut ModelEvaluator<'_>) -> Result<Sample, Error> {
         let input = base.read_input(0, ev)?;
         // The first output (the component's own property without
         // <output>), so that an output set from outside moves the

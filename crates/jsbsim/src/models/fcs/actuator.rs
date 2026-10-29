@@ -14,8 +14,9 @@ use super::Kind;
 use super::component::{Base, Tick, own_property};
 use super::families::{self, Component, ComponentAt, Family};
 use crate::Error;
+use crate::fdm::ModelEvaluator;
 use crate::fdm::{self, LoadContext, Models};
-use crate::functions::{Evaluator, Parameter};
+use crate::functions::Parameter;
 use crate::xml::Element;
 
 /// `FGActuator`.
@@ -350,7 +351,7 @@ impl Family for Actuator {
         Ok(actuator)
     }
 
-    fn sample(&self, base: &Base, ev: &mut Evaluator<'_>) -> Result<Sample, Error> {
+    fn sample(&self, base: &Base, ev: &mut ModelEvaluator<'_>) -> Result<Sample, Error> {
         let input = base.read_input(0, ev)?;
         let failed_input = if self.fail_zero { 0.0 } else { input };
         if self.fail_hardover && failed_input < 0.0 && self.clip_min_missing {
@@ -361,12 +362,13 @@ impl Family for Actuator {
         // the sample cannot know; reading them then differs only in when a
         // missing property is reported.
         let healthy = self.initialized && !self.fail_stuck;
-        let read = |p: &Option<Parameter>, ev: &mut Evaluator<'_>| -> Result<Option<f64>, Error> {
-            match (healthy, p) {
-                (true, Some(p)) => Ok(Some(ev.parameter(p)?)),
-                _ => Ok(None),
-            }
-        };
+        let read =
+            |p: &Option<Parameter>, ev: &mut ModelEvaluator<'_>| -> Result<Option<f64>, Error> {
+                match (healthy, p) {
+                    (true, Some(p)) => Ok(Some(ev.parameter(p)?)),
+                    _ => Ok(None),
+                }
+            };
         let lag = read(&self.lag, ev)?;
         let rate_limit_incr = read(&self.rate_limit_incr, ev)?;
         let rate_limit_decr = read(&self.rate_limit_decr, ev)?;

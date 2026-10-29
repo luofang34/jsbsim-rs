@@ -29,16 +29,20 @@ pub trait GetterSource {
 pub struct NoGetters;
 
 impl GetterSource for NoGetters {
+    #[inline]
     fn get(&self, _node: NodeId) -> Option<f64> {
         None
     }
 }
 
-/// Reads properties and evaluates functions and tables.
-pub struct Evaluator<'a> {
+/// Reads properties and evaluates functions and tables, with the tied
+/// properties' getters from `G`. The source is a type parameter rather
+/// than a trait object, so that a getter read on the frame's hot path is
+/// a direct, inlinable call.
+pub struct Evaluator<'a, G = NoGetters> {
     set: &'a FunctionSet,
     tree: &'a mut PropertyTree,
-    getters: &'a dyn GetterSource,
+    getters: G,
     depth: u32,
     template_argument: Option<NodeId>,
 }
@@ -46,15 +50,13 @@ pub struct Evaluator<'a> {
 impl<'a> Evaluator<'a> {
     /// An evaluator over `set` and `tree`, without model getters.
     pub fn new(set: &'a FunctionSet, tree: &'a mut PropertyTree) -> Self {
-        Self::with_getters(set, tree, &NoGetters)
+        Self::with_getters(set, tree, NoGetters)
     }
+}
 
+impl<'a, G: GetterSource> Evaluator<'a, G> {
     /// An evaluator that also reads model getters from `getters`.
-    pub fn with_getters(
-        set: &'a FunctionSet,
-        tree: &'a mut PropertyTree,
-        getters: &'a dyn GetterSource,
-    ) -> Self {
+    pub fn with_getters(set: &'a FunctionSet, tree: &'a mut PropertyTree, getters: G) -> Self {
         Self {
             set,
             tree,

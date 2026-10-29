@@ -9,7 +9,8 @@ use super::component::{Base, Tick, lenient};
 use super::families::{ComponentAt, Family};
 use crate::Error;
 use crate::fdm::LoadContext;
-use crate::functions::{Condition, Evaluator, FunctionError, Parameter};
+use crate::fdm::ModelEvaluator;
+use crate::functions::{Condition, FunctionError, Parameter};
 use crate::xml::Element;
 
 /// One `<test>`, or the `<default>` when it has no condition.
@@ -105,7 +106,7 @@ impl Family for Switch {
         })
     }
 
-    fn sample(&self, _base: &Base, ev: &mut Evaluator<'_>) -> Result<f64, Error> {
+    fn sample(&self, _base: &Base, ev: &mut ModelEvaluator<'_>) -> Result<f64, Error> {
         // `VerifyProperties`: every condition and value is evaluated on the
         // first run, so a missing property fails then.
         if !self.initialized {

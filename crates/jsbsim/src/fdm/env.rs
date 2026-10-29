@@ -10,7 +10,7 @@
 //! code can evaluate functions against `&Models` while it holds borrows of
 //! its own model's load-time data, then apply the results.
 
-use super::{Binder, Bindings, LoadContext, ModelGetters, Models};
+use super::{Binder, Bindings, LoadContext, ModelEvaluator, ModelGetters, Models};
 use crate::Error;
 use crate::functions::{Evaluator, FnId, FunctionSet};
 use crate::properties::PropertyTree;
@@ -27,7 +27,7 @@ impl Env {
     pub(crate) fn eval<R>(
         &mut self,
         models: &Models,
-        f: impl FnOnce(&mut Evaluator<'_>) -> Result<R, Error>,
+        f: impl FnOnce(&mut ModelEvaluator<'_>) -> Result<R, Error>,
     ) -> Result<R, Error> {
         let getters = ModelGetters {
             bindings: &self.bindings,
@@ -36,7 +36,7 @@ impl Env {
         f(&mut Evaluator::with_getters(
             &self.functions,
             &mut self.tree,
-            &getters,
+            getters,
         ))
     }
 
@@ -47,7 +47,7 @@ impl Env {
             models,
         };
         self.functions
-            .cache_value_with(id, true, &mut self.tree, &getters)
+            .cache_value_with(id, true, &mut self.tree, getters)
     }
 
     /// `cacheValue(true)` followed by `GetValue()`.

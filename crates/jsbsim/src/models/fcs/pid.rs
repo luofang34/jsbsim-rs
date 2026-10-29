@@ -10,8 +10,9 @@ use super::Kind;
 use super::component::{Base, Tick, model_error, own_property, parameter_value};
 use super::families::{self, Component, ComponentAt, Family};
 use crate::Error;
+use crate::fdm::ModelEvaluator;
 use crate::fdm::{self, LoadContext};
-use crate::functions::{Evaluator, Parameter, PropertyValue};
+use crate::functions::{Parameter, PropertyValue};
 use crate::xml::Element;
 
 /// The integration scheme of the `ki` term (`eIntegrateType`).
@@ -171,7 +172,7 @@ impl Family for Pid {
         })
     }
 
-    fn sample(&self, base: &Base, ev: &mut Evaluator<'_>) -> Result<Sample, Error> {
+    fn sample(&self, base: &Base, ev: &mut ModelEvaluator<'_>) -> Result<Sample, Error> {
         let input = base.read_input(0, ev)?;
         let pvdot = match &self.pvdot {
             Some(p) => Some(ev.property(p)?),

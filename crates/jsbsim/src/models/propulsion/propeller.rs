@@ -19,8 +19,9 @@ use std::f64::consts::PI;
 use super::families::ThrusterFamily;
 use super::thruster::ThrusterBase;
 use crate::Error;
+use crate::fdm::ModelEvaluator;
 use crate::fdm::{LoadContext, Models};
-use crate::functions::{Evaluator, Table};
+use crate::functions::Table;
 use crate::math::{ColumnVector3, E_U, E_V, E_W, E_X, E_Y, E_Z};
 use crate::xml::Element;
 
@@ -232,7 +233,7 @@ impl ThrusterFamily for Propeller {
         &self,
         base: &ThrusterBase,
         models: &Models,
-        _ev: &mut Evaluator<'_>,
+        _ev: &mut ModelEvaluator<'_>,
     ) -> Result<ColumnVector3, Error> {
         Ok(models.mass_balance.structural_to_body(base.force.location))
     }

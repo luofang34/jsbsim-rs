@@ -166,7 +166,7 @@ impl FunctionSet {
         cache: bool,
         tree: &mut PropertyTree,
     ) -> Result<(), crate::Error> {
-        self.cache_value_with(id, cache, tree, &NoGetters)
+        self.cache_value_with(id, cache, tree, NoGetters)
     }
 
     /// [`cache_value`](Self::cache_value) reading model getters.
@@ -175,7 +175,7 @@ impl FunctionSet {
         id: FnId,
         cache: bool,
         tree: &mut PropertyTree,
-        getters: &dyn GetterSource,
+        getters: impl GetterSource,
     ) -> Result<(), crate::Error> {
         self.function_mut(id)?.cached = None;
         if cache {

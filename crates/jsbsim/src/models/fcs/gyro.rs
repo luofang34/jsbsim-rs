@@ -10,8 +10,8 @@ use super::families::{ComponentAt, Family};
 use super::sensor::Signal;
 use super::sensor::orientation::Orientation;
 use crate::Error;
+use crate::fdm::ModelEvaluator;
 use crate::fdm::{LoadContext, Models};
-use crate::functions::Evaluator;
 use crate::xml::Element;
 
 /// `FGGyro`.
@@ -40,7 +40,7 @@ impl Family for Gyro {
         })
     }
 
-    fn sample(&self, base: &Base, _ev: &mut Evaluator<'_>) -> Result<f64, Error> {
+    fn sample(&self, base: &Base, _ev: &mut ModelEvaluator<'_>) -> Result<f64, Error> {
         Err(super::sensor::needs_models(base))
     }
 
@@ -48,7 +48,7 @@ impl Family for Gyro {
         &self,
         _base: &Base,
         models: &Models,
-        _ev: &mut Evaluator<'_>,
+        _ev: &mut ModelEvaluator<'_>,
     ) -> Result<f64, Error> {
         Ok(self.orientation.measure(models.propagate.state.pqri))
     }

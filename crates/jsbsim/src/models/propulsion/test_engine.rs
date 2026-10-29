@@ -13,8 +13,8 @@ use super::engine::{EngineBase, EngineType};
 use super::families::{EngineFamily, ThrusterFamily};
 use super::thruster::{Thruster, ThrusterBase};
 use crate::Error;
+use crate::fdm::ModelEvaluator;
 use crate::fdm::{EngineLoad, LoadContext, Models};
-use crate::functions::Evaluator;
 use crate::math::{ColumnVector3, E_X};
 use crate::xml::Element;
 
@@ -48,7 +48,7 @@ impl EngineFamily for TestEngine {
         base: &EngineBase,
         thruster: &Thruster,
         models: &Models,
-        ev: &mut Evaluator<'_>,
+        ev: &mut ModelEvaluator<'_>,
     ) -> Result<Self::Sample, Error> {
         let throttle = models
             .propulsion
@@ -115,7 +115,7 @@ impl ThrusterFamily for TestThruster {
         &self,
         _base: &ThrusterBase,
         _models: &Models,
-        _ev: &mut Evaluator<'_>,
+        _ev: &mut ModelEvaluator<'_>,
     ) -> Result<(), Error> {
         Ok(())
     }

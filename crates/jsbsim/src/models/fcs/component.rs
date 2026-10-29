@@ -8,7 +8,8 @@
 
 use crate::Error;
 use crate::fdm::LoadContext;
-use crate::functions::{Evaluator, Parameter, PropertyValue};
+use crate::fdm::ModelEvaluator;
+use crate::functions::{Parameter, PropertyValue};
 use crate::properties::{NodeId, mk_property_name};
 use crate::units::constrain;
 use crate::xml::Element;
@@ -190,7 +191,7 @@ impl Base {
     }
 
     /// `InputNodes[i]->getDoubleValue()`.
-    pub fn read_input(&self, i: usize, ev: &mut Evaluator<'_>) -> Result<f64, Error> {
+    pub fn read_input(&self, i: usize, ev: &mut ModelEvaluator<'_>) -> Result<f64, Error> {
         match self.inputs.get(i) {
             Some(input) => ev.property(input),
             None => Ok(0.0),
@@ -198,7 +199,7 @@ impl Base {
     }
 
     /// The clip limits, read as `Clip` reads them.
-    pub fn clip_limits(&self, ev: &mut Evaluator<'_>) -> Result<Option<Limits>, Error> {
+    pub fn clip_limits(&self, ev: &mut ModelEvaluator<'_>) -> Result<Option<Limits>, Error> {
         match &self.clip {
             Some(clip) => Ok(Some((ev.parameter(&clip.min)?, ev.parameter(&clip.max)?))),
             None => Ok(None),

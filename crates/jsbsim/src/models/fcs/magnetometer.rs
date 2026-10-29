@@ -22,8 +22,8 @@ use super::sensor::Signal;
 use super::sensor::orientation::Orientation;
 use super::{Fcs, Kind};
 use crate::Error;
+use crate::fdm::ModelEvaluator;
 use crate::fdm::{ExecState, LoadContext, Models};
-use crate::functions::Evaluator;
 use crate::math::{ColumnVector3, Matrix33};
 use crate::models::propagate::Propagate;
 use crate::units::FTTOM;
@@ -144,7 +144,7 @@ impl Family for Magnetometer {
         })
     }
 
-    fn sample(&self, base: &Base, _ev: &mut Evaluator<'_>) -> Result<Sample, Error> {
+    fn sample(&self, base: &Base, _ev: &mut ModelEvaluator<'_>) -> Result<Sample, Error> {
         Err(super::sensor::needs_models(base))
     }
 
@@ -152,7 +152,7 @@ impl Family for Magnetometer {
         &self,
         _base: &Base,
         models: &Models,
-        _ev: &mut Evaluator<'_>,
+        _ev: &mut ModelEvaluator<'_>,
     ) -> Result<Sample, Error> {
         let p = &models.propagate;
         Ok(Sample {

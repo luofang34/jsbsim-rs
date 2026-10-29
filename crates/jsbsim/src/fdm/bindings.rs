@@ -12,7 +12,7 @@
 
 use super::Models;
 use crate::Error;
-use crate::functions::GetterSource;
+use crate::functions::{Evaluator, GetterSource};
 use crate::properties::{NodeId, NodeMap, PropertyTree, Value};
 
 /// A getter: the property's value given the models.
@@ -128,12 +128,18 @@ impl Binder<'_> {
 }
 
 /// [`GetterSource`] over the models and their bindings.
+#[derive(Clone, Copy)]
 pub struct ModelGetters<'a> {
     pub(crate) bindings: &'a Bindings,
     pub(crate) models: &'a Models,
 }
 
+/// The evaluator models run with: it reads tied properties through their
+/// getters.
+pub type ModelEvaluator<'a> = Evaluator<'a, ModelGetters<'a>>;
+
 impl GetterSource for ModelGetters<'_> {
+    #[inline]
     fn get(&self, node: NodeId) -> Option<f64> {
         self.bindings.getters.get(node).map(|g| g(self.models))
     }

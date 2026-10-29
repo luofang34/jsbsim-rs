@@ -12,7 +12,8 @@ use super::component::{Base, Tick, model_error};
 use super::families::{ComponentAt, Family};
 use crate::Error;
 use crate::fdm::LoadContext;
-use crate::functions::{Evaluator, PropertyValue};
+use crate::fdm::ModelEvaluator;
+use crate::functions::PropertyValue;
 use crate::math::Location;
 use crate::units::{RADTODEG, feet_to_meters};
 use crate::xml::Element;
@@ -135,7 +136,7 @@ fn latitude_error(which: &str, name: &str) -> Error {
     }
 }
 
-fn read(c: &Coordinate, ev: &mut Evaluator<'_>) -> Result<f64, Error> {
+fn read(c: &Coordinate, ev: &mut ModelEvaluator<'_>) -> Result<f64, Error> {
     Ok(ev.property(&c.value)? * c.unit)
 }
 
@@ -174,7 +175,7 @@ impl Family for Waypoint {
         })
     }
 
-    fn sample(&self, base: &Base, ev: &mut Evaluator<'_>) -> Result<Coordinates, Error> {
+    fn sample(&self, base: &Base, ev: &mut ModelEvaluator<'_>) -> Result<Coordinates, Error> {
         let c = Coordinates {
             source_latitude: read(&self.source_latitude, ev)?,
             source_longitude: read(&self.source_longitude, ev)?,

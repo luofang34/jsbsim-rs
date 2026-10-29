@@ -12,7 +12,7 @@ use super::component::{Base, Tick, model_error};
 use super::families::{ComponentAt, Family};
 use crate::Error;
 use crate::fdm::LoadContext;
-use crate::functions::Evaluator;
+use crate::fdm::ModelEvaluator;
 use crate::properties::NodeId;
 use crate::xml::Element;
 
@@ -81,7 +81,7 @@ fn read(
     node: Option<NodeId>,
     path: &str,
     base: &Base,
-    ev: &mut Evaluator<'_>,
+    ev: &mut ModelEvaluator<'_>,
 ) -> Result<f64, Error> {
     match node {
         Some(node) => ev.read_node(node),
@@ -128,7 +128,7 @@ impl Family for Angles {
         })
     }
 
-    fn sample(&self, base: &Base, ev: &mut Evaluator<'_>) -> Result<(f64, f64), Error> {
+    fn sample(&self, base: &Base, ev: &mut ModelEvaluator<'_>) -> Result<(f64, f64), Error> {
         let source = read(self.source, &self.source_path, base, ev)?;
         let target = read(self.target, &self.target_path, base, ev)?;
         Ok((source, target))

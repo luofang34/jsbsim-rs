@@ -8,7 +8,8 @@ use super::component::{Base, Tick, lenient, model_error, parameter_value};
 use super::families::{ComponentAt, Family};
 use crate::Error;
 use crate::fdm::LoadContext;
-use crate::functions::{Evaluator, Parameter, TableId};
+use crate::fdm::ModelEvaluator;
+use crate::functions::{Parameter, TableId};
 use crate::xml::Element;
 
 /// `<aerosurface_scale>`'s mapping of the domain onto the range.
@@ -129,7 +130,7 @@ impl Family for Gain {
         Ok(Self { gain, kind })
     }
 
-    fn sample(&self, base: &Base, ev: &mut Evaluator<'_>) -> Result<Sample, Error> {
+    fn sample(&self, base: &Base, ev: &mut ModelEvaluator<'_>) -> Result<Sample, Error> {
         let input = base.read_input(0, ev)?;
         let scheduled = match self.kind {
             GainType::Scheduled(table) => ev.table(table)?,

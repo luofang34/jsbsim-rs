@@ -15,8 +15,8 @@ use super::Inputs;
 use super::families::{ThrusterFamily, ThrusterKind};
 use super::force::Force;
 use crate::Error;
+use crate::fdm::ModelEvaluator;
 use crate::fdm::{Binder, LoadContext, Models};
-use crate::functions::Evaluator;
 use crate::math::{ColumnVector3, E_X, E_Y, E_Z, Matrix33};
 use crate::xml::Element;
 
@@ -172,7 +172,7 @@ impl ThrusterFamily for Direct {
         &self,
         _base: &ThrusterBase,
         _models: &Models,
-        _ev: &mut Evaluator<'_>,
+        _ev: &mut ModelEvaluator<'_>,
     ) -> Result<(), Error> {
         Ok(())
     }

@@ -19,7 +19,7 @@ use super::component::{Base, Tick, lenient, model_error};
 use super::families::{ComponentAt, Family};
 use crate::Error;
 use crate::fdm::LoadContext;
-use crate::functions::Evaluator;
+use crate::fdm::ModelEvaluator;
 use crate::xml::Element;
 
 /// `FGSensor`'s members.
@@ -249,7 +249,7 @@ impl Family for Sensor {
         })
     }
 
-    fn sample(&self, base: &Base, ev: &mut Evaluator<'_>) -> Result<f64, Error> {
+    fn sample(&self, base: &Base, ev: &mut ModelEvaluator<'_>) -> Result<f64, Error> {
         match base.inputs.first() {
             Some(input) => ev.property(input),
             // JSBSim dereferences the missing input here.

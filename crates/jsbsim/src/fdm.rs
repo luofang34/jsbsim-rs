@@ -24,7 +24,9 @@ mod trim;
 #[cfg(test)]
 mod tests;
 
-pub use bindings::{Binder, Bindings, Getter, Kind, ModelGetters, Setter, convert_write};
+pub use bindings::{
+    Binder, Bindings, Getter, Kind, ModelEvaluator, ModelGetters, Setter, convert_write,
+};
 pub use exec_bind::ExecRequest;
 pub use load::{LoadContext, ModelFunctions};
 pub use run::InitialState;

@@ -9,7 +9,8 @@ use super::component::{Base, Tick, parameter_value};
 use super::families::{ComponentAt, Family};
 use crate::Error;
 use crate::fdm::LoadContext;
-use crate::functions::{Evaluator, Parameter};
+use crate::fdm::ModelEvaluator;
+use crate::functions::Parameter;
 use crate::xml::Element;
 
 /// `FGDeadBand`.
@@ -44,7 +45,7 @@ impl Family for DeadBand {
         Ok(Self { width, gain })
     }
 
-    fn sample(&self, base: &Base, ev: &mut Evaluator<'_>) -> Result<Self::Sample, Error> {
+    fn sample(&self, base: &Base, ev: &mut ModelEvaluator<'_>) -> Result<Self::Sample, Error> {
         let input = base.read_input(0, ev)?;
         Ok((input, ev.parameter(&self.width)?))
     }

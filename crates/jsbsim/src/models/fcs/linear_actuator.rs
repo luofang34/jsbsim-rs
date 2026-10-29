@@ -14,7 +14,8 @@ use super::component::{Base, Tick};
 use super::families::{ComponentAt, Family};
 use crate::Error;
 use crate::fdm::LoadContext;
-use crate::functions::{Evaluator, Parameter};
+use crate::fdm::ModelEvaluator;
+use crate::functions::Parameter;
 use crate::properties::PropertyTree;
 use crate::xml::Element;
 
@@ -134,7 +135,7 @@ fn number(
 
 /// The value of a parameter JSBSim reads in `Run`: when it is not
 /// constant.
-fn read(p: &Option<Parameter>, ev: &mut Evaluator<'_>) -> Result<Option<f64>, Error> {
+fn read(p: &Option<Parameter>, ev: &mut ModelEvaluator<'_>) -> Result<Option<f64>, Error> {
     match p {
         Some(p) if !is_constant(p, ev.tree()) => Ok(Some(ev.parameter(p)?)),
         _ => Ok(None),
@@ -240,7 +241,7 @@ impl Family for LinearActuator {
         Ok(actuator)
     }
 
-    fn sample(&self, base: &Base, ev: &mut Evaluator<'_>) -> Result<Sample, Error> {
+    fn sample(&self, base: &Base, ev: &mut ModelEvaluator<'_>) -> Result<Sample, Error> {
         let set = read(&self.set_param, ev)?;
         let reset = read(&self.reset_param, ev)?;
         let mut s = Sample {
