@@ -18,9 +18,12 @@ pub struct Contact {
     pub point: Location,
     /// Terrain normal, ECEF.
     pub normal: ColumnVector3,
-    /// Terrain velocity at the contact point, ECEF, ft/s.
+    /// Surface velocity at the queried point, ECEF, ft/s, including any
+    /// rotation of the surface: the gear's wheel velocity uses this alone.
     pub velocity: ColumnVector3,
-    /// Terrain angular velocity at the contact point, ECEF, rad/s.
+    /// Terrain angular velocity, ECEF, rad/s. Only the friction solve
+    /// reads it, from the query below the centre of gravity; the gear
+    /// ignores it.
     pub angular_velocity: ColumnVector3,
 }
 
@@ -38,6 +41,13 @@ pub struct Contact {
 /// must be deterministic in its arguments and its own state for the
 /// simulation to stay reproducible. It is not copied or serialised with
 /// the models.
+///
+/// # Velocities
+///
+/// `velocity` must be the surface velocity at the queried point, including
+/// rotation; `angular_velocity` reaches only the friction solve. A rotating
+/// deck therefore returns its translation plus `ω × r` for each point, as
+/// `FGLGear` takes the contact's velocity and discards its angular velocity.
 ///
 /// # Contact point
 ///
