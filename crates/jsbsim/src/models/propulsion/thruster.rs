@@ -12,7 +12,7 @@ mod bind;
 mod tests;
 
 use super::Inputs;
-use super::families::{ThrusterFamily, ThrusterKind};
+use super::families::{ThrusterFamily, ThrusterKind, ThrusterSite};
 use super::force::Force;
 use crate::Error;
 use crate::fdm::ModelEvaluator;
@@ -164,6 +164,7 @@ impl ThrusterFamily for Direct {
         _thruster_el: &Element,
         _base: &mut ThrusterBase,
         _ctx: &mut LoadContext<'_>,
+        _site: &ThrusterSite<'_>,
     ) -> Result<Self, Error> {
         Ok(Self)
     }

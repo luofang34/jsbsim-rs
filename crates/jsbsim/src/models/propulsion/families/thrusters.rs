@@ -9,8 +9,18 @@
 use crate::Error;
 use crate::fdm::ModelEvaluator;
 use crate::fdm::{LoadContext, Models};
+use crate::models::propulsion::engine::Engine;
 use crate::models::propulsion::thruster::{Thruster, ThrusterBase};
 use crate::xml::Element;
+
+/// What a thruster type's constructor reads from the executive besides
+/// its elements.
+pub struct ThrusterSite<'a> {
+    /// The executive's step when the thruster loads (`GetDeltaT()`), s.
+    pub dt: f64,
+    /// The engines loaded before this thruster's.
+    pub engines: &'a [Engine],
+}
 
 /// One thruster type (`FGThruster` or a subclass).
 pub trait ThrusterFamily: Sized {
@@ -25,6 +35,7 @@ pub trait ThrusterFamily: Sized {
         thruster_el: &Element,
         base: &mut ThrusterBase,
         ctx: &mut LoadContext<'_>,
+        site: &ThrusterSite<'_>,
     ) -> Result<Self, Error>;
 
     /// The reads of `Calculate`, from the property tree through `ev` and
@@ -121,10 +132,11 @@ macro_rules! thrusters {
             thruster_el: &Element,
             mut base: ThrusterBase,
             ctx: &mut LoadContext<'_>,
+            site: &ThrusterSite<'_>,
         ) -> Result<Option<Thruster>, Error> {
             match name {
                 $($(#[$cfg])* $element => {
-                    let family = <$ty as ThrusterFamily>::load(el, thruster_el, &mut base, ctx)?;
+                    let family = <$ty as ThrusterFamily>::load(el, thruster_el, &mut base, ctx, site)?;
                     Ok(Some(Thruster { base, kind: ThrusterKind::$variant(family) }))
                 })*
                 _ => Ok(None),
@@ -247,11 +259,13 @@ macro_rules! thrusters {
 thrusters! {
     Propeller(crate::models::propulsion::propeller::Propeller) = "propeller";
     Nozzle(crate::models::propulsion::nozzle::Nozzle) = "nozzle";
+    Rotor(crate::models::propulsion::rotor::Rotor) = "rotor";
     Direct(crate::models::propulsion::thruster::Direct) = "direct";
     #[cfg(test)]
     Test(crate::models::propulsion::test_engine::TestThruster) = "test_thruster";
 }
 
-/// Thruster elements registered only by the tests, after JSBSim's own.
+/// Thruster elements the tests look for after JSBSim's own: one registered
+/// only by them, and one no type registers.
 #[cfg(test)]
-pub(crate) const TEST_THRUSTER_ELEMENTS: [&str; 1] = ["test_thruster"];
+pub(crate) const TEST_THRUSTER_ELEMENTS: [&str; 2] = ["test_thruster", "unregistered_thruster"];

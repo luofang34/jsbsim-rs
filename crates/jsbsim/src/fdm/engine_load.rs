@@ -9,7 +9,7 @@ use super::order::Model;
 use super::{Fdm, LoadContext, ModelFunctions};
 use crate::Error;
 use crate::models::propulsion::engine::{Engine, EngineBase, EngineType};
-use crate::models::propulsion::families::{self, ENGINE_ELEMENTS, THRUSTER_ELEMENTS};
+use crate::models::propulsion::families::{self, ENGINE_ELEMENTS, THRUSTER_ELEMENTS, ThrusterSite};
 use crate::models::propulsion::force::TransformType;
 use crate::models::propulsion::thruster::{Thruster, ThrusterBase};
 use crate::models::propulsion::{self as propulsion};
@@ -192,12 +192,16 @@ impl Fdm {
             base.load(thruster_el, el, &mut self.env.binder())?;
             let options = self.options;
             let ctx = &mut self.env.load_context(options);
-            return families::load_thruster(name, el, thruster_el, base, ctx)?.ok_or_else(|| {
-                Error::Unsupported {
+            let site = ThrusterSite {
+                dt: self.models.exec.dt,
+                engines: &self.models.propulsion.engines,
+            };
+            return families::load_thruster(name, el, thruster_el, base, ctx, &site)?.ok_or_else(
+                || Error::Unsupported {
                     construct: format!("<{name}>"),
                     path: el.location().to_string(),
-                }
-            });
+                },
+            );
         }
         Err(Error::Model {
             message: format!("{}: Unknown thruster type", thruster_el.location()),

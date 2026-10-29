@@ -10,7 +10,7 @@
 
 use super::Inputs;
 use super::engine::{EngineBase, EngineType};
-use super::families::{EngineFamily, InitRunning, ThrusterFamily};
+use super::families::{EngineFamily, InitRunning, ThrusterFamily, ThrusterSite};
 use super::thruster::{Thruster, ThrusterBase};
 use crate::Error;
 use crate::fdm::ModelEvaluator;
@@ -105,6 +105,7 @@ impl ThrusterFamily for TestThruster {
         _thruster_el: &Element,
         base: &mut ThrusterBase,
         _ctx: &mut LoadContext<'_>,
+        _site: &ThrusterSite<'_>,
     ) -> Result<Self, Error> {
         base.name = el.attribute("name").to_owned();
         base.force.set_location(ColumnVector3::new(10.0, 0.0, 12.0));

@@ -31,7 +31,7 @@ T38 ok
 X15 ok
 XB-70 ok
 ZLT-NT unsupported <buoyant_forces> (In file aircraft/ZLT-NT/ZLT-NT.xml: line 672)
-ah1s unsupported <rotor> (In file aircraft/ah1s/Engines/ah1s_rotor.xml: line 3)
+ah1s ok
 ball ok
 ballx ok
 blank load-error

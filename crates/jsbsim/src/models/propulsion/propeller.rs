@@ -16,7 +16,7 @@ mod tests;
 
 use std::f64::consts::PI;
 
-use super::families::ThrusterFamily;
+use super::families::{ThrusterFamily, ThrusterSite};
 use super::thruster::ThrusterBase;
 use crate::Error;
 use crate::fdm::ModelEvaluator;
@@ -225,6 +225,7 @@ impl ThrusterFamily for Propeller {
         thruster_el: &Element,
         base: &mut ThrusterBase,
         ctx: &mut LoadContext<'_>,
+        _site: &ThrusterSite<'_>,
     ) -> Result<Self, Error> {
         load::load(el, thruster_el, base, ctx)
     }

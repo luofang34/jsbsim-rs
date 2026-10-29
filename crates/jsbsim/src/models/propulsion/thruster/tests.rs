@@ -116,6 +116,8 @@ fn only_a_direct_thruster_ties_a_reverser() {
 
 #[test]
 fn an_unregistered_thruster_is_refused_before_it_ties_anything() {
-    let err = load(&direct("<rotor/>")).err().unwrap();
-    assert!(matches!(&err, Error::Unsupported { construct, .. } if construct == "<rotor>"));
+    let err = load(&direct("<unregistered_thruster/>")).err().unwrap();
+    assert!(
+        matches!(&err, Error::Unsupported { construct, .. } if construct == "<unregistered_thruster>")
+    );
 }

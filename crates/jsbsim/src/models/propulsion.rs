@@ -17,16 +17,19 @@ pub mod engine;
 pub mod families;
 pub mod force;
 mod fuel;
+pub mod lag_filter;
 pub mod nozzle;
 pub mod piston;
 pub mod propeller;
 pub mod rocket;
+pub mod rotor;
 pub mod tank;
 #[cfg(test)]
 mod test_engine;
 #[cfg(test)]
 mod tests;
 pub mod thruster;
+pub mod transmission;
 pub mod turbine;
 pub mod turboprop;
 

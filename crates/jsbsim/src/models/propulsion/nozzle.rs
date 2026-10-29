@@ -5,7 +5,7 @@
 //! The nozzle (`FGNozzle`): the engine's vacuum thrust less the ambient
 //! pressure on the exit area, never negative.
 
-use super::families::ThrusterFamily;
+use super::families::{ThrusterFamily, ThrusterSite};
 use super::thruster::ThrusterBase;
 use crate::Error;
 use crate::fdm::ModelEvaluator;
@@ -29,6 +29,7 @@ impl ThrusterFamily for Nozzle {
         _thruster_el: &Element,
         base: &mut ThrusterBase,
         _ctx: &mut LoadContext<'_>,
+        _site: &ThrusterSite<'_>,
     ) -> Result<Self, Error> {
         if el.find_element("area").is_none() {
             return Err(Error::Model {

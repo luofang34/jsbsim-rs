@@ -52,7 +52,9 @@ mod thrusters;
 #[cfg(test)]
 pub(crate) use thrusters::TEST_THRUSTER_ELEMENTS;
 pub(crate) use thrusters::load_thruster;
-pub use thrusters::{ThrusterFamily, ThrusterKind, ThrusterSample, thruster_registered};
+pub use thrusters::{
+    ThrusterFamily, ThrusterKind, ThrusterSample, ThrusterSite, thruster_registered,
+};
 
 use super::Inputs;
 use super::engine::{EngineBase, EngineType};

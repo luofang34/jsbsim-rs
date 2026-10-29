@@ -135,13 +135,7 @@ fn reset_restores_the_initial_contents() {
 }
 
 #[test]
-fn engine_and_thruster_types_are_refused_by_name() {
-    let propeller = r#"<propulsion><engine>
-      <test_engine><sl-fuel-flow>1</sl-fuel-flow></test_engine>
-      <thruster><rotor/></thruster>
-    </engine></propulsion>"#;
-    let err = load(propeller).err().unwrap();
-    assert!(matches!(&err, Error::Unsupported { construct, .. } if construct == "<rotor>"));
+fn unknown_engines_and_function_grains_are_refused() {
     let unknown = "<propulsion><engine><steam/><thruster/></engine></propulsion>";
     assert!(matches!(load(unknown).err(), Some(Error::Model { .. })));
     let no_thruster = "<propulsion><engine><test_engine/></engine></propulsion>";
