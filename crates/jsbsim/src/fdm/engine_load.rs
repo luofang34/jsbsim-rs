@@ -163,7 +163,7 @@ impl Fdm {
             base.load(thruster_el, el, &mut self.env.binder())?;
             let options = self.options;
             let ctx = &mut self.env.load_context(options);
-            return families::load_thruster(name, el, base, ctx)?.ok_or_else(|| {
+            return families::load_thruster(name, el, thruster_el, base, ctx)?.ok_or_else(|| {
                 Error::Unsupported {
                     construct: format!("<{name}>"),
                     path: el.location().to_string(),

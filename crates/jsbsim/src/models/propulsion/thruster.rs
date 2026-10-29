@@ -161,6 +161,7 @@ impl ThrusterFamily for Direct {
 
     fn load(
         _el: &Element,
+        _thruster_el: &Element,
         _base: &mut ThrusterBase,
         _ctx: &mut LoadContext<'_>,
     ) -> Result<Self, Error> {

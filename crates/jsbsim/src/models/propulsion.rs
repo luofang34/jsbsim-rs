@@ -15,6 +15,7 @@ pub mod engine;
 pub mod families;
 pub mod force;
 mod fuel;
+pub mod propeller;
 pub mod tank;
 #[cfg(test)]
 mod test_engine;

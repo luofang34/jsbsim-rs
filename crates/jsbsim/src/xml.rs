@@ -190,6 +190,27 @@ impl Element {
             .filter(move |c| name.is_empty() || c.name == name)
     }
 
+    /// The children a `FindNextElement(name)` loop visits when the last
+    /// call before it was `FindElement(cursor)`: those named `name` after
+    /// the first child named `cursor`, or from the start when there is no
+    /// such child (which resets the cursor).
+    pub fn find_next_elements_after<'a>(
+        &'a self,
+        cursor: &str,
+        name: &'a str,
+    ) -> impl Iterator<Item = &'a Element> + 'a {
+        let start = self
+            .children
+            .iter()
+            .position(|c| c.name == cursor)
+            .map_or(0, |i| i + 1);
+        self.children
+            .get(start..)
+            .unwrap_or_default()
+            .iter()
+            .filter(move |c| c.name == name)
+    }
+
     /// `GetNumElements(name)`.
     #[must_use]
     pub fn num_elements(&self, name: &str) -> usize {

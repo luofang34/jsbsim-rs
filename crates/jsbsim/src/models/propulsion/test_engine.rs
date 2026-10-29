@@ -65,7 +65,7 @@ impl EngineFamily for TestEngine {
         base: &mut EngineBase,
         thruster: &mut Thruster,
         sample: Self::Sample,
-        _input: &Inputs,
+        input: &Inputs,
     ) {
         self.calculations = self.calculations.wrapping_add(1);
         self.throttle = sample.0;
@@ -74,6 +74,7 @@ impl EngineFamily for TestEngine {
         } else {
             0.0
         };
+        thruster.base.input.load(input);
         thruster.calculate(1000.0 * base.pct_power, &sample.1);
     }
 
@@ -96,6 +97,7 @@ impl ThrusterFamily for TestThruster {
 
     fn load(
         el: &Element,
+        _thruster_el: &Element,
         base: &mut ThrusterBase,
         _ctx: &mut LoadContext<'_>,
     ) -> Result<Self, Error> {

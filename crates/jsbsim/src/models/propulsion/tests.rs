@@ -147,10 +147,10 @@ fn engine_and_thruster_types_are_refused_by_name() {
     );
     let propeller = r#"<propulsion><engine>
       <test_engine><sl-fuel-flow>1</sl-fuel-flow></test_engine>
-      <thruster><propeller/></thruster>
+      <thruster><rotor/></thruster>
     </engine></propulsion>"#;
     let err = load(propeller).err().unwrap();
-    assert!(matches!(&err, Error::Unsupported { construct, .. } if construct == "<propeller>"));
+    assert!(matches!(&err, Error::Unsupported { construct, .. } if construct == "<rotor>"));
     let unknown = "<propulsion><engine><steam/><thruster/></engine></propulsion>";
     assert!(matches!(load(unknown).err(), Some(Error::Model { .. })));
     let no_thruster = "<propulsion><engine><test_engine/></engine></propulsion>";

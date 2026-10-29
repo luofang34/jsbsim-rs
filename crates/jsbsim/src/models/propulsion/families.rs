@@ -136,9 +136,11 @@ pub trait ThrusterFamily: Sized {
     type Sample;
 
     /// The type's constructor on its element `el` (the child of
-    /// `<thruster>`), filling `base` as `FGThruster`'s constructor does.
+    /// `thruster_el`, the `<thruster>`), once `FGThruster`'s constructor
+    /// has filled `base`.
     fn load(
         el: &Element,
+        thruster_el: &Element,
         base: &mut ThrusterBase,
         ctx: &mut LoadContext<'_>,
     ) -> Result<Self, Error>;
@@ -159,11 +161,36 @@ pub trait ThrusterFamily: Sized {
     fn reset_to_ic(&mut self, base: &mut ThrusterBase) {
         base.reset_to_ic();
     }
+
+    /// `GetRPM`: the thruster's own speed, rpm.
+    fn rpm(&self) -> f64 {
+        0.0
+    }
+
+    /// `GetEngineRPM`: the speed it turns the engine at, rpm.
+    fn engine_rpm(&self, _base: &ThrusterBase) -> f64 {
+        0.0
+    }
+
+    /// `SetRPM`.
+    fn set_rpm(&mut self, _rpm: f64) {}
+
+    /// `SetEngineRPM`.
+    fn set_engine_rpm(&mut self, _base: &ThrusterBase, _rpm: f64) {}
+
+    /// `FGPropeller::SetAdvance`, which engines call on a propeller only.
+    fn set_advance(&mut self, _advance: f64) {}
+
+    /// `FGPropeller::SetFeather`.
+    fn set_feather(&mut self, _feather: bool) {}
 }
 
 macro_rules! engines {
     ($($(#[$cfg:meta])* $variant:ident($ty:ty) = $element:literal;)*) => {
         /// An engine's type, with the type's own state.
+        // Each engine holds one in place, read every frame; boxing the large
+        // variants would only add an indirection.
+        #[allow(clippy::large_enum_variant)]
         #[derive(Debug, Clone)]
         pub enum EngineKind {
             $($(#[$cfg])* #[doc = concat!("`<", $element, ">`.")] $variant($ty),)*
@@ -295,6 +322,9 @@ macro_rules! engines {
 macro_rules! thrusters {
     ($($(#[$cfg:meta])* $variant:ident($ty:ty) = $element:literal;)*) => {
         /// A thruster's type, with the type's own state.
+        // Each engine holds one in place, read every frame; boxing the large
+        // variants would only add an indirection.
+        #[allow(clippy::large_enum_variant)]
         #[derive(Debug, Clone)]
         pub enum ThrusterKind {
             $($(#[$cfg])* #[doc = concat!("`<", $element, ">`.")] $variant($ty),)*
@@ -323,12 +353,13 @@ macro_rules! thrusters {
         pub(crate) fn load_thruster(
             name: &str,
             el: &Element,
+            thruster_el: &Element,
             mut base: ThrusterBase,
             ctx: &mut LoadContext<'_>,
         ) -> Result<Option<Thruster>, Error> {
             match name {
                 $($(#[$cfg])* $element => {
-                    let family = <$ty as ThrusterFamily>::load(el, &mut base, ctx)?;
+                    let family = <$ty as ThrusterFamily>::load(el, thruster_el, &mut base, ctx)?;
                     Ok(Some(Thruster { base, kind: ThrusterKind::$variant(family) }))
                 })*
                 _ => Ok(None),
@@ -370,6 +401,50 @@ macro_rules! thrusters {
                     $($(#[$cfg])* ThrusterKind::$variant(ref mut f) => f.reset_to_ic(&mut self.base),)*
                 }
             }
+
+            /// `GetRPM`.
+            #[must_use]
+            pub fn rpm(&self) -> f64 {
+                match self.kind {
+                    $($(#[$cfg])* ThrusterKind::$variant(ref f) => f.rpm(),)*
+                }
+            }
+
+            /// `GetEngineRPM`.
+            #[must_use]
+            pub fn engine_rpm(&self) -> f64 {
+                match self.kind {
+                    $($(#[$cfg])* ThrusterKind::$variant(ref f) => f.engine_rpm(&self.base),)*
+                }
+            }
+
+            /// `SetRPM`.
+            pub fn set_rpm(&mut self, rpm: f64) {
+                match self.kind {
+                    $($(#[$cfg])* ThrusterKind::$variant(ref mut f) => f.set_rpm(rpm),)*
+                }
+            }
+
+            /// `SetEngineRPM`.
+            pub fn set_engine_rpm(&mut self, rpm: f64) {
+                match self.kind {
+                    $($(#[$cfg])* ThrusterKind::$variant(ref mut f) => f.set_engine_rpm(&self.base, rpm),)*
+                }
+            }
+
+            /// `SetAdvance` of a propeller.
+            pub fn set_advance(&mut self, advance: f64) {
+                match self.kind {
+                    $($(#[$cfg])* ThrusterKind::$variant(ref mut f) => f.set_advance(advance),)*
+                }
+            }
+
+            /// `SetFeather` of a propeller.
+            pub fn set_feather(&mut self, feather: bool) {
+                match self.kind {
+                    $($(#[$cfg])* ThrusterKind::$variant(ref mut f) => f.set_feather(feather),)*
+                }
+            }
         }
     };
 }
@@ -380,6 +455,7 @@ engines! {
 }
 
 thrusters! {
+    Propeller(super::propeller::Propeller) = "propeller";
     Direct(super::thruster::Direct) = "direct";
     #[cfg(test)]
     Test(super::test_engine::TestThruster) = "test_thruster";
