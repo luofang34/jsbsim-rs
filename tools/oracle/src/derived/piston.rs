@@ -21,12 +21,18 @@ pub const NOISE0: &str = "c172x_noise0";
 /// The c172r with accelerometers.
 pub const ACCELEROMETERS: &str = "c172r_accelerometers";
 
-/// Upstream scripts flying the c172x untrimmed.
-pub const NOISE0_SCRIPTS: [&str; 4] = [
+/// Upstream scripts flying the c172x, untrimmed or trimmed through
+/// `simulation/do_simple_trim`.
+pub const NOISE0_SCRIPTS: [&str; 9] = [
     "c1723",
     "c1724",
     "c172_elevation_test",
     "c172_runway_at_rest_cg_shift",
+    "c1722",
+    "c172_cruise_8K",
+    "c172_cross_wind",
+    "c172_head_wind",
+    "c172_elevator_doublet",
 ];
 
 /// The c172x files besides the aircraft and its autopilot.

@@ -58,6 +58,33 @@ fn measure(fdm: &mut Fdm, frames: u32) -> (u64, u64) {
     )
 }
 
+/// (root under `oracle/`, script) of every script that trims through
+/// `simulation/do_simple_trim`.
+#[cfg(test)]
+const TRIMMED: [(&str, &str); 9] = [
+    ("derived", "scripts/c1722.xml"),
+    ("derived", "scripts/c172_cruise_8K.xml"),
+    ("derived", "scripts/c172_cross_wind.xml"),
+    ("derived", "scripts/c172_head_wind.xml"),
+    ("derived", "scripts/c172_elevator_doublet.xml"),
+    ("inputs", "scripts/p51d_tail_wind.xml"),
+    ("inputs", "scripts/Short_S23_2.xml"),
+    ("inputs", "scripts/Short_S23_3.xml"),
+    ("inputs", "scripts/Short_S23_4.xml"),
+];
+
+/// Runs `fdm` until its script's trim has completed.
+#[cfg(test)]
+fn run_until_trimmed(fdm: &mut Fdm, script: &str) {
+    for _ in 0..5000 {
+        if fdm.get_property("simulation/trim-completed").unwrap() == 1.0 {
+            return;
+        }
+        assert!(fdm.run().unwrap(), "{script} ended before its trim");
+    }
+    panic!("{script} did not trim within 5000 frames");
+}
+
 /// The corpus aircraft that load `ok`, flown from the airborne initial
 /// condition.
 #[cfg(test)]
@@ -95,6 +122,25 @@ fn measure_corpus(
         fdm.run_ic().unwrap();
         report.push((
             format!("aircraft {name}"),
+            FRAMES,
+            measure(&mut fdm, FRAMES),
+        ));
+    }
+}
+
+/// The trimming scripts, measured from their first frame after the trim
+/// has completed: a trim allocates its axes and contacts when it runs, as
+/// FGTrim does, and the frames after it nothing.
+#[cfg(test)]
+fn measure_trimmed(report: &mut Vec<(String, u32, (u64, u64))>) {
+    for (root, script) in TRIMMED {
+        let resolver = FileResolver::new(oracle_dir().join(root));
+        let mut fdm = Fdm::new().unwrap();
+        fdm.load_script(&resolver, script).unwrap();
+        fdm.run_ic().unwrap();
+        run_until_trimmed(&mut fdm, script);
+        report.push((
+            format!("trimmed script {script}"),
             FRAMES,
             measure(&mut fdm, FRAMES),
         ));
@@ -169,6 +215,8 @@ fn steady_state_frames_allocate_nothing() {
             measure(&mut fdm, frames),
         ));
     }
+
+    measure_trimmed(&mut report);
 
     let failures: Vec<_> = report
         .iter()

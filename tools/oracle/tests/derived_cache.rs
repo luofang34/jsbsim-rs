@@ -49,6 +49,33 @@ fn loading_aircraft() -> Vec<String> {
         .collect()
 }
 
+/// (root under `oracle/`, script) of every script that trims through
+/// `simulation/do_simple_trim`.
+#[cfg(test)]
+const TRIMMED: [(&str, &str); 9] = [
+    ("derived", "scripts/c1722.xml"),
+    ("derived", "scripts/c172_cruise_8K.xml"),
+    ("derived", "scripts/c172_cross_wind.xml"),
+    ("derived", "scripts/c172_head_wind.xml"),
+    ("derived", "scripts/c172_elevator_doublet.xml"),
+    ("inputs", "scripts/p51d_tail_wind.xml"),
+    ("inputs", "scripts/Short_S23_2.xml"),
+    ("inputs", "scripts/Short_S23_3.xml"),
+    ("inputs", "scripts/Short_S23_4.xml"),
+];
+
+/// Runs `fdm` until its script's trim has completed.
+#[cfg(test)]
+fn run_until_trimmed(fdm: &mut Fdm, script: &str) {
+    for _ in 0..5000 {
+        if fdm.get_property("simulation/trim-completed").unwrap() == 1.0 {
+            return;
+        }
+        assert!(fdm.run().unwrap(), "{script} ended before its trim");
+    }
+    panic!("{script} did not trim within 5000 frames");
+}
+
 /// Uncached derived reads across the measured frames of `fdm`.
 #[cfg(test)]
 fn misses(fdm: &mut Fdm, count: &AtomicUsize, frames: u32) -> usize {
@@ -101,6 +128,18 @@ fn steady_state_frames_read_only_cached_derived_values() {
             fdm.load_script(resolver, script).unwrap();
             fdm.run_ic().unwrap();
             report.push((format!("script {script}"), misses(&mut fdm, &count, frames)));
+        }
+        // The trimming scripts, from their first frame after the trim.
+        for (root, script) in TRIMMED {
+            let resolver = FileResolver::new(oracle_dir().join(root));
+            let mut fdm = Fdm::new().unwrap();
+            fdm.load_script(&resolver, script).unwrap();
+            fdm.run_ic().unwrap();
+            run_until_trimmed(&mut fdm, script);
+            report.push((
+                format!("trimmed script {script}"),
+                misses(&mut fdm, &count, FRAMES),
+            ));
         }
         assert!(
             report.iter().all(|(_, n)| *n == 0),
