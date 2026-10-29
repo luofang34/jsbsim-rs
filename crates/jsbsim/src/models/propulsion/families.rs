@@ -53,7 +53,8 @@ mod thrusters;
 pub(crate) use thrusters::TEST_THRUSTER_ELEMENTS;
 pub(crate) use thrusters::load_thruster;
 pub use thrusters::{
-    ThrusterFamily, ThrusterKind, ThrusterSample, ThrusterSite, thruster_registered,
+    REGISTERED_THRUSTERS, ThrusterFamily, ThrusterKind, ThrusterSample, ThrusterSite,
+    thruster_registered,
 };
 
 use super::Inputs;
@@ -179,6 +180,9 @@ macro_rules! engines {
             $($(#[$cfg])* #[doc = concat!("`<", $element, ">`.")] $variant($ty),)*
         }
 
+        /// The elements engine types register, in registration order.
+        pub const REGISTERED_ENGINES: &[&str] = &[$($(#[$cfg])* $element,)*];
+
         /// Whether an engine type registers element `name`.
         #[must_use]
         pub fn engine_registered(name: &str) -> bool {
@@ -192,6 +196,14 @@ macro_rules! engines {
         // unused.
         #[allow(unused_variables)]
         impl EngineKind {
+            /// The element its type registers.
+            #[must_use]
+            pub fn element(&self) -> &'static str {
+                match *self {
+                    $($(#[$cfg])* Self::$variant(_) => $element,)*
+                }
+            }
+
             /// Its `FGEngine::EngineType`.
             #[must_use]
             pub fn engine_type(&self) -> EngineType {

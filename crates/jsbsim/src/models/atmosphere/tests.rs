@@ -138,3 +138,17 @@ fn standard_table_prints_every_thousand_feet() {
         "           0         59           2116        0.0023769118"
     );
 }
+
+#[test]
+fn all_lists_every_atmosphere_model_once() {
+    // A new variant fails to compile here until it is given a position
+    // in ALL.
+    let position = |model: AtmosphereModel| match model {
+        AtmosphereModel::Standard => 0,
+        AtmosphereModel::Mars => 1,
+        AtmosphereModel::Msis => 2,
+    };
+    for (i, model) in AtmosphereModel::ALL.into_iter().enumerate() {
+        assert_eq!(position(model), i, "{model:?}");
+    }
+}

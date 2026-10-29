@@ -154,6 +154,11 @@ pub enum AtmosphereModel {
     Msis,
 }
 
+impl AtmosphereModel {
+    /// Every model, each once.
+    pub const ALL: [Self; 3] = [Self::Standard, Self::Mars, Self::Msis];
+}
+
 /// The atmosphere.
 #[derive(Debug, Clone)]
 pub struct Atmosphere {

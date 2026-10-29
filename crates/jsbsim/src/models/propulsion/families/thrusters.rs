@@ -113,6 +113,9 @@ macro_rules! thrusters {
             $variant(<$ty as ThrusterFamily>::Sample),)*
         }
 
+        /// The elements thruster types register, in registration order.
+        pub const REGISTERED_THRUSTERS: &[&str] = &[$($(#[$cfg])* $element,)*];
+
         /// Whether a thruster type registers element `name`.
         #[must_use]
         pub fn thruster_registered(name: &str) -> bool {
@@ -176,6 +179,14 @@ macro_rules! thrusters {
             pub fn reset_to_ic(&mut self) {
                 match self.kind {
                     $($(#[$cfg])* ThrusterKind::$variant(ref mut f) => f.reset_to_ic(&mut self.base),)*
+                }
+            }
+
+            /// The element its type registers.
+            #[must_use]
+            pub fn element(&self) -> &'static str {
+                match self.kind {
+                    $($(#[$cfg])* ThrusterKind::$variant(_) => $element,)*
                 }
             }
 
