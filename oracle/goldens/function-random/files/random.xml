@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  <random> and <urandom> with and without their attributes, generators of
+  their own seeded through atoi, a name JSBSim ignores, and draws nested
+  in other operations, which are never folded as constants.
+-->
+<system>
+  <property>r/x</property>
+  <function name="r/normal">
+    <random/>
+  </function>
+  <function name="r/normal-scaled">
+    <random mean="2.5" stddev="0.25"/>
+  </function>
+  <function name="r/uniform">
+    <urandom/>
+  </function>
+  <function name="r/uniform-range">
+    <urandom lower="-3" upper="7"/>
+  </function>
+  <function name="r/uniform-reversed">
+    <urandom lower="4" upper="-2"/>
+  </function>
+  <function name="r/seeded">
+    <random seed="5"/>
+  </function>
+  <function name="r/seeded-again">
+    <random seed="5"/>
+  </function>
+  <function name="r/seeded-uniform">
+    <urandom seed="5" lower="0" upper="1"/>
+  </function>
+  <function name="r/seed-garbage">
+    <random seed="12abc" mean="-1"/>
+  </function>
+  <function name="r/seed-negative">
+    <urandom seed="-7"/>
+  </function>
+  <function name="r/seed-zero">
+    <random seed="0"/>
+  </function>
+  <function name="r/named">
+    <sum>
+      <random name="r/inner"/>
+      <v>10</v>
+    </sum>
+  </function>
+  <function name="r/twice">
+    <difference>
+      <random/>
+      <random/>
+    </difference>
+  </function>
+  <function name="r/product">
+    <product>
+      <urandom lower="1" upper="2"/>
+      <p>r/x</p>
+    </product>
+  </function>
+  <function name="r/not-folded">
+    <sum>
+      <v>1</v>
+      <urandom/>
+    </sum>
+  </function>
+  <function name="r/reads-normal">
+    <product>
+      <p>r/normal</p>
+      <v>2</v>
+    </product>
+  </function>
+</system>

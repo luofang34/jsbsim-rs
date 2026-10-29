@@ -9,7 +9,7 @@
 
 use std::f64::consts::PI;
 
-use super::ops::{Parity, UNSUPPORTED};
+use super::ops::Parity;
 use super::{
     Bound, Evaluator, FnId, Function, FunctionError, FunctionSet, Op, Parameter, PropertyValue,
     Table, TableId, is_number, output_name,
@@ -153,6 +153,7 @@ impl FunctionSet {
             copy_to: None,
             cached: None,
             at,
+            random: None,
         });
         if let Some(property) = output {
             let node = self.bind(tree, &property, Bound::Function(id), &el.location())?;
@@ -224,11 +225,10 @@ impl FunctionSet {
             }
             "description" => return Ok(None),
             _ => match Op::from_name(name) {
-                Some(op) if UNSUPPORTED.contains(&op) => {
-                    return Err(Error::Unsupported {
-                        construct: format!("<{name}>"),
-                        path: el.location().to_string(),
-                    });
+                Some(op @ (Op::Random | Op::URandom)) => {
+                    return self
+                        .load_random(el, op)
+                        .map(|id| Some(Parameter::Function(id)));
                 }
                 Some(op) => return self.load_nested(tree, el, op, prefix, body).map(Some),
                 None => {
@@ -353,7 +353,9 @@ impl FunctionSet {
         let Ok(function) = self.function(id) else {
             return false;
         };
-        !UNSUPPORTED.contains(&function.op)
+        // `aFunc<func_t, 0>::IsConstant`: an operation without parameters
+        // is assumed to vary.
+        !matches!(function.op, Op::Random | Op::URandom)
             && function.params.iter().all(|p| match p {
                 Parameter::Real(_) => true,
                 Parameter::Property(v) | Parameter::Template { property: v, .. } => {

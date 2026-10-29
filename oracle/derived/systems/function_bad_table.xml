@@ -1,8 +1,7 @@
 <!--
   SPDX-License-Identifier: LGPL-2.1-or-later
-  function_bad_table.xml: tests/function.xml without its random components (see
-  function_no_random.xml) and with its first function table typed
-  "qsdfghjkl", as TestFunctions.test_table_exception edits it.
+  function_bad_table.xml: tests/function.xml with its first function table typed "qsdfghjkl", as
+  TestFunctions.test_table_exception edits it.
   Regenerate with `oracle derive`.
 -->
 <system>
@@ -225,6 +224,21 @@
           <p>test/gamma</p>
           <v> 3 </v>
         </rotation_wf_to_bf>
+      </function>
+    </fcs_function>
+    <fcs_function name="test/random">
+      <function>
+        <random/>
+      </function>
+    </fcs_function>
+    <fcs_function name="test/random2">
+      <function>
+        <random/>
+      </function>
+    </fcs_function>
+    <fcs_function name="test/urandom">
+      <function>
+        <urandom/>
       </function>
     </fcs_function>
     <fcs_function name="test/table">

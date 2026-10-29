@@ -1,15 +1,15 @@
-# Upstream tests/function.xml without its random components
-# (oracle/derived/systems/function_no_random.xml) driven as
+# Upstream tests/function.xml (vendored in oracle/inputs) driven as
 # TestFunctions.test_functions, test_rotations, test_wf_to_bf and
 # test_table_exception drive it, on tripod_function and
 # tripod_function_bad_table; test_functions then sweeps test/input
-# over the table.
+# over the table. test/random, test/random2 and test/urandom draw from
+# the executive's generator, seeded 0.
 # The tripod starts at 10000 ft so that its contacts stay clear of the
 # ground; nothing else differs from the upstream test.
-paths ../.. derived/aircraft derived/systems
+paths ../.. derived/aircraft inputs/tests
 new
 load tripod_function
-watch test/sum-values test/sum-values-inverted-input-sign test/sum-value-property test/sum-properties test/summer test/summer-with-bias test/output test/product-values test/product-value-property test/product-as-a-no-op test/sin-value test/sin-property test/interpolate1d test/table simulation/frame
+watch test/sum-values test/sum-values-inverted-input-sign test/sum-value-property test/sum-properties test/summer test/summer-with-bias test/output test/product-values test/product-value-property test/product-as-a-no-op test/sin-value test/sin-property test/interpolate1d test/table test/random test/random2 test/urandom simulation/frame
 set ic/h-sl-ft 10000
 runic
 set test/reference 1.5
@@ -17,6 +17,12 @@ run
 set test/input 0.0
 run
 set test/input 0.5
+run
+# Reseeding the executive restarts the random components' sequence.
+set simulation/randomseed 4
+run
+run
+set simulation/randomseed 4
 run
 set test/input 1.0
 run
@@ -26,7 +32,7 @@ set test/input 3.0
 run
 set test/input -1.0
 run
-paths ../.. derived/aircraft derived/systems
+paths ../.. derived/aircraft inputs/tests
 new
 load tripod_function
 watch test/alpha_local test/beta_local test/gamma_local
@@ -7226,7 +7232,7 @@ set test/gamma 170
 run
 set test/gamma 180
 run
-paths ../.. derived/aircraft derived/systems
+paths ../.. derived/aircraft inputs/tests
 new
 load tripod_function
 watch test/bf_to_wf/x test/bf_to_wf/y test/bf_to_wf/z test/wf_to_bf/x test/wf_to_bf/y test/wf_to_bf/z

@@ -218,16 +218,35 @@ fn argument_checks() {
 }
 
 #[test]
-fn random_is_unsupported_and_unknown_operations_are_ignored() {
+fn unknown_operations_are_ignored() {
+    let value = Fixture::new(&[]).value("<function><sum><bogus/><v>1</v><v>2</v></sum></function>");
+    assert_eq!(value, 3.0);
+}
+
+#[test]
+fn random_draws_on_every_evaluation_and_is_never_folded() {
+    let mut f = Fixture::new(&[]);
+    let id = f
+        .load(r#"<function><sum><v>1</v><urandom lower="2" upper="4" seed="9"/></sum></function>"#)
+        .unwrap();
+    let expected = crate::random::RandomNumberGenerator::new(9);
+    for _ in 0..3 {
+        let value = 1.0 + (expected.uniform() * 1.0 + 3.0);
+        assert_eq!(f.eval(id).unwrap().to_bits(), value.to_bits());
+    }
+}
+
+#[test]
+fn random_refuses_children_and_a_clock_seed() {
     let mut f = Fixture::new(&[]);
     assert!(matches!(
-        f.load("<function><random/></function>"),
-        Err(Error::Unsupported { construct, .. }) if construct == "<random>"
+        f.load("<function><random><v>1</v></random></function>"),
+        Err(Error::Function(FunctionError::Arguments { message, .. })) if message == "should have no arguments."
     ));
-    assert_eq!(
-        f.value("<function><sum><bogus/><v>1</v><v>2</v></sum></function>"),
-        3.0
-    );
+    assert!(matches!(
+        f.load(r#"<function><random seed="time_now"/></function>"#),
+        Err(Error::Unsupported { construct, .. }) if construct.starts_with("<random seed=\"time_now\">")
+    ));
 }
 
 #[test]

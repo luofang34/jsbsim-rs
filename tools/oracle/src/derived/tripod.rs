@@ -29,7 +29,7 @@ pub const SYSTEMS: &[System] = &[
     upstream("switch", "switch.xml"),
     upstream("filter", "filter.xml"),
     upstream("integrators", "integrators.xml"),
-    derived("function", "function_no_random.xml"),
+    upstream("function", "function.xml"),
     System {
         loads: false,
         ..derived("function_bad_table", "function_bad_table.xml")

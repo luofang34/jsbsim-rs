@@ -1,0 +1,35 @@
+# <random> and <urandom> (files/random.xml), drawn from a fresh
+# executive's generator, seeded 0, and from generators of their own;
+# then the elements JSBSim refuses, and a clock-seeded one, which the
+# port refuses as unsupported.
+load local files/random.xml
+get r/inner
+eval
+eval
+eval
+eval
+eval
+eval
+set r/x 3.5
+eval r/product r/product r/not-folded
+eval r/normal r/reads-normal r/normal
+get r/normal
+get r/reads-normal
+cache r/twice 1
+eval r/twice r/twice
+cache r/twice 0
+eval r/twice
+eval r/seeded r/seeded-again r/seeded r/seeded-again r/seeded-uniform
+reset
+load local files/random.xml
+eval
+eval
+reset
+load local files/random-child.xml
+reset
+load local files/urandom-bad-lower.xml
+reset
+load local files/random-bad-stddev.xml
+reset
+load local files/random-time-now.xml
+reset

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
   SPDX-License-Identifier: LGPL-2.1-or-later
-  tripod_function: tests/tripod.xml with <system file="function_no_random.xml"/>
+  tripod_function: tests/tripod.xml with <system file="function.xml"/>
   appended, as JSBSim's tests/JSBSim_utils.py include_system_test_file
   derives it. Regenerate with `oracle derive`.
 -->
@@ -58,5 +58,5 @@
     </contact>
   </ground_reactions>
   <aerodynamics/>
-  <system file="function_no_random.xml"/>
+  <system file="function.xml"/>
 </fdm_config>

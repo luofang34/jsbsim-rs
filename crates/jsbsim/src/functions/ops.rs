@@ -127,7 +127,3 @@ operations! {
     RotationBfToWf => "rotation_bf_to_wf", 7, 7, Either, false;
     RotationWfToBf => "rotation_wf_to_bf", 7, 7, Either, false;
 }
-
-/// Operations this port rejects with [`Error::Unsupported`](crate::Error::Unsupported):
-/// JSBSim's random generator is not mirrored yet.
-pub const UNSUPPORTED: &[Op] = &[Op::Random, Op::URandom];

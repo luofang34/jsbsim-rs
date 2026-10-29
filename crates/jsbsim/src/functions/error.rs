@@ -23,6 +23,14 @@ pub enum FunctionError {
         /// JSBSim's message, e.g. "should have at least 2 argument(s).".
         message: String,
     },
+    /// An attribute that should be a number is not (`InvalidNumber`).
+    #[error("{at}: {message}")]
+    Attribute {
+        /// Where the element is.
+        at: Location,
+        /// JSBSim's message.
+        message: String,
+    },
     /// `#` used without a numeric prefix to substitute.
     #[error("{at}: Illegal use of the special character '#'")]
     IllegalHash {

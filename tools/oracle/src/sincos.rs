@@ -130,6 +130,7 @@ pub const CASES: &[&str] = &[
     "fcs-waypoint-units",
     "function-errors",
     "function-ops",
+    "function-random",
     "functions-basic",
     "gear_rover_drop",
     "gear_rover_retract",

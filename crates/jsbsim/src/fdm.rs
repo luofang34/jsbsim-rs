@@ -196,6 +196,9 @@ impl Fdm {
         };
         fdm.options = options;
         fdm.env.functions = FunctionSet::with_options(options);
+        fdm.env
+            .functions
+            .set_exec_generator(fdm.models.exec.rng.clone());
         fdm.bind_all()?;
         fdm.load_planet_constants();
         fdm.initialize_models()?;

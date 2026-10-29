@@ -214,10 +214,6 @@ pub fn expected_blocking(repo_root: &Path) -> Result<Vec<(String, String)>, Orac
     }
     let function = read("tests/function.xml")?;
     files.push((
-        "systems/function_no_random.xml".to_owned(),
-        systems::no_random(&function)?,
-    ));
-    files.push((
         "systems/function_bad_table.xml".to_owned(),
         systems::bad_table(&function)?,
     ));

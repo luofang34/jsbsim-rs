@@ -30407,3 +30407,38 @@ property = "*/aero/qbar-psf"
 abs = 2.9e-13
 rel = 0.0
 reason = "The falling tripod's density and speed go through pow, exp and the geodetic conversions, where Rust libm and Apple libm differ in the last digit; the sensor's 12-bit quantization absorbs it. With Apple libm (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 2.8e-14; bound 10x that."
+
+[[tolerance]]
+case = "function-random"
+property = "*"
+abs = 0.0
+rel = 0.0
+reason = "Bit-identical: the uniform deviates, scales and offsets are IEEE basic operations in JSBSim's order; the tags listed differ."
+
+[[tolerance]]
+case = "function-random"
+property = "*/r/normal"
+abs = 2.2e-15
+rel = 0.0
+reason = "The normal deviate's polar method takes log from Rust libm, which differs from Apple libm in the last digit of some logarithms; with Apple libm (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 2.2e-16; bound 10x that."
+
+[[tolerance]]
+case = "function-random"
+property = "*/r/seed-zero"
+abs = 2.2e-15
+rel = 0.0
+reason = "The normal deviate's polar method takes log from Rust libm, which differs from Apple libm in the last digit of some logarithms; with Apple libm (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 2.2e-16; bound 10x that."
+
+[[tolerance]]
+case = "fcs-function"
+property = "*/test/random"
+abs = 2.2e-15
+rel = 0.0
+reason = "The normal deviate's polar method takes log from Rust libm, which differs from Apple libm in the last digit of some logarithms; with Apple libm (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 2.2e-16; bound 10x that."
+
+[[tolerance]]
+case = "fcs-function"
+property = "*/test/random2"
+abs = 5.6e-16
+rel = 0.0
+reason = "The normal deviate's polar method takes log from Rust libm, which differs from Apple libm in the last digit of some logarithms; with Apple libm (scripts/oracle-sincos.sh) the case is bit-identical. Observed max 5.6e-17; bound 10x that."

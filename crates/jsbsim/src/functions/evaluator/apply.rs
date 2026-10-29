@@ -88,6 +88,10 @@ impl<G: GetterSource> Evaluator<'_, G> {
                 }
             }
             Op::Switch => self.switch(f)?,
+            Op::Random | Op::URandom => match &f.random {
+                Some(draw) => draw.draw(&self.set.exec_rng),
+                None => f64::NAN,
+            },
             Op::Interpolate1d => self.interpolate1d(f)?,
             Op::Lt | Op::Le | Op::Gt | Op::Ge | Op::Eq | Op::Nq => self.compare(f)?,
             Op::RotationAlphaLocal | Op::RotationBetaLocal | Op::RotationGammaLocal => {

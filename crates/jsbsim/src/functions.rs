@@ -19,6 +19,7 @@ mod evaluator;
 mod load;
 mod ops;
 mod parameter;
+mod random;
 mod table;
 
 #[cfg(test)]
@@ -62,6 +63,8 @@ pub struct Function {
     copy_to: Option<NodeId>,
     cached: Option<f64>,
     at: Location,
+    /// The draw of a `<random>` or `<urandom>`.
+    random: Option<random::RandomDraw>,
 }
 
 impl Function {
@@ -98,6 +101,10 @@ pub struct FunctionSet {
     bound: NodeMap<Bound>,
     templates: BTreeMap<String, FnId>,
     options: LoadOptions,
+    /// The executive's generator, which `<random>` and `<urandom>` without
+    /// a `seed` draw from; a set of its own until the executive shares
+    /// its generator ([`set_exec_generator`](Self::set_exec_generator)).
+    exec_rng: crate::random::SharedGenerator,
 }
 
 impl FunctionSet {
@@ -114,6 +121,13 @@ impl FunctionSet {
             options,
             ..Self::default()
         }
+    }
+
+    /// Makes `<random>` and `<urandom>` without a `seed` draw from the
+    /// executive's generator `rng`, as `FGFDMExec::GetRandomGenerator`
+    /// shares it.
+    pub fn set_exec_generator(&mut self, rng: crate::random::SharedGenerator) {
+        self.exec_rng = rng;
     }
 
     /// Something JSBSim logs and ignores: logged, or refused when strict.
