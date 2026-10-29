@@ -148,7 +148,7 @@ impl Models {
         a.inertial_position = self.propagate.state.inertial_position;
         a.delta_t = self.exec.dt;
         a.mass = self.mass_balance.mass;
-        a.multipliers.clear();
+        self.ground_reactions.load_multipliers(&mut a.multipliers);
         a.terrain_velocity = self.propagate.local_terrain_velocity;
         a.terrain_angular_vel = self.propagate.local_terrain_angular_velocity;
     }
@@ -354,6 +354,8 @@ impl Fdm {
             Model::Accelerations => {
                 let (hd, ts) = (m.exec.hold_down, m.exec.trim_status);
                 m.accelerations.run(holding, hd, ts);
+                let solved = &m.accelerations.input.multipliers;
+                m.ground_reactions.store_multipliers(solved);
             }
             Model::Auxiliary => m.auxiliary.run(holding),
             _ => {}

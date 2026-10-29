@@ -15,6 +15,9 @@ use crate::math::{
 };
 use crate::units::constrain;
 
+#[cfg(test)]
+mod tests;
+
 /// A ground friction constraint (`LagrangeMultiplier`).
 #[derive(Debug, Clone, Copy, Default)]
 pub struct LagrangeMultiplier {
@@ -73,7 +76,8 @@ pub struct Inputs {
     pub delta_t: f64,
     /// Vehicle mass, slugs.
     pub mass: f64,
-    /// Ground friction constraints.
+    /// Ground friction constraints, copied from the contacts that
+    /// registered them and copied back once solved.
     pub multipliers: Vec<LagrangeMultiplier>,
 }
 
@@ -100,6 +104,9 @@ pub struct Accelerations {
     pub friction_forces: ColumnVector3,
     /// Friction moments.
     pub friction_moments: ColumnVector3,
+    /// The friction solver's matrix and right-hand side, kept so that
+    /// frames with contacts reuse their storage.
+    scratch: (Vec<f64>, Vec<f64>),
 }
 
 impl Accelerations {
@@ -194,8 +201,10 @@ impl Accelerations {
             return;
         }
         let i = &mut self.input;
-        let mut a = friction_matrix(i, n);
-        let mut rhs = vec![0.0; n];
+        let (a, rhs) = &mut self.scratch;
+        friction_matrix(i, n, a);
+        rhs.clear();
+        rhs.resize(n, 0.0);
         let mut vdot = self.uvwdot;
         if dt > 0. {
             vdot += (i.uvw - i.tec2b * i.terrain_velocity) / dt;
@@ -204,7 +213,10 @@ impl Accelerations {
         if dt > 0. {
             wdot += (i.pqr - i.tec2b * i.terrain_angular_vel) / dt;
         }
-        let rows = a.chunks_exact_mut(n).zip(&mut rhs).zip(&i.multipliers);
+        let rows = a
+            .chunks_exact_mut(n)
+            .zip(rhs.iter_mut())
+            .zip(&i.multipliers);
         for (r, ((row, rhs_r), m)) in rows.enumerate() {
             let Some(&d) = row.get(r) else {
                 continue;
@@ -217,7 +229,7 @@ impl Accelerations {
         }
         for _ in 0..50 {
             let mut norm = 0.;
-            for (r, (row, &rhs_r)) in a.chunks_exact(n).zip(&rhs).enumerate() {
+            for (r, (row, &rhs_r)) in a.chunks_exact(n).zip(rhs.iter()).enumerate() {
                 let mut dlambda = rhs_r;
                 for (&arc, mc) in row.iter().zip(&i.multipliers) {
                     dlambda -= arc * mc.value;
@@ -255,10 +267,11 @@ impl Accelerations {
 }
 
 /// The symmetric `n` x `n` (row-major) matrix of the friction
-/// multipliers' couplings: the upper triangle computed row by row as
-/// JSBSim does, the lower one copied from it.
-fn friction_matrix(i: &Inputs, n: usize) -> Vec<f64> {
-    let mut a = vec![0.0; n * n];
+/// multipliers' couplings, into `a`: the upper triangle computed row by
+/// row as JSBSim does, the lower one copied from it.
+fn friction_matrix(i: &Inputs, n: usize, a: &mut Vec<f64>) {
+    a.clear();
+    a.resize(n * n, 0.0);
     for (r, (row, mr)) in a.chunks_exact_mut(n).zip(&i.multipliers).enumerate() {
         let (u, arm) = (mr.force_jacobian, mr.lever_arm);
         let v1 = u / i.mass;
@@ -276,7 +289,6 @@ fn friction_matrix(i: &Inputs, n: usize) -> Vec<f64> {
             }
         }
     }
-    a
 }
 
 /// `FGAccelerations::bind`.
