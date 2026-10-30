@@ -1,5 +1,8 @@
 # jsbsim-rs
 
+[![CI](https://github.com/luofang34/jsbsim-rs/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/luofang34/jsbsim-rs/actions/workflows/ci.yml)
+[![crates.io](https://img.shields.io/crates/v/jsbsim.svg)](https://crates.io/crates/jsbsim)
+
 An **unofficial** pure-Rust port of [JSBSim](https://github.com/JSBSim-Team/jsbsim),
 the open-source flight dynamics model. It is not affiliated with or endorsed by
 the JSBSim project.
