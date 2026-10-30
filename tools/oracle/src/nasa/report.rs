@@ -10,6 +10,7 @@ use tracing::{error, info};
 
 use super::data::{Column, Simulator};
 use super::envelope::{ColumnStats, compare_column, samples};
+use super::flip::accepted_flips;
 use super::spread::{spread_ratio, two_figures};
 use super::{Case, ExpectedMiss};
 use crate::Series;
@@ -27,13 +28,19 @@ pub struct Counts {
     pub unexpected_pass: usize,
     /// Outside and not listed, or missed by Rust on other samples.
     pub fail: usize,
-    /// Expected misses naming a variable the case does not compare.
+    /// Expected misses naming a variable the case does not compare, and
+    /// threshold-flip caps above the flips accepted.
     pub stale: usize,
     /// Properties whose Rust-vs-C++ difference exceeds the case's bound,
     /// plus one when the runs' row counts differ.
     pub parity_fail: usize,
     /// Cases whose Rust run stopped before the end.
     pub rust_stopped: usize,
+    /// Samples accepted although Rust and C++ fall on opposite sides of
+    /// the pass threshold (see `super::flip`).
+    pub threshold_flips: usize,
+    /// Accepted threshold flips beyond the cases' `max_threshold_flips`.
+    pub flips_over_cap: usize,
 }
 
 impl Counts {
@@ -45,6 +52,7 @@ impl Counts {
             && self.stale == 0
             && self.parity_fail == 0
             && self.rust_stopped == 0
+            && self.flips_over_cap == 0
     }
 }
 
@@ -57,6 +65,8 @@ impl AddAssign for Counts {
         self.stale = self.stale.wrapping_add(other.stale);
         self.parity_fail = self.parity_fail.wrapping_add(other.parity_fail);
         self.rust_stopped = self.rust_stopped.wrapping_add(other.rust_stopped);
+        self.threshold_flips = self.threshold_flips.wrapping_add(other.threshold_flips);
+        self.flips_over_cap = self.flips_over_cap.wrapping_add(other.flips_over_cap);
     }
 }
 
@@ -65,14 +75,17 @@ impl fmt::Display for Counts {
         write!(
             f,
             "{} pass, {} expected_miss, {} unexpected_pass, {} fail, \
-             {} stale expected_miss, {} parity fail, {} Rust run stopped",
+             {} stale expected_miss, {} parity fail, {} Rust run stopped, \
+             {} threshold flips accepted, {} over the cap",
             self.pass,
             self.expected_miss,
             self.unexpected_pass,
             self.fail,
             self.stale,
             self.parity_fail,
-            self.rust_stopped
+            self.rust_stopped,
+            self.threshold_flips,
+            self.flips_over_cap
         )
     }
 }
@@ -130,8 +143,9 @@ pub(super) fn report_case(
             within_spread = within_spread.wrapping_add(usize::from(r <= 1.0));
         }
         let expected = case.expected_miss.iter().find(|m| m.variable == c.nasa);
-        let same = c.outside == r.outside;
-        let label = if same {
+        let flips = agreement(case, column, simulators, (cpp, rust), (&c, &r));
+        let label = if let Some(n) = flips {
+            counts.threshold_flips = counts.threshold_flips.wrapping_add(n);
             verdict(&c, expected, &mut counts)
         } else {
             counts.fail = counts.fail.wrapping_add(1);
@@ -150,10 +164,10 @@ pub(super) fn report_case(
             c.samples,
             r.inside,
             r.samples,
-            if same {
-                "same samples"
-            } else {
-                "DIFFERENT samples"
+            match flips {
+                Some(0) => "same samples".to_owned(),
+                Some(n) => format!("same samples but {n} within the parity bound of the threshold"),
+                None => "DIFFERENT samples".to_owned(),
             },
         );
     }
@@ -161,6 +175,62 @@ pub(super) fn report_case(
         "{}: C++ within the simulators' own spread (R <= 1) on {within_spread}/{spread_compared} variables",
         case.name
     );
+    report_cap_and_stale(case, &compared, &mut counts);
+    counts
+}
+
+/// How many samples Rust's and C++'s verdicts differ on, each logged, when
+/// all are accepted threshold flips; `None` when any is not.
+fn agreement(
+    case: &Case,
+    column: &Column,
+    simulators: &[Simulator],
+    runs: (&Series, &Series),
+    (c, r): (&ColumnStats, &ColumnStats),
+) -> Option<usize> {
+    if c.outside == r.outside {
+        return Some(0);
+    }
+    let flips = accepted_flips(
+        column,
+        simulators,
+        runs,
+        (&c.outside, &r.outside),
+        case.parity_rel(),
+    )?;
+    for f in &flips {
+        info!(
+            "{} {} threshold flip at t={:.4}: C++ {:.3e} from the threshold, Rust {:.3e} from C++, bound {:.3e}",
+            case.name,
+            c.nasa,
+            f.key as f64 / 1000.0,
+            f.cpp_to_threshold,
+            f.rust_to_cpp,
+            f.bound
+        );
+    }
+    Some(flips.len())
+}
+
+/// Fails accepted threshold flips other than the case's cap, so that the
+/// cap stays current, and expected misses of variables not `compared`.
+fn report_cap_and_stale(case: &Case, compared: &[&str], counts: &mut Counts) {
+    let cap = case.max_threshold_flips();
+    if counts.threshold_flips > cap {
+        counts.flips_over_cap = counts.threshold_flips - cap;
+        error!(
+            "{}: {} threshold flips accepted, {cap} allowed by max_threshold_flips: FAIL; \
+             review them and update oracle/nasa/manifest.toml",
+            case.name, counts.threshold_flips
+        );
+    } else if counts.threshold_flips < cap {
+        counts.stale = counts.stale.wrapping_add(1);
+        error!(
+            "{}: {} threshold flips accepted, but max_threshold_flips allows {cap}: FAIL; \
+             update oracle/nasa/manifest.toml",
+            case.name, counts.threshold_flips
+        );
+    }
     for miss in &case.expected_miss {
         if !compared.contains(&miss.variable.as_str()) {
             counts.stale = counts.stale.wrapping_add(1);
@@ -171,7 +241,6 @@ pub(super) fn report_case(
             );
         }
     }
-    counts
 }
 
 /// Logs the largest Rust-vs-C++ difference of each property; returns how

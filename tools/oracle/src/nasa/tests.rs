@@ -166,6 +166,11 @@ fn the_committed_manifest_is_consistent() {
                 p.rel
             );
             assert!(!p.cause.is_empty(), "{}", case.name);
+            assert!(
+                p.max_threshold_flips == 0 || !p.threshold_flips_cause.trim().is_empty(),
+                "{}: max_threshold_flips needs a threshold_flips_cause",
+                case.name
+            );
         }
     }
     // The F-16 is a hand translation of the DAVE-ML, so a miss not traced
@@ -384,6 +389,6 @@ fn counts_total_across_cases() {
     assert_eq!(
         total.to_string(),
         "3 pass, 1 expected_miss, 0 unexpected_pass, 0 fail, 0 stale expected_miss, \
-         3 parity fail, 1 Rust run stopped"
+         3 parity fail, 1 Rust run stopped, 0 threshold flips accepted, 0 over the cap"
     );
 }

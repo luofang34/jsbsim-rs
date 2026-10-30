@@ -7,6 +7,7 @@
 
 mod data;
 mod envelope;
+mod flip;
 mod report;
 mod spread;
 
@@ -103,6 +104,14 @@ pub struct Parity {
     pub rel: f64,
     /// What makes Rust and C++ differ by more than [`PARITY_REL`].
     pub cause: String,
+    /// Samples allowed on opposite sides of the pass threshold in Rust and
+    /// C++ (see `flip`); each must be reviewed, so it defaults to 0.
+    #[serde(default)]
+    pub max_threshold_flips: usize,
+    /// Which samples those are and why they are accepted; required when
+    /// `max_threshold_flips` is above 0.
+    #[serde(default)]
+    pub threshold_flips_cause: String,
 }
 
 impl Case {
@@ -111,6 +120,12 @@ impl Case {
     #[must_use]
     pub fn parity_rel(&self) -> f64 {
         self.parity.as_ref().map_or(PARITY_REL, |p| p.rel)
+    }
+
+    /// Threshold flips this case allows.
+    #[must_use]
+    pub fn max_threshold_flips(&self) -> usize {
+        self.parity.as_ref().map_or(0, |p| p.max_threshold_flips)
     }
 }
 

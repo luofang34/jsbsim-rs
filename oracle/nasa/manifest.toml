@@ -11,8 +11,11 @@
 # time, widened only by their ten-digit printed precision. Each
 # expected_miss names a variable C++ JSBSim lies outside on and why; the
 # comparison fails if it stops missing or is not compared in that case,
-# and the Rust port must miss on exactly the same samples. Each case, and
-# the run, ends with its count of every verdict.
+# and the Rust port must miss on exactly the same samples, except where
+# C++ lies within the case's parity bound of the threshold and Rust within
+# it of C++ (tools/oracle/src/nasa/flip.rs); a case allows at most its
+# [case.parity] max_threshold_flips of those, each with its cause. Each
+# case, and the run, ends with its count of every verdict.
 
 [[archive]]
 name = "Atmos_01_DroppedSphere"
@@ -2634,6 +2637,8 @@ section = "Appendix C.1.19, Table 43, exact trim"
 [case.parity]
 rel = 3e-06
 cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library, checked on every oracle-ci run by the sincos gate (scripts/oracle-sincos.sh); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the F-16's dynamics carry to 1.1e-07 of a property's magnitude here."
+max_threshold_flips = 1
+threshold_flips_cause = "aero_bodyMoment_ftlbf_N at t=92.8 s: C++ lies outside by 1.669e-6 against the printed-precision floor of 1.676e-6, 6.8e-9 ft-lbf from the threshold, and Rust 7.0e-9 from C++ there, within the case's bound of 6.5e-3 ft-lbf; Rust falls on the other side."
 
 [[case.expected_miss]]
 variable = "eiPosition_ft_Y"
