@@ -103,6 +103,26 @@ fn measure_snapshots(fdm: &mut Fdm, frames: u32) -> (u64, u64) {
     )
 }
 
+/// Records what `case` (load, start and [`measure`] one run) allocates.
+/// dhat counts the allocations of every thread, and the test harness's
+/// own thread allocates once when it notes that a test has run for 60
+/// seconds, so a count that is not zero is measured again from a fresh
+/// load: the port is deterministic, so what it allocates itself recurs,
+/// while the harness's note does not.
+#[cfg(test)]
+fn record(
+    report: &mut Vec<(String, u32, (u64, u64))>,
+    what: String,
+    frames: u32,
+    case: impl Fn() -> (u64, u64),
+) {
+    let mut counts = case();
+    if counts != (0, 0) {
+        counts = case();
+    }
+    report.push((what, frames, counts));
+}
+
 /// Runs `fdm` until its script's trim has completed.
 #[cfg(test)]
 fn run_until_trimmed(fdm: &mut Fdm, script: &str) {
@@ -135,13 +155,16 @@ fn measure_corpus(
             "{name} loads ok but is not vendored at {}",
             file.display()
         );
-        let mut fdm = Fdm::new().unwrap();
-        fdm.load_model(resolver, "aircraft", name).unwrap();
-        for (property, value) in oracle::bench::AIRBORNE_IC {
-            fdm.set_property(property, value).unwrap();
-        }
+        let airborne = || {
+            let mut fdm = Fdm::new().unwrap();
+            fdm.load_model(resolver, "aircraft", name).unwrap();
+            for (property, value) in oracle::bench::AIRBORNE_IC {
+                fdm.set_property(property, value).unwrap();
+            }
+            fdm
+        };
         if let Some((_, missing)) = oracle::bench::UNRUNNABLE.iter().find(|(n, _)| n == name) {
-            let err = fdm.run_ic().err();
+            let err = airborne().run_ic().err();
             assert!(
                 err.as_ref()
                     .is_some_and(|e| format!("{e:?}").contains(missing)),
@@ -149,12 +172,11 @@ fn measure_corpus(
             );
             continue;
         }
-        fdm.run_ic().unwrap();
-        report.push((
-            format!("aircraft {name}"),
-            FRAMES,
-            measure(&mut fdm, FRAMES),
-        ));
+        record(report, format!("aircraft {name}"), FRAMES, || {
+            let mut fdm = airborne();
+            fdm.run_ic().unwrap();
+            measure(&mut fdm, FRAMES)
+        });
     }
 }
 
@@ -163,14 +185,17 @@ fn measure_corpus(
 #[cfg(test)]
 fn measure_trimmed(report: &mut Vec<(String, u32, (u64, u64))>) {
     for run in TRIMMED {
-        let mut fdm = run.load(&oracle_dir()).unwrap();
-        fdm.run_ic().unwrap();
-        run_until_trimmed(&mut fdm, run.script);
-        report.push((
+        record(
+            report,
             format!("trimmed script {}", run.script),
             run.frames,
-            measure(&mut fdm, run.frames),
-        ));
+            || {
+                let mut fdm = run.load(&oracle_dir()).unwrap();
+                fdm.run_ic().unwrap();
+                run_until_trimmed(&mut fdm, run.script);
+                measure(&mut fdm, run.frames)
+            },
+        );
     }
 }
 
@@ -178,13 +203,11 @@ fn measure_trimmed(report: &mut Vec<(String, u32, (u64, u64))>) {
 #[cfg(test)]
 fn measure_scripts(report: &mut Vec<(String, u32, (u64, u64))>) {
     for run in SCRIPTS {
-        let mut fdm = run.load(&oracle_dir()).unwrap();
-        fdm.run_ic().unwrap();
-        report.push((
-            format!("script {}", run.script),
-            run.frames,
-            measure(&mut fdm, run.frames),
-        ));
+        record(report, format!("script {}", run.script), run.frames, || {
+            let mut fdm = run.load(&oracle_dir()).unwrap();
+            fdm.run_ic().unwrap();
+            measure(&mut fdm, run.frames)
+        });
     }
 }
 
@@ -201,32 +224,28 @@ fn steady_state_frames_allocate_nothing() {
     let oracle_resolver = FileResolver::new(oracle_dir());
     for system in oracle::derived::tripod::SYSTEMS.iter().filter(|s| s.loads) {
         let name = format!("tripod_{}", system.suffix);
-        let mut fdm = Fdm::new().unwrap();
-        fdm.set_systems_path(system.systems_path);
-        fdm.load_model(&oracle_resolver, "derived/aircraft", &name)
-            .unwrap();
-        fdm.set_property("ic/h-sl-ft", 10000.0).unwrap();
-        fdm.run_ic().unwrap();
-        report.push((
-            format!("aircraft {name}"),
-            FRAMES,
-            measure(&mut fdm, FRAMES),
-        ));
+        record(&mut report, format!("aircraft {name}"), FRAMES, || {
+            let mut fdm = Fdm::new().unwrap();
+            fdm.set_systems_path(system.systems_path);
+            fdm.load_model(&oracle_resolver, "derived/aircraft", &name)
+                .unwrap();
+            fdm.set_property("ic/h-sl-ft", 10000.0).unwrap();
+            fdm.run_ic().unwrap();
+            measure(&mut fdm, FRAMES)
+        });
     }
 
     // The planet tripods fly the Martian and NRLMSISE-00 atmospheres.
     for name in PLANET_TRIPODS {
-        let mut fdm = Fdm::new().unwrap();
-        fdm.load_model(&oracle_resolver, PLANET_TRIPOD_DIR, name)
-            .unwrap();
-        fdm.set_property("ic/h-sl-ft", PLANET_TRIPOD_ALTITUDE_FT)
-            .unwrap();
-        fdm.run_ic().unwrap();
-        report.push((
-            format!("aircraft {name}"),
-            FRAMES,
-            measure(&mut fdm, FRAMES),
-        ));
+        record(&mut report, format!("aircraft {name}"), FRAMES, || {
+            let mut fdm = Fdm::new().unwrap();
+            fdm.load_model(&oracle_resolver, PLANET_TRIPOD_DIR, name)
+                .unwrap();
+            fdm.set_property("ic/h-sl-ft", PLANET_TRIPOD_ALTITUDE_FT)
+                .unwrap();
+            fdm.run_ic().unwrap();
+            measure(&mut fdm, FRAMES)
+        });
     }
 
     measure_scripts(&mut report);
