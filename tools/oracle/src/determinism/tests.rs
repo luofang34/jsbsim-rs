@@ -94,7 +94,7 @@ fn missing_rows_and_other_headers_are_mismatches() {
         outcome.mismatch,
         Some(Mismatch::Length { native: 3, wasm: 2 })
     );
-    let renamed = long.replacen("b", "c", 1);
+    let renamed = long.replacen('b', "c", 1);
     let outcome = compare_records("t", true, &long, &renamed).unwrap();
     assert!(matches!(outcome.mismatch, Some(Mismatch::Header { .. })));
 }

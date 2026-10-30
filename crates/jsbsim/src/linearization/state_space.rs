@@ -195,7 +195,7 @@ impl StateSpace {
 
     /// `linearize`: A, B, C and D about `x0` and `u0`.
     pub(super) fn linearize(
-        &mut self,
+        &self,
         fdm: &mut Fdm,
         x0: &[f64],
         u0: &[f64],

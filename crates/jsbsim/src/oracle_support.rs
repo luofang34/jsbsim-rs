@@ -40,10 +40,10 @@ pub trait FdmInternals {
 
 impl FdmInternals for Fdm {
     fn tree(&self) -> &properties::PropertyTree {
-        Fdm::tree(self)
+        Self::tree(self)
     }
     fn load_mass_balance(&mut self, el: &xml::Element) -> Result<(), Error> {
-        Fdm::load_mass_balance(self, el)
+        Self::load_mass_balance(self, el)
     }
     fn load_planet_file(
         &mut self,
@@ -51,22 +51,22 @@ impl FdmInternals for Fdm {
         path: &str,
         use_aircraft_path: bool,
     ) -> Result<(), Error> {
-        Fdm::load_planet_file(self, resolver, path, use_aircraft_path)
+        Self::load_planet_file(self, resolver, path, use_aircraft_path)
     }
     fn init_atmosphere(&mut self) -> Result<(), Error> {
-        Fdm::init_atmosphere(self)
+        Self::init_atmosphere(self)
     }
     fn run_atmosphere(&mut self, holding: bool) -> Result<(), Error> {
-        Fdm::run_atmosphere(self, holding)
+        Self::run_atmosphere(self, holding)
     }
     fn steady_state(&mut self) -> Result<bool, Error> {
-        Fdm::steady_state(self)
+        Self::steady_state(self)
     }
     fn linearize(&mut self) -> Result<linearization::Linearization, Error> {
-        Fdm::linearize(self)
+        Self::linearize(self)
     }
     fn last_linearization(&self) -> Option<&linearization::Linearization> {
-        Fdm::last_linearization(self)
+        Self::last_linearization(self)
     }
 }
 

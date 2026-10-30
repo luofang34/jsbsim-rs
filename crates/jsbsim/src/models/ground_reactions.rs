@@ -189,6 +189,7 @@ impl Surface {
     /// `GetBumpHeight`.
     #[must_use]
     pub fn bump_height(&self) -> f64 {
+        const MAX_GROUND_BUMP_AMPLITUDE: f64 = 0.4;
         if self.bumpiness < 0.001 {
             return 0.0;
         }
@@ -198,7 +199,6 @@ impl Surface {
         y -= libm::floor(y);
         x *= 2.0 * std::f64::consts::PI;
         y *= 2.0 * std::f64::consts::PI;
-        const MAX_GROUND_BUMP_AMPLITUDE: f64 = 0.4;
         let sin = libm::sin;
         let mut h = sin(x) + sin(7.0 * x) + sin(8.0 * x) + sin(13.0 * x);
         h += sin(2.0 * y) + sin(5.0 * y) + sin(9.0 * y * x) + sin(17.0 * y);
@@ -282,6 +282,7 @@ impl crate::snapshot::Visit for GroundReactions {
         &mut self,
         v: &mut V,
     ) -> Result<(), crate::snapshot::SnapshotError> {
+        const FRESH: (usize, FrictionType) = (0, FrictionType::Roll);
         let Self {
             base,
             input,
@@ -299,7 +300,6 @@ impl crate::snapshot::Visit for GroundReactions {
         ds_cmd.visit(v)?;
         forces.visit(v)?;
         moments.visit(v)?;
-        const FRESH: (usize, FrictionType) = (0, FrictionType::Roll);
         let n = v.len(multipliers.len(), "friction constraints")?;
         if v.mutating() {
             multipliers.resize(n, FRESH);

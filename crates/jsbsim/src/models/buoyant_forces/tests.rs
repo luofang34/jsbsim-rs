@@ -58,7 +58,7 @@ fn a_fullness_above_what_the_overpressure_allows_is_clipped() {
 
 #[test]
 fn a_cell_without_location_or_shape_is_refused() {
-    let no_location = element(r#"<gas_cell><x_radius>1</x_radius></gas_cell>"#);
+    let no_location = element(r"<gas_cell><x_radius>1</x_radius></gas_cell>");
     assert!(matches!(
         GasCell::load(&no_location, &SL),
         Err(Error::Model { .. })

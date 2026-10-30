@@ -232,12 +232,10 @@ fn steady_state_frames_allocate_nothing() {
     measure_scripts(&mut report);
     measure_trimmed(&mut report);
 
-    let failures: Vec<_> = report
-        .iter()
-        .filter(|(_, _, (blocks, bytes))| *blocks != 0 || *bytes != 0)
-        .collect();
     assert!(
-        failures.is_empty(),
+        !report
+            .iter()
+            .any(|(_, _, (blocks, bytes))| *blocks != 0 || *bytes != 0),
         "allocations over the measured frames (what, frames, (blocks, bytes)): {report:?}"
     );
 }

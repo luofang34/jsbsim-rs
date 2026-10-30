@@ -33,7 +33,7 @@ pub struct Element {
     name: String,
     attributes: BTreeMap<String, String>,
     data_lines: Vec<String>,
-    children: Vec<Element>,
+    children: Vec<Self>,
     file: Rc<str>,
     line: u32,
 }
@@ -159,24 +159,24 @@ impl Element {
 
     /// Child elements in document order.
     #[must_use]
-    pub fn children(&self) -> &[Element] {
+    pub fn children(&self) -> &[Self] {
         &self.children
     }
 
     /// Mutable child elements in document order.
-    pub fn children_mut(&mut self) -> &mut Vec<Element> {
+    pub fn children_mut(&mut self) -> &mut Vec<Self> {
         &mut self.children
     }
 
     /// `AddChildElement`.
-    pub fn add_child(&mut self, child: Element) {
+    pub fn add_child(&mut self, child: Self) {
         self.children.push(child);
     }
 
     /// `FindElement(name)`: the first child named `name`; the first child
     /// of any name when `name` is empty.
     #[must_use]
-    pub fn find_element(&self, name: &str) -> Option<&Element> {
+    pub fn find_element(&self, name: &str) -> Option<&Self> {
         self.children
             .iter()
             .find(|c| name.is_empty() || c.name == name)
@@ -184,7 +184,7 @@ impl Element {
 
     /// The children `FindElement(name)` followed by `FindNextElement(name)`
     /// visit: those named `name`, or all of them when `name` is empty.
-    pub fn find_elements<'a>(&'a self, name: &'a str) -> impl Iterator<Item = &'a Element> + 'a {
+    pub fn find_elements<'a>(&'a self, name: &'a str) -> impl Iterator<Item = &'a Self> + 'a {
         self.children
             .iter()
             .filter(move |c| name.is_empty() || c.name == name)
@@ -198,7 +198,7 @@ impl Element {
         &'a self,
         cursor: &str,
         name: &'a str,
-    ) -> impl Iterator<Item = &'a Element> + 'a {
+    ) -> impl Iterator<Item = &'a Self> + 'a {
         let start = self
             .children
             .iter()
@@ -224,7 +224,7 @@ impl Element {
         self.find_element(name).map_or("", |e| e.data_line(0))
     }
 
-    fn require(&self, name: &str) -> Result<&Element, XmlError> {
+    fn require(&self, name: &str) -> Result<&Self, XmlError> {
         self.find_element(name)
             .ok_or_else(|| XmlError::MissingElement {
                 parent: self.name.clone(),
@@ -255,7 +255,7 @@ impl Element {
 
     /// `MergeAttributes`: copies the attributes of `other` that this
     /// element does not have.
-    pub fn merge_attributes(&mut self, other: &Element) {
+    pub fn merge_attributes(&mut self, other: &Self) {
         for (key, value) in &other.attributes {
             self.attributes
                 .entry(key.clone())

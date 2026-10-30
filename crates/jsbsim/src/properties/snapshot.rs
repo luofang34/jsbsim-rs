@@ -11,12 +11,17 @@
 use sha2::{Digest, Sha256};
 
 use super::{Node, NodeId, PropertyTree, Value};
-use crate::snapshot::{Checker, Reader, SnapshotError, Visit, Visitor, Writer};
+use crate::snapshot::{Checker, Reader, SnapshotError, Visit, Visitor, Writer, count_u32};
 
 impl NodeId {
     /// The id of slot `slot`.
     pub(crate) fn from_u32(slot: u32) -> Self {
         Self(slot)
+    }
+
+    /// The slot as the snapshot stores it.
+    pub(crate) const fn to_u32(self) -> u32 {
+        self.0
     }
 }
 
@@ -123,15 +128,20 @@ impl PropertyTree {
 
     /// The nodes created after the first `load_nodes`: parent slot, index
     /// and name of each, in creation order.
-    pub(crate) fn write_runtime_nodes(&self, w: &mut Writer<'_>, load_nodes: u32) {
+    pub(crate) fn write_runtime_nodes(
+        &self,
+        w: &mut Writer<'_>,
+        load_nodes: u32,
+    ) -> Result<(), SnapshotError> {
         let runtime = self.nodes.get(load_nodes as usize..).unwrap_or_default();
-        w.put(&(runtime.len() as u32).to_le_bytes());
+        w.put(&count_u32(runtime.len(), "runtime nodes")?.to_le_bytes());
         for node in runtime {
             w.put(&node.parent.map_or(u32::MAX, |p| p.0).to_le_bytes());
             w.put(&node.index.to_le_bytes());
-            w.put(&(node.name.len() as u32).to_le_bytes());
+            w.put(&count_u32(node.name.len(), "runtime node name bytes")?.to_le_bytes());
             w.put(node.name.as_bytes());
         }
+        Ok(())
     }
 
     /// Parses the records [`write_runtime_nodes`](Self::write_runtime_nodes)

@@ -45,6 +45,47 @@ disallowed_types = "deny"
 disallowed_methods = "deny"
 disallowed_macros = "deny"
 
+# Cleanups beyond clippy's default set, held at zero.
+needless_pass_by_ref_mut = "deny"
+unused_self = "deny"
+ref_option = "deny"
+unnecessary_wraps = "deny"
+or_fun_call = "deny"
+match_same_arms = "deny"
+redundant_clone = "deny"
+needless_collect = "deny"
+use_self = "deny"
+semicolon_if_nothing_returned = "deny"
+items_after_statements = "deny"
+redundant_closure_for_method_calls = "deny"
+single_char_pattern = "deny"
+inconsistent_struct_constructor = "deny"
+needless_raw_string_hashes = "deny"
+unnested_or_patterns = "deny"
+needless_for_each = "deny"
+manual_assert_eq = "deny"
+
+# --- C++ mirroring: begin -------------------------------------------------
+# While the port reproduces C++ JSBSim bit for bit (scripts/oracle-ci.sh),
+# these stay off: their fixes (mul_add, hypot, ln_1p, midpoint) round
+# differently, or they would obscure the line-for-line match with the C++
+# source (its literals, single-letter names, implicit int/float casts and
+# exact float comparisons). They only matter once pedantic or nursery is
+# turned on. To move to idiomatic Rust, delete from here to "end", and the
+# blocks of the same name in clippy.toml and tools/libm-platform/Cargo.toml.
+suboptimal_flops = "allow"
+imprecise_flops = "allow"
+manual_midpoint = "allow"
+float_cmp = "allow"
+unreadable_literal = "allow"
+similar_names = "allow"
+many_single_char_names = "allow"
+cast_possible_truncation = "allow"
+cast_possible_wrap = "allow"
+cast_precision_loss = "allow"
+cast_sign_loss = "allow"
+# --- C++ mirroring: end ---------------------------------------------------
+
 # One codegen unit gives LLVM each crate whole to inline across, which
 # makes frames faster (scripts/oracle-bench.sh). Rust codegen neither
 # reorders nor fuses floating-point operations, so results do not change.

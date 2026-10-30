@@ -2,11 +2,11 @@
 use super::super::tests::{load_error, load_system};
 use crate::{Error, LoadOptions};
 
-const COORDINATES: &str = r#"
+const COORDINATES: &str = r"
       <target_latitude>  test/tgt-lat </target_latitude>
       <target_longitude> test/tgt-lon </target_longitude>
       <source_latitude>  test/src-lat </source_latitude>
-      <source_longitude> test/src-lon </source_longitude>"#;
+      <source_longitude> test/src-lon </source_longitude>";
 
 fn system(planet: &str, component: &str) -> String {
     format!(

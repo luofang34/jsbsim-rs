@@ -148,7 +148,7 @@ impl Fdm {
         let e = &mut self.models.exec;
         e.saved_dt = e.dt;
         e.dt = 0.0;
-        let mut ss = state_space::StateSpace::new(x.clone(), u.clone(), y.clone());
+        let ss = state_space::StateSpace::new(x.clone(), u.clone(), y.clone());
         let [a, b, c, d] = ss.linearize(self, &x0, &u0, &y0)?;
         let e = &mut self.models.exec;
         e.dt = e.saved_dt;

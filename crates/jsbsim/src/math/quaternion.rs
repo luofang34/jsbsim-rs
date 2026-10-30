@@ -299,14 +299,14 @@ impl Sub for &Quaternion {
     }
 }
 
-impl AddAssign<&Quaternion> for Quaternion {
-    fn add_assign(&mut self, q: &Quaternion) {
+impl AddAssign<&Self> for Quaternion {
+    fn add_assign(&mut self, q: &Self) {
         *self = &*self + q;
     }
 }
 
-impl SubAssign<&Quaternion> for Quaternion {
-    fn sub_assign(&mut self, q: &Quaternion) {
+impl SubAssign<&Self> for Quaternion {
+    fn sub_assign(&mut self, q: &Self) {
         *self = &*self - q;
     }
 }
@@ -325,8 +325,8 @@ impl Mul for &Quaternion {
     }
 }
 
-impl MulAssign<&Quaternion> for Quaternion {
-    fn mul_assign(&mut self, q: &Quaternion) {
+impl MulAssign<&Self> for Quaternion {
+    fn mul_assign(&mut self, q: &Self) {
         *self = &*self * q;
     }
 }

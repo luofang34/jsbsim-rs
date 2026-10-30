@@ -68,5 +68,5 @@ fn ball_snapshot_bytes_are_pinned() {
         .unwrap();
     let mut again = Snapshot::new();
     fresh.snapshot_into(&mut again).unwrap();
-    assert!(again.as_bytes() == pinned);
+    assert_eq!(again.as_bytes(), pinned);
 }

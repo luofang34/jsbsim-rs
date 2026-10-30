@@ -18,7 +18,7 @@ impl<'a> Writer<'a> {
     }
 }
 
-fn count_u32(n: usize, what: &'static str) -> Result<u32, SnapshotError> {
+pub(crate) fn count_u32(n: usize, what: &'static str) -> Result<u32, SnapshotError> {
     u32::try_from(n).map_err(|_| SnapshotError::InvalidValue {
         what,
         value: n as u64,

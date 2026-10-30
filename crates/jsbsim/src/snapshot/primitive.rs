@@ -48,7 +48,7 @@ impl Visit for i32 {
     fn visit<V: Visitor>(&mut self, v: &mut V) -> Result<(), SnapshotError> {
         let mut bits = *self as u32;
         v.u32(&mut bits)?;
-        assign(v, self, bits as i32);
+        assign(v, self, bits as Self);
         Ok(())
     }
 }
@@ -57,7 +57,7 @@ impl Visit for i64 {
     fn visit<V: Visitor>(&mut self, v: &mut V) -> Result<(), SnapshotError> {
         let mut bits = *self as u64;
         v.u64(&mut bits)?;
-        assign(v, self, bits as i64);
+        assign(v, self, bits as Self);
         Ok(())
     }
 }
@@ -66,7 +66,7 @@ impl Visit for usize {
     fn visit<V: Visitor>(&mut self, v: &mut V) -> Result<(), SnapshotError> {
         let mut wide = *self as u64;
         v.u64(&mut wide)?;
-        let x = usize::try_from(wide).map_err(|_| SnapshotError::InvalidValue {
+        let x = Self::try_from(wide).map_err(|_| SnapshotError::InvalidValue {
             what: "usize",
             value: wide,
         })?;
@@ -79,7 +79,7 @@ impl Visit for f64 {
     fn visit<V: Visitor>(&mut self, v: &mut V) -> Result<(), SnapshotError> {
         let mut bits = self.to_bits();
         v.u64(&mut bits)?;
-        assign(v, self, f64::from_bits(bits));
+        assign(v, self, Self::from_bits(bits));
         Ok(())
     }
 }
@@ -88,7 +88,7 @@ impl Visit for f32 {
     fn visit<V: Visitor>(&mut self, v: &mut V) -> Result<(), SnapshotError> {
         let mut bits = self.to_bits();
         v.u32(&mut bits)?;
-        assign(v, self, f32::from_bits(bits));
+        assign(v, self, Self::from_bits(bits));
         Ok(())
     }
 }
@@ -125,9 +125,9 @@ impl Visit for String {
 
 impl Visit for NodeId {
     fn visit<V: Visitor>(&mut self, v: &mut V) -> Result<(), SnapshotError> {
-        let mut slot = self.slot() as u32;
+        let mut slot = self.to_u32();
         v.u32(&mut slot)?;
-        assign(v, self, NodeId::from_u32(slot));
+        assign(v, self, Self::from_u32(slot));
         Ok(())
     }
 }
@@ -196,7 +196,7 @@ impl<T: Visit + Default> Visit for Option<T> {
 /// A node that may not exist yet, as `u32::MAX` when it does not.
 impl Visit for Option<NodeId> {
     fn visit<V: Visitor>(&mut self, v: &mut V) -> Result<(), SnapshotError> {
-        let mut slot = self.map_or(u32::MAX, |n| n.slot() as u32);
+        let mut slot = self.map_or(u32::MAX, NodeId::to_u32);
         v.u32(&mut slot)?;
         assign(v, self, (slot != u32::MAX).then(|| NodeId::from_u32(slot)));
         Ok(())

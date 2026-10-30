@@ -209,7 +209,7 @@ impl Aerodynamics {
             match axis {
                 "X" | "Y" | "Z" => process_frame(&mut self.force_axis, frame, axis_el, "(X Y Z)")?,
                 "ROLL" | "PITCH" | "YAW" => {
-                    process_frame(&mut self.moment_axis, frame, axis_el, "(ROLL PITCH YAW)")?
+                    process_frame(&mut self.moment_axis, frame, axis_el, "(ROLL PITCH YAW)")?;
                 }
                 "LIFT" | "DRAG" => match self.force_axis {
                     AxisType::None => self.force_axis = AxisType::Wind,

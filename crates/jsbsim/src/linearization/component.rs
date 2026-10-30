@@ -83,8 +83,13 @@ impl Component {
     pub fn unit(self) -> &'static str {
         match self {
             Self::Vt => "ft/s",
-            Self::Alpha | Self::Theta | Self::Beta | Self::Phi | Self::Psi => "rad",
-            Self::Latitude | Self::Longitude => "rad",
+            Self::Alpha
+            | Self::Theta
+            | Self::Beta
+            | Self::Phi
+            | Self::Psi
+            | Self::Latitude
+            | Self::Longitude => "rad",
             Self::Q | Self::P | Self::R => "rad/s",
             Self::Rpm(_) => "rev/min",
             Self::Alt => "ft",

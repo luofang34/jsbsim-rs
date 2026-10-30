@@ -12,6 +12,18 @@ impl Fdm {
     /// `FGInitialCondition::Load(file)` for `dir/name` (`.xml` added when
     /// it has no extension), applied to the executive's initial conditions. False, with the
     /// problem logged, where JSBSim's `Load` returns false.
+    ///
+    /// # Errors
+    ///
+    /// [`Error::ResourceNotFound`] when the resolver lacks a document;
+    /// [`Error::Xml`] for malformed XML or a value that does not parse;
+    /// [`Error::Model`] for a configuration JSBSim refuses;
+    /// [`Error::Function`] for an invalid table, function or condition;
+    /// [`Error::Unsupported`] for a construct the port does not implement;
+    /// [`Error::UnknownInputType`] for an `<input>` without an input class;
+    /// [`Error::Geographic`] for a planet GeographicLib refuses; and
+    /// [`Error::PropertyPath`] for a property name SimGear would reject.
+    /// A failed load is not rolled back.
     pub fn load_initial_conditions(
         &mut self,
         resolver: &dyn crate::Resolver,

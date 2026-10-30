@@ -80,9 +80,9 @@ impl Throttles {
             &mut self.mixture_cmd,
             &mut self.prop_advance,
         ] {
-            v.iter_mut().for_each(|x| *x = 0.0);
+            v.fill(0.0);
         }
-        self.prop_feather.iter_mut().for_each(|x| *x = false);
+        self.prop_feather.fill(false);
     }
 
     /// `Run`'s default control law: each position follows its command.

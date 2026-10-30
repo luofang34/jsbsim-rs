@@ -139,7 +139,7 @@ fn the_header_is_checked_before_the_body() {
         Snapshot::from_bytes(&bytes[..20]),
         Err(SnapshotError::Truncated { .. })
     ));
-    let mut longer = bytes.clone();
+    let mut longer = bytes;
     longer.push(0);
     let longer = Snapshot::from_bytes(&longer).unwrap();
     assert_eq!(

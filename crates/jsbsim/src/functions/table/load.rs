@@ -283,7 +283,7 @@ impl Table {
                     "a named <tableData> sub-table has no lookup properties to bind",
                 ));
             }
-            let sub = Table::load(child, tree, "", options)?;
+            let sub = Self::load(child, tree, "", options)?;
             if self.n_dims == 0 {
                 self.n_dims = sub.n_dims + 1;
                 if self.n_dims < 3 {

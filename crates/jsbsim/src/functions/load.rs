@@ -291,8 +291,8 @@ impl FunctionSet {
     }
 
     fn load_property(
-        &mut self,
-        tree: &mut PropertyTree,
+        &self,
+        tree: &PropertyTree,
         el: &Element,
         prefix: &str,
         body: Body,

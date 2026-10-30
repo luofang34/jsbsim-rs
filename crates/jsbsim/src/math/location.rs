@@ -282,7 +282,7 @@ impl Location {
     /// (`a = ec = 1`, `e2 = 0`) apply, giving 1.
     #[must_use]
     pub fn sea_level_radius(&self) -> f64 {
-        let e = self.ellipse.unwrap_or(Ellipse::new(1.0, 1.0));
+        let e = self.ellipse.unwrap_or_else(|| Ellipse::new(1.0, 1.0));
         let cos_lat = libm::cos(self.read(|d| d.lat));
         e.a * e.ec / (1.0 - e.e2 * cos_lat * cos_lat).sqrt()
     }
@@ -372,7 +372,7 @@ impl Location {
     /// ellipse is set; without one its defaults (`a = ec = 1`) describe
     /// the unit sphere, which is used here too.
     fn geodesic(&self) -> Geodesic {
-        let e = self.ellipse.unwrap_or(Ellipse::new(1.0, 1.0));
+        let e = self.ellipse.unwrap_or_else(|| Ellipse::new(1.0, 1.0));
         Geodesic::new(e.a, 1.0 - e.ec)
     }
 

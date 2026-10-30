@@ -169,7 +169,7 @@ impl PropertyTree {
 
     /// The true root, where absolute paths start (`getRootNode`).
     #[must_use]
-    pub fn true_root(&self) -> NodeId {
+    pub const fn true_root() -> NodeId {
         NodeId(0)
     }
 
@@ -202,7 +202,7 @@ impl PropertyTree {
         let mut current = from;
         for component in &components {
             current = match component {
-                Component::Root => self.true_root(),
+                Component::Root => Self::true_root(),
                 Component::Current => current,
                 Component::Parent => self.parent(current).ok_or_else(past_root)?,
                 Component::Child(name, index) => match self.child(current, name, *index) {
@@ -238,7 +238,7 @@ impl PropertyTree {
         let mut current = from;
         for component in components {
             current = match component {
-                Component::Root => self.true_root(),
+                Component::Root => Self::true_root(),
                 Component::Current => current,
                 Component::Parent => self.parent(current).ok_or_else(past_root)?,
                 Component::Child(name, index) => match self.child(current, &name, index) {

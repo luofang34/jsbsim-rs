@@ -14,6 +14,12 @@ impl Fdm {
     /// A trim that does not converge is [`Error::TrimFailed`], as JSBSim
     /// throws `TrimFailureException`; the failed trim has put the controls
     /// back.
+    ///
+    /// # Errors
+    ///
+    /// [`Error::TrimFailed`] when the trim does not converge, and
+    /// [`Error::Function`] when a function the trimmed frames evaluate
+    /// fails.
     pub fn do_trim(&mut self, mode: TrimMode) -> Result<(), Error> {
         let mut trim = Trim::new(self, mode);
         let success = trim.do_trim(self)?;

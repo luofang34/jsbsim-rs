@@ -43,7 +43,7 @@ mod tests;
 pub use error::{FingerprintPart, SnapshotError};
 pub use fingerprint::Fingerprint;
 
-pub(crate) use codec::{Checker, Reader, Writer};
+pub(crate) use codec::{Checker, Reader, Writer, count_u32};
 pub(crate) use fingerprint::{HashingResolver, LoadRecord};
 pub(crate) use primitive::{visit_dynamic, visit_each_present, visit_flag, visit_present};
 pub(crate) use shape::ShapeHasher;
@@ -86,6 +86,12 @@ impl Snapshot {
     /// A snapshot from bytes [`as_bytes`](Self::as_bytes) gave, on this
     /// target or another. The header is checked here; the body when it is
     /// restored.
+    ///
+    /// # Errors
+    ///
+    /// [`SnapshotError::BadMagic`], [`SnapshotError::VersionMismatch`] or
+    /// [`SnapshotError::Truncated`] when `bytes` do not start with a
+    /// header this build reads.
     pub fn from_bytes(bytes: &[u8]) -> Result<Self, SnapshotError> {
         Fingerprint::read_header(bytes)?;
         Ok(Self {
@@ -94,6 +100,11 @@ impl Snapshot {
     }
 
     /// The fingerprint of the model the snapshot was taken of.
+    ///
+    /// # Errors
+    ///
+    /// As [`from_bytes`](Self::from_bytes), for a snapshot built from
+    /// bytes that were changed since.
     pub fn fingerprint(&self) -> Result<Fingerprint, SnapshotError> {
         Fingerprint::read_header(&self.bytes)
     }

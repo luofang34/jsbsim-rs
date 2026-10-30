@@ -56,9 +56,9 @@ impl Atmosphere {
             AtmosphereModel::Msis => return self.msis_compute(altitude).pressure,
             AtmosphereModel::Standard => {}
         }
-        let geo_pot_alt = self.geopotential_altitude(altitude);
+        let geo_pot_alt = Self::geopotential_altitude(altitude);
         let (b, base_alt) = self.layer_of(geo_pot_alt);
-        let tmb = self.get_temperature(self.geometric_altitude(base_alt));
+        let tmb = self.get_temperature(Self::geometric_altitude(base_alt));
         let delta_h = geo_pot_alt - base_alt;
         let p = &self.profile;
         let lmb = layer(&p.lapse_rates, b);
@@ -69,9 +69,9 @@ impl Atmosphere {
     /// (graded) lapse rates with the standard breakpoints.
     #[must_use]
     pub fn get_std_pressure(&self, altitude: f64) -> f64 {
-        let geo_pot_alt = self.geopotential_altitude(altitude);
+        let geo_pot_alt = Self::geopotential_altitude(altitude);
         let (b, base_alt) = self.layer_of(geo_pot_alt);
-        let tmb = self.get_std_temperature(self.geometric_altitude(base_alt));
+        let tmb = self.get_std_temperature(Self::geometric_altitude(base_alt));
         let delta_h = geo_pot_alt - base_alt;
         let p = &self.profile;
         let lmb = layer(&p.lapse_rates, b);
@@ -163,7 +163,7 @@ impl Atmosphere {
             let factor = -RDRY * tmb / G0;
             hb + factor * libm::log(density / pb)
         };
-        self.geometric_altitude(density_altitude)
+        Self::geometric_altitude(density_altitude)
     }
 
     /// `CalculatePressureAltitude`: the standard-day altitude (ft) with
@@ -193,6 +193,6 @@ impl Atmosphere {
             let factor = -RDRY * tmb / G0;
             hb + factor * libm::log(pressure / pb)
         };
-        self.geometric_altitude(pressure_altitude)
+        Self::geometric_altitude(pressure_altitude)
     }
 }

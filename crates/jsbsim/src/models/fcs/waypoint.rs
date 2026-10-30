@@ -112,13 +112,13 @@ fn coordinate(
 fn output_unit(el: &Element, kind: WaypointType, name: &str) -> Result<Unit, Error> {
     let unit = el.attribute("unit");
     match (kind, unit) {
-        (WaypointType::Heading, "") | (WaypointType::Heading, "RAD") => Ok(Unit::Rad),
+        (WaypointType::Heading, "" | "RAD") => Ok(Unit::Rad),
         (WaypointType::Heading, "DEG") => Ok(Unit::Deg),
         (WaypointType::Heading, _) => Err(model_error(
             el,
             format!("Unknown unit {unit} in HEADING waypoint component, "),
         )),
-        (WaypointType::Distance, "") | (WaypointType::Distance, "FT") => Ok(Unit::Feet),
+        (WaypointType::Distance, "" | "FT") => Ok(Unit::Feet),
         (WaypointType::Distance, "M") => Ok(Unit::Meters),
         (WaypointType::Distance, _) => Err(model_error(
             el,

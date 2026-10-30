@@ -135,7 +135,7 @@ fn number(
 
 /// The value of a parameter JSBSim reads in `Run`: when it is not
 /// constant.
-fn read(p: &Option<Parameter>, ev: &mut ModelEvaluator<'_>) -> Result<Option<f64>, Error> {
+fn read(p: Option<&Parameter>, ev: &mut ModelEvaluator<'_>) -> Result<Option<f64>, Error> {
     match p {
         Some(p) if !is_constant(p, ev.tree()) => Ok(Some(ev.parameter(p)?)),
         _ => Ok(None),
@@ -242,8 +242,8 @@ impl Family for LinearActuator {
     }
 
     fn sample(&self, base: &Base, ev: &mut ModelEvaluator<'_>) -> Result<Sample, Error> {
-        let set = read(&self.set_param, ev)?;
-        let reset = read(&self.reset_param, ev)?;
+        let set = read(self.set_param.as_ref(), ev)?;
+        let reset = read(self.reset_param.as_ref(), ev)?;
         let mut s = Sample {
             set,
             reset,
@@ -259,10 +259,10 @@ impl Family for LinearActuator {
             s.input = Some(input);
             let input_delta = (input - self.input_last) - self.input_mem;
             if input_delta.abs() >= self.hysteresis {
-                s.versus = read(&self.versus_param, ev)?;
+                s.versus = read(self.versus_param.as_ref(), ev)?;
             }
         }
-        s.bias = read(&self.bias_param, ev)?;
+        s.bias = read(self.bias_param.as_ref(), ev)?;
         Ok(s)
     }
 

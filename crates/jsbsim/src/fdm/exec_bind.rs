@@ -69,10 +69,10 @@ pub fn bind_atmosphere_enable(b: &mut Binder<'_>) -> Result<(), Error> {
 /// The executive's own properties, bound after the models.
 pub fn bind_exec(b: &mut Binder<'_>) -> Result<(), Error> {
     b.setter_only("simulation/do_simple_trim", Kind::Int, |m, v| {
-        m.exec.requests.push(ExecRequest::Trim(v as i32))
+        m.exec.requests.push(ExecRequest::Trim(v as i32));
     })?;
     b.setter_only("simulation/do_linearization", Kind::Int, |m, _| {
-        m.exec.requests.push(ExecRequest::Linearize)
+        m.exec.requests.push(ExecRequest::Linearize);
     })?;
     b.setter_only("simulation/reset", Kind::Int, |m, v| {
         // The `as u32` keeps the `int`'s two's complement bits, so a
@@ -80,7 +80,7 @@ pub fn bind_exec(b: &mut Binder<'_>) -> Result<(), Error> {
         let bits = v as i32 as u32;
         m.exec
             .requests
-            .push(ExecRequest::Reset(ResetMask::from_bits_retain(bits)))
+            .push(ExecRequest::Reset(ResetMask::from_bits_retain(bits)));
     })?;
     b.typed_getter("simulation/disperse", Kind::Int, |_| 0.0)?;
     b.property(

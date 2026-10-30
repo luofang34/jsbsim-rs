@@ -15,6 +15,11 @@ mod tests;
 /// `aircraft/ball/ball.xml`.
 pub trait Resolver {
     /// Returns the contents of `path`, or [`Error::ResourceNotFound`].
+    ///
+    /// # Errors
+    ///
+    /// [`Error::ResourceNotFound`] when nothing is at `path`;
+    /// implementations may return other variants for read failures.
     fn resolve(&self, path: &str) -> Result<Vec<u8>, Error>;
 
     /// Whether `path` exists; JSBSim probes candidate locations with it.

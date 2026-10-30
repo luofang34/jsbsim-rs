@@ -50,7 +50,7 @@ pub enum Condition {
         /// AND when true, OR when false.
         all: bool,
         /// The sub-conditions.
-        conditions: Vec<Condition>,
+        conditions: Vec<Self>,
     },
     /// `property comparison value`.
     Test {

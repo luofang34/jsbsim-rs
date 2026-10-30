@@ -49,8 +49,8 @@ impl PointMass {
     #[must_use]
     pub fn new(weight: f64, location: ColumnVector3) -> Self {
         Self {
-            weight,
             location,
+            weight,
             ..Self::default()
         }
     }

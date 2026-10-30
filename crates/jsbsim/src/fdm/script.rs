@@ -134,6 +134,18 @@ fn parse_event(el: &Element, fdm: &mut Fdm) -> Result<Event, Error> {
 impl Fdm {
     /// `FGFDMExec::LoadScript(script)`: the run span and time step, the
     /// aircraft and initial conditions, the declarations and the events.
+    ///
+    /// # Errors
+    ///
+    /// [`Error::ResourceNotFound`] when the resolver lacks a document;
+    /// [`Error::Xml`] for malformed XML or a value that does not parse;
+    /// [`Error::Model`] for a configuration JSBSim refuses;
+    /// [`Error::Function`] for an invalid table, function or condition;
+    /// [`Error::Unsupported`] for a construct the port does not implement;
+    /// [`Error::UnknownInputType`] for an `<input>` without an input class;
+    /// [`Error::Geographic`] for a planet GeographicLib refuses; and
+    /// [`Error::PropertyPath`] for a property name SimGear would reject.
+    /// A failed load is not rolled back: start again from a new `Fdm`.
     pub fn load_script(&mut self, resolver: &dyn Resolver, script_path: &str) -> Result<(), Error> {
         self.hashed_load(resolver, |fdm, r| fdm.load_script_from(r, script_path))
     }

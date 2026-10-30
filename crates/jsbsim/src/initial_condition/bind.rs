@@ -114,7 +114,7 @@ fn bind_angles_and_position(b: &mut Binder<'_>) -> Result<(), Error> {
         Kind::Double,
         |m| m.ic.terrain_elevation_ft(env(m)),
         |m, v| {
-            m.ic.set_terrain_elevation_ft(&m.atmosphere, &mut m.inertial, v)
+            m.ic.set_terrain_elevation_ft(&m.atmosphere, &mut m.inertial, v);
         },
     )?;
     Ok(())

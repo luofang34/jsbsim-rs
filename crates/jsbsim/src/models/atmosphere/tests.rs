@@ -25,7 +25,7 @@ fn sea_level_is_the_standard_day() {
 fn tropopause_temperature_comes_from_the_table() {
     let fdm = Fdm::new().unwrap();
     let a = &fdm.models.atmosphere;
-    let h = a.geometric_altitude(36089.2388);
+    let h = crate::models::atmosphere::Atmosphere::geometric_altitude(36089.2388);
     assert!((a.get_temperature(h) - 389.97).abs() < 1e-9);
     // The stratosphere is isothermal.
     assert!((a.get_temperature(h + 5000.0) - 389.97).abs() < 1e-9);

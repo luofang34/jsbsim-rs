@@ -105,7 +105,7 @@ pub fn run_blocking(repo_root: &Path, matches: &ArgMatches) -> Result<ExitCode, 
         "continue" => {
             continue_blocking(repo_root, &dir("from"), &dir("out")).map(|()| ExitCode::SUCCESS)
         }
-        "compare" => compare_blocking(&dir("a"), &dir("b")),
+        "compare" => Ok(compare_blocking(&dir("a"), &dir("b"))),
         "cost" => cost_blocking(repo_root).map(|()| ExitCode::SUCCESS),
         _ => Ok(ExitCode::FAILURE),
     }
@@ -228,7 +228,7 @@ fn continue_blocking(repo_root: &Path, from: &Path, out: &Path) -> Result<(), Or
     Ok(())
 }
 
-fn compare_blocking(a: &Path, b: &Path) -> Result<ExitCode, OracleError> {
+fn compare_blocking(a: &Path, b: &Path) -> ExitCode {
     let mut failures = 0;
     for case in CASES {
         for ext in ["snap", "fingerprint", "trace", "ab"] {
@@ -250,9 +250,9 @@ fn compare_blocking(a: &Path, b: &Path) -> Result<ExitCode, OracleError> {
     }
     if failures == 0 {
         info!("snapshot: {} cases agree", CASES.len());
-        Ok(ExitCode::SUCCESS)
+        ExitCode::SUCCESS
     } else {
-        Ok(ExitCode::FAILURE)
+        ExitCode::FAILURE
     }
 }
 

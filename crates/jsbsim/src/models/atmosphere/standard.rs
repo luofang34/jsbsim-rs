@@ -93,13 +93,13 @@ impl Atmosphere {
 
     /// `GeopotentialAltitude`.
     #[must_use]
-    pub fn geopotential_altitude(&self, geometalt: f64) -> f64 {
+    pub fn geopotential_altitude(geometalt: f64) -> f64 {
         (geometalt * EARTH_RADIUS) / (EARTH_RADIUS + geometalt)
     }
 
     /// `GeometricAltitude`.
     #[must_use]
-    pub fn geometric_altitude(&self, geopotalt: f64) -> f64 {
+    pub fn geometric_altitude(geopotalt: f64) -> f64 {
         (geopotalt * EARTH_RADIUS) / (EARTH_RADIUS - geopotalt)
     }
 
@@ -113,7 +113,7 @@ impl Atmosphere {
             AtmosphereModel::Standard => {}
         }
         let p = &self.profile;
-        let geo_pot_alt = self.geopotential_altitude(altitude);
+        let geo_pot_alt = Self::geopotential_altitude(altitude);
         let mut t;
         if geo_pot_alt >= 0.0 {
             t = p.temperature_table.value_1d(geo_pot_alt);
@@ -137,7 +137,7 @@ impl Atmosphere {
     #[must_use]
     pub fn get_std_temperature(&self, altitude: f64) -> f64 {
         let p = &self.profile;
-        let geo_pot_alt = self.geopotential_altitude(altitude);
+        let geo_pot_alt = Self::geopotential_altitude(altitude);
         if geo_pot_alt >= 0.0 {
             p.temperature_table.value_1d(geo_pot_alt)
         } else {
@@ -193,7 +193,7 @@ impl Atmosphere {
             return;
         }
         let target_temp = Self::convert_to_rankine(t, unit);
-        let geo_pot_alt = self.geopotential_altitude(h);
+        let geo_pot_alt = Self::geopotential_altitude(h);
         let mut bias = target_temp - self.get_std_temperature(h);
         let p = &self.profile;
         if geo_pot_alt <= p.gradient_fadeout_altitude {
@@ -208,8 +208,8 @@ impl Atmosphere {
     /// `SetTemperatureBias`: shifts the whole profile by `t`, capped so no
     /// temperature drops below 1 K.
     pub fn set_temperature_bias(&mut self, unit: TemperatureUnit, t: f64) {
-        let min_std_atmosphere_temp = self.profile.temperature_table.min_value();
         const MIN_UNIVERSE_TEMPERATURE: f64 = kelvin_to_rankine(1.0);
+        let min_std_atmosphere_temp = self.profile.temperature_table.min_value();
         let mut t = t;
         if matches!(unit, TemperatureUnit::Celsius | TemperatureUnit::Kelvin) {
             t *= 1.80;
@@ -252,7 +252,7 @@ impl Atmosphere {
             deltemp = min_delta_temperature;
         }
         self.profile.temperature_delta_gradient =
-            deltemp / (self.profile.gradient_fadeout_altitude - self.geopotential_altitude(h));
+            deltemp / (self.profile.gradient_fadeout_altitude - Self::geopotential_altitude(h));
         self.calculate_lapse_rates();
         self.calculate_pressure_breakpoints(self.sl_pressure);
         self.sl_temperature = self.get_temperature(0.0);

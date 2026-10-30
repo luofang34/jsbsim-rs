@@ -248,7 +248,7 @@ fn ids_from_another_tree_read_as_an_unreadable_detached_node() {
 fn absolute_paths_leave_an_instance_tree() {
     let mut tree = PropertyTree::for_instance(0);
     let base = tree.root();
-    assert_ne!(base, tree.true_root());
+    assert_ne!(base, PropertyTree::true_root());
     assert_eq!(tree.fully_qualified_name(base), "/fdm/jsbsim");
     let relative = tree.get_or_create(base, "systems/x").unwrap();
     let absolute = tree.get_or_create(base, "/systems/x").unwrap();

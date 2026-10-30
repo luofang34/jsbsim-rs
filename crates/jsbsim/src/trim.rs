@@ -115,9 +115,9 @@ impl Trim {
 
     /// `SetMode`: the axes of `mode` replace the current ones.
     pub fn set_mode(&mut self, fdm: &Fdm, mode: TrimMode) {
+        use {Control as C, State as S};
         self.clear_states();
         self.mode = mode;
-        use {Control as C, State as S};
         let pairs: &[(S, C)] = match mode {
             TrimMode::Full => &[
                 (S::Wdot, C::Alpha),

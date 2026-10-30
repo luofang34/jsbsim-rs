@@ -30,7 +30,7 @@ pub type Host<'a> = &'a mut dyn FnMut(&mut Fdm) -> Result<(), Error>;
 #[must_use]
 pub fn nodes(tree: &PropertyTree) -> Vec<NodeId> {
     let mut out = Vec::new();
-    let mut stack = vec![tree.true_root()];
+    let mut stack = vec![PropertyTree::true_root()];
     while let Some(node) = stack.pop() {
         out.push(node);
         stack.extend(tree.children(node).iter().rev());

@@ -70,7 +70,7 @@ fn c172x(altitude_agl_ft: Option<f64>, frames: u32) -> Fdm {
 /// The nodes reachable from the root, which are all the tree's.
 #[cfg(test)]
 fn node_count(tree: &PropertyTree) -> usize {
-    let mut pending = vec![tree.true_root()];
+    let mut pending = vec![PropertyTree::true_root()];
     let mut count = 0;
     while let Some(id) = pending.pop() {
         count += 1;

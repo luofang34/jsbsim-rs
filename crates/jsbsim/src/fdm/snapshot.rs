@@ -93,6 +93,11 @@ impl Fdm {
     }
 
     /// The fingerprint a snapshot of this executive carries.
+    ///
+    /// # Errors
+    ///
+    /// [`Error::Snapshot`] ([`SnapshotError::InvalidValue`]) when a count
+    /// in the state exceeds what the format stores (`u32::MAX`).
     pub fn fingerprint(&mut self) -> Result<Fingerprint, Error> {
         Ok(self.current_fingerprint()?)
     }
@@ -117,6 +122,11 @@ impl Fdm {
     /// Saves the dynamic state into `snapshot`, reusing its buffer. Call it
     /// between [`run`](Self::run)s; a trim, a reset or a linearization a
     /// property write requests has finished when the write returns.
+    ///
+    /// # Errors
+    ///
+    /// As [`fingerprint`](Self::fingerprint); `snapshot` is then left
+    /// partly written.
     pub fn snapshot_into(&mut self, snapshot: &mut Snapshot) -> Result<(), Error> {
         let fingerprint = self.current_fingerprint()?;
         let buffer = snapshot.buffer_mut();
@@ -125,7 +135,7 @@ impl Fdm {
         fingerprint.write_header(&mut w);
         self.env
             .tree
-            .write_runtime_nodes(&mut w, fingerprint.load_nodes);
+            .write_runtime_nodes(&mut w, fingerprint.load_nodes)?;
         self.env.tree.visit_values(&mut w)?;
         self.visit_state(&mut w)?;
         Ok(())
@@ -140,6 +150,18 @@ impl Fdm {
     /// The whole snapshot is decoded and checked before anything is
     /// written, so every error, a corrupted or truncated body included,
     /// leaves the executive unchanged.
+    ///
+    /// # Errors
+    ///
+    /// [`Error::Snapshot`]: [`SnapshotError::BadMagic`] or
+    /// [`SnapshotError::VersionMismatch`] for a header this build cannot
+    /// read, [`SnapshotError::FingerprintMismatch`] for a snapshot of
+    /// another model or load, and [`SnapshotError::Truncated`],
+    /// [`SnapshotError::TrailingBytes`], [`SnapshotError::Shape`],
+    /// [`SnapshotError::InvalidValue`], [`SnapshotError::InvalidText`],
+    /// [`SnapshotError::RuntimeNode`] or [`SnapshotError::LoadNodes`] for a
+    /// body that does not decode or does not fit. The executive is
+    /// unchanged after any of them.
     pub fn restore(&mut self, snapshot: &Snapshot) -> Result<(), Error> {
         let bytes = snapshot.as_bytes();
         let theirs = Fingerprint::read_header(bytes)?;

@@ -24,11 +24,6 @@ fn entry<const N: usize>(v: &[f64; N], i: i32) -> f64 {
 /// pressure at `altitude` ft (limited to 100000 ft), psf.
 #[must_use]
 pub fn std_pressure_100k(altitude: f64) -> f64 {
-    let altitude = if altitude > 100000.0 {
-        100000.0
-    } else {
-        altitude
-    };
     const COEF: [f64; 5] = [
         2116.217,
         -7.648932746E-2,
@@ -36,6 +31,11 @@ pub fn std_pressure_100k(altitude: f64) -> f64 {
         -7.1135726027E-12,
         1.7470331356E-17,
     ];
+    let altitude = if altitude > 100000.0 {
+        100000.0
+    } else {
+        altitude
+    };
     // The powers of the altitude, each the previous times the altitude.
     let mut power = 1.0;
     let mut press = 0.0;

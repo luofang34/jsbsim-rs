@@ -22,7 +22,7 @@ fn transcript_parity(case: &str, table: &ToleranceTable, margins: &mut Margins) 
     let input = std::fs::read_to_string(dir.join(INPUT_FILE)).unwrap();
     let reference = std::fs::read_to_string(dir.join(TRANSCRIPT_FILE)).unwrap();
     let context = oracle::probe::ProbeContext {
-        input_dir: dir.clone(),
+        input_dir: dir,
         jsbsim_root: None,
     };
     let candidate = oracle::probe::run(&spec.probe, &input, &context).unwrap();

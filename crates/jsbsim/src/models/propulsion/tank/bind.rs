@@ -18,7 +18,7 @@ const PROPERTIES: [(&str, Kind, Get, Option<Set>); 12] = [
         "contents-lbs",
         Kind::Double,
         |t| t.contents,
-        Some(|t, v| t.set_contents(v)),
+        Some(super::Tank::set_contents),
     ),
     (
         "unusable-volume-gal",

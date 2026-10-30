@@ -184,12 +184,22 @@ pub struct Fdm {
 
 impl Fdm {
     /// `FGFDMExec()` with default load options.
+    ///
+    /// # Errors
+    ///
+    /// As [`with_options`](Self::with_options).
     pub fn new() -> Result<Self, Error> {
         Self::with_options(crate::LoadOptions::default())
     }
 
     /// `FGFDMExec()`: allocates the models, binds their properties and
     /// initialises them; models load with `options`.
+    ///
+    /// # Errors
+    ///
+    /// [`Error::PropertyPath`] or [`Error::Function`] if the built-in
+    /// models cannot bind or initialise their properties. Neither depends
+    /// on any input, so either one is a bug in the port.
     pub fn with_options(options: crate::LoadOptions) -> Result<Self, Error> {
         let mut fdm = Self {
             env: env::Env {
@@ -309,12 +319,22 @@ impl Fdm {
     }
 
     /// The node at `path`, if it exists.
+    ///
+    /// # Errors
+    ///
+    /// [`Error::PropertyPath`] when `path` is not a valid property path.
     pub fn node(&self, path: &str) -> Result<Option<NodeId>, Error> {
         Ok(self.env.tree.get(path)?)
     }
 
     /// Reads `path` as JSBSim's `GetPropertyValue` does: tied nodes call
     /// their getter, function outputs evaluate.
+    ///
+    /// # Errors
+    ///
+    /// [`Error::PropertyPath`] when `path` is not a valid property path,
+    /// and [`Error::Function`] when the function bound to it fails to
+    /// evaluate.
     pub fn get_property(&mut self, path: &str) -> Result<f64, Error> {
         let Some(node) = self.env.tree.get(path)? else {
             return Ok(0.0);
@@ -323,6 +343,11 @@ impl Fdm {
     }
 
     /// Reads one node through getters and functions.
+    ///
+    /// # Errors
+    ///
+    /// [`Error::Function`] when the function bound to `node` fails to
+    /// evaluate.
     pub fn read_node(&mut self, node: NodeId) -> Result<f64, Error> {
         self.env.eval(&self.models, |ev| ev.read_node(node))
     }
@@ -330,6 +355,11 @@ impl Fdm {
     /// Writes `path` as `SetPropertyValue` does: a node tied to a setter
     /// calls it, a read-only node ignores the write, others store the value.
     /// The node is created when missing.
+    ///
+    /// # Errors
+    ///
+    /// [`Error::PropertyPath`] when `path` is not a valid property path;
+    /// otherwise as [`write_node`](Self::write_node).
     pub fn set_property(&mut self, path: &str, value: f64) -> Result<bool, Error> {
         let node = self.env.tree.get_or_create(self.env.tree.root(), path)?;
         self.write_node(node, value)
@@ -337,6 +367,15 @@ impl Fdm {
 
     /// Writes one node; false when it, or a node it aliases, is not
     /// writable. Setter requests that need the executive are then run.
+    ///
+    /// # Errors
+    ///
+    /// Errors of the request the write starts: a trim
+    /// (`simulation/do_simple_trim`, [`Error::TrimFailed`] when it does
+    /// not converge), a reset or initial-condition run
+    /// (`simulation/reset`, as [`run_ic`](Self::run_ic)), or a
+    /// linearization; and [`Error::Function`] when a function the request
+    /// evaluates fails.
     pub fn write_node(&mut self, node: NodeId, value: f64) -> Result<bool, Error> {
         let Some(target) = self.env.tree.write_target(node) else {
             return Ok(false);

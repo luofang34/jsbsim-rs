@@ -12,8 +12,9 @@ gate() {
 gate cargo fmt --all --check
 gate cargo clippy --workspace --all-targets -- -D warnings
 # The workspace build turns on jsbsim's __oracle feature for tools/oracle;
-# this is jsbsim as a dependent builds it.
-gate cargo clippy -p jsbsim --all-targets --features fs -- -D warnings
+# this is jsbsim as a dependent builds it. Every public function that
+# returns a Result documents its errors; the oracle internals need not.
+gate cargo clippy -p jsbsim --all-targets --features fs -- -D warnings -D clippy::missing_errors_doc
 gate cargo test --workspace --all-targets
 # --all-targets leaves out doc tests.
 gate cargo test --workspace --doc

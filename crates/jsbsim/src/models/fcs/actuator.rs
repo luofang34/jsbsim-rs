@@ -151,9 +151,9 @@ fn actuator_mut(m: &mut Models, at: ComponentAt) -> Option<&mut Actuator> {
 /// `bind`: the malfunctions and the saturation flag under the
 /// component's own property.
 fn bind(base: &Base, ctx: &mut LoadContext<'_>, at: ComponentAt) -> Result<(), Error> {
-    let own = own_property(&base.name);
     type Get = fn(&Actuator) -> bool;
     type Set = fn(&mut Actuator, bool);
+    let own = own_property(&base.name);
     let flags: [(&str, Get, Set); 3] = [
         ("fail_zero", |a| a.fail_zero, |a, v| a.fail_zero = v),
         (

@@ -49,7 +49,7 @@ impl Atmosphere {
                     / (RWATER * (self.pressure - self.saturated_vapor_pressure));
             }
         }
-        let geo_pot_alt = self.geopotential_altitude(h);
+        let geo_pot_alt = Self::geopotential_altitude(h);
         let max_fraction = 1E-6 * self.profile.max_vapor_mass_fraction.value_1d(geo_pot_alt);
         if self.vapor_mass_fraction > max_fraction || self.vapor_mass_fraction < 0.0 {
             self.vapor_mass_fraction = max_fraction;
@@ -59,8 +59,8 @@ impl Atmosphere {
 
     /// `SetDewPoint`.
     pub fn set_dew_point(&mut self, unit: TemperatureUnit, dewpoint: f64) {
-        let mut dew_point_r = Self::convert_to_rankine(dewpoint, unit);
         const MIN_DEW_POINT: f64 = celsius_to_rankine(-C) + 1.0;
+        let mut dew_point_r = Self::convert_to_rankine(dewpoint, unit);
         if dew_point_r <= MIN_DEW_POINT {
             tracing::warn!(
                 "The dew point temperature {} is lower than {} R.\nDew point is therefore capped to {}",

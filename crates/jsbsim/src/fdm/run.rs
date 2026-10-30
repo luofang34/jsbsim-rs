@@ -327,6 +327,13 @@ impl Fdm {
     }
 
     /// `Run`: one frame. False once the simulation is to terminate.
+    ///
+    /// # Errors
+    ///
+    /// [`Error::Function`] when a function, table or condition fails to
+    /// evaluate, and [`Error::TrimFailed`] when a trim requested through
+    /// `simulation/do_simple_trim` (by a script event, say) does not
+    /// converge or names no trim mode.
     pub fn run(&mut self) -> Result<bool, Error> {
         self.incr_time();
         let mut success = true;
@@ -413,6 +420,11 @@ impl Fdm {
     /// `RunIC`: initialise from the initial conditions with integration
     /// suspended, run one frame, seed the integrator histories, then start
     /// the engines the initial conditions say are running.
+    ///
+    /// # Errors
+    ///
+    /// As [`run`](Self::run), for the frame it runs and the engines it
+    /// starts.
     pub fn run_ic(&mut self) -> Result<(), Error> {
         let e = &mut self.models.exec;
         e.saved_dt = e.dt;
@@ -441,6 +453,11 @@ impl Fdm {
     /// initial state and the clock to the script's start (or zero), then
     /// runs [`run_ic`](Self::run_ic) unless `mode` contains
     /// [`ResetMask::DONT_EXECUTE_RUN_IC`].
+    ///
+    /// # Errors
+    ///
+    /// As [`run_ic`](Self::run_ic), and [`Error::Function`] when a model's
+    /// re-initialisation evaluates a function that fails.
     pub fn reset_to_initial_conditions(&mut self, mode: ResetMask) -> Result<(), Error> {
         self.initialize_models()?;
         if self.script.is_some() {

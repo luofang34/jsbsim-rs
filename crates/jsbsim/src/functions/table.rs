@@ -35,7 +35,7 @@ pub struct Table {
     n_cols: usize,
     n_dims: usize,
     data: Vec<f64>,
-    tables: Vec<Table>,
+    tables: Vec<Self>,
     lookup: Vec<Option<PropertyValue>>,
     internal: bool,
     name: String,

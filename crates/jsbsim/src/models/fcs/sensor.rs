@@ -230,7 +230,7 @@ fn noise(
     el: &Element,
     noise_el: &Element,
     name: &str,
-    ctx: &mut LoadContext<'_>,
+    ctx: &LoadContext<'_>,
 ) -> Result<Noise, Error> {
     let variance = el.find_element_value_as_number("noise")?;
     let variation = noise_el.attribute("variation");

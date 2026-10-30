@@ -190,6 +190,18 @@ impl Fdm {
     }
 
     /// `FGFDMExec::LoadModel(model)` for `aircraft_path/model/model.xml`.
+    ///
+    /// # Errors
+    ///
+    /// [`Error::ResourceNotFound`] when the resolver lacks a document;
+    /// [`Error::Xml`] for malformed XML or a value that does not parse;
+    /// [`Error::Model`] for a configuration JSBSim refuses;
+    /// [`Error::Function`] for an invalid table, function or condition;
+    /// [`Error::Unsupported`] for a construct the port does not implement;
+    /// [`Error::UnknownInputType`] for an `<input>` without an input class;
+    /// [`Error::Geographic`] for a planet GeographicLib refuses; and
+    /// [`Error::PropertyPath`] for a property name SimGear would reject.
+    /// A failed load is not rolled back: start again from a new `Fdm`.
     pub fn load_model(
         &mut self,
         resolver: &dyn Resolver,
