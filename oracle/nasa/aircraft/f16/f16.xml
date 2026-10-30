@@ -39,7 +39,11 @@
     forces from AERORP to the CM; the aero model itself is about the MRC.
     The products of inertia are the integrals of the TM's equation (4)
     (Ixz = +982), which the inertia tensor negates, so the mass balance
-    declares negated_crossproduct_inertia="false".
+    declares negated_crossproduct_inertia="false". The empty weight is
+    the mass of 637.1595 slug times FGJSBBase::slugtolb (32.174049), in
+    LBS: JSBSim's SLUG to LBS unit factor (14.59390/0.45359237 =
+    32.17404) differs from slugtolb, so a SLUG value would not come back
+    as DAVE-ML's mass.
   - Propulsion: F16_prop.dml's steady-state thrust acts at the CM along
     body X as an external force. The zero-power engine exists only
     so that JSBSim's trim has a throttle to move: fcs/throttle-cmd-norm[0]
@@ -82,7 +86,7 @@
     <iyy unit="SLUG*FT2"> 55814.0 </iyy>
     <izz unit="SLUG*FT2"> 63100.0 </izz>
     <ixz unit="SLUG*FT2"> 982.0 </ixz>
-    <emptywt unit="SLUG"> 637.1595 </emptywt>
+    <emptywt unit="LBS"> 20500.0009738155 </emptywt>
     <location name="CG" unit="FT">
       <x> -1.132 </x>
       <y> 0.0 </y>

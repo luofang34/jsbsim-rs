@@ -159,7 +159,14 @@ pub(super) fn report_case(
             c.max_spread,
             c.max_excursion,
             c.worst_time,
-            ratio.map_or_else(|| "n/a".to_owned(), two_figures),
+            ratio.map_or_else(
+                || "n/a".to_owned(),
+                |r| format!(
+                    "{} ({} the simulators' own spread)",
+                    two_figures(r),
+                    if r <= 1.0 { "within" } else { "beyond" }
+                )
+            ),
             c.inside,
             c.samples,
             r.inside,

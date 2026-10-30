@@ -99,6 +99,8 @@ fn two_figures_rounds_to_two_significant_figures() {
     assert_eq!(two_figures(0.96), "0.96");
     assert_eq!(two_figures(1.04), "1.0");
     assert_eq!(two_figures(21.4), "21");
+    assert_eq!(two_figures(232.4), "230");
+    assert_eq!(two_figures(1849.0), "1800");
     assert_eq!(two_figures(3.2e-5), "3.2e-5");
     assert_eq!(two_figures(f64::INFINITY), "inf");
 }

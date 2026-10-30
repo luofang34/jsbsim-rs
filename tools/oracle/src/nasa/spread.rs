@@ -43,7 +43,11 @@ pub fn two_figures(r: f64) -> String {
     if !(-3.0..=4.0).contains(&exponent) {
         return format!("{r:.1e}");
     }
-    let decimals = (1.0 - exponent).max(0.0) as usize;
+    if exponent >= 2.0 {
+        let unit = 10f64.powi(exponent as i32 - 1);
+        return format!("{}", (r / unit).round() * unit);
+    }
+    let decimals = (1.0 - exponent) as usize;
     format!("{r:.decimals$}")
 }
 

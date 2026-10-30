@@ -7,11 +7,11 @@
   rates equal the local frame's transport rate (attitude_rate frame
   LOCAL, all zero), SIM 5's trim definition, and the pitch below goes
   with the trim inputs the scripts fix: fcs/throttle-cmd-norm[0] =
-  0.13819656067116182 and fcs/pitch-trim-cmd-norm = 0.12987820023995858.
+  0.13819657650314732 and fcs/pitch-trim-cmd-norm = 0.12987821921895118.
   Newton solve on udot/wdot/qdot < 1e-11 against SIM 5's trim definition
   (C++ JSBSim, finite-difference Jacobian in pitch, throttle and pitch
-  trim); residuals at t = 0: udot -5.8e-15 ft/s2, wdot 2.8e-14 ft/s2,
-  qdot 2.9e-16 rad/s2.
+  trim); residuals at t = 0: udot 1.7e-14 ft/s2, wdot -2.1e-14 ft/s2,
+  qdot -8.1e-16 rad/s2.
   Written for jsbsim-rs from the parameters in NASA/TM-2015-218675,
   "Check-Cases for Verification of 6-Degree-of-Freedom Flight Vehicle
   Simulations", Volume II: Appendices.
@@ -24,7 +24,7 @@
   </position>
   <orientation unit="DEG" frame="LOCAL">
     <roll> 0.0 </roll>
-    <pitch> 2.6653828828378012 </pitch>
+    <pitch> 2.6653837665880826 </pitch>
     <yaw> 0.0 </yaw>
   </orientation>
   <velocity unit="FT/SEC" frame="LOCAL">

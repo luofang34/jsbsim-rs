@@ -25,8 +25,8 @@
     <property value="5"> simulation/integrator/position/rotational </property>
     <property value="5"> simulation/integrator/position/translational </property>
     <!-- The trim inputs of reset_Atmos_11_exact.xml's Newton solve. -->
-    <property value="0.1387385812110044"> fcs/throttle-cmd-norm[0] </property>
-    <property value="0.12930962358336048"> fcs/pitch-trim-cmd-norm </property>
+    <property value="0.13873859683881276"> fcs/throttle-cmd-norm[0] </property>
+    <property value="0.12930964243979803"> fcs/pitch-trim-cmd-norm </property>
     <event name="Engage the autopilot">
       <description>
         Engaged at the start. The
