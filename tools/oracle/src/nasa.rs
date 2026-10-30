@@ -229,7 +229,8 @@ fn simulators_blocking(paths: &Paths, archive: &Archive) -> Result<Vec<Simulator
     data::read_simulators_blocking(&cache_dir(paths).join(&archive.name))
 }
 
-fn spec(case: &Case) -> ScriptSpec {
+/// What a case samples: every property of [`COLUMNS`] at [`RATE_HZ`].
+pub(crate) fn spec(case: &Case) -> ScriptSpec {
     let mut properties: Vec<String> = Vec::new();
     for c in COLUMNS {
         if !properties.iter().any(|p| p == c.property) {
@@ -244,6 +245,20 @@ fn spec(case: &Case) -> ScriptSpec {
         aircraft_path: Some(case.aircraft_path.clone()),
         inputs: None,
         ground_callback: None,
+    }
+}
+
+/// Where C++ and Rust find `case`'s script and aircraft.
+pub(crate) fn roots(paths: &Paths, case: &Case) -> (PathBuf, PathBuf) {
+    match case.root {
+        Root::Jsbsim => (
+            paths.jsbsim_root.clone(),
+            paths.repo_root.join("oracle").join("inputs"),
+        ),
+        Root::Nasa => {
+            let nasa = paths.repo_root.join("oracle").join("nasa");
+            (nasa.clone(), nasa)
+        }
     }
 }
 
@@ -332,7 +347,6 @@ fn report_parity(case: &str, rel: f64, cpp: &Series, rust: &Series) -> bool {
 /// with the NASA simulators' spread.
 pub fn compare_blocking(paths: &Paths, names: &[String]) -> Result<ExitCode, OracleError> {
     let manifest = NasaManifest::read_blocking(&paths.repo_root)?;
-    let nasa_root = paths.repo_root.join("oracle").join("nasa");
     let mut pass = true;
     for case in &manifest.case {
         if !names.is_empty() && !names.contains(&case.name) {
@@ -341,13 +355,7 @@ pub fn compare_blocking(paths: &Paths, names: &[String]) -> Result<ExitCode, Ora
         info!("{}: TM-2015-218675 {}", case.name, case.section);
         let simulators = simulators_blocking(paths, manifest.archive(&case.archive)?)?;
         let spec = spec(case);
-        let (cpp_root, rust_root) = match case.root {
-            Root::Jsbsim => (
-                paths.jsbsim_root.clone(),
-                paths.repo_root.join("oracle").join("inputs"),
-            ),
-            Root::Nasa => (nasa_root.clone(), nasa_root.clone()),
-        };
+        let (cpp_root, rust_root) = roots(paths, case);
         let run_dir = paths
             .work_dir()
             .join("run")

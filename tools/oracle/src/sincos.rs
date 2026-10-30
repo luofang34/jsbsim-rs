@@ -8,7 +8,9 @@
 //! is rebuilt with [`SEPARATE_SINCOS_CXX_FLAGS`] in its own directory, its
 //! references are written under that directory, and the port, linked with
 //! the platform maths library in place of the `libm` crate, must
-//! reproduce them bit for bit.
+//! reproduce them bit for bit. The same holds for the check-cases of
+//! `oracle/nasa/manifest.toml` named in [`NASA_CASES`], whose references
+//! are generated the same way from the scripts `oracle nasa compare` runs.
 //!
 //! GeographicLib's `Math::sincosd` (Math.cpp) still calls `__sincos_stret`
 //! under these flags, through libc++'s `std::sin` and `std::cos`. A case
@@ -25,10 +27,12 @@ use tracing::{error, info, warn};
 
 use crate::cases::{self, Fresh, report_transcript};
 use crate::manifest::{self, CaseSpec, INPUT_FILE, Manifest, REFERENCE_FILE, TRANSCRIPT_FILE};
+use crate::nasa::NasaManifest;
 use crate::transcript::compare_transcript_declaring;
 use crate::upstream::{self, Paths};
 use crate::{OracleError, Series, ToleranceTable};
 
+mod nasa;
 #[cfg(test)]
 mod tests;
 
@@ -212,7 +216,22 @@ pub struct Exception {
 /// Golden cases that cannot be bit-identical even with these flags.
 pub const EXCEPTIONS: &[Exception] = &[];
 
-/// Runs `names`, or [`CASES`] when empty, and fails unless every one is
+/// Check-cases of `oracle/nasa/manifest.toml` that must be bit-identical.
+/// Their aircraft is not upstream, so they have no golden; each is run as
+/// `oracle nasa compare` runs it. The F-16 cases are here because their
+/// `[case.parity]` bounds cover only the gate builds' sin and cos.
+pub const NASA_CASES: &[&str] = &[
+    "Atmos_11",
+    "Atmos_12",
+    "Atmos_13p1",
+    "Atmos_13p2",
+    "Atmos_13p3",
+    "Atmos_13p4",
+    "Atmos_15",
+    "Atmos_16",
+];
+
+/// Runs `names`, or [`CASES`] and [`NASA_CASES`] when empty, and fails unless every one is
 /// bit-identical. `paths.build` must be [`upstream::Build::SeparateSincos`].
 pub fn check_blocking(paths: &Paths, names: &[String]) -> Result<ExitCode, OracleError> {
     if paths.build != upstream::Build::SeparateSincos {
@@ -231,13 +250,23 @@ pub fn check_blocking(paths: &Paths, names: &[String]) -> Result<ExitCode, Oracl
     upstream::build_blocking(paths)?;
     let names: Vec<String> = if names.is_empty() {
         warn_unlisted_blocking(paths)?;
-        CASES.iter().map(|&c| c.to_owned()).collect()
+        CASES
+            .iter()
+            .chain(NASA_CASES)
+            .map(|&c| c.to_owned())
+            .collect()
     } else {
         names.to_vec()
     };
+    let nasa_manifest = NasaManifest::read_blocking(&paths.repo_root)?;
     let mut identical = 0usize;
     for case in &names {
-        if check_case_blocking(paths, case)? {
+        let same = if NASA_CASES.contains(&case.as_str()) {
+            nasa::check_case_blocking(paths, &nasa_manifest, case)?
+        } else {
+            check_case_blocking(paths, case)?
+        };
+        if same {
             identical = identical.wrapping_add(1);
         }
     }
@@ -302,26 +331,8 @@ fn check_case_blocking(paths: &Paths, case: &str) -> Result<bool, OracleError> {
     match (&manifest.case, fresh) {
         (CaseSpec::Script(spec), Fresh::Series(reference)) => {
             reference.write_blocking(&dir.join(REFERENCE_FILE))?;
-            let (candidate, stop) =
-                crate::port_script::run_script(&spec.rust_root(&paths.repo_root), spec);
-            if let Some(stop) = stop {
-                error!("{case}: the Rust run stopped: {stop}");
-                return Ok(false);
-            }
-            Ok(match first_difference(&reference, &candidate) {
-                None => {
-                    info!(
-                        "{case}: bit-identical, {} rows x {} columns",
-                        reference.rows.len(),
-                        reference.columns.len()
-                    );
-                    true
-                }
-                Some(difference) => {
-                    error!("{case}: FIRST DIFFERENCE {difference}");
-                    false
-                }
-            })
+            let rust = crate::port_script::run_script(&spec.rust_root(&paths.repo_root), spec);
+            Ok(report_series(case, &reference, rust))
         }
         (CaseSpec::Transcript(spec), Fresh::Transcript(reference)) => {
             let path = dir.join(TRANSCRIPT_FILE);
@@ -347,6 +358,33 @@ fn check_case_blocking(paths: &Paths, case: &str) -> Result<bool, OracleError> {
         _ => Err(OracleError::Sincos(format!(
             "{case}: the C++ run produced the wrong kind of output"
         ))),
+    }
+}
+
+/// Logs whether the Rust run `rust` reproduced `reference` bit for bit;
+/// returns whether it did.
+fn report_series(
+    case: &str,
+    reference: &Series,
+    (candidate, stop): (Series, Option<crate::port_script::Stop>),
+) -> bool {
+    if let Some(stop) = stop {
+        error!("{case}: the Rust run stopped: {stop}");
+        return false;
+    }
+    match first_difference(reference, &candidate) {
+        None => {
+            info!(
+                "{case}: bit-identical, {} rows x {} columns",
+                reference.rows.len(),
+                reference.columns.len()
+            );
+            true
+        }
+        Some(difference) => {
+            error!("{case}: FIRST DIFFERENCE {difference}");
+            false
+        }
     }
 }
 

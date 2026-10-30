@@ -83,6 +83,29 @@ fn a_short_or_differently_shaped_candidate_differs() {
 }
 
 #[test]
+fn every_nasa_case_with_a_parity_bound_is_checked_bit_for_bit() {
+    // A `[case.parity]` bound is justified by the gate builds' sin and cos
+    // alone, which only this check shows.
+    let repo = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let manifest = NasaManifest::read_blocking(&repo).unwrap();
+    let mut seen = BTreeSet::new();
+    for name in NASA_CASES {
+        assert!(
+            manifest.case.iter().any(|c| c.name == *name),
+            "{name} is not in oracle/nasa/manifest.toml"
+        );
+        assert!(seen.insert(name), "{name} is listed twice");
+    }
+    for case in manifest.case.iter().filter(|c| c.parity.is_some()) {
+        assert!(
+            NASA_CASES.contains(&case.name.as_str()),
+            "{} states a parity bound but is not in NASA_CASES",
+            case.name
+        );
+    }
+}
+
+#[test]
 fn the_libm_crate_is_told_apart_from_the_platform_libm() {
     // `cargo test` links the libm crate, not tools/libm-platform.
     assert!(!platform_libm_linked());
