@@ -4,11 +4,20 @@
 //! vendored: `oracle/nasa/manifest.toml` pins each archive's URL, size and
 //! sha256, `fetch` downloads them into `target/oracle/nasa`, and `compare`
 //! refuses data that does not match the pins.
+//! The subcommands of [`CHECKS`] verify the F-16 translation against its
+//! DAVE-ML sources from the same archives.
 
+mod checks;
+mod control_law;
 mod data;
+mod daveml;
 mod envelope;
 mod flip;
+mod mass;
+mod package;
 mod report;
+mod rig;
+mod shots;
 mod spread;
 
 #[cfg(test)]
@@ -22,6 +31,7 @@ use serde::Deserialize;
 use sha2::{Digest, Sha256};
 use tracing::{error, info};
 
+pub use checks::{CHECKS, run_blocking as run_check_blocking};
 pub use data::{COLUMNS, Column, Simulator};
 pub use envelope::{ColumnStats, compare_column, compare_samples};
 pub use report::Counts;

@@ -146,7 +146,7 @@ fn bench_command(jsbsim_root: Arg) -> Command {
 }
 
 fn nasa_command(jsbsim_root: Arg) -> Command {
-    Command::new("nasa")
+    let mut nasa = Command::new("nasa")
                 .about("Optional comparison with the NASA TM-2015-218675 check-case data")
                 .subcommand_required(true)
                 .subcommand(
@@ -156,13 +156,17 @@ fn nasa_command(jsbsim_root: Arg) -> Command {
                 .subcommand(
                     Command::new("compare")
                         .about("Run the check-cases in C++ and Rust and compare both with the simulators' spread")
-                        .arg(jsbsim_root)
+                        .arg(jsbsim_root.clone())
                         .arg(
                             Arg::new("case")
                                 .action(ArgAction::Append)
                                 .help("Check-case names; all when omitted"),
                         ),
-                )
+                );
+    for (name, about) in nasa::CHECKS {
+        nasa = nasa.subcommand(Command::new(name).about(about).arg(jsbsim_root.clone()));
+    }
+    nasa
 }
 
 fn compare_command() -> Command {
@@ -320,7 +324,10 @@ fn run_nasa(repo_root: PathBuf, sub: &ArgMatches) -> Result<ExitCode, OracleErro
         return nasa::fetch_blocking(&paths).map(|()| ExitCode::SUCCESS);
     }
     upstream::build_blocking(&paths)?;
-    nasa::compare_blocking(&paths, &case_names(sub))
+    if name == "compare" {
+        return nasa::compare_blocking(&paths, &case_names(sub));
+    }
+    nasa::run_check_blocking(&paths, name)
 }
 
 /// The `--max-ratio` ceilings of `sub`.

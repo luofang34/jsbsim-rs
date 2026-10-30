@@ -108,6 +108,22 @@ pub enum OracleError {
         /// What is wrong.
         message: String,
     },
+    /// A DAVE-ML model could not be read or evaluated.
+    #[error("DAVE-ML {source_name}: {message}")]
+    DaveMl {
+        /// Model file.
+        source_name: String,
+        /// What went wrong.
+        message: String,
+    },
+    /// An F-16 check of `oracle nasa` could not run.
+    #[error("nasa {check}: {message}")]
+    NasaCheck {
+        /// The check, or what it was reading.
+        check: String,
+        /// What went wrong.
+        message: String,
+    },
     /// The Rust port failed while a benchmark case ran.
     #[error("bench case {case}: Rust port: {source}")]
     BenchPort {
