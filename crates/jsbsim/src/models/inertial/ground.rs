@@ -184,8 +184,7 @@ impl crate::snapshot::Visit for Slot {
         &mut self,
         v: &mut V,
     ) -> Result<(), crate::snapshot::SnapshotError> {
-        let mut default = matches!(self, Self::Default(_));
-        crate::snapshot::Visit::visit(&mut default, v)?;
+        let default = crate::snapshot::visit_flag(matches!(self, Self::Default(_)), v)?;
         match self {
             Self::Default(d) if default => crate::snapshot::Visit::visit(d, v),
             Self::Custom(_) if default => {

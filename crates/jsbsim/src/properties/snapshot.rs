@@ -11,7 +11,7 @@
 use sha2::{Digest, Sha256};
 
 use super::{Node, NodeId, PropertyTree, Value};
-use crate::snapshot::{Reader, SnapshotError, Visit, Visitor, Writer};
+use crate::snapshot::{Checker, Reader, SnapshotError, Visit, Visitor, Writer};
 
 impl NodeId {
     /// The id of slot `slot`.
@@ -56,13 +56,27 @@ impl Value {
     }
 }
 
+/// The kind, then the value. A check meeting another kind than the
+/// node's walks a fresh value of that kind in its place.
 impl Visit for Value {
     fn visit<V: Visitor>(&mut self, v: &mut V) -> Result<(), SnapshotError> {
         let mut tag = self.tag();
         v.u8(&mut tag)?;
-        if tag != self.tag() {
-            *self = Self::of_tag(tag)?;
+        if tag == self.tag() {
+            return self.visit_payload(v);
         }
+        let mut fresh = Self::of_tag(tag)?;
+        if v.mutating() {
+            *self = fresh;
+            self.visit_payload(v)
+        } else {
+            fresh.visit_payload(v)
+        }
+    }
+}
+
+impl Value {
+    fn visit_payload<V: Visitor>(&mut self, v: &mut V) -> Result<(), SnapshotError> {
         match self {
             Self::None => Ok(()),
             Self::Alias(n) => n.visit(v),
@@ -120,6 +134,47 @@ impl PropertyTree {
         }
     }
 
+    /// Parses the records [`write_runtime_nodes`](Self::write_runtime_nodes)
+    /// wrote, failing where [`read_runtime_nodes`](Self::read_runtime_nodes)
+    /// would, and changes nothing: each parent must be a node made before
+    /// the record's own.
+    pub(crate) fn check_runtime_nodes(
+        &self,
+        r: &mut Reader<'_>,
+        load_nodes: u32,
+    ) -> Result<RuntimeNodes, SnapshotError> {
+        if self.node_count() < load_nodes {
+            return Err(SnapshotError::LoadNodes {
+                expected: load_nodes,
+                found: self.node_count(),
+            });
+        }
+        let count = r.read_u32()?;
+        let mut matches = self.node_count() == load_nodes.saturating_add(count);
+        for i in 0..count {
+            let (parent, index, name) = runtime_node(r)?;
+            let before = load_nodes.saturating_add(i);
+            if parent >= before {
+                return Err(SnapshotError::RuntimeNode {
+                    name: name.to_owned(),
+                    parent,
+                    nodes: before,
+                });
+            }
+            matches = matches
+                && self.nodes.get(before as usize).is_some_and(|n| {
+                    n.parent.map_or(u32::MAX, |p| p.0) == parent
+                        && n.index == index
+                        && n.name == name
+                });
+        }
+        Ok(RuntimeNodes {
+            load_nodes,
+            count,
+            matches,
+        })
+    }
+
     /// Brings the nodes past the first `load_nodes` to those
     /// [`write_runtime_nodes`](Self::write_runtime_nodes) recorded. When
     /// they already match, nothing changes and nothing allocates.
@@ -128,26 +183,9 @@ impl PropertyTree {
         r: &mut Reader<'_>,
         load_nodes: u32,
     ) -> Result<(), SnapshotError> {
-        if self.node_count() < load_nodes {
-            return Err(SnapshotError::LoadNodes {
-                expected: load_nodes,
-                found: self.node_count(),
-            });
-        }
         let mut check = r.clone();
-        let count = check.read_u32()?;
-        let mut matches = self.node_count() == load_nodes.saturating_add(count);
-        for i in 0..count {
-            let (parent, index, name) = runtime_node(&mut check)?;
-            let slot = load_nodes as usize + i as usize;
-            matches = matches
-                && self.nodes.get(slot).is_some_and(|n| {
-                    n.parent.map_or(u32::MAX, |p| p.0) == parent
-                        && n.index == index
-                        && n.name == name
-                });
-        }
-        if matches {
+        let runtime = self.check_runtime_nodes(&mut check, load_nodes)?;
+        if runtime.matches {
             *r = check;
             return Ok(());
         }
@@ -156,7 +194,7 @@ impl PropertyTree {
             node.children.retain(|c| c.0 < load_nodes);
         }
         r.read_u32()?;
-        for _ in 0..count {
+        for _ in 0..runtime.count {
             let (parent, index, name) = runtime_node(r)?;
             if parent >= self.node_count() {
                 return Err(SnapshotError::RuntimeNode {
@@ -173,16 +211,56 @@ impl PropertyTree {
     /// The lookup generation, then each node's attribute bits and value.
     pub(crate) fn visit_values<V: Visitor>(&mut self, v: &mut V) -> Result<(), SnapshotError> {
         self.generation.visit(v)?;
-        let n = v.len(self.nodes.len(), "property nodes")?;
-        if n != self.nodes.len() {
-            return Err(SnapshotError::Shape {
-                what: "property nodes",
-                expected: self.nodes.len() as u64,
-                found: n as u64,
-            });
-        }
+        expect_nodes(v, self.nodes.len())?;
         self.nodes.iter_mut().try_for_each(|node| node.visit(v))
     }
+
+    /// [`visit_values`](Self::visit_values) over the tree as
+    /// [`read_runtime_nodes`](Self::read_runtime_nodes) would leave it
+    /// with `runtime`, from [`check_runtime_nodes`](Self::check_runtime_nodes):
+    /// a node it would make again, or make anew, is walked as a fresh
+    /// one, and one it would drop is not walked.
+    pub(crate) fn check_values(
+        &mut self,
+        c: &mut Checker<'_>,
+        runtime: RuntimeNodes,
+    ) -> Result<(), SnapshotError> {
+        self.generation.visit(c)?;
+        let kept = match runtime.matches {
+            true => self.nodes.len(),
+            false => runtime.load_nodes as usize,
+        };
+        let n = runtime.load_nodes as usize + runtime.count as usize;
+        expect_nodes(c, n)?;
+        self.nodes
+            .iter_mut()
+            .take(kept.min(n))
+            .try_for_each(|node| node.visit(c))?;
+        let mut fresh = Node::new(String::new(), 0, None);
+        (kept.min(n)..n).try_for_each(|_| fresh.visit(c))
+    }
+}
+
+/// What [`PropertyTree::check_runtime_nodes`] found.
+#[derive(Debug, Clone, Copy)]
+pub(crate) struct RuntimeNodes {
+    load_nodes: u32,
+    count: u32,
+    /// Whether the tree already has these nodes past the load's.
+    matches: bool,
+}
+
+/// The node count, which must be `n`.
+fn expect_nodes<V: Visitor>(v: &mut V, n: usize) -> Result<(), SnapshotError> {
+    let found = v.len(n, "property nodes")?;
+    if found != n {
+        return Err(SnapshotError::Shape {
+            what: "property nodes",
+            expected: n as u64,
+            found: found as u64,
+        });
+    }
+    Ok(())
 }
 
 impl Visit for Node {

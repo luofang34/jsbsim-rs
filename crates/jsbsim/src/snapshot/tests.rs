@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 use super::*;
 use crate::fdm::Fdm;
-use crate::properties::NodeId;
+use crate::math::Location;
+use crate::properties::{NodeId, Value};
 
 fn written(mut f: impl FnMut(&mut Writer<'_>) -> Result<(), SnapshotError>) -> Vec<u8> {
     let mut out = Vec::new();
@@ -209,4 +210,85 @@ fn nodes_created_before_a_snapshot_are_made_again() {
     assert_eq!(other.get_property("test/a").unwrap(), 1.0);
     assert_eq!(other.get_property("test/b[2]").unwrap(), 2.0);
     assert_eq!(other.node("test/a").unwrap(), fdm.node("test/a").unwrap());
+}
+
+/// A list whose length is state.
+#[derive(Clone)]
+struct Dynamic(Vec<f64>);
+
+impl Visit for Dynamic {
+    fn visit<V: Visitor>(&mut self, v: &mut V) -> Result<(), SnapshotError> {
+        visit_dynamic(&mut self.0, v, "values")
+    }
+}
+
+fn encoded<T: Visit + Clone>(x: &T) -> Vec<u8> {
+    let mut x = x.clone();
+    written(|w| x.visit(w))
+}
+
+/// Checks `bytes` onto `target`, which must consume them all and leave
+/// it as it was, then reads them onto it, which must consume the same
+/// bytes and leave what they encode.
+fn checked_then_read<T: Visit + Clone>(target: &T, bytes: &[u8]) {
+    let mut checked = target.clone();
+    let mut c = Checker::new(Reader::new(bytes, 0));
+    checked.visit(&mut c).unwrap();
+    c.finish().unwrap();
+    assert_eq!(encoded(&checked), encoded(target));
+    let mut read = target.clone();
+    let mut r = Reader::new(bytes, 0);
+    read.visit(&mut r).unwrap();
+    r.finish().unwrap();
+    assert_eq!(encoded(&read), bytes);
+}
+
+#[test]
+fn a_check_follows_the_stream_where_the_shapes_differ_and_writes_nothing() {
+    checked_then_read(&None::<f64>, &encoded(&Some(2.5f64)));
+    checked_then_read(&Some(1.0f64), &encoded(&None::<f64>));
+    checked_then_read(&Dynamic(vec![9.0]), &encoded(&Dynamic(vec![1.0, 2.0, 3.0])));
+    checked_then_read(&Dynamic(vec![1.0, 2.0, 3.0]), &encoded(&Dynamic(vec![9.0])));
+    checked_then_read(
+        &Value::Double(1.0),
+        &encoded(&Value::String("text".to_owned())),
+    );
+    checked_then_read(&Value::None, &encoded(&Value::Bool(true)));
+    let plain = Location::from_spherical(0.1, 0.2, 2.1e7);
+    let mut ellipsoidal = Location::from_spherical(0.3, 0.4, 2.2e7);
+    ellipsoidal.set_ellipse(2.09e7, 2.08e7);
+    checked_then_read(&plain, &encoded(&ellipsoidal));
+    checked_then_read(&ellipsoidal, &encoded(&plain));
+}
+
+#[test]
+fn a_check_rejects_what_a_restore_would_and_keeps_the_value() {
+    let check = |bytes| Checker::new(Reader::new(bytes, 0));
+    let mut flag = true;
+    assert_eq!(
+        flag.visit(&mut check(&[2])),
+        Err(SnapshotError::InvalidValue {
+            what: "bool",
+            value: 2
+        })
+    );
+    flag.visit(&mut check(&[0])).unwrap();
+    assert!(flag);
+    let mut value = Value::Double(1.0);
+    assert_eq!(
+        value.visit(&mut check(&[9])),
+        Err(SnapshotError::InvalidValue {
+            what: "property value type",
+            value: 9
+        })
+    );
+    assert_eq!(value, Value::Double(1.0));
+    let mut text = "kept".to_owned();
+    assert_eq!(
+        text.visit(&mut check(&[1, 0, 0, 0, 0xff])),
+        Err(SnapshotError::InvalidText { offset: 4 })
+    );
+    text.visit(&mut check(&[3, 0, 0, 0, b'n', b'e', b'w']))
+        .unwrap();
+    assert_eq!(text, "kept");
 }

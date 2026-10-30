@@ -185,6 +185,10 @@ impl RandomNumberGenerator {
         state.visit(v)?;
         cached.visit(v)?;
         has.visit(v)?;
+        // The generator is shared, so only a restore may store into it.
+        if !v.mutating() {
+            return Ok(());
+        }
         self.state.store(state, Ordering::Relaxed);
         self.cached_normal.store(cached, Ordering::Relaxed);
         self.has_cached_normal.store(has, Ordering::Relaxed);

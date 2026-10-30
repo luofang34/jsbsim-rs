@@ -2,11 +2,13 @@
 //! Taking and restoring [`Snapshot`]s of the executive, and the loads'
 //! record that fingerprints them.
 
+use tracing::error;
+
 use super::{ExecState, Fdm, Models};
 use crate::script::{Event, Script, Set};
 use crate::snapshot::{
-    Fingerprint, HashingResolver, ShapeHasher, Snapshot, SnapshotError, Visit, Visitor, Writer,
-    visit_fields, visit_present,
+    Checker, Fingerprint, HashingResolver, ShapeHasher, Snapshot, SnapshotError, Visit, Visitor,
+    Writer, visit_fields, visit_present,
 };
 use crate::{Error, Resolver};
 
@@ -131,11 +133,13 @@ impl Fdm {
 
     /// Restores the state `snapshot` saved. The snapshot must be of this
     /// model loaded the same way: [`SnapshotError::FingerprintMismatch`]
-    /// otherwise, before anything changes. Property nodes created after
-    /// the snapshot are dropped, so their ids become invalid; nodes it
-    /// holds that the executive lacks are made. The ground callback stays
-    /// as installed. An error found past the header, in a corrupted body,
-    /// leaves the state partly restored: restore a valid snapshot then.
+    /// otherwise. Property nodes created after the snapshot are dropped,
+    /// so their ids become invalid; nodes it holds that the executive
+    /// lacks are made. The ground callback stays as installed.
+    ///
+    /// The whole snapshot is decoded and checked before anything is
+    /// written, so every error, a corrupted or truncated body included,
+    /// leaves the executive unchanged.
     pub fn restore(&mut self, snapshot: &Snapshot) -> Result<(), Error> {
         let bytes = snapshot.as_bytes();
         let theirs = Fingerprint::read_header(bytes)?;
@@ -143,14 +147,31 @@ impl Fdm {
         if let Some(part) = ours.first_difference(&theirs) {
             return Err(SnapshotError::FingerprintMismatch { part }.into());
         }
+        self.check_body(bytes, theirs.load_nodes)?;
+        self.read_body(bytes, theirs.load_nodes).map_err(|e| {
+            // The check decodes as the read does, so this is a bug in a
+            // `Visit` impl, and the state is partly restored.
+            error!(error = %e, "a snapshot that passed its check failed to restore");
+            e.into()
+        })
+    }
+
+    /// Decodes the body as [`read_body`](Self::read_body) does, writing
+    /// nothing and allocating nothing.
+    fn check_body(&mut self, bytes: &[u8], load_nodes: u32) -> Result<(), SnapshotError> {
+        let mut c = Checker::new(Fingerprint::body(bytes));
+        let runtime = self.env.tree.check_runtime_nodes(c.reader(), load_nodes)?;
+        self.env.tree.check_values(&mut c, runtime)?;
+        self.visit_state(&mut c)?;
+        c.finish()
+    }
+
+    fn read_body(&mut self, bytes: &[u8], load_nodes: u32) -> Result<(), SnapshotError> {
         let mut r = Fingerprint::body(bytes);
-        self.env
-            .tree
-            .read_runtime_nodes(&mut r, theirs.load_nodes)?;
+        self.env.tree.read_runtime_nodes(&mut r, load_nodes)?;
         self.env.tree.visit_values(&mut r)?;
         self.visit_state(&mut r)?;
-        r.finish()?;
-        Ok(())
+        r.finish()
     }
 
     /// The state past the property tree, in one order for every

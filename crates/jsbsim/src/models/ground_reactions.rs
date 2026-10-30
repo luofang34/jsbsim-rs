@@ -302,13 +302,22 @@ impl crate::snapshot::Visit for GroundReactions {
         ds_cmd.visit(v)?;
         forces.visit(v)?;
         moments.visit(v)?;
+        const FRESH: (usize, FrictionType) = (0, FrictionType::Roll);
         let n = v.len(multipliers.len(), "friction constraints")?;
-        if v.loading() {
-            multipliers.resize(n, (0, FrictionType::Roll));
+        if v.mutating() {
+            multipliers.resize(n, FRESH);
         }
         for (contact, kind) in multipliers.iter_mut().take(n) {
             contact.visit(v)?;
             kind.visit(v)?;
+        }
+        // A check walks the constraints a restore would append.
+        if v.decoding() && n > multipliers.len() {
+            let (mut contact, mut kind) = FRESH;
+            for _ in multipliers.len()..n {
+                contact.visit(v)?;
+                kind.visit(v)?;
+            }
         }
         Ok(())
     }

@@ -363,7 +363,7 @@ impl crate::snapshot::Visit for Quaternion {
         v: &mut V,
     ) -> Result<(), crate::snapshot::SnapshotError> {
         crate::snapshot::Visit::visit(&mut self.data, v)?;
-        if v.loading() {
+        if v.mutating() {
             self.derived = None;
         }
         Ok(())

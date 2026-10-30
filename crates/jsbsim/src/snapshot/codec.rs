@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
-//! The saving and restoring directions of a snapshot walk.
+//! The saving, checking and restoring directions of a snapshot walk.
 
 use super::{SnapshotError, Visitor};
 
@@ -26,7 +26,11 @@ fn count_u32(n: usize, what: &'static str) -> Result<u32, SnapshotError> {
 }
 
 impl Visitor for Writer<'_> {
-    fn loading(&self) -> bool {
+    fn decoding(&self) -> bool {
+        false
+    }
+
+    fn mutating(&self) -> bool {
         false
     }
 
@@ -118,7 +122,11 @@ impl<'a> Reader<'a> {
 }
 
 impl Visitor for Reader<'_> {
-    fn loading(&self) -> bool {
+    fn decoding(&self) -> bool {
+        true
+    }
+
+    fn mutating(&self) -> bool {
         true
     }
 
@@ -161,6 +169,67 @@ impl Visitor for Reader<'_> {
             v.push_str(text);
         }
         Ok(())
+    }
+
+    fn kind(&mut self, _name: &'static str) {}
+}
+
+/// Decodes and validates a snapshot as a [`Reader`] restores it,
+/// consuming the same bytes, but writes nothing to what it visits and
+/// allocates nothing, so a restore can check the whole body and fail
+/// before any state changes.
+pub(crate) struct Checker<'a> {
+    r: Reader<'a>,
+}
+
+impl<'a> Checker<'a> {
+    pub(crate) fn new(r: Reader<'a>) -> Self {
+        Self { r }
+    }
+
+    /// The bytes underneath, for the parts of a snapshot parsed outside a
+    /// [`Visit`](super::Visit) walk.
+    pub(crate) fn reader(&mut self) -> &mut Reader<'a> {
+        &mut self.r
+    }
+
+    /// Fails unless every byte was read.
+    pub(crate) fn finish(&self) -> Result<(), SnapshotError> {
+        self.r.finish()
+    }
+}
+
+impl Visitor for Checker<'_> {
+    fn decoding(&self) -> bool {
+        true
+    }
+
+    fn mutating(&self) -> bool {
+        false
+    }
+
+    fn u8(&mut self, v: &mut u8) -> Result<(), SnapshotError> {
+        self.r.u8(v)
+    }
+
+    fn u32(&mut self, v: &mut u32) -> Result<(), SnapshotError> {
+        self.r.u32(v)
+    }
+
+    fn u64(&mut self, v: &mut u64) -> Result<(), SnapshotError> {
+        self.r.u64(v)
+    }
+
+    fn len(&mut self, n: usize, what: &'static str) -> Result<usize, SnapshotError> {
+        self.r.len(n, what)
+    }
+
+    fn count(&mut self, n: usize, what: &'static str) -> Result<(), SnapshotError> {
+        self.r.count(n, what)
+    }
+
+    fn string(&mut self, _v: &mut String) -> Result<(), SnapshotError> {
+        self.r.read_str().map(|_| ())
     }
 
     fn kind(&mut self, _name: &'static str) {}

@@ -26,7 +26,11 @@ impl ShapeHasher {
 }
 
 impl Visitor for ShapeHasher {
-    fn loading(&self) -> bool {
+    fn decoding(&self) -> bool {
+        false
+    }
+
+    fn mutating(&self) -> bool {
         false
     }
 

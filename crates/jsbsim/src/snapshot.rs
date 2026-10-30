@@ -43,9 +43,9 @@ mod tests;
 pub use error::{FingerprintPart, SnapshotError};
 pub use fingerprint::Fingerprint;
 
-pub(crate) use codec::{Reader, Writer};
+pub(crate) use codec::{Checker, Reader, Writer};
 pub(crate) use fingerprint::{HashingResolver, LoadRecord};
-pub(crate) use primitive::{visit_dynamic, visit_each_present, visit_present};
+pub(crate) use primitive::{visit_dynamic, visit_each_present, visit_flag, visit_present};
 pub(crate) use shape::ShapeHasher;
 
 /// The first bytes of every snapshot.
@@ -112,11 +112,20 @@ pub(crate) trait Visit {
     fn visit<V: Visitor>(&mut self, v: &mut V) -> Result<(), SnapshotError>;
 }
 
-/// A direction of a [`Visit`] walk: saving, restoring, or hashing the
-/// model structure.
+/// A direction of a [`Visit`] walk: saving, checking a snapshot before
+/// it is restored, restoring, or hashing the model structure.
+///
+/// The `u8`, `u32` and `u64` of a decoding visitor overwrite their
+/// argument, so an impl decodes into a local and assigns it to `self`
+/// only when [`mutating`](Self::mutating).
 pub(crate) trait Visitor {
-    /// True while restoring, when the walk overwrites what it visits.
-    fn loading(&self) -> bool;
+    /// True when values come from a snapshot: optional values, list
+    /// lengths and value kinds then follow the stream, not `self`.
+    fn decoding(&self) -> bool;
+    /// True when the walk overwrites what it visits. A decoding walk that
+    /// does not mutate checks a snapshot: where the stream holds a part
+    /// `self` lacks, it walks a default temporary instead of making one.
+    fn mutating(&self) -> bool;
     /// One byte.
     fn u8(&mut self, v: &mut u8) -> Result<(), SnapshotError>;
     /// Four bytes.
@@ -186,7 +195,9 @@ macro_rules! visit_unit_enum {
                 v.u8(&mut tag)?;
                 match ALL.get(usize::from(tag)) {
                     Some(x) => {
-                        *self = *x;
+                        if v.mutating() {
+                            *self = *x;
+                        }
                         Ok(())
                     }
                     None => Err($crate::snapshot::SnapshotError::InvalidValue {

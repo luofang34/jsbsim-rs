@@ -13,13 +13,16 @@
 //! Each run then takes a snapshot and restores it every frame, as a host
 //! rewinding frame by frame does: after the first, neither
 //! `Fdm::snapshot_into` nor `Fdm::restore` on a reused `Snapshot`
-//! allocates.
+//! allocates. Before each restore, the first snapshot with one byte
+//! appended is restored: the check that precedes every restore decodes
+//! all of it, of a state frames older, before it refuses the extra byte,
+//! so that check alone is measured too.
 
 use std::path::{Path, PathBuf};
 
-use jsbsim::FileResolver;
 use jsbsim::fdm::Fdm;
-use jsbsim::snapshot::Snapshot;
+use jsbsim::snapshot::{Snapshot, SnapshotError};
+use jsbsim::{Error, FileResolver};
 use oracle::steady_state::{
     FRAMES, PLANET_TRIPOD_ALTITUDE_FT, PLANET_TRIPOD_DIR, PLANET_TRIPODS, SCRIPTS, TRIMMED,
 };
@@ -71,17 +74,23 @@ fn measure(fdm: &mut Fdm, frames: u32) -> (u64, u64) {
 const SNAPSHOT_FRAMES: u32 = 200;
 
 /// Heap blocks and bytes allocated across `frames` frames that each take
-/// a snapshot, run, restore it and run again, after a first snapshot
-/// that may allocate; fewer when the script ends.
+/// a snapshot, run, check the first snapshot, restore the one taken and
+/// run again, after a first snapshot that may allocate; fewer when the script
+/// ends.
 #[cfg(test)]
 fn measure_snapshots(fdm: &mut Fdm, frames: u32) -> (u64, u64) {
     let mut snapshot = Snapshot::new();
     fdm.snapshot_into(&mut snapshot).unwrap();
+    let mut padded = snapshot.as_bytes().to_vec();
+    padded.push(0);
+    let checked_only = Snapshot::from_bytes(&padded).unwrap();
+    let trailing = Err(Error::Snapshot(SnapshotError::TrailingBytes { extra: 1 }));
     let before = dhat::HeapStats::get();
     fdm.restore(&snapshot).unwrap();
     for _ in 0..frames {
         fdm.snapshot_into(&mut snapshot).unwrap();
         fdm.run().unwrap();
+        assert_eq!(fdm.restore(&checked_only), trailing);
         fdm.restore(&snapshot).unwrap();
         if !fdm.run().unwrap() {
             break;
