@@ -618,7 +618,8 @@ cause = "Not isolated: outside by up to 1.9e-06 at t=0.0 s; with Adams-Bashforth
 # 0.57 deg/s of one at dt = 0.0003125 s, with the same integrators. The
 # TM's JSBSim setting (B.6.7), 120 Hz with Adams-Bashforth 4, is rejected:
 # it sets check-case 13.2 into a roll limit cycle, |p| reaching 31 deg/s
-# after t = 10 s, on which Rust and C++ diverge. JSBSim's default integrators at dt = 0.0025 s are
+# after t = 10 s, on which Rust and C++ diverge (`oracle nasa limit-cycle`
+# fails a run like it). JSBSim's default integrators at dt = 0.0025 s are
 # 5.1 and 8.5 deg/s off the dt = 0.00125 s run at 15.3 and 15.5 s.
 #
 # Each case also runs as <case>_exact from the exact trim of

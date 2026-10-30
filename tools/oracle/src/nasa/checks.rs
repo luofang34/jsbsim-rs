@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 //! The F-16 checks beside the envelope comparison, each a subcommand of
-//! `oracle nasa`: the model's mass properties, the DAVE-ML static shots
-//! and the control law frame by frame.
+//! `oracle nasa`: the model's mass properties, the DAVE-ML static shots,
+//! the control law frame by frame and the integration step's stability.
 
 use std::process::ExitCode;
 
 use tracing::{error, info};
 
-use super::{control_law, mass, shots};
+use super::{control_law, limit_cycle, mass, shots};
 use crate::OracleError;
 use crate::upstream::Paths;
 
 /// The checks, by subcommand name, with what each verifies.
-pub const CHECKS: [(&str, &str); 3] = [
+pub const CHECKS: [(&str, &str); 4] = [
     (
         "mass",
         "Compare f16.xml's mass properties in C++ and Rust with F16_inertia.dml",
@@ -24,6 +24,10 @@ pub const CHECKS: [(&str, &str); 3] = [
     (
         "control-law",
         "Check f16.xml's control law frame by frame against F16_control.dml and F16_gnc.dml",
+    ),
+    (
+        "limit-cycle",
+        "Require check-case 13.2 free of a roll limit cycle in C++ and Rust",
     ),
 ];
 
@@ -54,6 +58,7 @@ pub fn run_blocking(paths: &Paths, name: &str) -> Result<ExitCode, OracleError> 
             control_law::check_blocking(paths)?,
             &control_law::CASES.join(", "),
         ),
+        "limit-cycle" => verdict(name, limit_cycle::check_blocking(paths)?, "C++ and Rust"),
         other => {
             return Err(OracleError::NasaCheck {
                 check: other.to_owned(),

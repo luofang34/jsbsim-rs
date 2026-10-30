@@ -8,7 +8,8 @@
 # Arguments name check-cases (e.g. Atmos_02); all run when there are none.
 # Then runs the F-16 checks on both: mass properties against
 # F16_inertia.dml, the static shots of F16_aero.dml and F16_prop.dml, and
-# the control law frame by frame against F16_control.dml and F16_gnc.dml.
+# the control law frame by frame against F16_control.dml and F16_gnc.dml,
+# and check-case 13.2 free of a roll limit cycle (the integration step).
 # NASA_OFFLINE=1 skips the download and uses the archives already in
 # target/oracle/nasa, which are still checked against their pins.
 set -euo pipefail
@@ -20,6 +21,6 @@ if [ "${NASA_OFFLINE:-0}" != 1 ]; then
   cargo run --release -q -p oracle -- nasa fetch
 fi
 cargo run --release -q -p oracle -- nasa compare "$@"
-for check in mass shots control-law; do
+for check in mass shots control-law limit-cycle; do
   cargo run --release -q -p oracle -- nasa "$check"
 done
