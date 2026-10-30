@@ -117,7 +117,8 @@
       f16/track/* is the logic check-case 13.4 leaves to the simulation
       (C.1.16): with f16/track/on 1, latOffset is the distance right of the
       line through (lat0, lon0) along baseChiCmd, less the commanded
-      offset, in the circumnavigator's units (60 nmi per degree).
+      offset, from the ellipsoidal distance and bearing of the vehicle
+      from (lat0, lon0).
     -->
     <property value="0">f16/control/sas-on</property>
     <property value="0">f16/control/ap-on</property>
@@ -134,63 +135,37 @@
     <property value="0">f16/track/offset-cmd-ft</property>
 
     <channel name="Course offset">
+      <waypoint_heading name="trackBearing" unit="DEG">
+        <description>bearing of the vehicle from the course line's origin, on the planet's ellipsoid</description>
+        <source_latitude unit="DEG"> f16/track/lat0-deg </source_latitude>
+        <source_longitude unit="DEG"> f16/track/lon0-deg </source_longitude>
+        <target_latitude unit="DEG"> position/lat-geod-deg </target_latitude>
+        <target_longitude unit="DEG"> position/long-gc-deg </target_longitude>
+        <output>f16/track/bearing-deg</output>
+      </waypoint_heading>
+      <waypoint_distance name="trackDistance" unit="FT">
+        <description>distance of the vehicle from the course line's origin, on the planet's ellipsoid</description>
+        <source_latitude unit="DEG"> f16/track/lat0-deg </source_latitude>
+        <source_longitude unit="DEG"> f16/track/lon0-deg </source_longitude>
+        <target_latitude unit="DEG"> position/lat-geod-deg </target_latitude>
+        <target_longitude unit="DEG"> position/long-gc-deg </target_longitude>
+        <output>f16/track/distance-ft</output>
+      </waypoint_distance>
       <fcs_function name="trackLatOffset">
-        <description>distance right of the base course line less the commanded offset, ft</description>
+        <description>distance right of the base course line less the commanded offset, ft: d sin(bearing - course)</description>
         <function>
           <difference>
-            <difference>
-              <product>
-                <product>
+            <product>
+              <property>f16/track/distance-ft</property>
+              <sin>
+                <toradians>
                   <difference>
-                    <property>position/long-gc-deg</property>
-                    <property>f16/track/lon0-deg</property>
-                  </difference>
-                  <product>
-                    <value>60.0</value>
-                    <value>6076.12</value>
-                  </product>
-                  <cos>
-                    <product>
-                      <property>position/lat-geod-deg</property>
-                      <quotient>
-                        <value>3.14159265</value>
-                        <value>180.0</value>
-                      </quotient>
-                    </product>
-                  </cos>
-                </product>
-                <cos>
-                  <product>
+                    <property>f16/track/bearing-deg</property>
                     <property>f16/control/base-course-cmd-deg</property>
-                    <quotient>
-                      <value>3.14159265</value>
-                      <value>180.0</value>
-                    </quotient>
-                  </product>
-                </cos>
-              </product>
-              <product>
-                <product>
-                  <difference>
-                    <property>position/lat-geod-deg</property>
-                    <property>f16/track/lat0-deg</property>
                   </difference>
-                  <product>
-                    <value>60.0</value>
-                    <value>6076.12</value>
-                  </product>
-                </product>
-                <sin>
-                  <product>
-                    <property>f16/control/base-course-cmd-deg</property>
-                    <quotient>
-                      <value>3.14159265</value>
-                      <value>180.0</value>
-                    </quotient>
-                  </product>
-                </sin>
-              </product>
-            </difference>
+                </toradians>
+              </sin>
+            </product>
             <property>f16/track/offset-cmd-ft</property>
           </difference>
         </function>
