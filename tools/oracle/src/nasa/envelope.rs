@@ -44,11 +44,27 @@ impl ColumnStats {
 }
 
 /// `v` moved by whole periods to lie within half a period of `reference`.
-fn unwrap(v: f64, reference: f64, period: Option<f64>) -> f64 {
+pub(super) fn unwrap(v: f64, reference: f64, period: Option<f64>) -> f64 {
     match period {
         Some(p) => v - p * ((v - reference) / p).round(),
         None => v,
     }
+}
+
+/// The candidate's `column` as (time, value in the variable's unit)
+/// samples; `None` when the candidate lacks the property.
+pub(super) fn samples(column: &Column, candidate: &Series) -> Option<Vec<(f64, f64)>> {
+    let index = candidate
+        .columns
+        .iter()
+        .position(|c| c == column.property)?;
+    Some(
+        candidate
+            .rows
+            .iter()
+            .filter_map(|row| Some((*row.first()?, row.get(index)? * column.scale)))
+            .collect(),
+    )
 }
 
 /// Compares the candidate's `column` with the simulators; `None` when the
@@ -60,17 +76,70 @@ pub fn compare_column(
     simulators: &[Simulator],
     candidate: &Series,
 ) -> Option<ColumnStats> {
-    let index = candidate
-        .columns
+    compare_samples(column, simulators, &samples(column, candidate)?)
+}
+
+/// Compares `samples`, (time, value in the variable's unit), with the
+/// simulators' interval; `None` when fewer than two simulators recorded
+/// the variable at any sample.
+#[must_use]
+pub fn compare_samples(
+    column: &Column,
+    simulators: &[Simulator],
+    samples: &[(f64, f64)],
+) -> Option<ColumnStats> {
+    let simulators: Vec<&Simulator> = simulators.iter().collect();
+    compare_simulators(column, &simulators, samples)
+}
+
+/// The simulators' printed precision for `column`: the slack a sample
+/// outside their interval is allowed.
+pub(super) fn floor(column: &Column, simulators: &[&Simulator]) -> f64 {
+    let magnitude = simulators
         .iter()
-        .position(|c| c == column.property)?;
-    let recorded = simulators
-        .iter()
-        .filter(|s| s.values.contains_key(column.nasa))
-        .count();
+        .filter_map(|s| s.values.get(column.nasa))
+        .flat_map(|series| series.values())
+        .fold(0.0_f64, |m, v| m.max(v.abs()));
+    PRINTED_PRECISION * magnitude.max(1.0)
+}
+
+/// How far `x` lies outside the simulators' interval at time key `key`
+/// (zero inside), unwrapped like them, and the interval's width; `None`
+/// when fewer than two simulators recorded the variable then.
+pub(super) fn excursion(
+    column: &Column,
+    simulators: &[&Simulator],
+    key: i64,
+    x: f64,
+) -> Option<(f64, f64)> {
+    let mut values = simulators.iter().filter_map(|s| s.value(column.nasa, key));
+    let reference = values.next()?;
+    let (mut lo, mut hi, mut count) = (reference, reference, 1usize);
+    for v in values {
+        let v = unwrap(v, reference, column.period);
+        lo = lo.min(v);
+        hi = hi.max(v);
+        count = count.wrapping_add(1);
+    }
+    if count < 2 {
+        return None;
+    }
+    let x = unwrap(x, reference, column.period);
+    Some(((lo - x).max(x - hi).max(0.0), hi - lo))
+}
+
+/// [`compare_samples`] against a selection of simulators.
+pub(super) fn compare_simulators(
+    column: &Column,
+    simulators: &[&Simulator],
+    samples: &[(f64, f64)],
+) -> Option<ColumnStats> {
     let mut stats = ColumnStats {
         nasa: column.nasa,
-        simulators: recorded,
+        simulators: simulators
+            .iter()
+            .filter(|s| s.values.contains_key(column.nasa))
+            .count(),
         samples: 0,
         max_spread: 0.0,
         max_excursion: 0.0,
@@ -78,35 +147,12 @@ pub fn compare_column(
         inside: 0,
         outside: Vec::new(),
     };
-    let magnitude = simulators
-        .iter()
-        .filter_map(|s| s.values.get(column.nasa))
-        .flat_map(|series| series.values())
-        .fold(0.0_f64, |m, v| m.max(v.abs()));
-    let floor = PRINTED_PRECISION * magnitude.max(1.0);
-    let mut values = Vec::with_capacity(simulators.len());
-    for row in &candidate.rows {
-        let (Some(&t), Some(&raw)) = (row.first(), row.get(index)) else {
-            continue;
-        };
+    let floor = floor(column, simulators);
+    for &(t, x) in samples {
         let key = time_key(t);
-        values.clear();
-        values.extend(simulators.iter().filter_map(|s| s.value(column.nasa, key)));
-        let Some(&reference) = values.first() else {
+        let Some((excursion, spread)) = excursion(column, simulators, key, x) else {
             continue;
         };
-        if values.len() < 2 {
-            continue;
-        }
-        let (lo, hi) = values
-            .iter()
-            .map(|v| unwrap(*v, reference, column.period))
-            .fold((f64::INFINITY, f64::NEG_INFINITY), |(lo, hi), v| {
-                (lo.min(v), hi.max(v))
-            });
-        let x = unwrap(raw * column.scale, reference, column.period);
-        let spread = hi - lo;
-        let excursion = (lo - x).max(x - hi).max(0.0);
         stats.samples += 1;
         stats.max_spread = stats.max_spread.max(spread);
         if excursion > stats.max_excursion || excursion.is_nan() {

@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  Check-case 16 from the exact trim of
+  aircraft/f16/reset_Atmos_16_exact.xml, F-16 with the F16_gnc
+  circumnavigator around the Equator/IDL intersection: Appendix C.1.19,
+  Table 43; 180 s duration.
+  Written for jsbsim-rs from the parameters in NASA/TM-2015-218675,
+  "Check-Cases for Verification of 6-Degree-of-Freedom Flight Vehicle
+  Simulations", Volume II: Appendices.
+-->
+<runscript name="NASA EOM check-case Atmos 16, exact trim">
+  <description>Check-case 16 of NASA/TM-2015-218675: circular flight around the Equator-IDL intersection</description>
+  <use aircraft="f16" initialize="reset_Atmos_16_exact"/>
+  <run start="0.0" end="180" dt="0.0025">
+    <!--
+      Adams-Bashforth 4 for every integrator at dt = 0.0025 s, for the
+      convergence and stability reasons in the F-16 section of
+      oracle/nasa/manifest.toml.
+    -->
+    <property value="5"> simulation/integrator/rate/rotational </property>
+    <property value="5"> simulation/integrator/rate/translational </property>
+    <property value="5"> simulation/integrator/position/rotational </property>
+    <property value="5"> simulation/integrator/position/translational </property>
+    <!-- The trim inputs of reset_Atmos_16_exact.xml's Newton solve. -->
+    <property value="0.13819656067116182"> fcs/throttle-cmd-norm[0] </property>
+    <property value="0.12987820023995858"> fcs/pitch-trim-cmd-norm </property>
+    <event name="Engage the autopilot">
+      <description>
+        Engaged at the start. The
+        speed command holds the trimmed equivalent airspeed, the altitude
+        command the initial altitude.
+      </description>
+      <condition> simulation/sim-time-sec ge 0.0 </condition>
+      <set name="f16/control/sas-on" value="1"/>
+      <set name="f16/control/ap-on" value="1"/>
+      <set name="f16/control/keas-cmd">
+        <function>
+          <property>velocities/ve-kts</property>
+        </function>
+      </set>
+      <set name="f16/control/alt-cmd-ft" value="10000.0"/>
+      <set name="f16/gnc/guidance-on" value="1"/>
+      <set name="f16/gnc/circle-pole" value="0"/>
+    </event>
+  </run>
+</runscript>

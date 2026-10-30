@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  Check-case 13.3 from the exact trim of
+  aircraft/f16/reset_Atmos_11_exact.xml, F-16 with the F16_control
+  autopilot, 15 deg heading command change to the right at 15 s:
+  Appendix C.1.15, Table 39; 30 s duration.
+  Written for jsbsim-rs from the parameters in NASA/TM-2015-218675,
+  "Check-Cases for Verification of 6-Degree-of-Freedom Flight Vehicle
+  Simulations", Volume II: Appendices.
+-->
+<runscript name="NASA EOM check-case Atmos 13.3, exact trim">
+  <description>Check-case 13.3 of NASA/TM-2015-218675: course change of a subsonic aircraft</description>
+  <use aircraft="f16" initialize="reset_Atmos_11_exact"/>
+  <run start="0.0" end="30" dt="0.0025">
+    <!--
+      Adams-Bashforth 4 for every integrator at dt = 0.0025 s, for the
+      convergence and stability reasons in the F-16 section of
+      oracle/nasa/manifest.toml.
+    -->
+    <property value="5"> simulation/integrator/rate/rotational </property>
+    <property value="5"> simulation/integrator/rate/translational </property>
+    <property value="5"> simulation/integrator/position/rotational </property>
+    <property value="5"> simulation/integrator/position/translational </property>
+    <!-- The trim inputs of reset_Atmos_11_exact.xml's Newton solve. -->
+    <property value="0.1387385812110044"> fcs/throttle-cmd-norm[0] </property>
+    <property value="0.12930962358336048"> fcs/pitch-trim-cmd-norm </property>
+    <event name="Engage the autopilot">
+      <description>
+        Engaged at the start. The
+        speed command holds the trimmed equivalent airspeed, the altitude
+        command the initial altitude.
+      </description>
+      <condition> simulation/sim-time-sec ge 0.0 </condition>
+      <set name="f16/control/sas-on" value="1"/>
+      <set name="f16/control/ap-on" value="1"/>
+      <set name="f16/control/keas-cmd">
+        <function>
+          <property>velocities/ve-kts</property>
+        </function>
+      </set>
+      <set name="f16/control/alt-cmd-ft" value="10013.0"/>
+      <set name="f16/control/base-course-cmd-deg" value="45.0"/>
+    </event>
+    <event name="Turn right 15 deg">
+      <condition> simulation/sim-time-sec ge 15.0 </condition>
+      <set name="f16/control/base-course-cmd-deg" value="60.0"/>
+    </event>
+  </run>
+</runscript>

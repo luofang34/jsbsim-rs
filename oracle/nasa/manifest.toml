@@ -617,6 +617,20 @@ cause = "Not isolated: outside by up to 1.9e-06 at t=0.0 s; with Adams-Bashforth
 # it sets check-case 13.2 into a roll limit cycle, |p| reaching 31 deg/s
 # after t = 10 s, on which Rust and C++ diverge. JSBSim's default integrators at dt = 0.0025 s are
 # 5.1 and 8.5 deg/s off the dt = 0.00125 s run at 15.3 and 15.5 s.
+#
+# Each case also runs as <case>_exact from the exact trim of
+# aircraft/f16/reset_Atmos_*_exact.xml (body rates at the local transport
+# rate, SIM 5's trim definition, without FGTrim); a primary case's miss is
+# put down to FGTrim when its exact variant passes that variable.
+#
+# The strict rule cannot be met by an independent simulator: left out and
+# compared with the envelope of SIM 4 and SIM 5, NASA's SIM 2 lies outside
+# on 24 of its 24 variables in all eight cases (`oracle nasa compare` logs
+# this leave-one-out per case). Each variable's report line therefore
+# also gives R, C++ JSBSim's largest distance over time to its nearest
+# simulator divided by the largest distance over time between the two
+# closest simulators, as information, not a gate: R <= 1 means the miss
+# lies within the simulators' own spread.
 [[case]]
 name = "Atmos_11"
 archive = "Atmos_11_TrimCheckSubsonicF16"
@@ -626,124 +640,256 @@ aircraft_path = "aircraft"
 section = "Appendix C.1.11, Table 35"
 
 [case.parity]
-rel = 5e-9
-cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library, checked on every oracle-ci run by the sincos gate (scripts/oracle-sincos.sh); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the trim and the F-16's dynamics carry to 1.9e-10 of a property's magnitude here."
+rel = 1e-08
+cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library, checked on every oracle-ci run by the sincos gate (scripts/oracle-sincos.sh); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the trim and the F-16's dynamics carry to 4.7e-10 of a property's magnitude here."
 
 [[case.expected_miss]]
 variable = "eiPosition_ft_X"
-cause = "Not isolated (translation error not excluded): outside by up to 7 at t=180.0 s; with Adams-Bashforth 4 everywhere still outside by up to 7, with an exact trim at the local-horizon rates by up to 0.91."
+cause = "Not isolated (translation error not excluded): outside by up to 6.4 at t=155.6 s; R = 1.6, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiPosition_ft_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 17 at t=180.0 s; with Adams-Bashforth 4 everywhere still outside by up to 17, with an exact trim at the local-horizon rates by up to 0.041."
+cause = "Not isolated (translation error not excluded): outside by up to 17 at t=180.0 s; R = 21, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiPosition_ft_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 8.4 at t=180.0 s; with Adams-Bashforth 4 everywhere still outside by up to 8.4, with an exact trim at the local-horizon rates by up to 0.46."
+cause = "Not isolated (translation error not excluded): outside by up to 8.9 at t=180.0 s; R = 31, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "feVelocity_ft_s_X"
-cause = "Not isolated (translation error not excluded): outside by up to 0.16 at t=38.8 s; with Adams-Bashforth 4 everywhere still outside by up to 0.16, with an exact trim at the local-horizon rates by up to 0.0037."
+cause = "Not isolated (translation error not excluded): outside by up to 0.16 at t=38.9 s; R = 10, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "feVelocity_ft_s_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 0.00017 at t=1.3 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00015, with an exact trim at the local-horizon rates by up to 0.0036."
+cause = "Not isolated (translation error not excluded): outside by up to 0.00018 at t=1.3 s; R = 5.7, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "feVelocity_ft_s_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 0.086 at t=54.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.086, with an exact trim at the local-horizon rates by up to 0.0047."
+cause = "Not isolated (translation error not excluded): outside by up to 0.086 at t=54.1 s; R = 53, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiVelocity_ft_s_X"
-cause = "Not isolated (translation error not excluded): outside by up to 0.12 at t=44.0 s; with Adams-Bashforth 4 everywhere still outside by up to 0.12, with an exact trim at the local-horizon rates by up to 0.0074."
+cause = "Not isolated (translation error not excluded): outside by up to 0.11 at t=43.9 s; R = 4.1, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiVelocity_ft_s_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 0.24 at t=26.2 s; with Adams-Bashforth 4 everywhere still outside by up to 0.24, with an exact trim at the local-horizon rates by up to 0.0031."
+cause = "Not isolated (translation error not excluded): outside by up to 0.24 at t=26.2 s; R = 28, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiVelocity_ft_s_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 0.15 at t=52.0 s; with Adams-Bashforth 4 everywhere still outside by up to 0.15, with an exact trim at the local-horizon rates by up to 0.0057."
+cause = "Not isolated (translation error not excluded): outside by up to 0.15 at t=52.0 s; R = 14, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "longitude_deg"
-cause = "Not isolated (translation error not excluded): outside by up to 1.2e-05 at t=41.4 s; with Adams-Bashforth 4 everywhere still outside by up to 1.2e-05, with an exact trim at the local-horizon rates by up to 2.9e-07."
+cause = "Not isolated (translation error not excluded): outside by up to 1.1e-05 at t=41.4 s; R = 2.7, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "latitude_deg"
-cause = "Not isolated (translation error not excluded): outside by up to 4.2e-05 at t=180.0 s; with Adams-Bashforth 4 everywhere still outside by up to 4.2e-05, with an exact trim at the local-horizon rates by up to 4e-08."
+cause = "Not isolated (translation error not excluded): outside by up to 4.3e-05 at t=180.0 s; R = 39, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "localGravity_ft_s2"
-cause = "JSBSim's trim (FGTrim holds the body rates at zero relative to the Earth and stops within its udot, wdot and qdot tolerances) starts the F-16 off the simulators' equilibrium; inside with an exact trim at the local-horizon rates (outside by up to 2e-05 at t=180.0 s)."
+cause = "JSBSim's trim (FGTrim holds the body rates at zero relative to the Earth and stops within its udot, wdot and qdot tolerances) starts the F-16 off SIM 5's equilibrium; inside from the exact trim of Atmos_11_exact (outside by up to 2e-05 at t=180.0 s; R = 42, beyond the simulators' own spread)."
 
 [[case.expected_miss]]
 variable = "eulerAngle_deg_Yaw"
-cause = "Not isolated (translation error not excluded): outside by up to 7e-05 at t=158.6 s; with Adams-Bashforth 4 everywhere still outside by up to 7e-05, with an exact trim at the local-horizon rates by up to 2.4e-05."
+cause = "Not isolated (translation error not excluded): outside by up to 0.00058 at t=89.5 s; R = 0.20, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eulerAngle_deg_Pitch"
-cause = "Not isolated (translation error not excluded): outside by up to 0.0073 at t=57.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0073, with an exact trim at the local-horizon rates by up to 0.00044."
+cause = "Not isolated (translation error not excluded): outside by up to 0.0073 at t=57.1 s; R = 62, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eulerAngle_deg_Roll"
-cause = "Not isolated (translation error not excluded): outside by up to 0.00015 at t=2.1 s; with Adams-Bashforth 4 everywhere still outside by up to 3.8e-05, with an exact trim at the local-horizon rates by up to 7.4e-07."
+cause = "JSBSim's trim (FGTrim holds the body rates at zero relative to the Earth and stops within its udot, wdot and qdot tolerances) starts the F-16 off SIM 5's equilibrium; inside from the exact trim of Atmos_11_exact (outside by up to 0.00052 at t=2.4 s; R = 0.56, within the simulators' own spread)."
 
 [[case.expected_miss]]
 variable = "bodyAngularRateWrtEi_deg_s_Roll"
-cause = "Not isolated (translation error not excluded): outside by up to 0.00034 at t=2.3 s; with Adams-Bashforth 4 everywhere still outside by up to 1e-06, with an exact trim at the local-horizon rates by up to 0.00074."
+cause = "Not isolated (translation error not excluded): outside by up to 0.00015 at t=0.2 s; R = 0.61, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "bodyAngularRateWrtEi_deg_s_Pitch"
-cause = "Not isolated (translation error not excluded): outside by up to 0.00044 at t=25.3 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00044, with an exact trim at the local-horizon rates by up to 6.3e-05."
+cause = "Not isolated (translation error not excluded): outside by up to 0.00044 at t=25.3 s; R = 197, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "bodyAngularRateWrtEi_deg_s_Yaw"
-cause = "Not isolated (translation error not excluded): outside by up to 0.00014 at t=2.5 s; with Adams-Bashforth 4 everywhere still outside by up to 1.6e-06, with an exact trim at the local-horizon rates by up to 0.00034."
+cause = "Not isolated (translation error not excluded): outside by up to 0.00013 at t=1.5 s; R = 0.58, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "altitudeRateWrtMsl_ft_min"
-cause = "Not isolated (translation error not excluded): outside by up to 5.2 at t=54.1 s; with Adams-Bashforth 4 everywhere still outside by up to 5.2, with an exact trim at the local-horizon rates by up to 0.33."
+cause = "Not isolated (translation error not excluded): outside by up to 5.2 at t=54.1 s; R = 0.26, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "speedOfSound_ft_s"
-cause = "Not isolated (translation error not excluded): outside by up to 0.00047 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00047, with an exact trim at the local-horizon rates by up to 0.00047."
+cause = "Not isolated (translation error not excluded): outside by up to 0.00047 at t=0.1 s; R = 27, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "airDensity_slug_ft3"
-cause = "Not isolated (translation error not excluded): outside by up to 7.8e-09 at t=0.5 s; with Adams-Bashforth 4 everywhere still outside by up to 7.8e-09, with an exact trim at the local-horizon rates by up to 1.6e-08."
+cause = "Not isolated (translation error not excluded): outside by up to 7.8e-09 at t=0.5 s; R = 27, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyForce_lbf_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 0.068 at t=2.0 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0002, with an exact trim at the local-horizon rates by up to 0.16."
+cause = "Not isolated (translation error not excluded): outside by up to 0.062 at t=1.0 s; R = 0.60, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyForce_lbf_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 2.8 at t=66.0 s; with Adams-Bashforth 4 everywhere still outside by up to 2.8, with an exact trim at the local-horizon rates by up to 0.31."
+cause = "Not isolated (translation error not excluded): outside by up to 2.8 at t=66.0 s; R = 232, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyMoment_ftlbf_L"
-cause = "Not isolated (translation error not excluded): outside by up to 0.2 at t=2.8 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00055, with an exact trim at the local-horizon rates by up to 0.5."
+cause = "Not isolated (translation error not excluded): outside by up to 0.047 at t=4.6 s; R = 0.64, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyMoment_ftlbf_M"
-cause = "Not isolated (translation error not excluded): outside by up to 0.1 at t=0.5 s; with Adams-Bashforth 4 everywhere still outside by up to 0.1, with an exact trim at the local-horizon rates by up to 0.13."
+cause = "Not isolated (translation error not excluded): outside by up to 0.1 at t=0.5 s; R = 55, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyMoment_ftlbf_N"
-cause = "Not isolated (translation error not excluded): outside by up to 0.43 at t=2.9 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0014, with an exact trim at the local-horizon rates by up to 0.91."
+cause = "Not isolated (translation error not excluded): outside by up to 0.49 at t=2.0 s; R = 0.59, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "mach"
-cause = "Not isolated (translation error not excluded): outside by up to 9e-05 at t=99.0 s; with Adams-Bashforth 4 everywhere still outside by up to 9e-05, with an exact trim at the local-horizon rates by up to 4.5e-06."
+cause = "Not isolated (translation error not excluded): outside by up to 9e-05 at t=99.0 s; R = 13, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "dynamicPressure_lbf_ft2"
-cause = "Not isolated (translation error not excluded): outside by up to 0.26 at t=39.2 s; with Adams-Bashforth 4 everywhere still outside by up to 0.26, with an exact trim at the local-horizon rates by up to 0.0039."
+cause = "Not isolated (translation error not excluded): outside by up to 0.26 at t=39.2 s; R = 16, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "trueAirspeed_nmi_h"
-cause = "Not isolated (translation error not excluded): outside by up to 0.059 at t=180.0 s; with Adams-Bashforth 4 everywhere still outside by up to 0.059, with an exact trim at the local-horizon rates by up to 0.0031."
+cause = "Not isolated (translation error not excluded): outside by up to 0.059 at t=180.0 s; R = 0.41, within the simulators' own spread."
+
+[[case]]
+name = "Atmos_11_exact"
+archive = "Atmos_11_TrimCheckSubsonicF16"
+root = "nasa"
+script = "scripts/Atmos_11_exact.xml"
+aircraft_path = "aircraft"
+section = "Appendix C.1.11, Table 35, exact trim"
+
+[case.parity]
+rel = 1e-08
+cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library, checked on every oracle-ci run by the sincos gate (scripts/oracle-sincos.sh); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the F-16's dynamics carry to 4.4e-10 of a property's magnitude here."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_X"
+cause = "Not isolated (translation error not excluded): outside by up to 0.022 at t=24.9 s; R = 0.0056, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.041 at t=0.0 s; R = 0.080, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 0.062 at t=113.4 s; R = 0.25, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_X"
+cause = "Not isolated (translation error not excluded): outside by up to 0.00091 at t=0.1 s; R = 0.056, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.00091 at t=0.3 s; R = 0.035, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0011 at t=57.4 s; R = 0.39, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_X"
+cause = "Not isolated (translation error not excluded): outside by up to 0.00078 at t=2.1 s; R = 0.029, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0011 at t=63.2 s; R = 0.13, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0011 at t=10.3 s; R = 0.100, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "altitudeMsl_ft"
+cause = "Not isolated (translation error not excluded): outside by up to 0.022 at t=127.7 s; R = 0.22, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "longitude_deg"
+cause = "Not isolated (translation error not excluded): outside by up to 3e-08 at t=19.4 s; R = 0.0024, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "latitude_deg"
+cause = "Not isolated (translation error not excluded): outside by up to 7.1e-08 at t=150.5 s; R = 0.092, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Yaw"
+cause = "Not isolated (translation error not excluded): outside by up to 2.3e-06 at t=3.7 s; R = 0.0066, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Pitch"
+cause = "Not isolated (translation error not excluded): outside by up to 9.6e-05 at t=57.7 s; R = 0.47, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Roll"
+cause = "Not isolated (translation error not excluded): outside by up to 1.3e-05 at t=2.2 s; R = 0.0092, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Pitch"
+cause = "Not isolated (translation error not excluded): outside by up to 1e-05 at t=36.1 s; R = 1.5, beyond the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Yaw"
+cause = "Not isolated (translation error not excluded): outside by up to 5.3e-06 at t=1.5 s; R = 0.0069, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "altitudeRateWrtMsl_ft_min"
+cause = "Not isolated (translation error not excluded): outside by up to 0.083 at t=18.1 s; R = 0.0019, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "speedOfSound_ft_s"
+cause = "Not isolated (translation error not excluded): outside by up to 0.00047 at t=0.0 s; R = 0.64, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "airDensity_slug_ft3"
+cause = "Not isolated (translation error not excluded): outside by up to 9.8e-09 at t=38.4 s; R = 0.76, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "ambientPressure_lbf_ft2"
+cause = "Not isolated (translation error not excluded): outside by up to 0.001 at t=180.0 s; R = 0.42, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "ambientTemperature_dgR"
+cause = "Not isolated (translation error not excluded): outside by up to 8e-05 at t=127.7 s; R = 0.22, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0029 at t=2.9 s; R = 0.0067, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 0.062 at t=0.1 s; R = 2.0, beyond the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_L"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0071 at t=2.6 s; R = 0.0071, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_M"
+cause = "Not isolated (translation error not excluded): outside by up to 0.03 at t=0.1 s; R = 16, beyond the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_N"
+cause = "Not isolated (translation error not excluded): outside by up to 0.019 at t=1.9 s; R = 0.0066, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "mach"
+cause = "Not isolated (translation error not excluded): outside by up to 8.7e-07 at t=0.1 s; R = 0.058, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "dynamicPressure_lbf_ft2"
+cause = "Not isolated (translation error not excluded): outside by up to 2.1e-05 at t=0.1 s; R = 0.14, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "trueAirspeed_nmi_h"
+cause = "Not isolated (translation error not excluded): outside by up to 0.00077 at t=0.1 s; R = 0.0024, within the simulators' own spread."
 
 [[case]]
 name = "Atmos_12"
@@ -754,124 +900,252 @@ aircraft_path = "aircraft"
 section = "Appendix C.1.12, Table 36"
 
 [case.parity]
-rel = 2e-8
-cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library, checked on every oracle-ci run by the sincos gate (scripts/oracle-sincos.sh); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the trim and the F-16's dynamics carry to 8.0e-10 of a property's magnitude here."
+rel = 3e-08
+cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library, checked on every oracle-ci run by the sincos gate (scripts/oracle-sincos.sh); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the trim and the F-16's dynamics carry to 1.1e-09 of a property's magnitude here."
 
 [[case.expected_miss]]
 variable = "eiPosition_ft_X"
-cause = "Not isolated (translation error not excluded): outside by up to 57 at t=143.2 s; with Adams-Bashforth 4 everywhere still outside by up to 57, with an exact trim at the local-horizon rates by up to 0.38."
+cause = "Not isolated (translation error not excluded): outside by up to 57 at t=143.0 s; R = 9.2, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiPosition_ft_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 3e+02 at t=96.3 s; with Adams-Bashforth 4 everywhere still outside by up to 3e+02, with an exact trim at the local-horizon rates by up to 2.2."
+cause = "Not isolated (translation error not excluded): outside by up to 3e+02 at t=96.3 s; R = 202, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiPosition_ft_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 1e+02 at t=73.9 s; with Adams-Bashforth 4 everywhere still outside by up to 1e+02, with an exact trim at the local-horizon rates by up to 2.1."
+cause = "Not isolated (translation error not excluded): outside by up to 1e+02 at t=73.8 s; R = 26, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "feVelocity_ft_s_X"
-cause = "Not isolated (translation error not excluded): outside by up to 1.7 at t=69.2 s; with Adams-Bashforth 4 everywhere still outside by up to 1.7, with an exact trim at the local-horizon rates by up to 0.032."
+cause = "Not isolated (translation error not excluded): outside by up to 1.7 at t=69.2 s; R = 27, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "feVelocity_ft_s_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 0.89 at t=159.2 s; with Adams-Bashforth 4 everywhere still outside by up to 0.89, with an exact trim at the local-horizon rates by up to 0.031."
+cause = "Not isolated (translation error not excluded): outside by up to 0.9 at t=159.2 s; R = 38, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "feVelocity_ft_s_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 0.48 at t=91.3 s; with Adams-Bashforth 4 everywhere still outside by up to 0.48, with an exact trim at the local-horizon rates by up to 0.01."
+cause = "Not isolated (translation error not excluded): outside by up to 0.48 at t=91.3 s; R = 84, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiVelocity_ft_s_X"
-cause = "Not isolated (translation error not excluded): outside by up to 1.1 at t=95.3 s; with Adams-Bashforth 4 everywhere still outside by up to 1.1, with an exact trim at the local-horizon rates by up to 0.026."
+cause = "Not isolated (translation error not excluded): outside by up to 1.1 at t=95.3 s; R = 19, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiVelocity_ft_s_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 5 at t=47.3 s; with Adams-Bashforth 4 everywhere still outside by up to 5, with an exact trim at the local-horizon rates by up to 0.03."
+cause = "Not isolated (translation error not excluded): outside by up to 5 at t=47.3 s; R = 100, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiVelocity_ft_s_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 2.2 at t=116.2 s; with Adams-Bashforth 4 everywhere still outside by up to 2.2, with an exact trim at the local-horizon rates by up to 0.028."
+cause = "Not isolated (translation error not excluded): outside by up to 2.2 at t=116.2 s; R = 77, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "longitude_deg"
-cause = "Not isolated (translation error not excluded): outside by up to 0.00014 at t=57.8 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00014, with an exact trim at the local-horizon rates by up to 1.1e-07."
+cause = "JSBSim's trim (FGTrim holds the body rates at zero relative to the Earth and stops within its udot, wdot and qdot tolerances) starts the F-16 off SIM 5's equilibrium; inside from the exact trim of Atmos_12_exact (outside by up to 0.00014 at t=57.8 s; R = 21, beyond the simulators' own spread)."
 
 [[case.expected_miss]]
 variable = "latitude_deg"
-cause = "Not isolated (translation error not excluded): outside by up to 0.00027 at t=157.8 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00027, with an exact trim at the local-horizon rates by up to 7e-06."
+cause = "Not isolated (translation error not excluded): outside by up to 0.00027 at t=157.8 s; R = 23, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "localGravity_ft_s2"
-cause = "Not isolated (translation error not excluded): outside by up to 0.00087 at t=88.9 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00087, with an exact trim at the local-horizon rates by up to 2.2e-06."
+cause = "Not isolated (translation error not excluded): outside by up to 0.00087 at t=88.9 s; R = 279, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eulerAngle_deg_Yaw"
-cause = "Not isolated (translation error not excluded): outside by up to 0.00069 at t=161.9 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00068, with an exact trim at the local-horizon rates by up to 0.00018."
+cause = "Not isolated (translation error not excluded): outside by up to 0.00094 at t=163.4 s; R = 0.43, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eulerAngle_deg_Pitch"
-cause = "Not isolated (translation error not excluded): outside by up to 0.014 at t=92.2 s; with Adams-Bashforth 4 everywhere still outside by up to 0.014, with an exact trim at the local-horizon rates by up to 0.0003."
+cause = "Not isolated (translation error not excluded): outside by up to 0.014 at t=92.2 s; R = 84, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eulerAngle_deg_Roll"
-cause = "JSBSim's trim (FGTrim holds the body rates at zero relative to the Earth and stops within its udot, wdot and qdot tolerances) starts the F-16 off the simulators' equilibrium; inside with an exact trim at the local-horizon rates (outside by up to 0.00068 at t=83.6 s)."
+cause = "JSBSim's trim (FGTrim holds the body rates at zero relative to the Earth and stops within its udot, wdot and qdot tolerances) starts the F-16 off SIM 5's equilibrium; inside from the exact trim of Atmos_12_exact (outside by up to 0.00078 at t=81.4 s; R = 0.53, within the simulators' own spread)."
 
 [[case.expected_miss]]
 variable = "bodyAngularRateWrtEi_deg_s_Roll"
-cause = "Not isolated (translation error not excluded): outside by up to 0.0013 at t=3.0 s; with Adams-Bashforth 4 everywhere still outside by up to 5.7e-06, with an exact trim at the local-horizon rates by up to 0.003."
+cause = "Not isolated (translation error not excluded): outside by up to 0.0005 at t=1.8 s; R = 0.21, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "bodyAngularRateWrtEi_deg_s_Pitch"
-cause = "Not isolated (translation error not excluded): outside by up to 0.00037 at t=44.6 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00036, with an exact trim at the local-horizon rates by up to 2.1e-05."
+cause = "JSBSim's trim (FGTrim holds the body rates at zero relative to the Earth and stops within its udot, wdot and qdot tolerances) starts the F-16 off SIM 5's equilibrium; inside from the exact trim of Atmos_12_exact (outside by up to 0.00036 at t=44.6 s; R = 151, beyond the simulators' own spread)."
 
 [[case.expected_miss]]
 variable = "bodyAngularRateWrtEi_deg_s_Yaw"
-cause = "Not isolated (translation error not excluded): outside by up to 0.00066 at t=3.5 s; with Adams-Bashforth 4 everywhere still outside by up to 1.2e-05, with an exact trim at the local-horizon rates by up to 0.0016."
+cause = "Not isolated (translation error not excluded): outside by up to 0.00013 at t=2.3 s; R = 0.22, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "altitudeRateWrtMsl_ft_min"
-cause = "Not isolated (translation error not excluded): outside by up to 29 at t=91.2 s; with Adams-Bashforth 4 everywhere still outside by up to 29, with an exact trim at the local-horizon rates by up to 1.1."
+cause = "Not isolated (translation error not excluded): outside by up to 29 at t=91.2 s; R = 0.37, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "airDensity_slug_ft3"
-cause = "Not isolated (translation error not excluded): outside by up to 3.2e-09 at t=0.0 s; with Adams-Bashforth 4 everywhere still outside by up to 3.2e-09, with an exact trim at the local-horizon rates by up to 1.6e-08."
+cause = "Not isolated (translation error not excluded): outside by up to 3.2e-09 at t=0.0 s; R = 181, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyForce_lbf_X"
-cause = "Not isolated (translation error not excluded): outside by up to 2.6 at t=8.5 s; with Adams-Bashforth 4 everywhere still outside by up to 2.6, with an exact trim at the local-horizon rates by up to 0.49."
+cause = "Not isolated (translation error not excluded): outside by up to 2.6 at t=8.5 s; R = 141, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyForce_lbf_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 0.79 at t=3.7 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0018, with an exact trim at the local-horizon rates by up to 1.9."
+cause = "Not isolated (translation error not excluded): outside by up to 0.1 at t=2.5 s; R = 0.24, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyForce_lbf_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 9 at t=44.7 s; with Adams-Bashforth 4 everywhere still outside by up to 9, with an exact trim at the local-horizon rates by up to 0.23."
+cause = "Not isolated (translation error not excluded): outside by up to 9 at t=44.7 s; R = 164, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyMoment_ftlbf_L"
-cause = "Not isolated (translation error not excluded): outside by up to 1.9 at t=2.8 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0011, with an exact trim at the local-horizon rates by up to 4.1."
+cause = "Not isolated (translation error not excluded): outside by up to 0.13 at t=4.4 s; R = 0.28, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyMoment_ftlbf_M"
-cause = "Not isolated (translation error not excluded): outside by up to 0.19 at t=39.6 s; with Adams-Bashforth 4 everywhere still outside by up to 0.19, with an exact trim at the local-horizon rates by up to 0.17."
+cause = "Not isolated (translation error not excluded): outside by up to 0.19 at t=39.6 s; R = 222, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyMoment_ftlbf_N"
-cause = "Not isolated (translation error not excluded): outside by up to 5 at t=3.3 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0059, with an exact trim at the local-horizon rates by up to 12."
+cause = "Not isolated (translation error not excluded): outside by up to 1.6 at t=0.4 s; R = 0.24, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "mach"
-cause = "Not isolated (translation error not excluded): outside by up to 0.00049 at t=47.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00049, with an exact trim at the local-horizon rates by up to 4.6e-05."
+cause = "Not isolated (translation error not excluded): outside by up to 0.00049 at t=47.1 s; R = 188, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "dynamicPressure_lbf_ft2"
-cause = "Not isolated (translation error not excluded): outside by up to 22 at t=83.0 s; with Adams-Bashforth 4 everywhere still outside by up to 22, with an exact trim at the local-horizon rates by up to 0.086."
+cause = "Not isolated (translation error not excluded): outside by up to 22 at t=83.0 s; R = 293, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "trueAirspeed_nmi_h"
-cause = "Not isolated (translation error not excluded): outside by up to 0.58 at t=107.2 s; with Adams-Bashforth 4 everywhere still outside by up to 0.58, with an exact trim at the local-horizon rates by up to 0.026."
+cause = "Not isolated (translation error not excluded): outside by up to 0.58 at t=107.2 s; R = 0.63, within the simulators' own spread."
+
+[[case]]
+name = "Atmos_12_exact"
+archive = "Atmos_12_TrimCheckSupersonicF16"
+root = "nasa"
+script = "scripts/Atmos_12_exact.xml"
+aircraft_path = "aircraft"
+section = "Appendix C.1.12, Table 36, exact trim"
+
+[case.parity]
+rel = 3e-08
+cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library, checked on every oracle-ci run by the sincos gate (scripts/oracle-sincos.sh); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the F-16's dynamics carry to 1.4e-09 of a property's magnitude here."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_X"
+cause = "Not isolated (translation error not excluded): outside by up to 0.029 at t=0.0 s; R = 0.055, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.55 at t=168.1 s; R = 0.37, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 0.23 at t=72.3 s; R = 0.059, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_X"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0079 at t=0.1 s; R = 0.13, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0077 at t=0.1 s; R = 0.18, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 8.9e-05 at t=0.1 s; R = 0.18, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_X"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0063 at t=0.1 s; R = 0.11, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0065 at t=0.1 s; R = 0.13, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0066 at t=11.7 s; R = 0.23, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "altitudeMsl_ft"
+cause = "Not isolated (translation error not excluded): outside by up to 0.1 at t=176.0 s; R = 0.22, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "latitude_deg"
+cause = "Not isolated (translation error not excluded): outside by up to 9.9e-07 at t=158.2 s; R = 0.076, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "localGravity_ft_s2"
+cause = "Not isolated (translation error not excluded): outside by up to 1.5e-07 at t=54.2 s; R = 0.28, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Yaw"
+cause = "Not isolated (translation error not excluded): outside by up to 2.2e-06 at t=1.6 s; R = 0.0077, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Pitch"
+cause = "Not isolated (translation error not excluded): outside by up to 2.8e-06 at t=0.1 s; R = 0.18, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Roll"
+cause = "Not isolated (translation error not excluded): outside by up to 2.8e-05 at t=2.6 s; R = 0.0073, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Yaw"
+cause = "Not isolated (translation error not excluded): outside by up to 1.6e-05 at t=1.4 s; R = 0.0058, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "altitudeRateWrtMsl_ft_min"
+cause = "Not isolated (translation error not excluded): outside by up to 0.27 at t=91.2 s; R = 7.8e-4, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "airDensity_slug_ft3"
+cause = "Not isolated (translation error not excluded): outside by up to 6.7e-09 at t=174.8 s; R = 0.23, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "ambientPressure_lbf_ft2"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0016 at t=180.0 s; R = 0.15, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "ambientTemperature_dgR"
+cause = "Not isolated (translation error not excluded): outside by up to 0.00037 at t=176.0 s; R = 0.22, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_X"
+cause = "Not isolated (translation error not excluded): outside by up to 0.16 at t=8.5 s; R = 0.35, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.022 at t=1.6 s; R = 0.0061, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 0.018 at t=0.0 s; R = 0.80, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_L"
+cause = "Not isolated (translation error not excluded): outside by up to 0.038 at t=1.9 s; R = 0.0072, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_M"
+cause = "Not isolated (translation error not excluded): outside by up to 0.037 at t=0.1 s; R = 67, beyond the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_N"
+cause = "Not isolated (translation error not excluded): outside by up to 0.14 at t=2.0 s; R = 0.0063, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "mach"
+cause = "Not isolated (translation error not excluded): outside by up to 1.2e-05 at t=0.1 s; R = 1.1, beyond the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "dynamicPressure_lbf_ft2"
+cause = "Not isolated (translation error not excluded): outside by up to 0.026 at t=0.1 s; R = 0.35, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "trueAirspeed_nmi_h"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0066 at t=0.1 s; R = 0.0029, within the simulators' own spread."
 
 [[case]]
 name = "Atmos_13p1"
@@ -882,136 +1156,268 @@ aircraft_path = "aircraft"
 section = "Appendix C.1.13, Table 37"
 
 [case.parity]
-rel = 1e-8
-cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library, checked on every oracle-ci run by the sincos gate (scripts/oracle-sincos.sh); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the trim and the F-16's dynamics carry to 3.0e-10 of a property's magnitude here."
+rel = 3e-08
+cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library, checked on every oracle-ci run by the sincos gate (scripts/oracle-sincos.sh); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the trim and the F-16's dynamics carry to 1.2e-09 of a property's magnitude here."
 
 [[case.expected_miss]]
 variable = "eiPosition_ft_X"
-cause = "Not isolated (translation error not excluded): outside by up to 0.077 at t=20.0 s; with Adams-Bashforth 4 everywhere still outside by up to 8.2, with an exact trim at the local-horizon rates by up to 0.076, with the event one frame earlier by up to 0.12."
+cause = "Not isolated (translation error not excluded): outside by up to 0.1 at t=20.0 s; R = 0.075, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiPosition_ft_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 0.041 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.73, with an exact trim at the local-horizon rates by up to 0.041, with the event one frame earlier by up to 0.28."
+cause = "Not isolated (translation error not excluded): outside by up to 0.041 at t=0.1 s; R = 0.18, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiPosition_ft_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 0.18 at t=20.0 s; with Adams-Bashforth 4 everywhere still outside by up to 5.2, with an exact trim at the local-horizon rates by up to 0.17, with the event one frame earlier by up to 0.38."
+cause = "Not isolated (translation error not excluded): outside by up to 0.2 at t=20.0 s; R = 0.14, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "feVelocity_ft_s_X"
-cause = "Not isolated (translation error not excluded): outside by up to 0.085 at t=5.1 s; with Adams-Bashforth 4 everywhere still outside by up to 2.1, with an exact trim at the local-horizon rates by up to 0.085, with the event one frame earlier by up to 0.2."
-
-[[case.expected_miss]]
-variable = "feVelocity_ft_s_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 0.039 at t=5.3 s; with Adams-Bashforth 4 everywhere still outside by up to 2.1, with an exact trim at the local-horizon rates by up to 0.039, with the event one frame earlier by up to 0.076."
+cause = "Not isolated (translation error not excluded): outside by up to 0.011 at t=5.1 s; R = 0.47, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "feVelocity_ft_s_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 0.65 at t=5.3 s; with Adams-Bashforth 4 everywhere still outside by up to 0.45, with an exact trim at the local-horizon rates by up to 0.65, with the event one frame earlier by up to 0.37."
+cause = "Not isolated (translation error not excluded): outside by up to 0.064 at t=1.8 s; R = 0.57, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiVelocity_ft_s_X"
-cause = "Not isolated (translation error not excluded): outside by up to 0.16 at t=5.3 s; with Adams-Bashforth 4 everywhere still outside by up to 2.5, with an exact trim at the local-horizon rates by up to 0.16, with the event one frame earlier by up to 0.11."
+cause = "Not isolated (translation error not excluded): outside by up to 0.02 at t=1.9 s; R = 0.38, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiVelocity_ft_s_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 0.48 at t=5.3 s; with Adams-Bashforth 4 everywhere still outside by up to 0.66, with an exact trim at the local-horizon rates by up to 0.48, with the event one frame earlier by up to 0.56."
+cause = "Not isolated (translation error not excluded): outside by up to 0.045 at t=1.8 s; R = 0.67, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiVelocity_ft_s_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 0.42 at t=5.3 s; with Adams-Bashforth 4 everywhere still outside by up to 1.7, with an exact trim at the local-horizon rates by up to 0.42, with the event one frame earlier by up to 0.33."
+cause = "Not isolated (translation error not excluded): outside by up to 0.056 at t=1.9 s; R = 0.48, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "altitudeMsl_ft"
-cause = "Not isolated (translation error not excluded): outside by up to 0.33 at t=13.3 s; with Adams-Bashforth 4 everywhere still outside by up to 0.95, with an exact trim at the local-horizon rates by up to 0.33, with the event one frame earlier by up to 0.46."
+cause = "Not isolated (translation error not excluded): outside by up to 0.31 at t=13.4 s; R = 1.3, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "latitude_deg"
-cause = "Not isolated (translation error not excluded): outside by up to 8.3e-08 at t=20.0 s; with Adams-Bashforth 4 everywhere still outside by up to 2.5e-08, with an exact trim at the local-horizon rates by up to 8.1e-08, with the event one frame earlier by up to 1.2e-07."
+cause = "Not isolated (translation error not excluded): outside by up to 1.6e-07 at t=20.0 s; R = 0.036, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "localGravity_ft_s2"
-cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 8.6e-07 at t=5.1 s)."
+cause = "Not isolated (translation error not excluded): outside by up to 8.5e-07 at t=5.2 s; R = 1.1, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eulerAngle_deg_Yaw"
-cause = "Not isolated (translation error not excluded): outside by up to 0.00039 at t=5.4 s; with Adams-Bashforth 4 everywhere still outside by up to 1.6, with an exact trim at the local-horizon rates by up to 0.00039, with the event one frame earlier by up to 0.00028."
+cause = "Not isolated (translation error not excluded): outside by up to 4.4e-05 at t=5.5 s; R = 0.21, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eulerAngle_deg_Pitch"
-cause = "Not isolated (translation error not excluded): outside by up to 0.42 at t=5.2 s; with Adams-Bashforth 4 everywhere still outside by up to 0.13, with an exact trim at the local-horizon rates by up to 0.42, with the event one frame earlier by up to 0.031."
+cause = "Not isolated (translation error not excluded): outside by up to 0.011 at t=0.2 s; R = 0.41, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eulerAngle_deg_Roll"
-cause = "Not isolated (translation error not excluded): outside by up to 0.00021 at t=5.3 s; with Adams-Bashforth 4 everywhere still outside by up to 3.6, with an exact trim at the local-horizon rates by up to 0.00021, with the event one frame earlier by up to 0.0014."
+cause = "Not isolated (translation error not excluded): outside by up to 2e-05 at t=5.8 s; R = 0.63, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "bodyAngularRateWrtEi_deg_s_Roll"
-cause = "Not isolated (translation error not excluded): outside by up to 0.039 at t=5.5 s; with Adams-Bashforth 4 everywhere still outside by up to 48, with an exact trim at the local-horizon rates by up to 0.039, with the event one frame earlier by up to 0.094."
+cause = "Not isolated (translation error not excluded): outside by up to 0.00011 at t=5.6 s; R = 0.44, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "bodyAngularRateWrtEi_deg_s_Pitch"
-cause = "Not isolated (translation error not excluded): outside by up to 3.4 at t=5.3 s; with Adams-Bashforth 4 everywhere still outside by up to 0.92, with an exact trim at the local-horizon rates by up to 3.4, with the event one frame earlier by up to 1.8."
+cause = "Not isolated (translation error not excluded): outside by up to 0.36 at t=5.2 s; R = 0.42, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "bodyAngularRateWrtEi_deg_s_Yaw"
-cause = "Not isolated (translation error not excluded): outside by up to 0.0019 at t=6.0 s; with Adams-Bashforth 4 everywhere still outside by up to 7.6, with an exact trim at the local-horizon rates by up to 0.0019, with the event one frame earlier by up to 0.0026."
+cause = "Not isolated (translation error not excluded): outside by up to 0.00012 at t=6.2 s; R = 0.18, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "altitudeRateWrtMsl_ft_min"
-cause = "Not isolated (translation error not excluded): outside by up to 54 at t=5.3 s; with Adams-Bashforth 4 everywhere still outside by up to 42, with an exact trim at the local-horizon rates by up to 54, with the event one frame earlier by up to 22."
+cause = "Not isolated (translation error not excluded): outside by up to 9.8 at t=5.3 s; R = 0.20, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "speedOfSound_ft_s"
-cause = "Not isolated (translation error not excluded): outside by up to 0.0019 at t=13.3 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0024, with an exact trim at the local-horizon rates by up to 0.0019, with the event one frame earlier by up to 0.0024."
+cause = "Not isolated (translation error not excluded): outside by up to 0.0019 at t=13.4 s; R = 1.1, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "airDensity_slug_ft3"
-cause = "Not isolated (translation error not excluded): outside by up to 1e-08 at t=13.3 s; with Adams-Bashforth 4 everywhere still outside by up to 6.5e-08, with an exact trim at the local-horizon rates by up to 1e-08, with the event one frame earlier by up to 1.7e-08."
+cause = "Not isolated (translation error not excluded): outside by up to 9.3e-09 at t=13.4 s; R = 1.1, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "ambientPressure_lbf_ft2"
-cause = "Not isolated (translation error not excluded): outside by up to 0.014 at t=13.3 s; with Adams-Bashforth 4 everywhere still outside by up to 0.045, with an exact trim at the local-horizon rates by up to 0.014, with the event one frame earlier by up to 0.021."
+cause = "Not isolated (translation error not excluded): outside by up to 0.013 at t=13.4 s; R = 0.49, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "ambientTemperature_dgR"
-cause = "Not isolated (translation error not excluded): outside by up to 0.0012 at t=13.3 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0034, with an exact trim at the local-horizon rates by up to 0.0012, with the event one frame earlier by up to 0.0016."
+cause = "Not isolated (translation error not excluded): outside by up to 0.0011 at t=13.4 s; R = 1.3, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyForce_lbf_X"
-cause = "Not isolated (translation error not excluded): outside by up to 6e+02 at t=5.4 s; with Adams-Bashforth 4 everywhere still outside by up to 1.9e+02, with an exact trim at the local-horizon rates by up to 6e+02, with the event one frame earlier by up to 2.2e+02."
+cause = "Not isolated (translation error not excluded): outside by up to 21 at t=0.1 s; R = 0.41, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyForce_lbf_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 0.97 at t=6.3 s; with Adams-Bashforth 4 everywhere still outside by up to 7.8e+03, with an exact trim at the local-horizon rates by up to 0.97, with the event one frame earlier by up to 1.1."
+cause = "Not isolated (translation error not excluded): outside by up to 0.21 at t=5.2 s; R = 0.14, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyForce_lbf_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 1.9e+03 at t=5.4 s; with Adams-Bashforth 4 everywhere still outside by up to 1.4e+03, with an exact trim at the local-horizon rates by up to 1.9e+03, with the event one frame earlier by up to 3.9e+03."
+cause = "Not isolated (translation error not excluded): outside by up to 1.7e+02 at t=0.1 s; R = 0.55, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyMoment_ftlbf_L"
-cause = "Not isolated (translation error not excluded): outside by up to 1e+03 at t=5.6 s; with Adams-Bashforth 4 everywhere still outside by up to 2.1e+05, with an exact trim at the local-horizon rates by up to 1e+03, with the event one frame earlier by up to 5.2e+02."
+cause = "Not isolated (translation error not excluded): outside by up to 2.6 at t=5.3 s; R = 0.034, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyMoment_ftlbf_M"
-cause = "Not isolated (translation error not excluded): outside by up to 2.3e+04 at t=5.0 s; with Adams-Bashforth 4 everywhere still outside by up to 2e+04, with an exact trim at the local-horizon rates by up to 2.3e+04, with the event one frame earlier by up to 4.1e+04."
+cause = "Not isolated (translation error not excluded): outside by up to 1.6e+03 at t=0.1 s; R = 0.41, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyMoment_ftlbf_N"
-cause = "Not isolated (translation error not excluded): outside by up to 19 at t=5.7 s; with Adams-Bashforth 4 everywhere still outside by up to 1.1e+05, with an exact trim at the local-horizon rates by up to 19, with the event one frame earlier by up to 12."
+cause = "Not isolated (translation error not excluded): outside by up to 1.1 at t=5.9 s; R = 0.19, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "mach"
-cause = "Not isolated (translation error not excluded): outside by up to 5.8e-05 at t=5.3 s; with Adams-Bashforth 4 everywhere still outside by up to 2.1e-07, with an exact trim at the local-horizon rates by up to 5.8e-05, with the event one frame earlier by up to 0.00026."
+cause = "Not isolated (translation error not excluded): outside by up to 5.3e-06 at t=13.3 s; R = 0.27, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "dynamicPressure_lbf_ft2"
-cause = "Not isolated (translation error not excluded): outside by up to 0.12 at t=5.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.058, with an exact trim at the local-horizon rates by up to 0.12, with the event one frame earlier by up to 0.28."
+cause = "Not isolated (translation error not excluded): outside by up to 0.039 at t=5.2 s; R = 0.29, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "trueAirspeed_nmi_h"
-cause = "Not isolated (translation error not excluded): outside by up to 0.17 at t=5.3 s; with Adams-Bashforth 4 everywhere still outside by up to 0.097, with an exact trim at the local-horizon rates by up to 0.17, with the event one frame earlier by up to 0.18."
+cause = "Not isolated (translation error not excluded): outside by up to 0.037 at t=5.3 s; R = 0.25, within the simulators' own spread."
+
+[[case]]
+name = "Atmos_13p1_exact"
+archive = "Atmos_13p1_SubsonicAltitudeChangeF16"
+root = "nasa"
+script = "scripts/Atmos_13p1_exact.xml"
+aircraft_path = "aircraft"
+section = "Appendix C.1.13, Table 37, exact trim"
+
+[case.parity]
+rel = 3e-08
+cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library, checked on every oracle-ci run by the sincos gate (scripts/oracle-sincos.sh); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the F-16's dynamics carry to 1.1e-09 of a property's magnitude here."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_X"
+cause = "Not isolated (translation error not excluded): outside by up to 0.099 at t=20.0 s; R = 0.074, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.041 at t=0.1 s; R = 0.18, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 0.2 at t=20.0 s; R = 0.14, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_X"
+cause = "Not isolated (translation error not excluded): outside by up to 0.011 at t=5.1 s; R = 0.47, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 0.064 at t=1.8 s; R = 0.57, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_X"
+cause = "Not isolated (translation error not excluded): outside by up to 0.02 at t=1.9 s; R = 0.38, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.045 at t=1.8 s; R = 0.67, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 0.056 at t=1.9 s; R = 0.48, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "altitudeMsl_ft"
+cause = "Not isolated (translation error not excluded): outside by up to 0.31 at t=13.4 s; R = 1.3, beyond the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "latitude_deg"
+cause = "Not isolated (translation error not excluded): outside by up to 1.6e-07 at t=20.0 s; R = 0.036, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "localGravity_ft_s2"
+cause = "Not isolated (translation error not excluded): outside by up to 8.5e-07 at t=5.2 s; R = 1.1, beyond the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Yaw"
+cause = "Not isolated (translation error not excluded): outside by up to 4.5e-05 at t=5.5 s; R = 0.21, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Pitch"
+cause = "Not isolated (translation error not excluded): outside by up to 0.011 at t=0.2 s; R = 0.41, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Roll"
+cause = "Not isolated (translation error not excluded): outside by up to 2.8e-05 at t=0.9 s; R = 0.62, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Roll"
+cause = "Not isolated (translation error not excluded): outside by up to 0.00011 at t=5.6 s; R = 0.44, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Pitch"
+cause = "Not isolated (translation error not excluded): outside by up to 0.36 at t=5.2 s; R = 0.42, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Yaw"
+cause = "Not isolated (translation error not excluded): outside by up to 0.00012 at t=6.2 s; R = 0.061, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "altitudeRateWrtMsl_ft_min"
+cause = "Not isolated (translation error not excluded): outside by up to 9.8 at t=5.3 s; R = 0.20, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "speedOfSound_ft_s"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0019 at t=13.4 s; R = 1.1, beyond the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "airDensity_slug_ft3"
+cause = "Not isolated (translation error not excluded): outside by up to 9.3e-09 at t=13.4 s; R = 1.1, beyond the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "ambientPressure_lbf_ft2"
+cause = "Not isolated (translation error not excluded): outside by up to 0.013 at t=13.4 s; R = 0.49, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "ambientTemperature_dgR"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0011 at t=13.4 s; R = 1.3, beyond the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_X"
+cause = "Not isolated (translation error not excluded): outside by up to 24 at t=0.1 s; R = 0.41, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.21 at t=5.2 s; R = 0.083, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 1.8e+02 at t=0.1 s; R = 0.55, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_L"
+cause = "Not isolated (translation error not excluded): outside by up to 2.6 at t=5.3 s; R = 0.034, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_M"
+cause = "Not isolated (translation error not excluded): outside by up to 1.8e+03 at t=0.1 s; R = 0.41, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_N"
+cause = "Not isolated (translation error not excluded): outside by up to 1.1 at t=5.9 s; R = 0.13, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "mach"
+cause = "Not isolated (translation error not excluded): outside by up to 5.3e-06 at t=13.3 s; R = 0.27, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "dynamicPressure_lbf_ft2"
+cause = "Not isolated (translation error not excluded): outside by up to 0.039 at t=5.2 s; R = 0.29, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "trueAirspeed_nmi_h"
+cause = "Not isolated (translation error not excluded): outside by up to 0.037 at t=5.3 s; R = 0.25, within the simulators' own spread."
 
 [[case]]
 name = "Atmos_13p2"
@@ -1022,140 +1428,276 @@ aircraft_path = "aircraft"
 section = "Appendix C.1.14, Table 38"
 
 [case.parity]
-rel = 5e-8
-cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library, checked on every oracle-ci run by the sincos gate (scripts/oracle-sincos.sh); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the trim and the F-16's dynamics carry to 1.9e-09 of a property's magnitude here."
+rel = 2e-07
+cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library, checked on every oracle-ci run by the sincos gate (scripts/oracle-sincos.sh); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the trim and the F-16's dynamics carry to 5.4e-09 of a property's magnitude here."
 
 [[case.expected_miss]]
 variable = "eiPosition_ft_X"
-cause = "Not isolated (translation error not excluded): outside by up to 0.16 at t=20.0 s; with Adams-Bashforth 4 everywhere still outside by up to 5.1, with an exact trim at the local-horizon rates by up to 0.16, with the event one frame earlier by up to 0.064."
+cause = "Not isolated (translation error not excluded): outside by up to 0.13 at t=20.0 s; R = 0.096, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiPosition_ft_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 0.041 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.45, with an exact trim at the local-horizon rates by up to 0.041, with the event one frame earlier by up to 0.041."
+cause = "Not isolated (translation error not excluded): outside by up to 0.041 at t=0.1 s; R = 0.18, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiPosition_ft_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 0.26 at t=20.0 s; with Adams-Bashforth 4 everywhere still outside by up to 3.5, with an exact trim at the local-horizon rates by up to 0.26, with the event one frame earlier by up to 0.17."
+cause = "Not isolated (translation error not excluded): outside by up to 0.22 at t=20.0 s; R = 0.17, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "feVelocity_ft_s_X"
-cause = "Not isolated (translation error not excluded): outside by up to 0.035 at t=5.2 s; with Adams-Bashforth 4 everywhere still outside by up to 1.6, with an exact trim at the local-horizon rates by up to 0.035, with the event one frame earlier by up to 0.0034."
+cause = "Not isolated (translation error not excluded): outside by up to 0.015 at t=7.2 s; R = 0.19, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "feVelocity_ft_s_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 0.034 at t=6.2 s; with Adams-Bashforth 4 everywhere still outside by up to 2, with an exact trim at the local-horizon rates by up to 0.034, with the event one frame earlier by up to 0.0034."
+cause = "Not isolated (translation error not excluded): outside by up to 0.015 at t=7.2 s; R = 0.19, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "feVelocity_ft_s_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 0.064 at t=1.9 s; with Adams-Bashforth 4 everywhere still outside by up to 0.19, with an exact trim at the local-horizon rates by up to 0.064, with the event one frame earlier by up to 0.087."
+cause = "Not isolated (translation error not excluded): outside by up to 0.064 at t=1.8 s; R = 1.9, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiVelocity_ft_s_X"
-cause = "Not isolated (translation error not excluded): outside by up to 0.033 at t=5.2 s; with Adams-Bashforth 4 everywhere still outside by up to 2.2, with an exact trim at the local-horizon rates by up to 0.033, with the event one frame earlier by up to 0.02."
+cause = "Not isolated (translation error not excluded): outside by up to 0.02 at t=1.9 s; R = 0.27, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiVelocity_ft_s_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 0.045 at t=1.8 s; with Adams-Bashforth 4 everywhere still outside by up to 0.57, with an exact trim at the local-horizon rates by up to 0.045, with the event one frame earlier by up to 0.045."
+cause = "Not isolated (translation error not excluded): outside by up to 0.045 at t=1.8 s; R = 1.0, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiVelocity_ft_s_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 0.056 at t=1.9 s; with Adams-Bashforth 4 everywhere still outside by up to 1.6, with an exact trim at the local-horizon rates by up to 0.056, with the event one frame earlier by up to 0.056."
+cause = "Not isolated (translation error not excluded): outside by up to 0.056 at t=1.9 s; R = 0.61, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "altitudeMsl_ft"
-cause = "Not isolated (translation error not excluded): outside by up to 0.32 at t=10.5 s; with Adams-Bashforth 4 everywhere still outside by up to 0.68, with an exact trim at the local-horizon rates by up to 0.32, with the event one frame earlier by up to 0.31."
+cause = "Not isolated (translation error not excluded): outside by up to 0.31 at t=10.5 s; R = 1.9, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "longitude_deg"
-cause = "Script events act from the frame after their time (they run before the frame's integration), so the command first enters the derivatives 0.01 s after the TM's time; inside with the event one frame earlier (outside by up to 4.4e-07 at t=20.0 s)."
+cause = "Not isolated (translation error not excluded): outside by up to 3e-07 at t=20.0 s; R = 0.057, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "latitude_deg"
-cause = "Not isolated (translation error not excluded): outside by up to 3.5e-07 at t=20.0 s; with Adams-Bashforth 4 everywhere still outside by up to 2.5e-08, with an exact trim at the local-horizon rates by up to 3.5e-07, with the event one frame earlier by up to 3.3e-08."
+cause = "Not isolated (translation error not excluded): outside by up to 2.4e-07 at t=20.0 s; R = 0.057, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "localGravity_ft_s2"
-cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 9e-07 at t=7.4 s)."
-
-[[case.expected_miss]]
-variable = "eulerAngle_deg_Yaw"
-cause = "Not isolated (translation error not excluded): outside by up to 5.6e-06 at t=2.4 s; with Adams-Bashforth 4 everywhere still outside by up to 1.7, with an exact trim at the local-horizon rates by up to 1.9e-05, with the event one frame earlier by up to 8.4e-06."
+cause = "Not isolated (translation error not excluded): outside by up to 8.8e-07 at t=6.9 s; R = 1.6, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eulerAngle_deg_Pitch"
-cause = "Not isolated (translation error not excluded): outside by up to 0.011 at t=0.2 s; with Adams-Bashforth 4 everywhere still outside by up to 0.056, with an exact trim at the local-horizon rates by up to 0.011, with the event one frame earlier by up to 0.011."
-
-[[case.expected_miss]]
-variable = "eulerAngle_deg_Roll"
-cause = "Not isolated (translation error not excluded): outside by up to 8.7e-05 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 3.1, with an exact trim at the local-horizon rates by up to 4.9e-05, with the event one frame earlier by up to 0.00023."
+cause = "Not isolated (translation error not excluded): outside by up to 0.011 at t=0.2 s; R = 2.5, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "bodyAngularRateWrtEi_deg_s_Roll"
-cause = "Not isolated (translation error not excluded): outside by up to 0.0065 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 47, with an exact trim at the local-horizon rates by up to 0.0056, with the event one frame earlier by up to 0.0065."
+cause = "Not isolated (translation error not excluded): outside by up to 1.8e-05 at t=1.0 s; R = 0.42, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "bodyAngularRateWrtEi_deg_s_Pitch"
-cause = "Not isolated (translation error not excluded): outside by up to 0.068 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.58, with an exact trim at the local-horizon rates by up to 0.077, with the event one frame earlier by up to 0.8."
+cause = "Not isolated (translation error not excluded): outside by up to 0.064 at t=0.1 s; R = 0.84, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "bodyAngularRateWrtEi_deg_s_Yaw"
-cause = "Not isolated (translation error not excluded): outside by up to 0.00011 at t=5.1 s; with Adams-Bashforth 4 everywhere still outside by up to 6.9, with an exact trim at the local-horizon rates by up to 0.00011, with the event one frame earlier by up to 3.6e-05."
+cause = "Not isolated (translation error not excluded): outside by up to 4.3e-06 at t=5.2 s; R = 0.59, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "altitudeRateWrtMsl_ft_min"
-cause = "Not isolated (translation error not excluded): outside by up to 3.8 at t=1.9 s; with Adams-Bashforth 4 everywhere still outside by up to 14, with an exact trim at the local-horizon rates by up to 3.8, with the event one frame earlier by up to 5.9."
+cause = "Not isolated (translation error not excluded): outside by up to 3.8 at t=1.8 s; R = 0.063, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "speedOfSound_ft_s"
-cause = "Not isolated (translation error not excluded): outside by up to 0.0019 at t=10.5 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0013, with an exact trim at the local-horizon rates by up to 0.0019, with the event one frame earlier by up to 0.0019."
+cause = "Not isolated (translation error not excluded): outside by up to 0.0019 at t=10.5 s; R = 1.3, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "airDensity_slug_ft3"
-cause = "Not isolated (translation error not excluded): outside by up to 9.7e-09 at t=10.5 s; with Adams-Bashforth 4 everywhere still outside by up to 5e-08, with an exact trim at the local-horizon rates by up to 9.6e-09, with the event one frame earlier by up to 9.1e-09."
+cause = "Not isolated (translation error not excluded): outside by up to 9.4e-09 at t=10.5 s; R = 2.1, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "ambientPressure_lbf_ft2"
-cause = "Not isolated (translation error not excluded): outside by up to 0.013 at t=10.5 s; with Adams-Bashforth 4 everywhere still outside by up to 0.03, with an exact trim at the local-horizon rates by up to 0.013, with the event one frame earlier by up to 0.013."
+cause = "Not isolated (translation error not excluded): outside by up to 0.013 at t=10.5 s; R = 0.61, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "ambientTemperature_dgR"
-cause = "Not isolated (translation error not excluded): outside by up to 0.0011 at t=10.5 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0024, with an exact trim at the local-horizon rates by up to 0.0011, with the event one frame earlier by up to 0.0011."
+cause = "Not isolated (translation error not excluded): outside by up to 0.0011 at t=10.5 s; R = 1.9, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyForce_lbf_X"
-cause = "Not isolated (translation error not excluded): outside by up to 27 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 2.5e+02, with an exact trim at the local-horizon rates by up to 30, with the event one frame earlier by up to 27."
+cause = "Not isolated (translation error not excluded): outside by up to 21 at t=0.1 s; R = 0.47, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyForce_lbf_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 0.034 at t=2.3 s; with Adams-Bashforth 4 everywhere still outside by up to 7.8e+03, with an exact trim at the local-horizon rates by up to 0.072, with the event one frame earlier by up to 0.034."
+cause = "Not isolated (translation error not excluded): outside by up to 0.0017 at t=5.3 s; R = 0.44, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyForce_lbf_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 2e+02 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 1.2e+03, with an exact trim at the local-horizon rates by up to 2.2e+02, with the event one frame earlier by up to 2e+02."
+cause = "Not isolated (translation error not excluded): outside by up to 1.7e+02 at t=0.1 s; R = 0.76, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyMoment_ftlbf_L"
-cause = "Not isolated (translation error not excluded): outside by up to 49 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 2e+05, with an exact trim at the local-horizon rates by up to 62, with the event one frame earlier by up to 49."
+cause = "Not isolated (translation error not excluded): outside by up to 0.31 at t=0.4 s; R = 0.15, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyMoment_ftlbf_M"
-cause = "Not isolated (translation error not excluded): outside by up to 2.3e+04 at t=5.0 s; with Adams-Bashforth 4 everywhere still outside by up to 2e+04, with an exact trim at the local-horizon rates by up to 2.3e+04, with the event one frame earlier by up to 2e+03."
+cause = "Not isolated (translation error not excluded): outside by up to 1.6e+03 at t=0.1 s; R = 0.42, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyMoment_ftlbf_N"
-cause = "Not isolated (translation error not excluded): outside by up to 0.21 at t=3.2 s; with Adams-Bashforth 4 everywhere still outside by up to 1.1e+05, with an exact trim at the local-horizon rates by up to 0.73, with the event one frame earlier by up to 0.21."
+cause = "Not isolated (translation error not excluded): outside by up to 0.13 at t=2.1 s; R = 0.42, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "mach"
-cause = "Not isolated (translation error not excluded): outside by up to 4.7e-05 at t=5.2 s; with Adams-Bashforth 4 everywhere still outside by up to 4.1e-05, with an exact trim at the local-horizon rates by up to 4.6e-05, with the event one frame earlier by up to 5.4e-06."
+cause = "Not isolated (translation error not excluded): outside by up to 2.1e-05 at t=7.2 s; R = 0.20, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "dynamicPressure_lbf_ft2"
-cause = "Not isolated (translation error not excluded): outside by up to 0.047 at t=5.2 s; with Adams-Bashforth 4 everywhere still outside by up to 0.053, with an exact trim at the local-horizon rates by up to 0.047, with the event one frame earlier by up to 0.0034."
+cause = "Not isolated (translation error not excluded): outside by up to 0.019 at t=5.2 s; R = 0.18, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "trueAirspeed_nmi_h"
-cause = "Not isolated (translation error not excluded): outside by up to 0.029 at t=5.2 s; with Adams-Bashforth 4 everywhere still outside by up to 0.027, with an exact trim at the local-horizon rates by up to 0.029, with the event one frame earlier by up to 0.047."
+cause = "Not isolated (translation error not excluded): outside by up to 0.013 at t=7.1 s; R = 0.0018, within the simulators' own spread."
+
+[[case]]
+name = "Atmos_13p2_exact"
+archive = "Atmos_13p2_SubsonicAirspeedChangeF16"
+root = "nasa"
+script = "scripts/Atmos_13p2_exact.xml"
+aircraft_path = "aircraft"
+section = "Appendix C.1.14, Table 38, exact trim"
+
+[case.parity]
+rel = 2e-07
+cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library, checked on every oracle-ci run by the sincos gate (scripts/oracle-sincos.sh); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the F-16's dynamics carry to 5.7e-09 of a property's magnitude here."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_X"
+cause = "Not isolated (translation error not excluded): outside by up to 0.12 at t=20.0 s; R = 0.095, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.041 at t=0.1 s; R = 0.18, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 0.22 at t=20.0 s; R = 0.17, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_X"
+cause = "Not isolated (translation error not excluded): outside by up to 0.015 at t=7.2 s; R = 0.19, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.015 at t=7.2 s; R = 0.19, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 0.064 at t=1.8 s; R = 1.9, beyond the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_X"
+cause = "Not isolated (translation error not excluded): outside by up to 0.02 at t=1.9 s; R = 0.27, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.045 at t=1.8 s; R = 1.0, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 0.056 at t=1.9 s; R = 0.61, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "altitudeMsl_ft"
+cause = "Not isolated (translation error not excluded): outside by up to 0.31 at t=10.5 s; R = 1.9, beyond the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "longitude_deg"
+cause = "Not isolated (translation error not excluded): outside by up to 3e-07 at t=20.0 s; R = 0.057, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "latitude_deg"
+cause = "Not isolated (translation error not excluded): outside by up to 2.4e-07 at t=20.0 s; R = 0.057, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "localGravity_ft_s2"
+cause = "Not isolated (translation error not excluded): outside by up to 8.8e-07 at t=6.8 s; R = 1.6, beyond the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Yaw"
+cause = "Not isolated (translation error not excluded): outside by up to 2.7e-06 at t=1.5 s; R = 0.025, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Pitch"
+cause = "Not isolated (translation error not excluded): outside by up to 0.011 at t=0.2 s; R = 2.5, beyond the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Roll"
+cause = "Not isolated (translation error not excluded): outside by up to 2.8e-05 at t=0.9 s; R = 0.30, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Roll"
+cause = "Not isolated (translation error not excluded): outside by up to 3.1e-05 at t=0.3 s; R = 0.45, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Pitch"
+cause = "Not isolated (translation error not excluded): outside by up to 0.073 at t=0.1 s; R = 0.96, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Yaw"
+cause = "Not isolated (translation error not excluded): outside by up to 4.7e-06 at t=1.2 s; R = 0.013, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "altitudeRateWrtMsl_ft_min"
+cause = "Not isolated (translation error not excluded): outside by up to 3.8 at t=1.8 s; R = 0.063, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "speedOfSound_ft_s"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0019 at t=10.5 s; R = 1.3, beyond the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "airDensity_slug_ft3"
+cause = "Not isolated (translation error not excluded): outside by up to 9.3e-09 at t=10.5 s; R = 2.1, beyond the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "ambientPressure_lbf_ft2"
+cause = "Not isolated (translation error not excluded): outside by up to 0.013 at t=10.5 s; R = 0.61, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "ambientTemperature_dgR"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0011 at t=10.5 s; R = 1.9, beyond the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_X"
+cause = "Not isolated (translation error not excluded): outside by up to 24 at t=0.1 s; R = 0.53, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0032 at t=0.1 s; R = 0.012, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 1.8e+02 at t=0.1 s; R = 0.82, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_L"
+cause = "Not isolated (translation error not excluded): outside by up to 0.057 at t=5.3 s; R = 0.15, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_M"
+cause = "Not isolated (translation error not excluded): outside by up to 1.8e+03 at t=0.1 s; R = 0.47, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_N"
+cause = "Not isolated (translation error not excluded): outside by up to 0.026 at t=1.4 s; R = 0.012, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "mach"
+cause = "Not isolated (translation error not excluded): outside by up to 2.1e-05 at t=7.2 s; R = 0.20, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "dynamicPressure_lbf_ft2"
+cause = "Not isolated (translation error not excluded): outside by up to 0.019 at t=5.2 s; R = 0.18, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "trueAirspeed_nmi_h"
+cause = "Not isolated (translation error not excluded): outside by up to 0.013 at t=7.1 s; R = 0.0018, within the simulators' own spread."
 
 [[case]]
 name = "Atmos_13p3"
@@ -1166,140 +1708,276 @@ aircraft_path = "aircraft"
 section = "Appendix C.1.15, Table 39"
 
 [case.parity]
-rel = 1e-9
-cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library, checked on every oracle-ci run by the sincos gate (scripts/oracle-sincos.sh); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the trim and the F-16's dynamics carry to 3.8e-11 of a property's magnitude here."
+rel = 5e-09
+cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library, checked on every oracle-ci run by the sincos gate (scripts/oracle-sincos.sh); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the trim and the F-16's dynamics carry to 1.6e-10 of a property's magnitude here."
 
 [[case.expected_miss]]
 variable = "eiPosition_ft_X"
-cause = "Not isolated (translation error not excluded): outside by up to 1.3 at t=24.4 s; with Adams-Bashforth 4 everywhere still outside by up to 8.4, with an exact trim at the local-horizon rates by up to 1.3, with the event one frame earlier by up to 0.099."
+cause = "Not isolated (translation error not excluded): outside by up to 0.1 at t=15.7 s; R = 0.092, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiPosition_ft_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 2.5 at t=30.0 s; with Adams-Bashforth 4 everywhere still outside by up to 3.9, with an exact trim at the local-horizon rates by up to 2.5, with the event one frame earlier by up to 1.6."
+cause = "Not isolated (translation error not excluded): outside by up to 0.14 at t=30.0 s; R = 0.24, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiPosition_ft_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 5.1 at t=30.0 s; with Adams-Bashforth 4 everywhere still outside by up to 9.1, with an exact trim at the local-horizon rates by up to 5.1, with the event one frame earlier by up to 3.2."
+cause = "Not isolated (translation error not excluded): outside by up to 0.47 at t=19.4 s; R = 0.74, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "feVelocity_ft_s_X"
-cause = "Not isolated (translation error not excluded): outside by up to 0.76 at t=16.9 s; with Adams-Bashforth 4 everywhere still outside by up to 3.5, with an exact trim at the local-horizon rates by up to 0.76, with the event one frame earlier by up to 0.45."
+cause = "Not isolated (translation error not excluded): outside by up to 0.041 at t=15.1 s; R = 0.30, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "feVelocity_ft_s_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 0.56 at t=16.9 s; with Adams-Bashforth 4 everywhere still outside by up to 2.1, with an exact trim at the local-horizon rates by up to 0.56, with the event one frame earlier by up to 0.28."
+cause = "Not isolated (translation error not excluded): outside by up to 0.027 at t=15.7 s; R = 0.20, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "feVelocity_ft_s_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 0.47 at t=15.6 s; with Adams-Bashforth 4 everywhere still outside by up to 1.2, with an exact trim at the local-horizon rates by up to 0.47, with the event one frame earlier by up to 0.49."
+cause = "Not isolated (translation error not excluded): outside by up to 0.064 at t=1.8 s; R = 0.19, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiVelocity_ft_s_X"
-cause = "Not isolated (translation error not excluded): outside by up to 1.1 at t=16.0 s; with Adams-Bashforth 4 everywhere still outside by up to 2.6, with an exact trim at the local-horizon rates by up to 1.1, with the event one frame earlier by up to 0.62."
+cause = "Not isolated (translation error not excluded): outside by up to 0.075 at t=15.6 s; R = 0.21, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiVelocity_ft_s_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 0.8 at t=16.0 s; with Adams-Bashforth 4 everywhere still outside by up to 2, with an exact trim at the local-horizon rates by up to 0.8, with the event one frame earlier by up to 0.56."
+cause = "Not isolated (translation error not excluded): outside by up to 0.072 at t=15.5 s; R = 0.26, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiVelocity_ft_s_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 0.54 at t=15.9 s; with Adams-Bashforth 4 everywhere still outside by up to 2.7, with an exact trim at the local-horizon rates by up to 0.54, with the event one frame earlier by up to 0.27."
+cause = "Not isolated (translation error not excluded): outside by up to 0.056 at t=1.9 s; R = 0.33, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "altitudeMsl_ft"
-cause = "Not isolated (translation error not excluded): outside by up to 0.24 at t=28.9 s; with Adams-Bashforth 4 everywhere still outside by up to 1.1, with an exact trim at the local-horizon rates by up to 0.24, with the event one frame earlier by up to 0.24."
-
-[[case.expected_miss]]
-variable = "longitude_deg"
-cause = "Script events act from the frame after their time (they run before the frame's integration), so the command first enters the derivatives 0.01 s after the TM's time; inside with the event one frame earlier (outside by up to 2.3e-06 at t=23.7 s)."
+cause = "Not isolated (translation error not excluded): outside by up to 0.32 at t=16.1 s; R = 0.53, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "latitude_deg"
-cause = "Not isolated (translation error not excluded): outside by up to 1.6e-05 at t=30.0 s; with Adams-Bashforth 4 everywhere still outside by up to 2.5e-08, with an exact trim at the local-horizon rates by up to 1.6e-05, with the event one frame earlier by up to 1e-05."
+cause = "Not isolated (translation error not excluded): outside by up to 8.7e-07 at t=18.4 s; R = 0.61, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "localGravity_ft_s2"
-cause = "Not isolated (translation error not excluded): outside by up to 9.3e-07 at t=15.4 s; with Adams-Bashforth 4 everywhere still outside by up to 3.8e-06, with an exact trim at the local-horizon rates by up to 9.3e-07, with the event one frame earlier by up to 8.9e-07."
+cause = "Not isolated (translation error not excluded): outside by up to 8.8e-07 at t=15.8 s; R = 0.45, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eulerAngle_deg_Yaw"
-cause = "Not isolated (translation error not excluded): outside by up to 0.37 at t=16.2 s; with Adams-Bashforth 4 everywhere still outside by up to 2.1, with an exact trim at the local-horizon rates by up to 0.37, with the event one frame earlier by up to 0.28."
+cause = "Not isolated (translation error not excluded): outside by up to 0.0084 at t=17.4 s; R = 0.23, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eulerAngle_deg_Pitch"
-cause = "Not isolated (translation error not excluded): outside by up to 0.073 at t=16.5 s; with Adams-Bashforth 4 everywhere still outside by up to 0.11, with an exact trim at the local-horizon rates by up to 0.073, with the event one frame earlier by up to 0.059."
+cause = "Not isolated (translation error not excluded): outside by up to 0.011 at t=0.2 s; R = 0.18, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eulerAngle_deg_Roll"
-cause = "Not isolated (translation error not excluded): outside by up to 2.6 at t=15.6 s; with Adams-Bashforth 4 everywhere still outside by up to 4.2, with an exact trim at the local-horizon rates by up to 2.6, with the event one frame earlier by up to 2.4."
+cause = "Not isolated (translation error not excluded): outside by up to 0.0024 at t=15.8 s; R = 0.46, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "bodyAngularRateWrtEi_deg_s_Roll"
-cause = "Not isolated (translation error not excluded): outside by up to 53 at t=15.5 s; with Adams-Bashforth 4 everywhere still outside by up to 47, with an exact trim at the local-horizon rates by up to 53, with the event one frame earlier by up to 31."
+cause = "Not isolated (translation error not excluded): outside by up to 0.17 at t=15.3 s; R = 0.47, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "bodyAngularRateWrtEi_deg_s_Pitch"
-cause = "Not isolated (translation error not excluded): outside by up to 1.4 at t=15.6 s; with Adams-Bashforth 4 everywhere still outside by up to 5.1, with an exact trim at the local-horizon rates by up to 1.4, with the event one frame earlier by up to 0.81."
+cause = "Not isolated (translation error not excluded): outside by up to 0.064 at t=0.1 s; R = 0.22, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "bodyAngularRateWrtEi_deg_s_Yaw"
-cause = "Not isolated (translation error not excluded): outside by up to 2.9 at t=15.3 s; with Adams-Bashforth 4 everywhere still outside by up to 7.6, with an exact trim at the local-horizon rates by up to 2.9, with the event one frame earlier by up to 2.3."
+cause = "Not isolated (translation error not excluded): outside by up to 0.032 at t=17.3 s; R = 0.21, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "altitudeRateWrtMsl_ft_min"
-cause = "Not isolated (translation error not excluded): outside by up to 63 at t=15.6 s; with Adams-Bashforth 4 everywhere still outside by up to 72, with an exact trim at the local-horizon rates by up to 63, with the event one frame earlier by up to 64."
+cause = "Not isolated (translation error not excluded): outside by up to 3.8 at t=1.8 s; R = 0.040, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "speedOfSound_ft_s"
-cause = "Not isolated (translation error not excluded): outside by up to 0.0014 at t=28.9 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0048, with an exact trim at the local-horizon rates by up to 0.0014, with the event one frame earlier by up to 0.0014."
+cause = "Not isolated (translation error not excluded): outside by up to 0.0019 at t=16.1 s; R = 0.60, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "airDensity_slug_ft3"
-cause = "Not isolated (translation error not excluded): outside by up to 7.2e-09 at t=0.5 s; with Adams-Bashforth 4 everywhere still outside by up to 5.2e-08, with an exact trim at the local-horizon rates by up to 7.2e-09, with the event one frame earlier by up to 8.4e-09."
+cause = "Not isolated (translation error not excluded): outside by up to 9.4e-09 at t=16.1 s; R = 0.35, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "ambientPressure_lbf_ft2"
-cause = "Not isolated (translation error not excluded): outside by up to 0.0088 at t=28.9 s; with Adams-Bashforth 4 everywhere still outside by up to 0.056, with an exact trim at the local-horizon rates by up to 0.0088, with the event one frame earlier by up to 0.0089."
+cause = "Not isolated (translation error not excluded): outside by up to 0.013 at t=16.1 s; R = 0.29, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "ambientTemperature_dgR"
-cause = "Not isolated (translation error not excluded): outside by up to 0.00079 at t=28.9 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0038, with an exact trim at the local-horizon rates by up to 0.00079, with the event one frame earlier by up to 0.0008."
+cause = "Not isolated (translation error not excluded): outside by up to 0.0011 at t=16.1 s; R = 0.53, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyForce_lbf_X"
-cause = "Not isolated (translation error not excluded): outside by up to 5.1e+02 at t=15.5 s; with Adams-Bashforth 4 everywhere still outside by up to 4.4e+03, with an exact trim at the local-horizon rates by up to 5.1e+02, with the event one frame earlier by up to 3.2e+02."
+cause = "Not isolated (translation error not excluded): outside by up to 21 at t=0.1 s; R = 0.19, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyForce_lbf_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 6.5e+03 at t=15.6 s; with Adams-Bashforth 4 everywhere still outside by up to 7.8e+03, with an exact trim at the local-horizon rates by up to 6.5e+03, with the event one frame earlier by up to 6.8e+03."
+cause = "Not isolated (translation error not excluded): outside by up to 82 at t=16.0 s; R = 3.3, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyForce_lbf_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 1.7e+03 at t=15.5 s; with Adams-Bashforth 4 everywhere still outside by up to 1.4e+04, with an exact trim at the local-horizon rates by up to 1.7e+03, with the event one frame earlier by up to 1.9e+03."
+cause = "Not isolated (translation error not excluded): outside by up to 1.7e+02 at t=0.1 s; R = 0.16, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyMoment_ftlbf_L"
-cause = "Not isolated (translation error not excluded): outside by up to 2.4e+05 at t=15.6 s; with Adams-Bashforth 4 everywhere still outside by up to 2.1e+05, with an exact trim at the local-horizon rates by up to 2.4e+05, with the event one frame earlier by up to 2.3e+05."
+cause = "Not isolated (translation error not excluded): outside by up to 7.4e+03 at t=15.6 s; R = 5.3, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyMoment_ftlbf_M"
-cause = "Not isolated (translation error not excluded): outside by up to 2.5e+04 at t=15.7 s; with Adams-Bashforth 4 everywhere still outside by up to 1.5e+05, with an exact trim at the local-horizon rates by up to 2.5e+04, with the event one frame earlier by up to 1.6e+04."
+cause = "Not isolated (translation error not excluded): outside by up to 1.6e+03 at t=0.1 s; R = 0.21, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyMoment_ftlbf_N"
-cause = "Not isolated (translation error not excluded): outside by up to 1.1e+05 at t=15.6 s; with Adams-Bashforth 4 everywhere still outside by up to 1.1e+05, with an exact trim at the local-horizon rates by up to 1.1e+05, with the event one frame earlier by up to 1.1e+05."
+cause = "Not isolated (translation error not excluded): outside by up to 1.9e+03 at t=15.2 s; R = 3.4, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "mach"
-cause = "Not isolated (translation error not excluded): outside by up to 2.4e-05 at t=16.5 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00012, with an exact trim at the local-horizon rates by up to 2.4e-05, with the event one frame earlier by up to 3e-05."
+cause = "Not isolated (translation error not excluded): outside by up to 1.2e-05 at t=15.7 s; R = 0.095, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "dynamicPressure_lbf_ft2"
-cause = "Not isolated (translation error not excluded): outside by up to 0.031 at t=16.5 s; with Adams-Bashforth 4 everywhere still outside by up to 0.13, with an exact trim at the local-horizon rates by up to 0.031, with the event one frame earlier by up to 0.032."
+cause = "Not isolated (translation error not excluded): outside by up to 0.01 at t=15.7 s; R = 0.053, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "trueAirspeed_nmi_h"
-cause = "Not isolated (translation error not excluded): outside by up to 0.074 at t=15.5 s; with Adams-Bashforth 4 everywhere still outside by up to 0.14, with an exact trim at the local-horizon rates by up to 0.075, with the event one frame earlier by up to 0.076."
+cause = "Not isolated (translation error not excluded): outside by up to 0.007 at t=15.7 s; R = 0.087, within the simulators' own spread."
+
+[[case]]
+name = "Atmos_13p3_exact"
+archive = "Atmos_13p3_SubsonicHeadingChangeF16"
+root = "nasa"
+script = "scripts/Atmos_13p3_exact.xml"
+aircraft_path = "aircraft"
+section = "Appendix C.1.15, Table 39, exact trim"
+
+[case.parity]
+rel = 1e-08
+cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library, checked on every oracle-ci run by the sincos gate (scripts/oracle-sincos.sh); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the F-16's dynamics carry to 4.1e-10 of a property's magnitude here."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_X"
+cause = "Not isolated (translation error not excluded): outside by up to 0.1 at t=15.7 s; R = 0.092, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.13 at t=30.0 s; R = 0.24, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 0.46 at t=19.4 s; R = 0.74, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_X"
+cause = "Not isolated (translation error not excluded): outside by up to 0.041 at t=15.1 s; R = 0.30, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.027 at t=15.7 s; R = 0.20, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 0.064 at t=1.8 s; R = 0.19, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_X"
+cause = "Not isolated (translation error not excluded): outside by up to 0.075 at t=15.6 s; R = 0.21, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.072 at t=15.5 s; R = 0.26, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 0.056 at t=1.9 s; R = 0.33, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "altitudeMsl_ft"
+cause = "Not isolated (translation error not excluded): outside by up to 0.31 at t=16.1 s; R = 0.53, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "latitude_deg"
+cause = "Not isolated (translation error not excluded): outside by up to 8.7e-07 at t=18.4 s; R = 0.61, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "localGravity_ft_s2"
+cause = "Not isolated (translation error not excluded): outside by up to 8.8e-07 at t=15.8 s; R = 0.45, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Yaw"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0084 at t=17.4 s; R = 0.23, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Pitch"
+cause = "Not isolated (translation error not excluded): outside by up to 0.011 at t=0.2 s; R = 0.18, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Roll"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0024 at t=15.8 s; R = 0.46, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Roll"
+cause = "Not isolated (translation error not excluded): outside by up to 0.17 at t=15.3 s; R = 0.47, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Pitch"
+cause = "Not isolated (translation error not excluded): outside by up to 0.073 at t=0.1 s; R = 0.22, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Yaw"
+cause = "Not isolated (translation error not excluded): outside by up to 0.032 at t=17.3 s; R = 0.21, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "altitudeRateWrtMsl_ft_min"
+cause = "Not isolated (translation error not excluded): outside by up to 3.8 at t=1.8 s; R = 0.040, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "speedOfSound_ft_s"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0019 at t=16.1 s; R = 0.60, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "airDensity_slug_ft3"
+cause = "Not isolated (translation error not excluded): outside by up to 9.4e-09 at t=16.1 s; R = 0.35, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "ambientPressure_lbf_ft2"
+cause = "Not isolated (translation error not excluded): outside by up to 0.013 at t=16.1 s; R = 0.29, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "ambientTemperature_dgR"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0011 at t=16.1 s; R = 0.53, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_X"
+cause = "Not isolated (translation error not excluded): outside by up to 24 at t=0.1 s; R = 0.19, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 82 at t=16.0 s; R = 3.3, beyond the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 1.8e+02 at t=0.1 s; R = 0.16, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_L"
+cause = "Not isolated (translation error not excluded): outside by up to 7.4e+03 at t=15.6 s; R = 5.3, beyond the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_M"
+cause = "Not isolated (translation error not excluded): outside by up to 1.8e+03 at t=0.1 s; R = 0.21, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_N"
+cause = "Not isolated (translation error not excluded): outside by up to 1.9e+03 at t=15.2 s; R = 3.4, beyond the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "mach"
+cause = "Not isolated (translation error not excluded): outside by up to 1.2e-05 at t=15.7 s; R = 0.095, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "dynamicPressure_lbf_ft2"
+cause = "Not isolated (translation error not excluded): outside by up to 0.01 at t=15.7 s; R = 0.053, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "trueAirspeed_nmi_h"
+cause = "Not isolated (translation error not excluded): outside by up to 0.007 at t=15.7 s; R = 0.086, within the simulators' own spread."
 
 [[case]]
 name = "Atmos_13p4"
@@ -1310,136 +1988,276 @@ aircraft_path = "aircraft"
 section = "Appendix C.1.16, Table 40"
 
 [case.parity]
-rel = 5e-8
-cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library, checked on every oracle-ci run by the sincos gate (scripts/oracle-sincos.sh); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the trim and the F-16's dynamics carry to 2.1e-09 of a property's magnitude here."
+rel = 1e-07
+cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library, checked on every oracle-ci run by the sincos gate (scripts/oracle-sincos.sh); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the trim and the F-16's dynamics carry to 3.2e-09 of a property's magnitude here."
 
 [[case.expected_miss]]
 variable = "eiPosition_ft_X"
-cause = "Not isolated (translation error not excluded): outside by up to 47 at t=60.0 s; with Adams-Bashforth 4 everywhere still outside by up to 42, with an exact trim at the local-horizon rates by up to 47, with the event one frame earlier by up to 47."
+cause = "Not isolated (translation error not excluded): outside by up to 4.2 at t=60.0 s; R = 1.0, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiPosition_ft_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 11 at t=60.0 s; with Adams-Bashforth 4 everywhere still outside by up to 9, with an exact trim at the local-horizon rates by up to 11, with the event one frame earlier by up to 11."
+cause = "Not isolated (translation error not excluded): outside by up to 0.041 at t=0.1 s; R = 0.38, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiPosition_ft_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 31 at t=60.0 s; with Adams-Bashforth 4 everywhere still outside by up to 28, with an exact trim at the local-horizon rates by up to 31, with the event one frame earlier by up to 31."
+cause = "Not isolated (translation error not excluded): outside by up to 0.58 at t=20.4 s; R = 0.47, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "feVelocity_ft_s_X"
-cause = "Not isolated (translation error not excluded): outside by up to 1.1 at t=33.2 s; with Adams-Bashforth 4 everywhere still outside by up to 3.7, with an exact trim at the local-horizon rates by up to 1.1, with the event one frame earlier by up to 0.97."
+cause = "Not isolated (translation error not excluded): outside by up to 0.14 at t=20.7 s; R = 0.47, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "feVelocity_ft_s_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 0.94 at t=40.7 s; with Adams-Bashforth 4 everywhere still outside by up to 3, with an exact trim at the local-horizon rates by up to 0.94, with the event one frame earlier by up to 0.9."
+cause = "Not isolated (translation error not excluded): outside by up to 0.16 at t=20.7 s; R = 0.33, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "feVelocity_ft_s_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 0.48 at t=20.6 s; with Adams-Bashforth 4 everywhere still outside by up to 1.5, with an exact trim at the local-horizon rates by up to 0.48, with the event one frame earlier by up to 0.48."
+cause = "Not isolated (translation error not excluded): outside by up to 0.064 at t=1.8 s; R = 0.15, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiVelocity_ft_s_X"
-cause = "Not isolated (translation error not excluded): outside by up to 1 at t=39.1 s; with Adams-Bashforth 4 everywhere still outside by up to 3.3, with an exact trim at the local-horizon rates by up to 1, with the event one frame earlier by up to 1."
+cause = "Not isolated (translation error not excluded): outside by up to 0.18 at t=20.7 s; R = 0.30, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiVelocity_ft_s_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 0.39 at t=31.9 s; with Adams-Bashforth 4 everywhere still outside by up to 2.4, with an exact trim at the local-horizon rates by up to 0.39, with the event one frame earlier by up to 0.36."
+cause = "Not isolated (translation error not excluded): outside by up to 0.058 at t=20.8 s; R = 0.14, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiVelocity_ft_s_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 0.85 at t=33.3 s; with Adams-Bashforth 4 everywhere still outside by up to 3.7, with an exact trim at the local-horizon rates by up to 0.85, with the event one frame earlier by up to 0.81."
+cause = "Not isolated (translation error not excluded): outside by up to 0.11 at t=20.7 s; R = 0.63, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "altitudeMsl_ft"
-cause = "Not isolated (translation error not excluded): outside by up to 0.33 at t=33.8 s; with Adams-Bashforth 4 everywhere still outside by up to 1, with an exact trim at the local-horizon rates by up to 0.33, with the event one frame earlier by up to 0.32."
+cause = "Not isolated (translation error not excluded): outside by up to 0.31 at t=33.9 s; R = 0.51, within the simulators' own spread."
 
 [[case.expected_miss]]
-variable = "longitude_deg"
-cause = "Not isolated (translation error not excluded): outside by up to 5.7e-05 at t=60.0 s; with Adams-Bashforth 4 everywhere still outside by up to 4.4e-05, with an exact trim at the local-horizon rates by up to 5.7e-05, with the event one frame earlier by up to 5.7e-05."
+variable = "latitude_deg"
+cause = "Not isolated (translation error not excluded): outside by up to 1.5e-06 at t=20.5 s; R = 0.44, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "localGravity_ft_s2"
-cause = "Not isolated (translation error not excluded): outside by up to 9.3e-07 at t=32.8 s; with Adams-Bashforth 4 everywhere still outside by up to 3.6e-06, with an exact trim at the local-horizon rates by up to 9.3e-07, with the event one frame earlier by up to 9.8e-07."
+cause = "Not isolated (translation error not excluded): outside by up to 8.7e-07 at t=6.5 s; R = 0.44, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eulerAngle_deg_Yaw"
-cause = "Not isolated (translation error not excluded): outside by up to 0.4 at t=21.2 s; with Adams-Bashforth 4 everywhere still outside by up to 2.4, with an exact trim at the local-horizon rates by up to 0.4, with the event one frame earlier by up to 0.35."
+cause = "Not isolated (translation error not excluded): outside by up to 0.15 at t=20.6 s; R = 0.17, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eulerAngle_deg_Pitch"
-cause = "Not isolated (translation error not excluded): outside by up to 0.059 at t=21.5 s; with Adams-Bashforth 4 everywhere still outside by up to 0.12, with an exact trim at the local-horizon rates by up to 0.059, with the event one frame earlier by up to 0.058."
+cause = "Not isolated (translation error not excluded): outside by up to 0.011 at t=20.9 s; R = 0.16, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eulerAngle_deg_Roll"
-cause = "Not isolated (translation error not excluded): outside by up to 2.6 at t=20.6 s; with Adams-Bashforth 4 everywhere still outside by up to 3.9, with an exact trim at the local-horizon rates by up to 2.6, with the event one frame earlier by up to 2.4."
+cause = "Not isolated (translation error not excluded): outside by up to 0.38 at t=20.2 s; R = 0.96, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "bodyAngularRateWrtEi_deg_s_Roll"
-cause = "Not isolated (translation error not excluded): outside by up to 42 at t=20.5 s; with Adams-Bashforth 4 everywhere still outside by up to 52, with an exact trim at the local-horizon rates by up to 42, with the event one frame earlier by up to 31."
+cause = "Not isolated (translation error not excluded): outside by up to 1.9 at t=20.3 s; R = 0.31, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "bodyAngularRateWrtEi_deg_s_Pitch"
-cause = "Not isolated (translation error not excluded): outside by up to 1.2 at t=20.6 s; with Adams-Bashforth 4 everywhere still outside by up to 4.6, with an exact trim at the local-horizon rates by up to 1.2, with the event one frame earlier by up to 0.9."
+cause = "Not isolated (translation error not excluded): outside by up to 0.27 at t=20.9 s; R = 0.18, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "bodyAngularRateWrtEi_deg_s_Yaw"
-cause = "Not isolated (translation error not excluded): outside by up to 2.5 at t=20.5 s; with Adams-Bashforth 4 everywhere still outside by up to 7.9, with an exact trim at the local-horizon rates by up to 2.5, with the event one frame earlier by up to 2.5."
+cause = "Not isolated (translation error not excluded): outside by up to 0.9 at t=20.3 s; R = 0.20, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "altitudeRateWrtMsl_ft_min"
-cause = "Not isolated (translation error not excluded): outside by up to 65 at t=20.6 s; with Adams-Bashforth 4 everywhere still outside by up to 90, with an exact trim at the local-horizon rates by up to 65, with the event one frame earlier by up to 66."
+cause = "Not isolated (translation error not excluded): outside by up to 4.1 at t=20.4 s; R = 0.035, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "speedOfSound_ft_s"
-cause = "Not isolated (translation error not excluded): outside by up to 0.0018 at t=33.8 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0046, with an exact trim at the local-horizon rates by up to 0.0018, with the event one frame earlier by up to 0.0018."
+cause = "Not isolated (translation error not excluded): outside by up to 0.0018 at t=21.1 s; R = 0.58, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "airDensity_slug_ft3"
-cause = "Not isolated (translation error not excluded): outside by up to 1.1e-08 at t=33.1 s; with Adams-Bashforth 4 everywhere still outside by up to 7e-08, with an exact trim at the local-horizon rates by up to 1.1e-08, with the event one frame earlier by up to 1e-08."
+cause = "Not isolated (translation error not excluded): outside by up to 9.3e-09 at t=34.3 s; R = 0.33, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "ambientPressure_lbf_ft2"
-cause = "Not isolated (translation error not excluded): outside by up to 0.014 at t=33.8 s; with Adams-Bashforth 4 everywhere still outside by up to 0.054, with an exact trim at the local-horizon rates by up to 0.014, with the event one frame earlier by up to 0.014."
+cause = "Not isolated (translation error not excluded): outside by up to 0.013 at t=33.9 s; R = 0.28, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "ambientTemperature_dgR"
-cause = "Not isolated (translation error not excluded): outside by up to 0.0011 at t=33.8 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0037, with an exact trim at the local-horizon rates by up to 0.0011, with the event one frame earlier by up to 0.0011."
+cause = "Not isolated (translation error not excluded): outside by up to 0.001 at t=33.9 s; R = 0.51, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyForce_lbf_X"
-cause = "Not isolated (translation error not excluded): outside by up to 4.7e+02 at t=20.5 s; with Adams-Bashforth 4 everywhere still outside by up to 4.3e+03, with an exact trim at the local-horizon rates by up to 4.7e+02, with the event one frame earlier by up to 3.1e+02."
+cause = "Not isolated (translation error not excluded): outside by up to 35 at t=20.3 s; R = 0.17, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyForce_lbf_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 7.2e+03 at t=20.6 s; with Adams-Bashforth 4 everywhere still outside by up to 8.1e+03, with an exact trim at the local-horizon rates by up to 7.2e+03, with the event one frame earlier by up to 7.3e+03."
+cause = "Not isolated (translation error not excluded): outside by up to 5.2e+03 at t=20.0 s; R = 2.4, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyForce_lbf_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 1.6e+03 at t=20.6 s; with Adams-Bashforth 4 everywhere still outside by up to 1.4e+04, with an exact trim at the local-horizon rates by up to 1.6e+03, with the event one frame earlier by up to 2.2e+03."
+cause = "Not isolated (translation error not excluded): outside by up to 4.4e+02 at t=20.5 s; R = 0.18, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyMoment_ftlbf_L"
-cause = "Not isolated (translation error not excluded): outside by up to 2.3e+05 at t=20.6 s; with Adams-Bashforth 4 everywhere still outside by up to 2.1e+05, with an exact trim at the local-horizon rates by up to 2.3e+05, with the event one frame earlier by up to 2.2e+05."
+cause = "Not isolated (translation error not excluded): outside by up to 1.8e+05 at t=20.0 s; R = 3.4, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyMoment_ftlbf_M"
-cause = "Not isolated (translation error not excluded): outside by up to 1.4e+04 at t=20.7 s; with Adams-Bashforth 4 everywhere still outside by up to 1.4e+05, with an exact trim at the local-horizon rates by up to 1.4e+04, with the event one frame earlier by up to 1.8e+04."
+cause = "Not isolated (translation error not excluded): outside by up to 1.6e+03 at t=0.1 s; R = 0.17, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyMoment_ftlbf_N"
-cause = "Not isolated (translation error not excluded): outside by up to 1.2e+05 at t=20.6 s; with Adams-Bashforth 4 everywhere still outside by up to 1.1e+05, with an exact trim at the local-horizon rates by up to 1.2e+05, with the event one frame earlier by up to 1.2e+05."
+cause = "Not isolated (translation error not excluded): outside by up to 9.3e+04 at t=20.0 s; R = 2.6, beyond the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "mach"
-cause = "Not isolated (translation error not excluded): outside by up to 2.6e-05 at t=20.7 s; with Adams-Bashforth 4 everywhere still outside by up to 9.7e-05, with an exact trim at the local-horizon rates by up to 2.6e-05, with the event one frame earlier by up to 3e-05."
+cause = "Not isolated (translation error not excluded): outside by up to 1.3e-05 at t=20.8 s; R = 0.10, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "dynamicPressure_lbf_ft2"
-cause = "Not isolated (translation error not excluded): outside by up to 0.028 at t=20.7 s; with Adams-Bashforth 4 everywhere still outside by up to 0.11, with an exact trim at the local-horizon rates by up to 0.028, with the event one frame earlier by up to 0.033."
+cause = "Not isolated (translation error not excluded): outside by up to 0.012 at t=20.8 s; R = 0.062, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "trueAirspeed_nmi_h"
-cause = "Not isolated (translation error not excluded): outside by up to 0.078 at t=20.5 s; with Adams-Bashforth 4 everywhere still outside by up to 0.13, with an exact trim at the local-horizon rates by up to 0.078, with the event one frame earlier by up to 0.077."
+cause = "Not isolated (translation error not excluded): outside by up to 0.0076 at t=20.8 s; R = 0.095, within the simulators' own spread."
+
+[[case]]
+name = "Atmos_13p4_exact"
+archive = "Atmos_13p4_SubsonicLateralSideStepF16"
+root = "nasa"
+script = "scripts/Atmos_13p4_exact.xml"
+aircraft_path = "aircraft"
+section = "Appendix C.1.16, Table 40, exact trim"
+
+[case.parity]
+rel = 5e-08
+cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library, checked on every oracle-ci run by the sincos gate (scripts/oracle-sincos.sh); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the F-16's dynamics carry to 2.5e-09 of a property's magnitude here."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_X"
+cause = "Not isolated (translation error not excluded): outside by up to 4.2 at t=60.0 s; R = 1.0, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.041 at t=0.1 s; R = 0.38, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 0.58 at t=20.4 s; R = 0.47, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_X"
+cause = "Not isolated (translation error not excluded): outside by up to 0.14 at t=20.7 s; R = 0.47, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.16 at t=20.7 s; R = 0.33, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 0.064 at t=1.8 s; R = 0.15, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_X"
+cause = "Not isolated (translation error not excluded): outside by up to 0.18 at t=20.7 s; R = 0.30, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.058 at t=20.8 s; R = 0.14, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 0.11 at t=20.7 s; R = 0.63, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "altitudeMsl_ft"
+cause = "Not isolated (translation error not excluded): outside by up to 0.31 at t=33.9 s; R = 0.51, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "latitude_deg"
+cause = "Not isolated (translation error not excluded): outside by up to 1.5e-06 at t=20.5 s; R = 0.44, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "localGravity_ft_s2"
+cause = "Not isolated (translation error not excluded): outside by up to 8.7e-07 at t=6.5 s; R = 0.44, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Yaw"
+cause = "Not isolated (translation error not excluded): outside by up to 0.15 at t=20.6 s; R = 0.17, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Pitch"
+cause = "Not isolated (translation error not excluded): outside by up to 0.011 at t=0.2 s; R = 0.16, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Roll"
+cause = "Not isolated (translation error not excluded): outside by up to 0.38 at t=20.2 s; R = 0.96, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Roll"
+cause = "Not isolated (translation error not excluded): outside by up to 1.9 at t=20.3 s; R = 0.31, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Pitch"
+cause = "Not isolated (translation error not excluded): outside by up to 0.27 at t=20.9 s; R = 0.18, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Yaw"
+cause = "Not isolated (translation error not excluded): outside by up to 0.9 at t=20.3 s; R = 0.20, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "altitudeRateWrtMsl_ft_min"
+cause = "Not isolated (translation error not excluded): outside by up to 4.1 at t=20.4 s; R = 0.035, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "speedOfSound_ft_s"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0018 at t=21.1 s; R = 0.58, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "airDensity_slug_ft3"
+cause = "Not isolated (translation error not excluded): outside by up to 9.3e-09 at t=34.3 s; R = 0.33, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "ambientPressure_lbf_ft2"
+cause = "Not isolated (translation error not excluded): outside by up to 0.013 at t=33.9 s; R = 0.28, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "ambientTemperature_dgR"
+cause = "Not isolated (translation error not excluded): outside by up to 0.001 at t=33.9 s; R = 0.51, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_X"
+cause = "Not isolated (translation error not excluded): outside by up to 35 at t=20.3 s; R = 0.17, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 5.2e+03 at t=20.0 s; R = 2.4, beyond the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 4.4e+02 at t=20.5 s; R = 0.18, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_L"
+cause = "Not isolated (translation error not excluded): outside by up to 1.8e+05 at t=20.0 s; R = 3.4, beyond the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_M"
+cause = "Not isolated (translation error not excluded): outside by up to 1.8e+03 at t=0.1 s; R = 0.17, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_N"
+cause = "Not isolated (translation error not excluded): outside by up to 9.3e+04 at t=20.0 s; R = 2.6, beyond the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "mach"
+cause = "Not isolated (translation error not excluded): outside by up to 1.3e-05 at t=20.8 s; R = 0.10, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "dynamicPressure_lbf_ft2"
+cause = "Not isolated (translation error not excluded): outside by up to 0.012 at t=20.8 s; R = 0.061, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "trueAirspeed_nmi_h"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0076 at t=20.8 s; R = 0.094, within the simulators' own spread."
 
 [[case]]
 name = "Atmos_15"
@@ -1450,120 +2268,236 @@ aircraft_path = "aircraft"
 section = "Appendix C.1.18, Table 42"
 
 [case.parity]
-rel = 1e-6
-cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library, checked on every oracle-ci run by the sincos gate (scripts/oracle-sincos.sh); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the trim and the F-16's dynamics carry to 3.1e-08 of a property's magnitude here."
+rel = 2e-06
+cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library, checked on every oracle-ci run by the sincos gate (scripts/oracle-sincos.sh); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the trim and the F-16's dynamics carry to 6.3e-08 of a property's magnitude here."
 
 [[case.expected_miss]]
 variable = "eiPosition_ft_X"
-cause = "Not isolated (translation error not excluded): outside by up to 0.36 at t=4.3 s; with Adams-Bashforth 4 everywhere still outside by up to 1.3e+02, with an exact trim at the local-horizon rates by up to 0.42."
+cause = "Not isolated (translation error not excluded): outside by up to 0.34 at t=4.9 s; R = 0.016, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiPosition_ft_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 0.21 at t=133.1 s; with Adams-Bashforth 4 everywhere still outside by up to 1e+02, with an exact trim at the local-horizon rates by up to 0.39."
+cause = "Not isolated (translation error not excluded): outside by up to 0.00093 at t=78.5 s; R = 0.022, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiPosition_ft_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 0.0092 at t=34.2 s; with Adams-Bashforth 4 everywhere still outside by up to 4.7, with an exact trim at the local-horizon rates by up to 0.0096."
+cause = "JSBSim's trim (FGTrim holds the body rates at zero relative to the Earth and stops within its udot, wdot and qdot tolerances) starts the F-16 off SIM 5's equilibrium; inside from the exact trim of Atmos_15_exact (outside by up to 0.0032 at t=34.8 s; R = 0.030, within the simulators' own spread)."
 
 [[case.expected_miss]]
 variable = "feVelocity_ft_s_X"
-cause = "Not isolated (translation error not excluded): outside by up to 0.0051 at t=0.4 s; with Adams-Bashforth 4 everywhere still outside by up to 11, with an exact trim at the local-horizon rates by up to 0.015."
+cause = "Not isolated (translation error not excluded): outside by up to 0.011 at t=32.3 s; R = 0.68, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "feVelocity_ft_s_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 0.0024 at t=9.4 s; with Adams-Bashforth 4 everywhere still outside by up to 0.25, with an exact trim at the local-horizon rates by up to 0.0014."
+cause = "Not isolated (translation error not excluded): outside by up to 0.0014 at t=9.1 s; R = 0.17, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "feVelocity_ft_s_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 0.00058 at t=31.3 s; with Adams-Bashforth 4 everywhere still outside by up to 3.2, with an exact trim at the local-horizon rates by up to 0.0033."
+cause = "Not isolated (translation error not excluded): outside by up to 0.00014 at t=34.5 s; R = 0.10, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiVelocity_ft_s_X"
-cause = "Not isolated (translation error not excluded): outside by up to 0.093 at t=0.5 s; with Adams-Bashforth 4 everywhere still outside by up to 9.8, with an exact trim at the local-horizon rates by up to 0.022."
+cause = "Not isolated (translation error not excluded): outside by up to 0.08 at t=1.8 s; R = 0.49, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiVelocity_ft_s_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 0.025 at t=6.4 s; with Adams-Bashforth 4 everywhere still outside by up to 6.7, with an exact trim at the local-horizon rates by up to 0.015."
+cause = "Not isolated (translation error not excluded): outside by up to 0.011 at t=6.2 s; R = 0.40, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiVelocity_ft_s_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 0.021 at t=1.0 s; with Adams-Bashforth 4 everywhere still outside by up to 3.3, with an exact trim at the local-horizon rates by up to 0.0073."
-
-[[case.expected_miss]]
-variable = "localGravity_ft_s2"
-cause = "Not isolated (translation error not excluded): outside by up to 6.2e-09 at t=1.3 s; with Adams-Bashforth 4 everywhere still outside by up to 1.3e-05, with an exact trim at the local-horizon rates by up to 2e-08."
+cause = "Not isolated (translation error not excluded): outside by up to 0.011 at t=1.0 s; R = 0.11, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eulerAngle_deg_Yaw"
-cause = "Not isolated (translation error not excluded): outside by up to 0.009 at t=0.8 s; with Adams-Bashforth 4 everywhere still outside by up to 3, with an exact trim at the local-horizon rates by up to 0.011."
+cause = "Not isolated (translation error not excluded): outside by up to 0.0015 at t=31.4 s; R = 0.17, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eulerAngle_deg_Pitch"
-cause = "Not isolated (translation error not excluded): outside by up to 0.00074 at t=32.2 s; with Adams-Bashforth 4 everywhere still outside by up to 0.35, with an exact trim at the local-horizon rates by up to 0.0013."
+cause = "Not isolated (translation error not excluded): outside by up to 0.00011 at t=36.5 s; R = 0.17, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eulerAngle_deg_Roll"
-cause = "Not isolated (translation error not excluded): outside by up to 0.12 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 5.6, with an exact trim at the local-horizon rates by up to 0.017."
+cause = "Not isolated (translation error not excluded): outside by up to 0.0014 at t=5.9 s; R = 0.65, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "bodyAngularRateWrtEi_deg_s_Roll"
-cause = "Not isolated (translation error not excluded): outside by up to 3.4 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 54, with an exact trim at the local-horizon rates by up to 1.4."
+cause = "Not isolated (translation error not excluded): outside by up to 0.063 at t=0.5 s; R = 0.69, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "bodyAngularRateWrtEi_deg_s_Pitch"
-cause = "Not isolated (translation error not excluded): outside by up to 0.019 at t=31.8 s; with Adams-Bashforth 4 everywhere still outside by up to 7.6, with an exact trim at the local-horizon rates by up to 0.019."
+cause = "Not isolated (translation error not excluded): outside by up to 0.0026 at t=3.0 s; R = 0.77, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "bodyAngularRateWrtEi_deg_s_Yaw"
-cause = "Not isolated (translation error not excluded): outside by up to 0.05 at t=0.5 s; with Adams-Bashforth 4 everywhere still outside by up to 10, with an exact trim at the local-horizon rates by up to 0.052."
+cause = "Not isolated (translation error not excluded): outside by up to 0.0014 at t=31.7 s; R = 0.54, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "altitudeRateWrtMsl_ft_min"
-cause = "Not isolated (translation error not excluded): outside by up to 0.98 at t=0.5 s; with Adams-Bashforth 4 everywhere still outside by up to 1.9e+02, with an exact trim at the local-horizon rates by up to 0.33."
+cause = "Not isolated (translation error not excluded): outside by up to 0.95 at t=0.5 s; R = 0.078, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "speedOfSound_ft_s"
-cause = "Not isolated (translation error not excluded): outside by up to 0.00048 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.015, with an exact trim at the local-horizon rates by up to 0.00048."
+cause = "Not isolated (translation error not excluded): outside by up to 0.00048 at t=0.1 s; R = 0.23, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "airDensity_slug_ft3"
-cause = "Not isolated (translation error not excluded): outside by up to 8.3e-09 at t=0.8 s; with Adams-Bashforth 4 everywhere still outside by up to 2.3e-07, with an exact trim at the local-horizon rates by up to 7.9e-09."
+cause = "Not isolated (translation error not excluded): outside by up to 8.3e-09 at t=0.8 s; R = 0.37, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyForce_lbf_X"
-cause = "Not isolated (translation error not excluded): outside by up to 2 at t=0.7 s; with Adams-Bashforth 4 everywhere still outside by up to 4.3e+03, with an exact trim at the local-horizon rates by up to 1.7."
+cause = "Not isolated (translation error not excluded): outside by up to 0.47 at t=3.4 s; R = 0.17, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyForce_lbf_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 29 at t=1.3 s; with Adams-Bashforth 4 everywhere still outside by up to 8.7e+03, with an exact trim at the local-horizon rates by up to 36."
+cause = "Not isolated (translation error not excluded): outside by up to 9.9 at t=1.5 s; R = 0.39, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyForce_lbf_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 46 at t=0.8 s; with Adams-Bashforth 4 everywhere still outside by up to 1.8e+04, with an exact trim at the local-horizon rates by up to 20."
+cause = "Not isolated (translation error not excluded): outside by up to 8.3 at t=0.9 s; R = 0.23, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyMoment_ftlbf_L"
-cause = "Not isolated (translation error not excluded): outside by up to 7.1e+03 at t=0.2 s; with Adams-Bashforth 4 everywhere still outside by up to 2.1e+05, with an exact trim at the local-horizon rates by up to 3.4e+04."
+cause = "Not isolated (translation error not excluded): outside by up to 1.7e+03 at t=0.1 s; R = 0.49, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyMoment_ftlbf_M"
-cause = "Not isolated (translation error not excluded): outside by up to 3.8e+02 at t=0.2 s; with Adams-Bashforth 4 everywhere still outside by up to 1.4e+05, with an exact trim at the local-horizon rates by up to 5.4e+02."
+cause = "Not isolated (translation error not excluded): outside by up to 3 at t=31.5 s; R = 0.018, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyMoment_ftlbf_N"
-cause = "Not isolated (translation error not excluded): outside by up to 3.1e+02 at t=0.7 s; with Adams-Bashforth 4 everywhere still outside by up to 1.2e+05, with an exact trim at the local-horizon rates by up to 4.5e+02."
+cause = "Not isolated (translation error not excluded): outside by up to 75 at t=1.5 s; R = 0.43, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "mach"
-cause = "Not isolated (translation error not excluded): outside by up to 2.7e-06 at t=1.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00024, with an exact trim at the local-horizon rates by up to 9.8e-07."
+cause = "Not isolated (translation error not excluded): outside by up to 2.2e-06 at t=1.1 s; R = 0.082, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "dynamicPressure_lbf_ft2"
-cause = "Not isolated (translation error not excluded): outside by up to 0.0037 at t=1.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.23, with an exact trim at the local-horizon rates by up to 0.0021."
+cause = "Not isolated (translation error not excluded): outside by up to 0.0033 at t=1.1 s; R = 0.025, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "trueAirspeed_nmi_h"
-cause = "Not isolated (translation error not excluded): outside by up to 0.0015 at t=1.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.23, with an exact trim at the local-horizon rates by up to 0.00042."
+cause = "Not isolated (translation error not excluded): outside by up to 0.0012 at t=1.1 s; R = 0.076, within the simulators' own spread."
+
+[[case]]
+name = "Atmos_15_exact"
+archive = "Atmos_15_CircleNorthPoleF16"
+root = "nasa"
+script = "scripts/Atmos_15_exact.xml"
+aircraft_path = "aircraft"
+section = "Appendix C.1.18, Table 42, exact trim"
+
+[case.parity]
+rel = 2e-06
+cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library, checked on every oracle-ci run by the sincos gate (scripts/oracle-sincos.sh); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the F-16's dynamics carry to 5.4e-08 of a property's magnitude here."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_X"
+cause = "Not isolated (translation error not excluded): outside by up to 0.08 at t=180.0 s; R = 0.0038, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.058 at t=139.0 s; R = 0.0038, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_X"
+cause = "Not isolated (translation error not excluded): outside by up to 0.00086 at t=0.1 s; R = 0.0030, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0005 at t=0.9 s; R = 0.013, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 5.3e-05 at t=36.6 s; R = 0.013, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_X"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0019 at t=146.2 s; R = 0.0038, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0024 at t=180.0 s; R = 0.0038, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 0.00038 at t=2.9 s; R = 0.013, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Yaw"
+cause = "Not isolated (translation error not excluded): outside by up to 0.00023 at t=1.6 s; R = 0.0061, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Pitch"
+cause = "Not isolated (translation error not excluded): outside by up to 5e-05 at t=31.3 s; R = 0.021, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Roll"
+cause = "Not isolated (translation error not excluded): outside by up to 0.00032 at t=0.9 s; R = 0.0068, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Roll"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0091 at t=31.3 s; R = 0.043, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Pitch"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0022 at t=0.2 s; R = 0.082, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Yaw"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0012 at t=0.7 s; R = 0.014, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "altitudeRateWrtMsl_ft_min"
+cause = "Not isolated (translation error not excluded): outside by up to 0.12 at t=0.1 s; R = 0.0096, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "speedOfSound_ft_s"
+cause = "Not isolated (translation error not excluded): outside by up to 0.00048 at t=0.1 s; R = 0.22, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "airDensity_slug_ft3"
+cause = "Not isolated (translation error not excluded): outside by up to 8e-09 at t=1.0 s; R = 0.33, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "ambientTemperature_dgR"
+cause = "Not isolated (translation error not excluded): outside by up to 2.1e-07 at t=0.1 s; R = 0.0012, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_X"
+cause = "Not isolated (translation error not excluded): outside by up to 0.037 at t=2.0 s; R = 0.017, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.5 at t=1.4 s; R = 0.013, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 0.3 at t=2.4 s; R = 0.012, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_L"
+cause = "Not isolated (translation error not excluded): outside by up to 2e+03 at t=0.1 s; R = 0.58, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_M"
+cause = "Not isolated (translation error not excluded): outside by up to 71 at t=0.2 s; R = 0.0027, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_N"
+cause = "Not isolated (translation error not excluded): outside by up to 7 at t=1.4 s; R = 0.020, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "mach"
+cause = "Not isolated (translation error not excluded): outside by up to 7.8e-07 at t=0.8 s; R = 0.030, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "dynamicPressure_lbf_ft2"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0018 at t=1.0 s; R = 0.014, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "trueAirspeed_nmi_h"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0003 at t=1.1 s; R = 0.019, within the simulators' own spread."
 
 [[case]]
 name = "Atmos_16"
@@ -1574,125 +2508,245 @@ aircraft_path = "aircraft"
 section = "Appendix C.1.19, Table 43"
 
 [case.parity]
-rel = 1e-6
-cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library, checked on every oracle-ci run by the sincos gate (scripts/oracle-sincos.sh); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the trim and the F-16's dynamics carry to 4.2e-08 of a property's magnitude here."
-
-[[case.expected_miss]]
-variable = "eiPosition_ft_X"
-cause = "Not isolated (translation error not excluded): outside by up to 0.01 at t=3.5 s; with Adams-Bashforth 4 everywhere still outside by up to 5, with an exact trim at the local-horizon rates by up to 0.01."
+rel = 3e-06
+cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library, checked on every oracle-ci run by the sincos gate (scripts/oracle-sincos.sh); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the trim and the F-16's dynamics carry to 1.2e-07 of a property's magnitude here."
 
 [[case.expected_miss]]
 variable = "eiPosition_ft_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 0.57 at t=156.8 s; with Adams-Bashforth 4 everywhere still outside by up to 1.3e+02, with an exact trim at the local-horizon rates by up to 0.57."
+cause = "Not isolated (translation error not excluded): outside by up to 0.073 at t=163.6 s; R = 0.0050, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiPosition_ft_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 0.54 at t=105.0 s; with Adams-Bashforth 4 everywhere still outside by up to 1.1e+02, with an exact trim at the local-horizon rates by up to 0.54."
+cause = "Not isolated (translation error not excluded): outside by up to 0.056 at t=180.0 s; R = 0.0053, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "feVelocity_ft_s_X"
-cause = "Not isolated (translation error not excluded): outside by up to 0.017 at t=157.9 s; with Adams-Bashforth 4 everywhere still outside by up to 6.3, with an exact trim at the local-horizon rates by up to 0.017."
+cause = "Not isolated (translation error not excluded): outside by up to 0.0024 at t=170.5 s; R = 0.0050, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "feVelocity_ft_s_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 0.017 at t=106.3 s; with Adams-Bashforth 4 everywhere still outside by up to 8, with an exact trim at the local-horizon rates by up to 0.016."
+cause = "Not isolated (translation error not excluded): outside by up to 0.0016 at t=123.2 s; R = 0.0050, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "feVelocity_ft_s_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 0.0034 at t=6.7 s; with Adams-Bashforth 4 everywhere still outside by up to 3.3, with an exact trim at the local-horizon rates by up to 0.0034."
+cause = "Not isolated (translation error not excluded): outside by up to 7.8e-05 at t=43.0 s; R = 0.0034, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiVelocity_ft_s_X"
-cause = "Not isolated (translation error not excluded): outside by up to 0.0099 at t=1.0 s; with Adams-Bashforth 4 everywhere still outside by up to 3.3, with an exact trim at the local-horizon rates by up to 0.0099."
+cause = "Not isolated (translation error not excluded): outside by up to 0.00028 at t=2.5 s; R = 0.0034, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiVelocity_ft_s_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 0.018 at t=1.6 s; with Adams-Bashforth 4 everywhere still outside by up to 8, with an exact trim at the local-horizon rates by up to 0.018."
+cause = "Not isolated (translation error not excluded): outside by up to 0.0016 at t=123.2 s; R = 0.0050, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eiVelocity_ft_s_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 0.017 at t=157.9 s; with Adams-Bashforth 4 everywhere still outside by up to 7.8, with an exact trim at the local-horizon rates by up to 0.017."
+cause = "Not isolated (translation error not excluded): outside by up to 0.0024 at t=170.5 s; R = 0.0050, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "longitude_deg"
-cause = "Not isolated (translation error not excluded): outside by up to 1.6e-06 at t=156.8 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00034, with an exact trim at the local-horizon rates by up to 1.6e-06."
+cause = "Not isolated (translation error not excluded): outside by up to 2e-07 at t=163.6 s; R = 0.0050, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "latitude_deg"
-cause = "Not isolated (translation error not excluded): outside by up to 1.5e-06 at t=105.2 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00031, with an exact trim at the local-horizon rates by up to 1.5e-06."
-
-[[case.expected_miss]]
-variable = "localGravity_ft_s2"
-cause = "Not isolated (translation error not excluded): outside by up to 3.2e-08 at t=3.5 s; with Adams-Bashforth 4 everywhere still outside by up to 1.1e-05, with an exact trim at the local-horizon rates by up to 3.1e-08."
+cause = "Not isolated (translation error not excluded): outside by up to 1.6e-07 at t=180.0 s; R = 0.0053, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eulerAngle_deg_Yaw"
-cause = "Not isolated (translation error not excluded): outside by up to 0.0076 at t=37.4 s; with Adams-Bashforth 4 everywhere still outside by up to 3.4, with an exact trim at the local-horizon rates by up to 0.0076."
+cause = "Not isolated (translation error not excluded): outside by up to 0.00025 at t=180.0 s; R = 0.0048, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eulerAngle_deg_Pitch"
-cause = "Not isolated (translation error not excluded): outside by up to 0.0015 at t=5.7 s; with Adams-Bashforth 4 everywhere still outside by up to 0.34, with an exact trim at the local-horizon rates by up to 0.0015."
+cause = "Not isolated (translation error not excluded): outside by up to 4.7e-05 at t=37.5 s; R = 0.080, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "eulerAngle_deg_Roll"
-cause = "Not isolated (translation error not excluded): outside by up to 0.095 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 4.1, with an exact trim at the local-horizon rates by up to 0.095."
+cause = "Not isolated (translation error not excluded): outside by up to 0.00013 at t=4.9 s; R = 0.0046, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "bodyAngularRateWrtEi_deg_s_Roll"
-cause = "Not isolated (translation error not excluded): outside by up to 1.2 at t=0.2 s; with Adams-Bashforth 4 everywhere still outside by up to 55, with an exact trim at the local-horizon rates by up to 1.2."
+cause = "Not isolated (translation error not excluded): outside by up to 0.051 at t=37.3 s; R = 0.043, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "bodyAngularRateWrtEi_deg_s_Pitch"
-cause = "Not isolated (translation error not excluded): outside by up to 0.021 at t=37.8 s; with Adams-Bashforth 4 everywhere still outside by up to 11, with an exact trim at the local-horizon rates by up to 0.021."
+cause = "Not isolated (translation error not excluded): outside by up to 0.00016 at t=38.5 s; R = 0.056, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "bodyAngularRateWrtEi_deg_s_Yaw"
-cause = "Not isolated (translation error not excluded): outside by up to 0.055 at t=0.5 s; with Adams-Bashforth 4 everywhere still outside by up to 12, with an exact trim at the local-horizon rates by up to 0.055."
+cause = "Not isolated (translation error not excluded): outside by up to 0.00049 at t=1.3 s; R = 0.0035, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "altitudeRateWrtMsl_ft_min"
-cause = "Not isolated (translation error not excluded): outside by up to 0.42 at t=37.7 s; with Adams-Bashforth 4 everywhere still outside by up to 2e+02, with an exact trim at the local-horizon rates by up to 0.42."
+cause = "Not isolated (translation error not excluded): outside by up to 0.029 at t=0.2 s; R = 0.0028, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "speedOfSound_ft_s"
-cause = "Not isolated (translation error not excluded): outside by up to 0.00048 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.013, with an exact trim at the local-horizon rates by up to 0.00048."
+cause = "Not isolated (translation error not excluded): outside by up to 0.00048 at t=0.1 s; R = 0.30, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "airDensity_slug_ft3"
-cause = "Not isolated (translation error not excluded): outside by up to 7.9e-09 at t=0.6 s; with Adams-Bashforth 4 everywhere still outside by up to 2.1e-07, with an exact trim at the local-horizon rates by up to 7.9e-09."
+cause = "Not isolated (translation error not excluded): outside by up to 7.9e-09 at t=1.0 s; R = 0.34, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyForce_lbf_X"
-cause = "Not isolated (translation error not excluded): outside by up to 2.8 at t=37.4 s; with Adams-Bashforth 4 everywhere still outside by up to 3.9e+03, with an exact trim at the local-horizon rates by up to 2.8."
+cause = "Not isolated (translation error not excluded): outside by up to 0.19 at t=0.2 s; R = 0.17, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyForce_lbf_Y"
-cause = "Not isolated (translation error not excluded): outside by up to 62 at t=1.3 s; with Adams-Bashforth 4 everywhere still outside by up to 9.9e+03, with an exact trim at the local-horizon rates by up to 63."
+cause = "Not isolated (translation error not excluded): outside by up to 0.24 at t=1.5 s; R = 0.024, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyForce_lbf_Z"
-cause = "Not isolated (translation error not excluded): outside by up to 39 at t=0.8 s; with Adams-Bashforth 4 everywhere still outside by up to 1.9e+04, with an exact trim at the local-horizon rates by up to 39."
+cause = "Not isolated (translation error not excluded): outside by up to 0.66 at t=37.3 s; R = 0.051, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyMoment_ftlbf_L"
-cause = "Not isolated (translation error not excluded): outside by up to 32 at t=1.1 s; with Adams-Bashforth 4 everywhere still outside by up to 2.1e+05, with an exact trim at the local-horizon rates by up to 32."
+cause = "Not isolated (translation error not excluded): outside by up to 5.4e+02 at t=37.3 s; R = 0.061, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyMoment_ftlbf_M"
-cause = "Not isolated (translation error not excluded): outside by up to 2.1e+02 at t=0.2 s; with Adams-Bashforth 4 everywhere still outside by up to 1.7e+05, with an exact trim at the local-horizon rates by up to 2e+02."
+cause = "Not isolated (translation error not excluded): outside by up to 9.1 at t=0.2 s; R = 0.0089, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "aero_bodyMoment_ftlbf_N"
-cause = "Not isolated (translation error not excluded): outside by up to 3.7e+02 at t=1.2 s; with Adams-Bashforth 4 everywhere still outside by up to 1.2e+05, with an exact trim at the local-horizon rates by up to 3.7e+02."
+cause = "Not isolated (translation error not excluded): outside by up to 3 at t=1.1 s; R = 0.0036, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "mach"
-cause = "Not isolated (translation error not excluded): outside by up to 1.3e-06 at t=1.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00018, with an exact trim at the local-horizon rates by up to 1.3e-06."
+cause = "Not isolated (translation error not excluded): outside by up to 9.7e-07 at t=0.1 s; R = 0.041, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "dynamicPressure_lbf_ft2"
-cause = "Not isolated (translation error not excluded): outside by up to 0.0023 at t=1.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.16, with an exact trim at the local-horizon rates by up to 0.0022."
+cause = "Not isolated (translation error not excluded): outside by up to 0.002 at t=0.1 s; R = 0.016, within the simulators' own spread."
 
 [[case.expected_miss]]
 variable = "trueAirspeed_nmi_h"
-cause = "Not isolated (translation error not excluded): outside by up to 0.00064 at t=1.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.19, with an exact trim at the local-horizon rates by up to 0.00061."
+cause = "Not isolated (translation error not excluded): outside by up to 0.00042 at t=0.1 s; R = 0.029, within the simulators' own spread."
+
+[[case]]
+name = "Atmos_16_exact"
+archive = "Atmos_16_CircleEquatorDateLineF16"
+root = "nasa"
+script = "scripts/Atmos_16_exact.xml"
+aircraft_path = "aircraft"
+section = "Appendix C.1.19, Table 43, exact trim"
+
+[case.parity]
+rel = 3e-06
+cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library, checked on every oracle-ci run by the sincos gate (scripts/oracle-sincos.sh); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the F-16's dynamics carry to 1.1e-07 of a property's magnitude here."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.066 at t=163.5 s; R = 0.0046, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 0.051 at t=180.0 s; R = 0.0048, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_X"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0022 at t=170.5 s; R = 0.0045, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0015 at t=123.2 s; R = 0.0045, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 7e-05 at t=43.0 s; R = 0.0047, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_X"
+cause = "Not isolated (translation error not excluded): outside by up to 0.00023 at t=2.4 s; R = 0.0047, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0015 at t=123.2 s; R = 0.0045, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0022 at t=170.5 s; R = 0.0045, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "longitude_deg"
+cause = "Not isolated (translation error not excluded): outside by up to 1.8e-07 at t=163.5 s; R = 0.0046, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "latitude_deg"
+cause = "Not isolated (translation error not excluded): outside by up to 1.4e-07 at t=180.0 s; R = 0.0048, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Yaw"
+cause = "Not isolated (translation error not excluded): outside by up to 0.00022 at t=180.0 s; R = 0.0043, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Pitch"
+cause = "Not isolated (translation error not excluded): outside by up to 4.4e-05 at t=37.5 s; R = 0.0090, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Roll"
+cause = "Not isolated (translation error not excluded): outside by up to 0.00012 at t=4.9 s; R = 0.0046, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Roll"
+cause = "Not isolated (translation error not excluded): outside by up to 0.05 at t=37.3 s; R = 0.042, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Pitch"
+cause = "Not isolated (translation error not excluded): outside by up to 0.00015 at t=38.5 s; R = 0.030, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Yaw"
+cause = "Not isolated (translation error not excluded): outside by up to 0.00052 at t=1.3 s; R = 0.0028, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "altitudeRateWrtMsl_ft_min"
+cause = "Not isolated (translation error not excluded): outside by up to 0.04 at t=0.1 s; R = 0.0039, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "speedOfSound_ft_s"
+cause = "Not isolated (translation error not excluded): outside by up to 0.00048 at t=0.1 s; R = 0.30, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "airDensity_slug_ft3"
+cause = "Not isolated (translation error not excluded): outside by up to 8e-09 at t=1.0 s; R = 0.34, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "ambientTemperature_dgR"
+cause = "Not isolated (translation error not excluded): outside by up to 4.9e-08 at t=0.1 s; R = 0.0012, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_X"
+cause = "Not isolated (translation error not excluded): outside by up to 0.33 at t=0.2 s; R = 0.019, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Y"
+cause = "Not isolated (translation error not excluded): outside by up to 0.25 at t=1.5 s; R = 0.024, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Z"
+cause = "Not isolated (translation error not excluded): outside by up to 0.65 at t=37.3 s; R = 0.0070, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_L"
+cause = "Not isolated (translation error not excluded): outside by up to 5.4e+02 at t=37.3 s; R = 0.061, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_M"
+cause = "Not isolated (translation error not excluded): outside by up to 19 at t=0.2 s; R = 0.0010, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_N"
+cause = "Not isolated (translation error not excluded): outside by up to 3.1 at t=1.5 s; R = 0.0035, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "mach"
+cause = "Not isolated (translation error not excluded): outside by up to 7.8e-07 at t=1.4 s; R = 0.033, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "dynamicPressure_lbf_ft2"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0018 at t=39.9 s; R = 0.014, within the simulators' own spread."
+
+[[case.expected_miss]]
+variable = "trueAirspeed_nmi_h"
+cause = "Not isolated (translation error not excluded): outside by up to 0.0003 at t=1.3 s; R = 0.021, within the simulators' own spread."

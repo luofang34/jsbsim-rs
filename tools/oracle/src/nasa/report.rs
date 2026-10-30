@@ -9,7 +9,8 @@ use std::ops::AddAssign;
 use tracing::{error, info};
 
 use super::data::{Column, Simulator};
-use super::envelope::{ColumnStats, compare_column};
+use super::envelope::{ColumnStats, compare_column, samples};
+use super::spread::{spread_ratio, two_figures};
 use super::{Case, ExpectedMiss};
 use crate::Series;
 
@@ -112,6 +113,7 @@ pub(super) fn report_case(
 ) -> Counts {
     let mut counts = Counts::default();
     let mut compared: Vec<&str> = Vec::new();
+    let (mut within_spread, mut spread_compared) = (0usize, 0usize);
     for column in columns {
         let (Some(c), Some(r)) = (
             compare_column(column, simulators, cpp),
@@ -120,6 +122,13 @@ pub(super) fn report_case(
             continue;
         };
         compared.push(column.nasa);
+        let ratio = samples(column, cpp)
+            .and_then(|s| spread_ratio(column, simulators, &s))
+            .map(|r| r.ratio());
+        if let Some(r) = ratio {
+            spread_compared = spread_compared.wrapping_add(1);
+            within_spread = within_spread.wrapping_add(usize::from(r <= 1.0));
+        }
         let expected = case.expected_miss.iter().find(|m| m.variable == c.nasa);
         let same = c.outside == r.outside;
         let label = if same {
@@ -129,13 +138,14 @@ pub(super) fn report_case(
             "FAIL".to_owned()
         };
         info!(
-            "{} {:<33} sims {}, spread <= {:.3e}, C++ outside <= {:.3e} at t={}, inside {}/{}; Rust inside {}/{}, {}: {label}",
+            "{} {:<33} sims {}, spread <= {:.3e}, C++ outside <= {:.3e} at t={:.4}, R {}, inside {}/{}; Rust inside {}/{}, {}: {label}",
             case.name,
             c.nasa,
             c.simulators,
             c.max_spread,
             c.max_excursion,
             c.worst_time,
+            ratio.map_or_else(|| "n/a".to_owned(), two_figures),
             c.inside,
             c.samples,
             r.inside,
@@ -147,6 +157,10 @@ pub(super) fn report_case(
             },
         );
     }
+    info!(
+        "{}: C++ within the simulators' own spread (R <= 1) on {within_spread}/{spread_compared} variables",
+        case.name
+    );
     for miss in &case.expected_miss {
         if !compared.contains(&miss.variable.as_str()) {
             counts.stale = counts.stale.wrapping_add(1);

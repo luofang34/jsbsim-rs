@@ -178,7 +178,7 @@ fn the_committed_manifest_is_consistent() {
                 .is_ok_and(|s| s.contains(r#"aircraft="f16""#))
         })
         .collect();
-    assert_eq!(f16.len(), 8);
+    assert_eq!(f16.len(), 16);
     for case in f16 {
         for miss in &case.expected_miss {
             assert!(

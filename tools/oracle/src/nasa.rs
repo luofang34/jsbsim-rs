@@ -8,6 +8,7 @@
 mod data;
 mod envelope;
 mod report;
+mod spread;
 
 #[cfg(test)]
 mod tests;
@@ -21,9 +22,10 @@ use sha2::{Digest, Sha256};
 use tracing::{error, info};
 
 pub use data::{COLUMNS, Column, Simulator};
-pub use envelope::{ColumnStats, compare_column};
+pub use envelope::{ColumnStats, compare_column, compare_samples};
 pub use report::Counts;
 use report::{report_case, report_parity};
+pub use spread::{SpreadRatio, leave_one_out, spread_ratio};
 
 use crate::OracleError;
 use crate::manifest::ScriptSpec;
@@ -324,6 +326,8 @@ fn compare_case_blocking(
         });
     }
     let mut counts = report_case(case, COLUMNS, &simulators, &cpp, &rust);
+    let times: Vec<f64> = cpp.rows.iter().filter_map(|r| r.first().copied()).collect();
+    spread::report_leave_one_out(&case.name, COLUMNS, &simulators, &times);
     if let Some(p) = &case.parity {
         info!("{}: parity within {:e} ({})", case.name, p.rel, p.cause);
     }

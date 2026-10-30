@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  Exact-trim initial conditions of check-case 16: Appendix C.1.19, Table
+  43 (10,000 ft MSL at 0 N 179.95 W, Earth-relative NED velocity
+  [563.643, 0, 0] ft/s, heading 0 deg), flown without FGTrim. The body
+  rates equal the local frame's transport rate (attitude_rate frame
+  LOCAL, all zero), SIM 5's trim definition, and the pitch below goes
+  with the trim inputs the scripts fix: fcs/throttle-cmd-norm[0] =
+  0.13819656067116182 and fcs/pitch-trim-cmd-norm = 0.12987820023995858.
+  Newton solve on udot/wdot/qdot < 1e-11 against SIM 5's trim definition
+  (C++ JSBSim, finite-difference Jacobian in pitch, throttle and pitch
+  trim); residuals at t = 0: udot -5.8e-15 ft/s2, wdot 2.8e-14 ft/s2,
+  qdot 2.9e-16 rad/s2.
+  Written for jsbsim-rs from the parameters in NASA/TM-2015-218675,
+  "Check-Cases for Verification of 6-Degree-of-Freedom Flight Vehicle
+  Simulations", Volume II: Appendices.
+-->
+<initialize name="Atmos 16 exact" version="2.0">
+  <position frame="ECEF">
+    <latitude unit="DEG" type="geodetic"> 0.0 </latitude>
+    <longitude unit="DEG"> -179.95 </longitude>
+    <altitudeMSL unit="FT"> 10000.0 </altitudeMSL>
+  </position>
+  <orientation unit="DEG" frame="LOCAL">
+    <roll> 0.0 </roll>
+    <pitch> 2.6653828828378012 </pitch>
+    <yaw> 0.0 </yaw>
+  </orientation>
+  <velocity unit="FT/SEC" frame="LOCAL">
+    <x> 563.643 </x>
+    <y> 0.0 </y>
+    <z> 0.0 </z>
+  </velocity>
+  <attitude_rate unit="RAD/SEC" frame="LOCAL">
+    <roll> 0.0 </roll>
+    <pitch> 0.0 </pitch>
+    <yaw> 0.0 </yaw>
+  </attitude_rate>
+</initialize>

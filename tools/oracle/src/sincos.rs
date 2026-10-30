@@ -222,13 +222,21 @@ pub const EXCEPTIONS: &[Exception] = &[];
 /// `[case.parity]` bounds cover only the gate builds' sin and cos.
 pub const NASA_CASES: &[&str] = &[
     "Atmos_11",
+    "Atmos_11_exact",
     "Atmos_12",
+    "Atmos_12_exact",
     "Atmos_13p1",
+    "Atmos_13p1_exact",
     "Atmos_13p2",
+    "Atmos_13p2_exact",
     "Atmos_13p3",
+    "Atmos_13p3_exact",
     "Atmos_13p4",
+    "Atmos_13p4_exact",
     "Atmos_15",
+    "Atmos_15_exact",
     "Atmos_16",
+    "Atmos_16_exact",
 ];
 
 /// Runs `names`, or [`CASES`] and [`NASA_CASES`] when empty, and fails unless every one is
