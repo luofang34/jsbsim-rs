@@ -2,7 +2,8 @@
 
 use super::data::{Column, Simulator};
 use super::{
-    Archive, NasaManifest, PARITY_REL, Root, compare_column, report_parity, sha256_hex, verify,
+    Archive, Case, Counts, ExpectedMiss, NasaManifest, PARITY_REL, Root, compare_column,
+    report_case, report_parity, sha256_hex, verify,
 };
 use crate::{OracleError, Series};
 
@@ -167,6 +168,27 @@ fn the_committed_manifest_is_consistent() {
             assert!(!p.cause.is_empty(), "{}", case.name);
         }
     }
+    // The F-16 is a hand translation of the DAVE-ML, so a miss not traced
+    // to a cause may be the translation's, not JSBSim's.
+    let f16: Vec<_> = manifest
+        .case
+        .iter()
+        .filter(|c| {
+            std::fs::read_to_string(repo.join("oracle/nasa").join(&c.script))
+                .is_ok_and(|s| s.contains(r#"aircraft="f16""#))
+        })
+        .collect();
+    assert_eq!(f16.len(), 8);
+    for case in f16 {
+        for miss in &case.expected_miss {
+            assert!(
+                !miss.cause.starts_with("Not isolated:"),
+                "{} {}: an F-16 miss not isolated must say translation error is not excluded",
+                case.name,
+                miss.variable
+            );
+        }
+    }
     for archive in &manifest.archive {
         assert_eq!(archive.sha256.len(), 64, "{}", archive.name);
         assert!(archive.url.starts_with("https://"), "{}", archive.name);
@@ -181,9 +203,9 @@ fn parity_holds_each_property_to_the_case_bound_of_its_magnitude() {
     };
     let mut rust = cpp.clone();
     rust.rows[0][1] += 2e-6;
-    assert!(!report_parity("c", PARITY_REL, &cpp, &rust));
-    assert!(report_parity("c", 1e-9, &cpp, &rust));
-    assert!(!report_parity("c", 1e-10, &cpp, &rust));
+    assert_eq!(report_parity("c", PARITY_REL, &cpp, &rust), 1);
+    assert_eq!(report_parity("c", 1e-9, &cpp, &rust), 0);
+    assert_eq!(report_parity("c", 1e-10, &cpp, &rust), 1);
 }
 
 #[test]
@@ -211,4 +233,157 @@ section = "s"
     let manifest: NasaManifest = toml::from_str(text).unwrap();
     assert_eq!(manifest.case[0].parity_rel(), 1e-9);
     assert_eq!(manifest.case[1].parity_rel(), PARITY_REL);
+}
+
+/// Two simulators recording `a` to `d` as 1 and 3 at t=0.
+fn four_variable_sims() -> Vec<Simulator> {
+    [("s1", 1), ("s2", 3)]
+        .iter()
+        .map(|(name, v)| {
+            Simulator::parse(name, &format!("time,a,b,c,d\n0.0,{v},{v},{v},{v}\n")).unwrap()
+        })
+        .collect()
+}
+
+fn four_variable_series(values: [f64; 4]) -> Series {
+    Series {
+        columns: ["Time", "pa", "pb", "pc", "pd"].map(str::to_owned).to_vec(),
+        rows: vec![std::iter::once(0.0).chain(values).collect()],
+    }
+}
+
+const FOUR_COLUMNS: [Column; 5] = [
+    Column {
+        nasa: "a",
+        property: "pa",
+        ..PLAIN
+    },
+    Column {
+        nasa: "b",
+        property: "pb",
+        ..PLAIN
+    },
+    Column {
+        nasa: "c",
+        property: "pc",
+        ..PLAIN
+    },
+    Column {
+        nasa: "d",
+        property: "pd",
+        ..PLAIN
+    },
+    // No simulator records it, so it is not compared.
+    Column {
+        nasa: "e",
+        property: "pa",
+        ..PLAIN
+    },
+];
+
+fn case_missing(variables: &[&str]) -> Case {
+    Case {
+        name: "c".to_owned(),
+        archive: "a".to_owned(),
+        root: Root::Nasa,
+        script: "s.xml".to_owned(),
+        aircraft_path: "aircraft".to_owned(),
+        section: "s".to_owned(),
+        expected_miss: variables
+            .iter()
+            .map(|v| ExpectedMiss {
+                variable: (*v).to_owned(),
+                cause: "why".to_owned(),
+            })
+            .collect(),
+        parity: None,
+    }
+}
+
+#[test]
+fn each_compared_variable_is_counted_once_by_its_verdict() {
+    // a inside, b outside and listed, c inside but listed, d outside.
+    let series = four_variable_series([2.0, 9.0, 2.0, 9.0]);
+    let sims = four_variable_sims();
+    let counts = report_case(
+        &case_missing(&["b", "c"]),
+        &FOUR_COLUMNS,
+        &sims,
+        &series,
+        &series,
+    );
+    let expected = Counts {
+        pass: 1,
+        expected_miss: 1,
+        unexpected_pass: 1,
+        fail: 1,
+        ..Counts::default()
+    };
+    assert_eq!(counts, expected);
+    assert!(!counts.ok());
+    let clean = report_case(
+        &case_missing(&["b", "d"]),
+        &FOUR_COLUMNS,
+        &sims,
+        &series,
+        &series,
+    );
+    assert!(clean.ok(), "{clean}");
+    assert_eq!((clean.pass, clean.expected_miss), (2, 2));
+}
+
+#[test]
+fn an_expected_miss_of_a_variable_not_compared_fails_as_stale() {
+    let series = four_variable_series([2.0, 9.0, 2.0, 9.0]);
+    // "e" is a column no simulator records; "dd" is misspelt.
+    let case = case_missing(&["b", "d", "e", "dd"]);
+    let counts = report_case(
+        &case,
+        &FOUR_COLUMNS,
+        &four_variable_sims(),
+        &series,
+        &series,
+    );
+    assert_eq!((counts.expected_miss, counts.stale), (2, 2));
+    assert!(!counts.ok());
+}
+
+#[test]
+fn rust_missing_on_other_samples_than_cpp_is_a_fail() {
+    let cpp = four_variable_series([2.0, 9.0, 2.0, 9.0]);
+    let rust = four_variable_series([9.0, 9.0, 2.0, 9.0]);
+    let case = case_missing(&["b", "d"]);
+    let counts = report_case(&case, &FOUR_COLUMNS, &four_variable_sims(), &cpp, &rust);
+    assert_eq!((counts.pass, counts.fail, counts.expected_miss), (1, 1, 2));
+    assert!(!counts.ok());
+}
+
+#[test]
+fn counts_total_across_cases() {
+    let mut total = Counts::default();
+    total += Counts {
+        pass: 2,
+        expected_miss: 1,
+        ..Counts::default()
+    };
+    total += Counts {
+        pass: 1,
+        parity_fail: 3,
+        rust_stopped: 1,
+        ..Counts::default()
+    };
+    let expected = Counts {
+        pass: 3,
+        expected_miss: 1,
+        parity_fail: 3,
+        rust_stopped: 1,
+        ..Counts::default()
+    };
+    assert_eq!(total, expected);
+    assert!(!total.ok());
+    assert_eq!(
+        total.to_string(),
+        "3 pass, 1 expected_miss, 0 unexpected_pass, 0 fail, 0 stale expected_miss, \
+         3 parity fail, 1 Rust run stopped"
+    );
 }

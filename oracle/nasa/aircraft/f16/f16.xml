@@ -28,6 +28,10 @@
     F16_gnc.dml      "Revision C, 2013-10-22", sha256
       fc1dbff00cc14b0228973c43cfc17797fd48d2e36950ec039ff4e77d8577827c
 
+  The port matches C++ JSBSim on this hand-translated DAVE-ML F-16; the
+  model lands near, but mostly outside, NASA's sims-4/5 envelope; causes
+  are not isolated and translation error is not excluded.
+
   Mapping onto JSBSim:
   - Inertia: the constants of F16_inertia.dml with the CM at 25% MAC
     (Table 7), so the CM lies 0.1 cbar = 1.132 ft ahead of the moment

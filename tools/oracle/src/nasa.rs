@@ -7,6 +7,7 @@
 
 mod data;
 mod envelope;
+mod report;
 
 #[cfg(test)]
 mod tests;
@@ -21,10 +22,12 @@ use tracing::{error, info};
 
 pub use data::{COLUMNS, Column, Simulator};
 pub use envelope::{ColumnStats, compare_column};
+pub use report::Counts;
+use report::{report_case, report_parity};
 
+use crate::OracleError;
 use crate::manifest::ScriptSpec;
 use crate::upstream::{self, Paths, run_blocking};
-use crate::{OracleError, Series};
 
 /// Samples per second compared; every simulator records at least this often.
 const RATE_HZ: f64 = 10.0;
@@ -110,7 +113,8 @@ impl Case {
 }
 
 /// A variable C++ JSBSim lies outside the simulators on, and why. The
-/// comparison fails if it stops missing, so the list stays current.
+/// comparison fails if it stops missing or is not compared, so the list
+/// stays current.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ExpectedMiss {
@@ -267,115 +271,62 @@ pub(crate) fn roots(paths: &Paths, case: &Case) -> (PathBuf, PathBuf) {
 /// case states a looser [`Parity`].
 pub const PARITY_REL: f64 = 1e-12;
 
-/// Logs each variable's verdict: C++ inside the simulators at every sample,
-/// or missing where the manifest names the cause; Rust outside on exactly
-/// the same samples. Returns whether every verdict holds.
-fn report_case(case: &Case, simulators: &[Simulator], cpp: &Series, rust: &Series) -> bool {
-    let mut pass = true;
-    for column in COLUMNS {
-        let (Some(c), Some(r)) = (
-            compare_column(column, simulators, cpp),
-            compare_column(column, simulators, rust),
-        ) else {
-            continue;
-        };
-        let expected = case
-            .expected_miss
-            .iter()
-            .find(|m| m.variable == column.nasa);
-        let verdict = match (c.passes(), expected) {
-            (true, None) => "PASS".to_owned(),
-            (false, Some(m)) => format!("EXPECTED MISS ({})", m.cause),
-            (true, Some(_)) => {
-                pass = false;
-                "FAIL: listed as an expected miss but inside; update oracle/nasa/manifest.toml"
-                    .to_owned()
-            }
-            (false, None) => {
-                pass = false;
-                "FAIL".to_owned()
-            }
-        };
-        let same = c.outside == r.outside;
-        pass &= same;
-        info!(
-            "{} {:<33} sims {}, spread <= {:.3e}, C++ outside <= {:.3e} at t={}, inside {}/{}; Rust inside {}/{}, {}: {verdict}",
-            case.name,
-            c.nasa,
-            c.simulators,
-            c.max_spread,
-            c.max_excursion,
-            c.worst_time,
-            c.inside,
-            c.samples,
-            r.inside,
-            r.samples,
-            if same {
-                "same samples"
-            } else {
-                "DIFFERENT samples (FAIL)"
-            },
-        );
-    }
-    pass
-}
-
-/// Logs the largest Rust-vs-C++ difference of each property; returns
-/// whether all are within `rel` of their magnitude.
-fn report_parity(case: &str, rel: f64, cpp: &Series, rust: &Series) -> bool {
-    let mut pass = cpp.rows.len() == rust.rows.len();
-    for (i, property) in cpp.columns.iter().enumerate().skip(1) {
-        let (mut max, mut magnitude) = (0.0_f64, 1.0_f64);
-        for (a, b) in cpp.rows.iter().zip(&rust.rows) {
-            if let (Some(a), Some(b)) = (a.get(i), b.get(i)) {
-                max = max.max((a - b).abs());
-                magnitude = magnitude.max(a.abs());
-            }
-        }
-        let ok = max <= rel * magnitude;
-        pass &= ok;
-        info!(
-            "{case} parity {property:<33} max |Rust - C++| {max:.3e}, {:.3e} of its magnitude{}",
-            max / magnitude,
-            if ok { "" } else { " FAIL" }
-        );
-    }
-    pass
-}
-
 /// Runs `names` (all cases when empty) in C++ and Rust and compares both
 /// with the NASA simulators' spread.
 pub fn compare_blocking(paths: &Paths, names: &[String]) -> Result<ExitCode, OracleError> {
     let manifest = NasaManifest::read_blocking(&paths.repo_root)?;
-    let mut pass = true;
+    let (mut total, mut cases) = (Counts::default(), 0usize);
     for case in &manifest.case {
         if !names.is_empty() && !names.contains(&case.name) {
             continue;
         }
-        info!("{}: TM-2015-218675 {}", case.name, case.section);
-        let simulators = simulators_blocking(paths, manifest.archive(&case.archive)?)?;
-        let spec = spec(case);
-        let (cpp_root, rust_root) = roots(paths, case);
-        let run_dir = paths
-            .work_dir()
-            .join("run")
-            .join(format!("nasa-{}", case.name));
-        let cpp = upstream::run_script_in_blocking(paths, &cpp_root, &spec, &run_dir)?.series;
-        let (rust, failure) = crate::port_script::run_script(&rust_root, &spec);
-        if let Some(e) = failure {
-            error!("{}: the Rust run failed: {e}", case.name);
-            pass = false;
-            continue;
+        let counts = compare_case_blocking(paths, &manifest, case)?;
+        let line = format!("{}: {counts}", case.name);
+        if counts.ok() {
+            info!("{line}");
+        } else {
+            error!("{line}");
         }
-        pass &= report_case(case, &simulators, &cpp, &rust);
-        if let Some(p) = &case.parity {
-            info!("{}: parity within {:e} ({})", case.name, p.rel, p.cause);
-        }
-        pass &= report_parity(&case.name, case.parity_rel(), &cpp, &rust);
+        total += counts;
+        cases = cases.wrapping_add(1);
     }
-    Ok(if pass {
+    let line = format!("nasa total over {cases} cases: {total}");
+    Ok(if total.ok() {
+        info!("{line}");
         ExitCode::SUCCESS
     } else {
+        error!("{line}");
         ExitCode::FAILURE
     })
+}
+
+/// Runs `case` in C++ and Rust, logs every verdict and counts them.
+fn compare_case_blocking(
+    paths: &Paths,
+    manifest: &NasaManifest,
+    case: &Case,
+) -> Result<Counts, OracleError> {
+    info!("{}: TM-2015-218675 {}", case.name, case.section);
+    let simulators = simulators_blocking(paths, manifest.archive(&case.archive)?)?;
+    let spec = spec(case);
+    let (cpp_root, rust_root) = roots(paths, case);
+    let run_dir = paths
+        .work_dir()
+        .join("run")
+        .join(format!("nasa-{}", case.name));
+    let cpp = upstream::run_script_in_blocking(paths, &cpp_root, &spec, &run_dir)?.series;
+    let (rust, failure) = crate::port_script::run_script(&rust_root, &spec);
+    if let Some(e) = failure {
+        error!("{}: the Rust run failed: {e}", case.name);
+        return Ok(Counts {
+            rust_stopped: 1,
+            ..Counts::default()
+        });
+    }
+    let mut counts = report_case(case, COLUMNS, &simulators, &cpp, &rust);
+    if let Some(p) = &case.parity {
+        info!("{}: parity within {:e} ({})", case.name, p.rel, p.cause);
+    }
+    counts.parity_fail = report_parity(&case.name, case.parity_rel(), &cpp, &rust);
+    Ok(counts)
 }
