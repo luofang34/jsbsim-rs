@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  Thruster passing the engine's (zero) thrust straight through.
+  Written for jsbsim-rs.
+-->
+<direct name="Direct">
+</direct>

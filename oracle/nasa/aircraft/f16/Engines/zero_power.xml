@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  Engine without power for the F-16 of NASA/TM-2015-218675: it gives
+  JSBSim's trim the throttle command the control law reads as
+  trimmedPilotControl_throttle; the thrust itself is an external force.
+  Written for jsbsim-rs.
+-->
+<electric_engine name="zero power">
+  <power unit="WATTS"> 0.0 </power>
+</electric_engine>

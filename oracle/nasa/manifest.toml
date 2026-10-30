@@ -69,6 +69,71 @@ size = 1095669
 sha256 = "27d7ee39c7a7b97b9505566e6d2636bf06472ad81c10fd86b8b50a2be958feca"
 retrieved = "2026-10-28"
 
+[[archive]]
+name = "Atmos_11_TrimCheckSubsonicF16"
+url = "https://nescacademy.nasa.gov/src/flightsim/Datasets/Atmos_11_TrimCheckSubsonicF16.zip"
+size = 1073945
+sha256 = "e54a3a0f33f16529046228caf9305ac0a1a2228e662f1dc5f12cc5e1698182f2"
+retrieved = "2026-10-29"
+
+[[archive]]
+name = "Atmos_12_TrimCheckSupersonicF16"
+url = "https://nescacademy.nasa.gov/src/flightsim/Datasets/Atmos_12_TrimCheckSupersonicF16.zip"
+size = 1102726
+sha256 = "533ec5ff0f420258b4c2405f381a6cbde99f660d07492e517494605dc0decad8"
+retrieved = "2026-10-29"
+
+[[archive]]
+name = "Atmos_13p1_SubsonicAltitudeChangeF16"
+url = "https://nescacademy.nasa.gov/src/flightsim/Datasets/Atmos_13p1_SubsonicAltitudeChangeF16.zip"
+size = 243753
+sha256 = "e01af780ada24640ab532a3688b658ab7639923271385ad3fa1e05b23e0d8808"
+retrieved = "2026-10-29"
+
+[[archive]]
+name = "Atmos_13p2_SubsonicAirspeedChangeF16"
+url = "https://nescacademy.nasa.gov/src/flightsim/Datasets/Atmos_13p2_SubsonicAirspeedChangeF16.zip"
+size = 236924
+sha256 = "b26a2f9eb4c537ea96bf73493004ae77d37b38d496b32e6d50e00b4ec9482fb1"
+retrieved = "2026-10-29"
+
+[[archive]]
+name = "Atmos_13p3_SubsonicHeadingChangeF16"
+url = "https://nescacademy.nasa.gov/src/flightsim/Datasets/Atmos_13p3_SubsonicHeadingChangeF16.zip"
+size = 736702
+sha256 = "02a9936096e101cd7bd36ecc8798c55694a2642c148dd7b629854248c0097a29"
+retrieved = "2026-10-29"
+
+[[archive]]
+name = "Atmos_13p4_SubsonicLateralSideStepF16"
+url = "https://nescacademy.nasa.gov/src/flightsim/Datasets/Atmos_13p4_SubsonicLateralSideStepF16.zip"
+size = 847844
+sha256 = "43656d57daabb8a350931ea6826edda7b1a1a4f99bb0f42005d6c0436fa14174"
+retrieved = "2026-10-29"
+
+[[archive]]
+name = "Atmos_15_CircleNorthPoleF16"
+url = "https://nescacademy.nasa.gov/src/flightsim/Datasets/Atmos_15_CircleNorthPoleF16.zip"
+size = 927078
+sha256 = "9a3fc239b2050dc9e6ba728321b9eff67bc37d8fad90e7050c0b5c2223420839"
+retrieved = "2026-10-29"
+
+[[archive]]
+name = "Atmos_16_CircleEquatorDateLineF16"
+url = "https://nescacademy.nasa.gov/src/flightsim/Datasets/Atmos_16_CircleEquatorDateLineF16.zip"
+size = 1102071
+sha256 = "ebfd9b13862cefbb8998a0605b5538dcc2c232f8d0471e6fa32a3ba4b966033d"
+retrieved = "2026-10-29"
+
+# The S-119 (DAVE-ML) models; no case reads it. Its F16_package.zip holds
+# the F-16 that oracle/nasa/aircraft/f16 is translated from.
+[[archive]]
+name = "Atmospheric_models"
+url = "https://nescacademy.nasa.gov/src/flightsim/Models/Atmospheric_models.zip"
+size = 1498326
+sha256 = "10e2dc267856ef37eaedbcdd16eb49a8c44b39301054de0fa78292c1c4aba3bc"
+retrieved = "2026-10-29"
+
 [[case]]
 name = "Atmos_01"
 archive = "Atmos_01_DroppedSphere"
@@ -536,3 +601,1083 @@ cause = "Not isolated: outside by up to 0.012 at t=0.0 s; with Adams-Bashforth 4
 [[case.expected_miss]]
 variable = "trueAirspeed_nmi_h"
 cause = "Not isolated: outside by up to 1.9e-06 at t=0.0 s; with Adams-Bashforth 4 everywhere still outside by up to 1.9e-06."
+
+[[case]]
+name = "Atmos_11"
+archive = "Atmos_11_TrimCheckSubsonicF16"
+root = "nasa"
+script = "scripts/Atmos_11.xml"
+aircraft_path = "aircraft"
+section = "Appendix C.1.11, Table 35"
+
+[case.parity]
+rel = 5e-9
+cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library (the scripts/oracle-sincos.sh setup); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the trim and the F-16's dynamics carry to 1.9e-10 of a property's magnitude here."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_X"
+cause = "Not isolated: outside by up to 7 at t=180.0 s; with Adams-Bashforth 4 everywhere still outside by up to 7, with an exact trim at the local-horizon rates by up to 0.91."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Y"
+cause = "Not isolated: outside by up to 17 at t=180.0 s; with Adams-Bashforth 4 everywhere still outside by up to 17, with an exact trim at the local-horizon rates by up to 0.041."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Z"
+cause = "Not isolated: outside by up to 8.4 at t=180.0 s; with Adams-Bashforth 4 everywhere still outside by up to 8.4, with an exact trim at the local-horizon rates by up to 0.46."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_X"
+cause = "Not isolated: outside by up to 0.16 at t=38.8 s; with Adams-Bashforth 4 everywhere still outside by up to 0.16, with an exact trim at the local-horizon rates by up to 0.0037."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Y"
+cause = "Not isolated: outside by up to 0.00017 at t=1.3 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00015, with an exact trim at the local-horizon rates by up to 0.0036."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Z"
+cause = "Not isolated: outside by up to 0.086 at t=54.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.086, with an exact trim at the local-horizon rates by up to 0.0047."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_X"
+cause = "Not isolated: outside by up to 0.12 at t=44.0 s; with Adams-Bashforth 4 everywhere still outside by up to 0.12, with an exact trim at the local-horizon rates by up to 0.0074."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Y"
+cause = "Not isolated: outside by up to 0.24 at t=26.2 s; with Adams-Bashforth 4 everywhere still outside by up to 0.24, with an exact trim at the local-horizon rates by up to 0.0031."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Z"
+cause = "Not isolated: outside by up to 0.15 at t=52.0 s; with Adams-Bashforth 4 everywhere still outside by up to 0.15, with an exact trim at the local-horizon rates by up to 0.0057."
+
+[[case.expected_miss]]
+variable = "longitude_deg"
+cause = "Not isolated: outside by up to 1.2e-05 at t=41.4 s; with Adams-Bashforth 4 everywhere still outside by up to 1.2e-05, with an exact trim at the local-horizon rates by up to 2.9e-07."
+
+[[case.expected_miss]]
+variable = "latitude_deg"
+cause = "Not isolated: outside by up to 4.2e-05 at t=180.0 s; with Adams-Bashforth 4 everywhere still outside by up to 4.2e-05, with an exact trim at the local-horizon rates by up to 4e-08."
+
+[[case.expected_miss]]
+variable = "localGravity_ft_s2"
+cause = "JSBSim's trim (FGTrim holds the body rates at zero relative to the Earth and stops within its udot, wdot and qdot tolerances) starts the F-16 off the simulators' equilibrium; inside with an exact trim at the local-horizon rates (outside by up to 2e-05 at t=180.0 s)."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Yaw"
+cause = "Not isolated: outside by up to 7e-05 at t=158.6 s; with Adams-Bashforth 4 everywhere still outside by up to 7e-05, with an exact trim at the local-horizon rates by up to 2.4e-05."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Pitch"
+cause = "Not isolated: outside by up to 0.0073 at t=57.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0073, with an exact trim at the local-horizon rates by up to 0.00044."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Roll"
+cause = "Not isolated: outside by up to 0.00015 at t=2.1 s; with Adams-Bashforth 4 everywhere still outside by up to 3.8e-05, with an exact trim at the local-horizon rates by up to 7.4e-07."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Roll"
+cause = "Not isolated: outside by up to 0.00034 at t=2.3 s; with Adams-Bashforth 4 everywhere still outside by up to 1e-06, with an exact trim at the local-horizon rates by up to 0.00074."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Pitch"
+cause = "Not isolated: outside by up to 0.00044 at t=25.3 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00044, with an exact trim at the local-horizon rates by up to 6.3e-05."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Yaw"
+cause = "Not isolated: outside by up to 0.00014 at t=2.5 s; with Adams-Bashforth 4 everywhere still outside by up to 1.6e-06, with an exact trim at the local-horizon rates by up to 0.00034."
+
+[[case.expected_miss]]
+variable = "altitudeRateWrtMsl_ft_min"
+cause = "Not isolated: outside by up to 5.2 at t=54.1 s; with Adams-Bashforth 4 everywhere still outside by up to 5.2, with an exact trim at the local-horizon rates by up to 0.33."
+
+[[case.expected_miss]]
+variable = "speedOfSound_ft_s"
+cause = "Not isolated: outside by up to 0.00047 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00047, with an exact trim at the local-horizon rates by up to 0.00047."
+
+[[case.expected_miss]]
+variable = "airDensity_slug_ft3"
+cause = "Not isolated: outside by up to 7.8e-09 at t=0.5 s; with Adams-Bashforth 4 everywhere still outside by up to 7.8e-09, with an exact trim at the local-horizon rates by up to 1.6e-08."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Y"
+cause = "Not isolated: outside by up to 0.068 at t=2.0 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0002, with an exact trim at the local-horizon rates by up to 0.16."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Z"
+cause = "Not isolated: outside by up to 2.8 at t=66.0 s; with Adams-Bashforth 4 everywhere still outside by up to 2.8, with an exact trim at the local-horizon rates by up to 0.31."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_L"
+cause = "Not isolated: outside by up to 0.2 at t=2.8 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00055, with an exact trim at the local-horizon rates by up to 0.5."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_M"
+cause = "Not isolated: outside by up to 0.1 at t=0.5 s; with Adams-Bashforth 4 everywhere still outside by up to 0.1, with an exact trim at the local-horizon rates by up to 0.13."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_N"
+cause = "Not isolated: outside by up to 0.43 at t=2.9 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0014, with an exact trim at the local-horizon rates by up to 0.91."
+
+[[case.expected_miss]]
+variable = "mach"
+cause = "Not isolated: outside by up to 9e-05 at t=99.0 s; with Adams-Bashforth 4 everywhere still outside by up to 9e-05, with an exact trim at the local-horizon rates by up to 4.5e-06."
+
+[[case.expected_miss]]
+variable = "dynamicPressure_lbf_ft2"
+cause = "Not isolated: outside by up to 0.26 at t=39.2 s; with Adams-Bashforth 4 everywhere still outside by up to 0.26, with an exact trim at the local-horizon rates by up to 0.0039."
+
+[[case.expected_miss]]
+variable = "trueAirspeed_nmi_h"
+cause = "Not isolated: outside by up to 0.059 at t=180.0 s; with Adams-Bashforth 4 everywhere still outside by up to 0.059, with an exact trim at the local-horizon rates by up to 0.0031."
+
+[[case]]
+name = "Atmos_12"
+archive = "Atmos_12_TrimCheckSupersonicF16"
+root = "nasa"
+script = "scripts/Atmos_12.xml"
+aircraft_path = "aircraft"
+section = "Appendix C.1.12, Table 36"
+
+[case.parity]
+rel = 2e-8
+cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library (the scripts/oracle-sincos.sh setup); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the trim and the F-16's dynamics carry to 8.0e-10 of a property's magnitude here."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_X"
+cause = "Not isolated: outside by up to 57 at t=143.2 s; with Adams-Bashforth 4 everywhere still outside by up to 57, with an exact trim at the local-horizon rates by up to 0.38."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Y"
+cause = "Not isolated: outside by up to 3e+02 at t=96.3 s; with Adams-Bashforth 4 everywhere still outside by up to 3e+02, with an exact trim at the local-horizon rates by up to 2.2."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Z"
+cause = "Not isolated: outside by up to 1e+02 at t=73.9 s; with Adams-Bashforth 4 everywhere still outside by up to 1e+02, with an exact trim at the local-horizon rates by up to 2.1."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_X"
+cause = "Not isolated: outside by up to 1.7 at t=69.2 s; with Adams-Bashforth 4 everywhere still outside by up to 1.7, with an exact trim at the local-horizon rates by up to 0.032."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Y"
+cause = "Not isolated: outside by up to 0.89 at t=159.2 s; with Adams-Bashforth 4 everywhere still outside by up to 0.89, with an exact trim at the local-horizon rates by up to 0.031."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Z"
+cause = "Not isolated: outside by up to 0.48 at t=91.3 s; with Adams-Bashforth 4 everywhere still outside by up to 0.48, with an exact trim at the local-horizon rates by up to 0.01."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_X"
+cause = "Not isolated: outside by up to 1.1 at t=95.3 s; with Adams-Bashforth 4 everywhere still outside by up to 1.1, with an exact trim at the local-horizon rates by up to 0.026."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Y"
+cause = "Not isolated: outside by up to 5 at t=47.3 s; with Adams-Bashforth 4 everywhere still outside by up to 5, with an exact trim at the local-horizon rates by up to 0.03."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Z"
+cause = "Not isolated: outside by up to 2.2 at t=116.2 s; with Adams-Bashforth 4 everywhere still outside by up to 2.2, with an exact trim at the local-horizon rates by up to 0.028."
+
+[[case.expected_miss]]
+variable = "longitude_deg"
+cause = "Not isolated: outside by up to 0.00014 at t=57.8 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00014, with an exact trim at the local-horizon rates by up to 1.1e-07."
+
+[[case.expected_miss]]
+variable = "latitude_deg"
+cause = "Not isolated: outside by up to 0.00027 at t=157.8 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00027, with an exact trim at the local-horizon rates by up to 7e-06."
+
+[[case.expected_miss]]
+variable = "localGravity_ft_s2"
+cause = "Not isolated: outside by up to 0.00087 at t=88.9 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00087, with an exact trim at the local-horizon rates by up to 2.2e-06."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Yaw"
+cause = "Not isolated: outside by up to 0.00069 at t=161.9 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00068, with an exact trim at the local-horizon rates by up to 0.00018."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Pitch"
+cause = "Not isolated: outside by up to 0.014 at t=92.2 s; with Adams-Bashforth 4 everywhere still outside by up to 0.014, with an exact trim at the local-horizon rates by up to 0.0003."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Roll"
+cause = "JSBSim's trim (FGTrim holds the body rates at zero relative to the Earth and stops within its udot, wdot and qdot tolerances) starts the F-16 off the simulators' equilibrium; inside with an exact trim at the local-horizon rates (outside by up to 0.00068 at t=83.6 s)."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Roll"
+cause = "Not isolated: outside by up to 0.0013 at t=3.0 s; with Adams-Bashforth 4 everywhere still outside by up to 5.7e-06, with an exact trim at the local-horizon rates by up to 0.003."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Pitch"
+cause = "Not isolated: outside by up to 0.00037 at t=44.6 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00036, with an exact trim at the local-horizon rates by up to 2.1e-05."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Yaw"
+cause = "Not isolated: outside by up to 0.00066 at t=3.5 s; with Adams-Bashforth 4 everywhere still outside by up to 1.2e-05, with an exact trim at the local-horizon rates by up to 0.0016."
+
+[[case.expected_miss]]
+variable = "altitudeRateWrtMsl_ft_min"
+cause = "Not isolated: outside by up to 29 at t=91.2 s; with Adams-Bashforth 4 everywhere still outside by up to 29, with an exact trim at the local-horizon rates by up to 1.1."
+
+[[case.expected_miss]]
+variable = "airDensity_slug_ft3"
+cause = "Not isolated: outside by up to 3.2e-09 at t=0.0 s; with Adams-Bashforth 4 everywhere still outside by up to 3.2e-09, with an exact trim at the local-horizon rates by up to 1.6e-08."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_X"
+cause = "Not isolated: outside by up to 2.6 at t=8.5 s; with Adams-Bashforth 4 everywhere still outside by up to 2.6, with an exact trim at the local-horizon rates by up to 0.49."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Y"
+cause = "Not isolated: outside by up to 0.79 at t=3.7 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0018, with an exact trim at the local-horizon rates by up to 1.9."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Z"
+cause = "Not isolated: outside by up to 9 at t=44.7 s; with Adams-Bashforth 4 everywhere still outside by up to 9, with an exact trim at the local-horizon rates by up to 0.23."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_L"
+cause = "Not isolated: outside by up to 1.9 at t=2.8 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0011, with an exact trim at the local-horizon rates by up to 4.1."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_M"
+cause = "Not isolated: outside by up to 0.19 at t=39.6 s; with Adams-Bashforth 4 everywhere still outside by up to 0.19, with an exact trim at the local-horizon rates by up to 0.17."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_N"
+cause = "Not isolated: outside by up to 5 at t=3.3 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0059, with an exact trim at the local-horizon rates by up to 12."
+
+[[case.expected_miss]]
+variable = "mach"
+cause = "Not isolated: outside by up to 0.00049 at t=47.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00049, with an exact trim at the local-horizon rates by up to 4.6e-05."
+
+[[case.expected_miss]]
+variable = "dynamicPressure_lbf_ft2"
+cause = "Not isolated: outside by up to 22 at t=83.0 s; with Adams-Bashforth 4 everywhere still outside by up to 22, with an exact trim at the local-horizon rates by up to 0.086."
+
+[[case.expected_miss]]
+variable = "trueAirspeed_nmi_h"
+cause = "Not isolated: outside by up to 0.58 at t=107.2 s; with Adams-Bashforth 4 everywhere still outside by up to 0.58, with an exact trim at the local-horizon rates by up to 0.026."
+
+[[case]]
+name = "Atmos_13p1"
+archive = "Atmos_13p1_SubsonicAltitudeChangeF16"
+root = "nasa"
+script = "scripts/Atmos_13p1.xml"
+aircraft_path = "aircraft"
+section = "Appendix C.1.13, Table 37"
+
+[case.parity]
+rel = 1e-8
+cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library (the scripts/oracle-sincos.sh setup); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the trim and the F-16's dynamics carry to 3.0e-10 of a property's magnitude here."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_X"
+cause = "Not isolated: outside by up to 0.077 at t=20.0 s; with Adams-Bashforth 4 everywhere still outside by up to 8.2, with an exact trim at the local-horizon rates by up to 0.076, with the event one frame earlier by up to 0.12."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Y"
+cause = "Not isolated: outside by up to 0.041 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.73, with an exact trim at the local-horizon rates by up to 0.041, with the event one frame earlier by up to 0.28."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Z"
+cause = "Not isolated: outside by up to 0.18 at t=20.0 s; with Adams-Bashforth 4 everywhere still outside by up to 5.2, with an exact trim at the local-horizon rates by up to 0.17, with the event one frame earlier by up to 0.38."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_X"
+cause = "Not isolated: outside by up to 0.085 at t=5.1 s; with Adams-Bashforth 4 everywhere still outside by up to 2.1, with an exact trim at the local-horizon rates by up to 0.085, with the event one frame earlier by up to 0.2."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Y"
+cause = "Not isolated: outside by up to 0.039 at t=5.3 s; with Adams-Bashforth 4 everywhere still outside by up to 2.1, with an exact trim at the local-horizon rates by up to 0.039, with the event one frame earlier by up to 0.076."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Z"
+cause = "Not isolated: outside by up to 0.65 at t=5.3 s; with Adams-Bashforth 4 everywhere still outside by up to 0.45, with an exact trim at the local-horizon rates by up to 0.65, with the event one frame earlier by up to 0.37."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_X"
+cause = "Not isolated: outside by up to 0.16 at t=5.3 s; with Adams-Bashforth 4 everywhere still outside by up to 2.5, with an exact trim at the local-horizon rates by up to 0.16, with the event one frame earlier by up to 0.11."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Y"
+cause = "Not isolated: outside by up to 0.48 at t=5.3 s; with Adams-Bashforth 4 everywhere still outside by up to 0.66, with an exact trim at the local-horizon rates by up to 0.48, with the event one frame earlier by up to 0.56."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Z"
+cause = "Not isolated: outside by up to 0.42 at t=5.3 s; with Adams-Bashforth 4 everywhere still outside by up to 1.7, with an exact trim at the local-horizon rates by up to 0.42, with the event one frame earlier by up to 0.33."
+
+[[case.expected_miss]]
+variable = "altitudeMsl_ft"
+cause = "Not isolated: outside by up to 0.33 at t=13.3 s; with Adams-Bashforth 4 everywhere still outside by up to 0.95, with an exact trim at the local-horizon rates by up to 0.33, with the event one frame earlier by up to 0.46."
+
+[[case.expected_miss]]
+variable = "latitude_deg"
+cause = "Not isolated: outside by up to 8.3e-08 at t=20.0 s; with Adams-Bashforth 4 everywhere still outside by up to 2.5e-08, with an exact trim at the local-horizon rates by up to 8.1e-08, with the event one frame earlier by up to 1.2e-07."
+
+[[case.expected_miss]]
+variable = "localGravity_ft_s2"
+cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 8.6e-07 at t=5.1 s)."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Yaw"
+cause = "Not isolated: outside by up to 0.00039 at t=5.4 s; with Adams-Bashforth 4 everywhere still outside by up to 1.6, with an exact trim at the local-horizon rates by up to 0.00039, with the event one frame earlier by up to 0.00028."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Pitch"
+cause = "Not isolated: outside by up to 0.42 at t=5.2 s; with Adams-Bashforth 4 everywhere still outside by up to 0.13, with an exact trim at the local-horizon rates by up to 0.42, with the event one frame earlier by up to 0.031."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Roll"
+cause = "Not isolated: outside by up to 0.00021 at t=5.3 s; with Adams-Bashforth 4 everywhere still outside by up to 3.6, with an exact trim at the local-horizon rates by up to 0.00021, with the event one frame earlier by up to 0.0014."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Roll"
+cause = "Not isolated: outside by up to 0.039 at t=5.5 s; with Adams-Bashforth 4 everywhere still outside by up to 48, with an exact trim at the local-horizon rates by up to 0.039, with the event one frame earlier by up to 0.094."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Pitch"
+cause = "Not isolated: outside by up to 3.4 at t=5.3 s; with Adams-Bashforth 4 everywhere still outside by up to 0.92, with an exact trim at the local-horizon rates by up to 3.4, with the event one frame earlier by up to 1.8."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Yaw"
+cause = "Not isolated: outside by up to 0.0019 at t=6.0 s; with Adams-Bashforth 4 everywhere still outside by up to 7.6, with an exact trim at the local-horizon rates by up to 0.0019, with the event one frame earlier by up to 0.0026."
+
+[[case.expected_miss]]
+variable = "altitudeRateWrtMsl_ft_min"
+cause = "Not isolated: outside by up to 54 at t=5.3 s; with Adams-Bashforth 4 everywhere still outside by up to 42, with an exact trim at the local-horizon rates by up to 54, with the event one frame earlier by up to 22."
+
+[[case.expected_miss]]
+variable = "speedOfSound_ft_s"
+cause = "Not isolated: outside by up to 0.0019 at t=13.3 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0024, with an exact trim at the local-horizon rates by up to 0.0019, with the event one frame earlier by up to 0.0024."
+
+[[case.expected_miss]]
+variable = "airDensity_slug_ft3"
+cause = "Not isolated: outside by up to 1e-08 at t=13.3 s; with Adams-Bashforth 4 everywhere still outside by up to 6.5e-08, with an exact trim at the local-horizon rates by up to 1e-08, with the event one frame earlier by up to 1.7e-08."
+
+[[case.expected_miss]]
+variable = "ambientPressure_lbf_ft2"
+cause = "Not isolated: outside by up to 0.014 at t=13.3 s; with Adams-Bashforth 4 everywhere still outside by up to 0.045, with an exact trim at the local-horizon rates by up to 0.014, with the event one frame earlier by up to 0.021."
+
+[[case.expected_miss]]
+variable = "ambientTemperature_dgR"
+cause = "Not isolated: outside by up to 0.0012 at t=13.3 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0034, with an exact trim at the local-horizon rates by up to 0.0012, with the event one frame earlier by up to 0.0016."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_X"
+cause = "Not isolated: outside by up to 6e+02 at t=5.4 s; with Adams-Bashforth 4 everywhere still outside by up to 1.9e+02, with an exact trim at the local-horizon rates by up to 6e+02, with the event one frame earlier by up to 2.2e+02."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Y"
+cause = "Not isolated: outside by up to 0.97 at t=6.3 s; with Adams-Bashforth 4 everywhere still outside by up to 7.8e+03, with an exact trim at the local-horizon rates by up to 0.97, with the event one frame earlier by up to 1.1."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Z"
+cause = "Not isolated: outside by up to 1.9e+03 at t=5.4 s; with Adams-Bashforth 4 everywhere still outside by up to 1.4e+03, with an exact trim at the local-horizon rates by up to 1.9e+03, with the event one frame earlier by up to 3.9e+03."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_L"
+cause = "Not isolated: outside by up to 1e+03 at t=5.6 s; with Adams-Bashforth 4 everywhere still outside by up to 2.1e+05, with an exact trim at the local-horizon rates by up to 1e+03, with the event one frame earlier by up to 5.2e+02."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_M"
+cause = "Not isolated: outside by up to 2.3e+04 at t=5.0 s; with Adams-Bashforth 4 everywhere still outside by up to 2e+04, with an exact trim at the local-horizon rates by up to 2.3e+04, with the event one frame earlier by up to 4.1e+04."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_N"
+cause = "Not isolated: outside by up to 19 at t=5.7 s; with Adams-Bashforth 4 everywhere still outside by up to 1.1e+05, with an exact trim at the local-horizon rates by up to 19, with the event one frame earlier by up to 12."
+
+[[case.expected_miss]]
+variable = "mach"
+cause = "Not isolated: outside by up to 5.8e-05 at t=5.3 s; with Adams-Bashforth 4 everywhere still outside by up to 2.1e-07, with an exact trim at the local-horizon rates by up to 5.8e-05, with the event one frame earlier by up to 0.00026."
+
+[[case.expected_miss]]
+variable = "dynamicPressure_lbf_ft2"
+cause = "Not isolated: outside by up to 0.12 at t=5.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.058, with an exact trim at the local-horizon rates by up to 0.12, with the event one frame earlier by up to 0.28."
+
+[[case.expected_miss]]
+variable = "trueAirspeed_nmi_h"
+cause = "Not isolated: outside by up to 0.17 at t=5.3 s; with Adams-Bashforth 4 everywhere still outside by up to 0.097, with an exact trim at the local-horizon rates by up to 0.17, with the event one frame earlier by up to 0.18."
+
+[[case]]
+name = "Atmos_13p2"
+archive = "Atmos_13p2_SubsonicAirspeedChangeF16"
+root = "nasa"
+script = "scripts/Atmos_13p2.xml"
+aircraft_path = "aircraft"
+section = "Appendix C.1.14, Table 38"
+
+[case.parity]
+rel = 5e-8
+cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library (the scripts/oracle-sincos.sh setup); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the trim and the F-16's dynamics carry to 1.9e-09 of a property's magnitude here."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_X"
+cause = "Not isolated: outside by up to 0.16 at t=20.0 s; with Adams-Bashforth 4 everywhere still outside by up to 5.1, with an exact trim at the local-horizon rates by up to 0.16, with the event one frame earlier by up to 0.064."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Y"
+cause = "Not isolated: outside by up to 0.041 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.45, with an exact trim at the local-horizon rates by up to 0.041, with the event one frame earlier by up to 0.041."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Z"
+cause = "Not isolated: outside by up to 0.26 at t=20.0 s; with Adams-Bashforth 4 everywhere still outside by up to 3.5, with an exact trim at the local-horizon rates by up to 0.26, with the event one frame earlier by up to 0.17."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_X"
+cause = "Not isolated: outside by up to 0.035 at t=5.2 s; with Adams-Bashforth 4 everywhere still outside by up to 1.6, with an exact trim at the local-horizon rates by up to 0.035, with the event one frame earlier by up to 0.0034."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Y"
+cause = "Not isolated: outside by up to 0.034 at t=6.2 s; with Adams-Bashforth 4 everywhere still outside by up to 2, with an exact trim at the local-horizon rates by up to 0.034, with the event one frame earlier by up to 0.0034."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Z"
+cause = "Not isolated: outside by up to 0.064 at t=1.9 s; with Adams-Bashforth 4 everywhere still outside by up to 0.19, with an exact trim at the local-horizon rates by up to 0.064, with the event one frame earlier by up to 0.087."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_X"
+cause = "Not isolated: outside by up to 0.033 at t=5.2 s; with Adams-Bashforth 4 everywhere still outside by up to 2.2, with an exact trim at the local-horizon rates by up to 0.033, with the event one frame earlier by up to 0.02."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Y"
+cause = "Not isolated: outside by up to 0.045 at t=1.8 s; with Adams-Bashforth 4 everywhere still outside by up to 0.57, with an exact trim at the local-horizon rates by up to 0.045, with the event one frame earlier by up to 0.045."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Z"
+cause = "Not isolated: outside by up to 0.056 at t=1.9 s; with Adams-Bashforth 4 everywhere still outside by up to 1.6, with an exact trim at the local-horizon rates by up to 0.056, with the event one frame earlier by up to 0.056."
+
+[[case.expected_miss]]
+variable = "altitudeMsl_ft"
+cause = "Not isolated: outside by up to 0.32 at t=10.5 s; with Adams-Bashforth 4 everywhere still outside by up to 0.68, with an exact trim at the local-horizon rates by up to 0.32, with the event one frame earlier by up to 0.31."
+
+[[case.expected_miss]]
+variable = "longitude_deg"
+cause = "Script events act from the frame after their time (they run before the frame's integration), so the command first enters the derivatives 0.01 s after the TM's time; inside with the event one frame earlier (outside by up to 4.4e-07 at t=20.0 s)."
+
+[[case.expected_miss]]
+variable = "latitude_deg"
+cause = "Not isolated: outside by up to 3.5e-07 at t=20.0 s; with Adams-Bashforth 4 everywhere still outside by up to 2.5e-08, with an exact trim at the local-horizon rates by up to 3.5e-07, with the event one frame earlier by up to 3.3e-08."
+
+[[case.expected_miss]]
+variable = "localGravity_ft_s2"
+cause = "JSBSim's default integrators (rectangular Euler for rotation, Adams-Bashforth 2/3 for translation); inside with Adams-Bashforth 4 everywhere (outside by up to 9e-07 at t=7.4 s)."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Yaw"
+cause = "Not isolated: outside by up to 5.6e-06 at t=2.4 s; with Adams-Bashforth 4 everywhere still outside by up to 1.7, with an exact trim at the local-horizon rates by up to 1.9e-05, with the event one frame earlier by up to 8.4e-06."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Pitch"
+cause = "Not isolated: outside by up to 0.011 at t=0.2 s; with Adams-Bashforth 4 everywhere still outside by up to 0.056, with an exact trim at the local-horizon rates by up to 0.011, with the event one frame earlier by up to 0.011."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Roll"
+cause = "Not isolated: outside by up to 8.7e-05 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 3.1, with an exact trim at the local-horizon rates by up to 4.9e-05, with the event one frame earlier by up to 0.00023."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Roll"
+cause = "Not isolated: outside by up to 0.0065 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 47, with an exact trim at the local-horizon rates by up to 0.0056, with the event one frame earlier by up to 0.0065."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Pitch"
+cause = "Not isolated: outside by up to 0.068 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.58, with an exact trim at the local-horizon rates by up to 0.077, with the event one frame earlier by up to 0.8."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Yaw"
+cause = "Not isolated: outside by up to 0.00011 at t=5.1 s; with Adams-Bashforth 4 everywhere still outside by up to 6.9, with an exact trim at the local-horizon rates by up to 0.00011, with the event one frame earlier by up to 3.6e-05."
+
+[[case.expected_miss]]
+variable = "altitudeRateWrtMsl_ft_min"
+cause = "Not isolated: outside by up to 3.8 at t=1.9 s; with Adams-Bashforth 4 everywhere still outside by up to 14, with an exact trim at the local-horizon rates by up to 3.8, with the event one frame earlier by up to 5.9."
+
+[[case.expected_miss]]
+variable = "speedOfSound_ft_s"
+cause = "Not isolated: outside by up to 0.0019 at t=10.5 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0013, with an exact trim at the local-horizon rates by up to 0.0019, with the event one frame earlier by up to 0.0019."
+
+[[case.expected_miss]]
+variable = "airDensity_slug_ft3"
+cause = "Not isolated: outside by up to 9.7e-09 at t=10.5 s; with Adams-Bashforth 4 everywhere still outside by up to 5e-08, with an exact trim at the local-horizon rates by up to 9.6e-09, with the event one frame earlier by up to 9.1e-09."
+
+[[case.expected_miss]]
+variable = "ambientPressure_lbf_ft2"
+cause = "Not isolated: outside by up to 0.013 at t=10.5 s; with Adams-Bashforth 4 everywhere still outside by up to 0.03, with an exact trim at the local-horizon rates by up to 0.013, with the event one frame earlier by up to 0.013."
+
+[[case.expected_miss]]
+variable = "ambientTemperature_dgR"
+cause = "Not isolated: outside by up to 0.0011 at t=10.5 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0024, with an exact trim at the local-horizon rates by up to 0.0011, with the event one frame earlier by up to 0.0011."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_X"
+cause = "Not isolated: outside by up to 27 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 2.5e+02, with an exact trim at the local-horizon rates by up to 30, with the event one frame earlier by up to 27."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Y"
+cause = "Not isolated: outside by up to 0.034 at t=2.3 s; with Adams-Bashforth 4 everywhere still outside by up to 7.8e+03, with an exact trim at the local-horizon rates by up to 0.072, with the event one frame earlier by up to 0.034."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Z"
+cause = "Not isolated: outside by up to 2e+02 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 1.2e+03, with an exact trim at the local-horizon rates by up to 2.2e+02, with the event one frame earlier by up to 2e+02."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_L"
+cause = "Not isolated: outside by up to 49 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 2e+05, with an exact trim at the local-horizon rates by up to 62, with the event one frame earlier by up to 49."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_M"
+cause = "Not isolated: outside by up to 2.3e+04 at t=5.0 s; with Adams-Bashforth 4 everywhere still outside by up to 2e+04, with an exact trim at the local-horizon rates by up to 2.3e+04, with the event one frame earlier by up to 2e+03."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_N"
+cause = "Not isolated: outside by up to 0.21 at t=3.2 s; with Adams-Bashforth 4 everywhere still outside by up to 1.1e+05, with an exact trim at the local-horizon rates by up to 0.73, with the event one frame earlier by up to 0.21."
+
+[[case.expected_miss]]
+variable = "mach"
+cause = "Not isolated: outside by up to 4.7e-05 at t=5.2 s; with Adams-Bashforth 4 everywhere still outside by up to 4.1e-05, with an exact trim at the local-horizon rates by up to 4.6e-05, with the event one frame earlier by up to 5.4e-06."
+
+[[case.expected_miss]]
+variable = "dynamicPressure_lbf_ft2"
+cause = "Not isolated: outside by up to 0.047 at t=5.2 s; with Adams-Bashforth 4 everywhere still outside by up to 0.053, with an exact trim at the local-horizon rates by up to 0.047, with the event one frame earlier by up to 0.0034."
+
+[[case.expected_miss]]
+variable = "trueAirspeed_nmi_h"
+cause = "Not isolated: outside by up to 0.029 at t=5.2 s; with Adams-Bashforth 4 everywhere still outside by up to 0.027, with an exact trim at the local-horizon rates by up to 0.029, with the event one frame earlier by up to 0.047."
+
+[[case]]
+name = "Atmos_13p3"
+archive = "Atmos_13p3_SubsonicHeadingChangeF16"
+root = "nasa"
+script = "scripts/Atmos_13p3.xml"
+aircraft_path = "aircraft"
+section = "Appendix C.1.15, Table 39"
+
+[case.parity]
+rel = 1e-9
+cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library (the scripts/oracle-sincos.sh setup); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the trim and the F-16's dynamics carry to 3.8e-11 of a property's magnitude here."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_X"
+cause = "Not isolated: outside by up to 1.3 at t=24.4 s; with Adams-Bashforth 4 everywhere still outside by up to 8.4, with an exact trim at the local-horizon rates by up to 1.3, with the event one frame earlier by up to 0.099."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Y"
+cause = "Not isolated: outside by up to 2.5 at t=30.0 s; with Adams-Bashforth 4 everywhere still outside by up to 3.9, with an exact trim at the local-horizon rates by up to 2.5, with the event one frame earlier by up to 1.6."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Z"
+cause = "Not isolated: outside by up to 5.1 at t=30.0 s; with Adams-Bashforth 4 everywhere still outside by up to 9.1, with an exact trim at the local-horizon rates by up to 5.1, with the event one frame earlier by up to 3.2."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_X"
+cause = "Not isolated: outside by up to 0.76 at t=16.9 s; with Adams-Bashforth 4 everywhere still outside by up to 3.5, with an exact trim at the local-horizon rates by up to 0.76, with the event one frame earlier by up to 0.45."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Y"
+cause = "Not isolated: outside by up to 0.56 at t=16.9 s; with Adams-Bashforth 4 everywhere still outside by up to 2.1, with an exact trim at the local-horizon rates by up to 0.56, with the event one frame earlier by up to 0.28."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Z"
+cause = "Not isolated: outside by up to 0.47 at t=15.6 s; with Adams-Bashforth 4 everywhere still outside by up to 1.2, with an exact trim at the local-horizon rates by up to 0.47, with the event one frame earlier by up to 0.49."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_X"
+cause = "Not isolated: outside by up to 1.1 at t=16.0 s; with Adams-Bashforth 4 everywhere still outside by up to 2.6, with an exact trim at the local-horizon rates by up to 1.1, with the event one frame earlier by up to 0.62."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Y"
+cause = "Not isolated: outside by up to 0.8 at t=16.0 s; with Adams-Bashforth 4 everywhere still outside by up to 2, with an exact trim at the local-horizon rates by up to 0.8, with the event one frame earlier by up to 0.56."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Z"
+cause = "Not isolated: outside by up to 0.54 at t=15.9 s; with Adams-Bashforth 4 everywhere still outside by up to 2.7, with an exact trim at the local-horizon rates by up to 0.54, with the event one frame earlier by up to 0.27."
+
+[[case.expected_miss]]
+variable = "altitudeMsl_ft"
+cause = "Not isolated: outside by up to 0.24 at t=28.9 s; with Adams-Bashforth 4 everywhere still outside by up to 1.1, with an exact trim at the local-horizon rates by up to 0.24, with the event one frame earlier by up to 0.24."
+
+[[case.expected_miss]]
+variable = "longitude_deg"
+cause = "Script events act from the frame after their time (they run before the frame's integration), so the command first enters the derivatives 0.01 s after the TM's time; inside with the event one frame earlier (outside by up to 2.3e-06 at t=23.7 s)."
+
+[[case.expected_miss]]
+variable = "latitude_deg"
+cause = "Not isolated: outside by up to 1.6e-05 at t=30.0 s; with Adams-Bashforth 4 everywhere still outside by up to 2.5e-08, with an exact trim at the local-horizon rates by up to 1.6e-05, with the event one frame earlier by up to 1e-05."
+
+[[case.expected_miss]]
+variable = "localGravity_ft_s2"
+cause = "Not isolated: outside by up to 9.3e-07 at t=15.4 s; with Adams-Bashforth 4 everywhere still outside by up to 3.8e-06, with an exact trim at the local-horizon rates by up to 9.3e-07, with the event one frame earlier by up to 8.9e-07."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Yaw"
+cause = "Not isolated: outside by up to 0.37 at t=16.2 s; with Adams-Bashforth 4 everywhere still outside by up to 2.1, with an exact trim at the local-horizon rates by up to 0.37, with the event one frame earlier by up to 0.28."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Pitch"
+cause = "Not isolated: outside by up to 0.073 at t=16.5 s; with Adams-Bashforth 4 everywhere still outside by up to 0.11, with an exact trim at the local-horizon rates by up to 0.073, with the event one frame earlier by up to 0.059."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Roll"
+cause = "Not isolated: outside by up to 2.6 at t=15.6 s; with Adams-Bashforth 4 everywhere still outside by up to 4.2, with an exact trim at the local-horizon rates by up to 2.6, with the event one frame earlier by up to 2.4."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Roll"
+cause = "Not isolated: outside by up to 53 at t=15.5 s; with Adams-Bashforth 4 everywhere still outside by up to 47, with an exact trim at the local-horizon rates by up to 53, with the event one frame earlier by up to 31."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Pitch"
+cause = "Not isolated: outside by up to 1.4 at t=15.6 s; with Adams-Bashforth 4 everywhere still outside by up to 5.1, with an exact trim at the local-horizon rates by up to 1.4, with the event one frame earlier by up to 0.81."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Yaw"
+cause = "Not isolated: outside by up to 2.9 at t=15.3 s; with Adams-Bashforth 4 everywhere still outside by up to 7.6, with an exact trim at the local-horizon rates by up to 2.9, with the event one frame earlier by up to 2.3."
+
+[[case.expected_miss]]
+variable = "altitudeRateWrtMsl_ft_min"
+cause = "Not isolated: outside by up to 63 at t=15.6 s; with Adams-Bashforth 4 everywhere still outside by up to 72, with an exact trim at the local-horizon rates by up to 63, with the event one frame earlier by up to 64."
+
+[[case.expected_miss]]
+variable = "speedOfSound_ft_s"
+cause = "Not isolated: outside by up to 0.0014 at t=28.9 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0048, with an exact trim at the local-horizon rates by up to 0.0014, with the event one frame earlier by up to 0.0014."
+
+[[case.expected_miss]]
+variable = "airDensity_slug_ft3"
+cause = "Not isolated: outside by up to 7.2e-09 at t=0.5 s; with Adams-Bashforth 4 everywhere still outside by up to 5.2e-08, with an exact trim at the local-horizon rates by up to 7.2e-09, with the event one frame earlier by up to 8.4e-09."
+
+[[case.expected_miss]]
+variable = "ambientPressure_lbf_ft2"
+cause = "Not isolated: outside by up to 0.0088 at t=28.9 s; with Adams-Bashforth 4 everywhere still outside by up to 0.056, with an exact trim at the local-horizon rates by up to 0.0088, with the event one frame earlier by up to 0.0089."
+
+[[case.expected_miss]]
+variable = "ambientTemperature_dgR"
+cause = "Not isolated: outside by up to 0.00079 at t=28.9 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0038, with an exact trim at the local-horizon rates by up to 0.00079, with the event one frame earlier by up to 0.0008."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_X"
+cause = "Not isolated: outside by up to 5.1e+02 at t=15.5 s; with Adams-Bashforth 4 everywhere still outside by up to 4.4e+03, with an exact trim at the local-horizon rates by up to 5.1e+02, with the event one frame earlier by up to 3.2e+02."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Y"
+cause = "Not isolated: outside by up to 6.5e+03 at t=15.6 s; with Adams-Bashforth 4 everywhere still outside by up to 7.8e+03, with an exact trim at the local-horizon rates by up to 6.5e+03, with the event one frame earlier by up to 6.8e+03."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Z"
+cause = "Not isolated: outside by up to 1.7e+03 at t=15.5 s; with Adams-Bashforth 4 everywhere still outside by up to 1.4e+04, with an exact trim at the local-horizon rates by up to 1.7e+03, with the event one frame earlier by up to 1.9e+03."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_L"
+cause = "Not isolated: outside by up to 2.4e+05 at t=15.6 s; with Adams-Bashforth 4 everywhere still outside by up to 2.1e+05, with an exact trim at the local-horizon rates by up to 2.4e+05, with the event one frame earlier by up to 2.3e+05."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_M"
+cause = "Not isolated: outside by up to 2.5e+04 at t=15.7 s; with Adams-Bashforth 4 everywhere still outside by up to 1.5e+05, with an exact trim at the local-horizon rates by up to 2.5e+04, with the event one frame earlier by up to 1.6e+04."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_N"
+cause = "Not isolated: outside by up to 1.1e+05 at t=15.6 s; with Adams-Bashforth 4 everywhere still outside by up to 1.1e+05, with an exact trim at the local-horizon rates by up to 1.1e+05, with the event one frame earlier by up to 1.1e+05."
+
+[[case.expected_miss]]
+variable = "mach"
+cause = "Not isolated: outside by up to 2.4e-05 at t=16.5 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00012, with an exact trim at the local-horizon rates by up to 2.4e-05, with the event one frame earlier by up to 3e-05."
+
+[[case.expected_miss]]
+variable = "dynamicPressure_lbf_ft2"
+cause = "Not isolated: outside by up to 0.031 at t=16.5 s; with Adams-Bashforth 4 everywhere still outside by up to 0.13, with an exact trim at the local-horizon rates by up to 0.031, with the event one frame earlier by up to 0.032."
+
+[[case.expected_miss]]
+variable = "trueAirspeed_nmi_h"
+cause = "Not isolated: outside by up to 0.074 at t=15.5 s; with Adams-Bashforth 4 everywhere still outside by up to 0.14, with an exact trim at the local-horizon rates by up to 0.075, with the event one frame earlier by up to 0.076."
+
+[[case]]
+name = "Atmos_13p4"
+archive = "Atmos_13p4_SubsonicLateralSideStepF16"
+root = "nasa"
+script = "scripts/Atmos_13p4.xml"
+aircraft_path = "aircraft"
+section = "Appendix C.1.16, Table 40"
+
+[case.parity]
+rel = 5e-8
+cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library (the scripts/oracle-sincos.sh setup); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the trim and the F-16's dynamics carry to 2.1e-09 of a property's magnitude here."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_X"
+cause = "Not isolated: outside by up to 47 at t=60.0 s; with Adams-Bashforth 4 everywhere still outside by up to 42, with an exact trim at the local-horizon rates by up to 47, with the event one frame earlier by up to 47."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Y"
+cause = "Not isolated: outside by up to 11 at t=60.0 s; with Adams-Bashforth 4 everywhere still outside by up to 9, with an exact trim at the local-horizon rates by up to 11, with the event one frame earlier by up to 11."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Z"
+cause = "Not isolated: outside by up to 31 at t=60.0 s; with Adams-Bashforth 4 everywhere still outside by up to 28, with an exact trim at the local-horizon rates by up to 31, with the event one frame earlier by up to 31."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_X"
+cause = "Not isolated: outside by up to 1.1 at t=33.2 s; with Adams-Bashforth 4 everywhere still outside by up to 3.7, with an exact trim at the local-horizon rates by up to 1.1, with the event one frame earlier by up to 0.97."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Y"
+cause = "Not isolated: outside by up to 0.94 at t=40.7 s; with Adams-Bashforth 4 everywhere still outside by up to 3, with an exact trim at the local-horizon rates by up to 0.94, with the event one frame earlier by up to 0.9."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Z"
+cause = "Not isolated: outside by up to 0.48 at t=20.6 s; with Adams-Bashforth 4 everywhere still outside by up to 1.5, with an exact trim at the local-horizon rates by up to 0.48, with the event one frame earlier by up to 0.48."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_X"
+cause = "Not isolated: outside by up to 1 at t=39.1 s; with Adams-Bashforth 4 everywhere still outside by up to 3.3, with an exact trim at the local-horizon rates by up to 1, with the event one frame earlier by up to 1."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Y"
+cause = "Not isolated: outside by up to 0.39 at t=31.9 s; with Adams-Bashforth 4 everywhere still outside by up to 2.4, with an exact trim at the local-horizon rates by up to 0.39, with the event one frame earlier by up to 0.36."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Z"
+cause = "Not isolated: outside by up to 0.85 at t=33.3 s; with Adams-Bashforth 4 everywhere still outside by up to 3.7, with an exact trim at the local-horizon rates by up to 0.85, with the event one frame earlier by up to 0.81."
+
+[[case.expected_miss]]
+variable = "altitudeMsl_ft"
+cause = "Not isolated: outside by up to 0.33 at t=33.8 s; with Adams-Bashforth 4 everywhere still outside by up to 1, with an exact trim at the local-horizon rates by up to 0.33, with the event one frame earlier by up to 0.32."
+
+[[case.expected_miss]]
+variable = "longitude_deg"
+cause = "Not isolated: outside by up to 5.7e-05 at t=60.0 s; with Adams-Bashforth 4 everywhere still outside by up to 4.4e-05, with an exact trim at the local-horizon rates by up to 5.7e-05, with the event one frame earlier by up to 5.7e-05."
+
+[[case.expected_miss]]
+variable = "localGravity_ft_s2"
+cause = "Not isolated: outside by up to 9.3e-07 at t=32.8 s; with Adams-Bashforth 4 everywhere still outside by up to 3.6e-06, with an exact trim at the local-horizon rates by up to 9.3e-07, with the event one frame earlier by up to 9.8e-07."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Yaw"
+cause = "Not isolated: outside by up to 0.4 at t=21.2 s; with Adams-Bashforth 4 everywhere still outside by up to 2.4, with an exact trim at the local-horizon rates by up to 0.4, with the event one frame earlier by up to 0.35."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Pitch"
+cause = "Not isolated: outside by up to 0.059 at t=21.5 s; with Adams-Bashforth 4 everywhere still outside by up to 0.12, with an exact trim at the local-horizon rates by up to 0.059, with the event one frame earlier by up to 0.058."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Roll"
+cause = "Not isolated: outside by up to 2.6 at t=20.6 s; with Adams-Bashforth 4 everywhere still outside by up to 3.9, with an exact trim at the local-horizon rates by up to 2.6, with the event one frame earlier by up to 2.4."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Roll"
+cause = "Not isolated: outside by up to 42 at t=20.5 s; with Adams-Bashforth 4 everywhere still outside by up to 52, with an exact trim at the local-horizon rates by up to 42, with the event one frame earlier by up to 31."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Pitch"
+cause = "Not isolated: outside by up to 1.2 at t=20.6 s; with Adams-Bashforth 4 everywhere still outside by up to 4.6, with an exact trim at the local-horizon rates by up to 1.2, with the event one frame earlier by up to 0.9."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Yaw"
+cause = "Not isolated: outside by up to 2.5 at t=20.5 s; with Adams-Bashforth 4 everywhere still outside by up to 7.9, with an exact trim at the local-horizon rates by up to 2.5, with the event one frame earlier by up to 2.5."
+
+[[case.expected_miss]]
+variable = "altitudeRateWrtMsl_ft_min"
+cause = "Not isolated: outside by up to 65 at t=20.6 s; with Adams-Bashforth 4 everywhere still outside by up to 90, with an exact trim at the local-horizon rates by up to 65, with the event one frame earlier by up to 66."
+
+[[case.expected_miss]]
+variable = "speedOfSound_ft_s"
+cause = "Not isolated: outside by up to 0.0018 at t=33.8 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0046, with an exact trim at the local-horizon rates by up to 0.0018, with the event one frame earlier by up to 0.0018."
+
+[[case.expected_miss]]
+variable = "airDensity_slug_ft3"
+cause = "Not isolated: outside by up to 1.1e-08 at t=33.1 s; with Adams-Bashforth 4 everywhere still outside by up to 7e-08, with an exact trim at the local-horizon rates by up to 1.1e-08, with the event one frame earlier by up to 1e-08."
+
+[[case.expected_miss]]
+variable = "ambientPressure_lbf_ft2"
+cause = "Not isolated: outside by up to 0.014 at t=33.8 s; with Adams-Bashforth 4 everywhere still outside by up to 0.054, with an exact trim at the local-horizon rates by up to 0.014, with the event one frame earlier by up to 0.014."
+
+[[case.expected_miss]]
+variable = "ambientTemperature_dgR"
+cause = "Not isolated: outside by up to 0.0011 at t=33.8 s; with Adams-Bashforth 4 everywhere still outside by up to 0.0037, with an exact trim at the local-horizon rates by up to 0.0011, with the event one frame earlier by up to 0.0011."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_X"
+cause = "Not isolated: outside by up to 4.7e+02 at t=20.5 s; with Adams-Bashforth 4 everywhere still outside by up to 4.3e+03, with an exact trim at the local-horizon rates by up to 4.7e+02, with the event one frame earlier by up to 3.1e+02."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Y"
+cause = "Not isolated: outside by up to 7.2e+03 at t=20.6 s; with Adams-Bashforth 4 everywhere still outside by up to 8.1e+03, with an exact trim at the local-horizon rates by up to 7.2e+03, with the event one frame earlier by up to 7.3e+03."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Z"
+cause = "Not isolated: outside by up to 1.6e+03 at t=20.6 s; with Adams-Bashforth 4 everywhere still outside by up to 1.4e+04, with an exact trim at the local-horizon rates by up to 1.6e+03, with the event one frame earlier by up to 2.2e+03."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_L"
+cause = "Not isolated: outside by up to 2.3e+05 at t=20.6 s; with Adams-Bashforth 4 everywhere still outside by up to 2.1e+05, with an exact trim at the local-horizon rates by up to 2.3e+05, with the event one frame earlier by up to 2.2e+05."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_M"
+cause = "Not isolated: outside by up to 1.4e+04 at t=20.7 s; with Adams-Bashforth 4 everywhere still outside by up to 1.4e+05, with an exact trim at the local-horizon rates by up to 1.4e+04, with the event one frame earlier by up to 1.8e+04."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_N"
+cause = "Not isolated: outside by up to 1.2e+05 at t=20.6 s; with Adams-Bashforth 4 everywhere still outside by up to 1.1e+05, with an exact trim at the local-horizon rates by up to 1.2e+05, with the event one frame earlier by up to 1.2e+05."
+
+[[case.expected_miss]]
+variable = "mach"
+cause = "Not isolated: outside by up to 2.6e-05 at t=20.7 s; with Adams-Bashforth 4 everywhere still outside by up to 9.7e-05, with an exact trim at the local-horizon rates by up to 2.6e-05, with the event one frame earlier by up to 3e-05."
+
+[[case.expected_miss]]
+variable = "dynamicPressure_lbf_ft2"
+cause = "Not isolated: outside by up to 0.028 at t=20.7 s; with Adams-Bashforth 4 everywhere still outside by up to 0.11, with an exact trim at the local-horizon rates by up to 0.028, with the event one frame earlier by up to 0.033."
+
+[[case.expected_miss]]
+variable = "trueAirspeed_nmi_h"
+cause = "Not isolated: outside by up to 0.078 at t=20.5 s; with Adams-Bashforth 4 everywhere still outside by up to 0.13, with an exact trim at the local-horizon rates by up to 0.078, with the event one frame earlier by up to 0.077."
+
+[[case]]
+name = "Atmos_15"
+archive = "Atmos_15_CircleNorthPoleF16"
+root = "nasa"
+script = "scripts/Atmos_15.xml"
+aircraft_path = "aircraft"
+section = "Appendix C.1.18, Table 42"
+
+[case.parity]
+rel = 1e-6
+cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library (the scripts/oracle-sincos.sh setup); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the trim and the F-16's dynamics carry to 3.1e-08 of a property's magnitude here."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_X"
+cause = "Not isolated: outside by up to 0.36 at t=4.3 s; with Adams-Bashforth 4 everywhere still outside by up to 1.3e+02, with an exact trim at the local-horizon rates by up to 0.42."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Y"
+cause = "Not isolated: outside by up to 0.21 at t=133.1 s; with Adams-Bashforth 4 everywhere still outside by up to 1e+02, with an exact trim at the local-horizon rates by up to 0.39."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Z"
+cause = "Not isolated: outside by up to 0.0092 at t=34.2 s; with Adams-Bashforth 4 everywhere still outside by up to 4.7, with an exact trim at the local-horizon rates by up to 0.0096."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_X"
+cause = "Not isolated: outside by up to 0.0051 at t=0.4 s; with Adams-Bashforth 4 everywhere still outside by up to 11, with an exact trim at the local-horizon rates by up to 0.015."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Y"
+cause = "Not isolated: outside by up to 0.0024 at t=9.4 s; with Adams-Bashforth 4 everywhere still outside by up to 0.25, with an exact trim at the local-horizon rates by up to 0.0014."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Z"
+cause = "Not isolated: outside by up to 0.00058 at t=31.3 s; with Adams-Bashforth 4 everywhere still outside by up to 3.2, with an exact trim at the local-horizon rates by up to 0.0033."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_X"
+cause = "Not isolated: outside by up to 0.093 at t=0.5 s; with Adams-Bashforth 4 everywhere still outside by up to 9.8, with an exact trim at the local-horizon rates by up to 0.022."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Y"
+cause = "Not isolated: outside by up to 0.025 at t=6.4 s; with Adams-Bashforth 4 everywhere still outside by up to 6.7, with an exact trim at the local-horizon rates by up to 0.015."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Z"
+cause = "Not isolated: outside by up to 0.021 at t=1.0 s; with Adams-Bashforth 4 everywhere still outside by up to 3.3, with an exact trim at the local-horizon rates by up to 0.0073."
+
+[[case.expected_miss]]
+variable = "localGravity_ft_s2"
+cause = "Not isolated: outside by up to 6.2e-09 at t=1.3 s; with Adams-Bashforth 4 everywhere still outside by up to 1.3e-05, with an exact trim at the local-horizon rates by up to 2e-08."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Yaw"
+cause = "Not isolated: outside by up to 0.009 at t=0.8 s; with Adams-Bashforth 4 everywhere still outside by up to 3, with an exact trim at the local-horizon rates by up to 0.011."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Pitch"
+cause = "Not isolated: outside by up to 0.00074 at t=32.2 s; with Adams-Bashforth 4 everywhere still outside by up to 0.35, with an exact trim at the local-horizon rates by up to 0.0013."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Roll"
+cause = "Not isolated: outside by up to 0.12 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 5.6, with an exact trim at the local-horizon rates by up to 0.017."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Roll"
+cause = "Not isolated: outside by up to 3.4 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 54, with an exact trim at the local-horizon rates by up to 1.4."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Pitch"
+cause = "Not isolated: outside by up to 0.019 at t=31.8 s; with Adams-Bashforth 4 everywhere still outside by up to 7.6, with an exact trim at the local-horizon rates by up to 0.019."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Yaw"
+cause = "Not isolated: outside by up to 0.05 at t=0.5 s; with Adams-Bashforth 4 everywhere still outside by up to 10, with an exact trim at the local-horizon rates by up to 0.052."
+
+[[case.expected_miss]]
+variable = "altitudeRateWrtMsl_ft_min"
+cause = "Not isolated: outside by up to 0.98 at t=0.5 s; with Adams-Bashforth 4 everywhere still outside by up to 1.9e+02, with an exact trim at the local-horizon rates by up to 0.33."
+
+[[case.expected_miss]]
+variable = "speedOfSound_ft_s"
+cause = "Not isolated: outside by up to 0.00048 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.015, with an exact trim at the local-horizon rates by up to 0.00048."
+
+[[case.expected_miss]]
+variable = "airDensity_slug_ft3"
+cause = "Not isolated: outside by up to 8.3e-09 at t=0.8 s; with Adams-Bashforth 4 everywhere still outside by up to 2.3e-07, with an exact trim at the local-horizon rates by up to 7.9e-09."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_X"
+cause = "Not isolated: outside by up to 2 at t=0.7 s; with Adams-Bashforth 4 everywhere still outside by up to 4.3e+03, with an exact trim at the local-horizon rates by up to 1.7."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Y"
+cause = "Not isolated: outside by up to 29 at t=1.3 s; with Adams-Bashforth 4 everywhere still outside by up to 8.7e+03, with an exact trim at the local-horizon rates by up to 36."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Z"
+cause = "Not isolated: outside by up to 46 at t=0.8 s; with Adams-Bashforth 4 everywhere still outside by up to 1.8e+04, with an exact trim at the local-horizon rates by up to 20."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_L"
+cause = "Not isolated: outside by up to 7.1e+03 at t=0.2 s; with Adams-Bashforth 4 everywhere still outside by up to 2.1e+05, with an exact trim at the local-horizon rates by up to 3.4e+04."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_M"
+cause = "Not isolated: outside by up to 3.8e+02 at t=0.2 s; with Adams-Bashforth 4 everywhere still outside by up to 1.4e+05, with an exact trim at the local-horizon rates by up to 5.4e+02."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_N"
+cause = "Not isolated: outside by up to 3.1e+02 at t=0.7 s; with Adams-Bashforth 4 everywhere still outside by up to 1.2e+05, with an exact trim at the local-horizon rates by up to 4.5e+02."
+
+[[case.expected_miss]]
+variable = "mach"
+cause = "Not isolated: outside by up to 2.7e-06 at t=1.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00024, with an exact trim at the local-horizon rates by up to 9.8e-07."
+
+[[case.expected_miss]]
+variable = "dynamicPressure_lbf_ft2"
+cause = "Not isolated: outside by up to 0.0037 at t=1.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.23, with an exact trim at the local-horizon rates by up to 0.0021."
+
+[[case.expected_miss]]
+variable = "trueAirspeed_nmi_h"
+cause = "Not isolated: outside by up to 0.0015 at t=1.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.23, with an exact trim at the local-horizon rates by up to 0.00042."
+
+[[case]]
+name = "Atmos_16"
+archive = "Atmos_16_CircleEquatorDateLineF16"
+root = "nasa"
+script = "scripts/Atmos_16.xml"
+aircraft_path = "aircraft"
+section = "Appendix C.1.19, Table 43"
+
+[case.parity]
+rel = 1e-6
+cause = "Bit-identical with C++ built to call sin and cos separately and the port on the platform maths library (the scripts/oracle-sincos.sh setup); the gate's builds differ in the last digit of sin and cos (Apple's fused __sincos_stret against the libm crate), which the trim and the F-16's dynamics carry to 4.2e-08 of a property's magnitude here."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_X"
+cause = "Not isolated: outside by up to 0.01 at t=3.5 s; with Adams-Bashforth 4 everywhere still outside by up to 5, with an exact trim at the local-horizon rates by up to 0.01."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Y"
+cause = "Not isolated: outside by up to 0.57 at t=156.8 s; with Adams-Bashforth 4 everywhere still outside by up to 1.3e+02, with an exact trim at the local-horizon rates by up to 0.57."
+
+[[case.expected_miss]]
+variable = "eiPosition_ft_Z"
+cause = "Not isolated: outside by up to 0.54 at t=105.0 s; with Adams-Bashforth 4 everywhere still outside by up to 1.1e+02, with an exact trim at the local-horizon rates by up to 0.54."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_X"
+cause = "Not isolated: outside by up to 0.017 at t=157.9 s; with Adams-Bashforth 4 everywhere still outside by up to 6.3, with an exact trim at the local-horizon rates by up to 0.017."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Y"
+cause = "Not isolated: outside by up to 0.017 at t=106.3 s; with Adams-Bashforth 4 everywhere still outside by up to 8, with an exact trim at the local-horizon rates by up to 0.016."
+
+[[case.expected_miss]]
+variable = "feVelocity_ft_s_Z"
+cause = "Not isolated: outside by up to 0.0034 at t=6.7 s; with Adams-Bashforth 4 everywhere still outside by up to 3.3, with an exact trim at the local-horizon rates by up to 0.0034."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_X"
+cause = "Not isolated: outside by up to 0.0099 at t=1.0 s; with Adams-Bashforth 4 everywhere still outside by up to 3.3, with an exact trim at the local-horizon rates by up to 0.0099."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Y"
+cause = "Not isolated: outside by up to 0.018 at t=1.6 s; with Adams-Bashforth 4 everywhere still outside by up to 8, with an exact trim at the local-horizon rates by up to 0.018."
+
+[[case.expected_miss]]
+variable = "eiVelocity_ft_s_Z"
+cause = "Not isolated: outside by up to 0.017 at t=157.9 s; with Adams-Bashforth 4 everywhere still outside by up to 7.8, with an exact trim at the local-horizon rates by up to 0.017."
+
+[[case.expected_miss]]
+variable = "longitude_deg"
+cause = "Not isolated: outside by up to 1.6e-06 at t=156.8 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00034, with an exact trim at the local-horizon rates by up to 1.6e-06."
+
+[[case.expected_miss]]
+variable = "latitude_deg"
+cause = "Not isolated: outside by up to 1.5e-06 at t=105.2 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00031, with an exact trim at the local-horizon rates by up to 1.5e-06."
+
+[[case.expected_miss]]
+variable = "localGravity_ft_s2"
+cause = "Not isolated: outside by up to 3.2e-08 at t=3.5 s; with Adams-Bashforth 4 everywhere still outside by up to 1.1e-05, with an exact trim at the local-horizon rates by up to 3.1e-08."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Yaw"
+cause = "Not isolated: outside by up to 0.0076 at t=37.4 s; with Adams-Bashforth 4 everywhere still outside by up to 3.4, with an exact trim at the local-horizon rates by up to 0.0076."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Pitch"
+cause = "Not isolated: outside by up to 0.0015 at t=5.7 s; with Adams-Bashforth 4 everywhere still outside by up to 0.34, with an exact trim at the local-horizon rates by up to 0.0015."
+
+[[case.expected_miss]]
+variable = "eulerAngle_deg_Roll"
+cause = "Not isolated: outside by up to 0.095 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 4.1, with an exact trim at the local-horizon rates by up to 0.095."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Roll"
+cause = "Not isolated: outside by up to 1.2 at t=0.2 s; with Adams-Bashforth 4 everywhere still outside by up to 55, with an exact trim at the local-horizon rates by up to 1.2."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Pitch"
+cause = "Not isolated: outside by up to 0.021 at t=37.8 s; with Adams-Bashforth 4 everywhere still outside by up to 11, with an exact trim at the local-horizon rates by up to 0.021."
+
+[[case.expected_miss]]
+variable = "bodyAngularRateWrtEi_deg_s_Yaw"
+cause = "Not isolated: outside by up to 0.055 at t=0.5 s; with Adams-Bashforth 4 everywhere still outside by up to 12, with an exact trim at the local-horizon rates by up to 0.055."
+
+[[case.expected_miss]]
+variable = "altitudeRateWrtMsl_ft_min"
+cause = "Not isolated: outside by up to 0.42 at t=37.7 s; with Adams-Bashforth 4 everywhere still outside by up to 2e+02, with an exact trim at the local-horizon rates by up to 0.42."
+
+[[case.expected_miss]]
+variable = "speedOfSound_ft_s"
+cause = "Not isolated: outside by up to 0.00048 at t=0.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.013, with an exact trim at the local-horizon rates by up to 0.00048."
+
+[[case.expected_miss]]
+variable = "airDensity_slug_ft3"
+cause = "Not isolated: outside by up to 7.9e-09 at t=0.6 s; with Adams-Bashforth 4 everywhere still outside by up to 2.1e-07, with an exact trim at the local-horizon rates by up to 7.9e-09."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_X"
+cause = "Not isolated: outside by up to 2.8 at t=37.4 s; with Adams-Bashforth 4 everywhere still outside by up to 3.9e+03, with an exact trim at the local-horizon rates by up to 2.8."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Y"
+cause = "Not isolated: outside by up to 62 at t=1.3 s; with Adams-Bashforth 4 everywhere still outside by up to 9.9e+03, with an exact trim at the local-horizon rates by up to 63."
+
+[[case.expected_miss]]
+variable = "aero_bodyForce_lbf_Z"
+cause = "Not isolated: outside by up to 39 at t=0.8 s; with Adams-Bashforth 4 everywhere still outside by up to 1.9e+04, with an exact trim at the local-horizon rates by up to 39."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_L"
+cause = "Not isolated: outside by up to 32 at t=1.1 s; with Adams-Bashforth 4 everywhere still outside by up to 2.1e+05, with an exact trim at the local-horizon rates by up to 32."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_M"
+cause = "Not isolated: outside by up to 2.1e+02 at t=0.2 s; with Adams-Bashforth 4 everywhere still outside by up to 1.7e+05, with an exact trim at the local-horizon rates by up to 2e+02."
+
+[[case.expected_miss]]
+variable = "aero_bodyMoment_ftlbf_N"
+cause = "Not isolated: outside by up to 3.7e+02 at t=1.2 s; with Adams-Bashforth 4 everywhere still outside by up to 1.2e+05, with an exact trim at the local-horizon rates by up to 3.7e+02."
+
+[[case.expected_miss]]
+variable = "mach"
+cause = "Not isolated: outside by up to 1.3e-06 at t=1.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.00018, with an exact trim at the local-horizon rates by up to 1.3e-06."
+
+[[case.expected_miss]]
+variable = "dynamicPressure_lbf_ft2"
+cause = "Not isolated: outside by up to 0.0023 at t=1.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.16, with an exact trim at the local-horizon rates by up to 0.0022."
+
+[[case.expected_miss]]
+variable = "trueAirspeed_nmi_h"
+cause = "Not isolated: outside by up to 0.00064 at t=1.1 s; with Adams-Bashforth 4 everywhere still outside by up to 0.19, with an exact trim at the local-horizon rates by up to 0.00061."

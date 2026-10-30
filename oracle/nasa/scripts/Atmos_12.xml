@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  Check-case 12, trimmed supersonic F-16, controls fixed and stability
+  augmentation off: Appendix C.1.12, Table 36; 180 s duration.
+  Written for jsbsim-rs from the parameters in NASA/TM-2015-218675,
+  "Check-Cases for Verification of 6-Degree-of-Freedom Flight Vehicle
+  Simulations", Volume II: Appendices.
+-->
+<runscript name="NASA EOM check-case Atmos 12">
+  <description>Check-case 12 of NASA/TM-2015-218675: steady flight of a supersonic aircraft</description>
+  <use aircraft="f16" initialize="reset_Atmos_12"/>
+  <run start="0.0" end="180" dt="0.01">
+  </run>
+</runscript>

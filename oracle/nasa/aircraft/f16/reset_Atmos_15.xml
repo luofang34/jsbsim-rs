@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  Initial conditions of check-case 15: Appendix C.1.18, Table 42 (10,000
+  ft MSL at 89.95 N 45 W, Earth-relative NED velocity [0, 563.643, 0]
+  ft/s, heading 90 deg). The version 1 format is the one whose <trim>
+  JSBSim runs before the first output: the longitudinal trim solves for
+  zero udot, wdot and qdot by moving angle of attack (so pitch, keeping
+  the flight path level), the throttle and the pitch trim, as the TM's
+  trim varies pitch attitude, elevator and throttle. It sets the body
+  rates to zero relative to the Earth.
+  Written for jsbsim-rs from the parameters in NASA/TM-2015-218675,
+  "Check-Cases for Verification of 6-Degree-of-Freedom Flight Vehicle
+  Simulations", Volume II: Appendices.
+-->
+<initialize name="Atmos 15">
+  <latitude unit="DEG" type="geodetic"> 89.95 </latitude>
+  <longitude unit="DEG"> -45.0 </longitude>
+  <altitudeMSL unit="FT"> 10000.0 </altitudeMSL>
+  <phi unit="DEG"> 0.0 </phi>
+  <theta unit="DEG"> 0.0 </theta>
+  <psi unit="DEG"> 90.0 </psi>
+  <vnorth unit="FT/SEC"> 0.0 </vnorth>
+  <veast unit="FT/SEC"> 563.643 </veast>
+  <vdown unit="FT/SEC"> 0.0 </vdown>
+  <trim> longitudinal </trim>
+</initialize>

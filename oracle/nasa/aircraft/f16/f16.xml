@@ -1,0 +1,1561 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  F-16 of check-cases 11, 12, 13.1-13.4, 15 and 16 (Appendix B.1.5,
+  C.1.11-C.1.19). Planet: WGS-84 with J2 gravitation (B.2.3, B.4.3),
+  constants of Table 73, as for the spheres.
+
+  Hand-translated for jsbsim-rs from the ANSI/AIAA S-119 (DAVE-ML 2.0)
+  models of NASA/TM-2015-218675; not part of the upstream JSBSim set.
+  Table values are copied verbatim from the models' dataTable elements and
+  every calculation keeps the models' constants (including pi as
+  3.14159265) and their order of operations. Source:
+    https://nescacademy.nasa.gov/src/flightsim/Models/Atmospheric_models.zip
+    (1498326 bytes, sha256
+    10e2dc267856ef37eaedbcdd16eb49a8c44b39301054de0fa78292c1c4aba3bc,
+    pinned in oracle/nasa/manifest.toml), member F16_package.zip
+    (1473876 bytes, sha256
+    20c60f615ae8e87d81c9d98b54fff45a2832840201499cbcfe3f45a60ef3e5b2),
+    directory F16_package/F16_S119_source:
+    F16_aero.dml     "Mod P, 2013-10-21", sha256
+      82796577b989b5f3becb7d13430ff6c619b3ecd2e642a6427b743658fb177e51
+    F16_inertia.dml  "Initial version" (2012-08-07), sha256
+      e11d4eba5b158d24db7034bd85682ad0b896dd2f3172f007ca3d6d6d4e693c4a
+    F16_prop.dml     "Initial version" (2012-08-07), sha256
+      e5fd7772e5c05cdac666c94febbe4cb50139418b26045affd92dbd198f2215c6
+    F16_control.dml  "Revision F, 2013-10-22", sha256
+      bca7789dde61b741de69f697ce8799ee666214d0e1fa203973523774fc3a969b
+    F16_gnc.dml      "Revision C, 2013-10-22", sha256
+      fc1dbff00cc14b0228973c43cfc17797fd48d2e36950ec039ff4e77d8577827c
+
+  Mapping onto JSBSim:
+  - Inertia: the constants of F16_inertia.dml with the CM at 25% MAC
+    (Table 7), so the CM lies 0.1 cbar = 1.132 ft ahead of the moment
+    reference center (35% MAC), which is AERORP. JSBSim moves the aero
+    forces from AERORP to the CM; the aero model itself is about the MRC.
+  - Propulsion: F16_prop.dml's steady-state thrust acts at the CM along
+    body X as an external force. The zero-power engine exists only
+    so that JSBSim's trim has a throttle to move: fcs/throttle-cmd-norm[0]
+    is the control law's trimmedPilotControl_throttle and
+    fcs/pitch-trim-cmd-norm its trimmedPilotControl_long, as B.1.5
+    recommends for a trim that adjusts the trim inputs.
+  - Control: F16_gnc.dml, whose autopilot and LQR are F16_control.dml's.
+    With f16/gnc/guidance-on 0 the course command and lateral deviation
+    come from f16/control/base-course-cmd-deg and
+    f16/control/lat-offset-ft (F16_control.dml's inputs); with 1 they come
+    from the circumnavigator (F16_gnc.dml). f16/track/* is the logic
+    check-case 13.4 leaves to the simulation. Variables with minValue or
+    maxValue are clipped to them. The control system comes before
+    F16_prop so that the thrust uses this frame's power lever angle.
+  - Not in the models, as the TM requires: no actuator dynamics, no
+    engine dynamics; the thrust tables hold their edge values beyond
+    Mach 1 (extrapolate="neither"), as JSBSim tables do.
+-->
+<fdm_config name="f16" version="2.0" release="BETA">
+  <fileheader/>
+  <planet name="WGS-84 Earth">
+    <equatorial_radius unit="FT"> 20925646.32546 </equatorial_radius>
+    <semiminor_axis unit="FT"> 20855486.595293265 </semiminor_axis>
+    <rotation_rate unit="RAD/SEC"> 7.292115E-05 </rotation_rate>
+    <GM unit="FT3/SEC2"> 1.407644175720511E16 </GM>
+    <J2> 0.00108262982 </J2>
+  </planet>
+  <metrics>
+    <wingarea unit="FT2"> 300.0 </wingarea>
+    <wingspan unit="FT"> 30.0 </wingspan>
+    <chord unit="FT"> 11.32 </chord>
+    <location name="AERORP" unit="FT">
+      <x> 0.0 </x>
+      <y> 0.0 </y>
+      <z> 0.0 </z>
+    </location>
+  </metrics>
+  <mass_balance>
+    <ixx unit="SLUG*FT2"> 9496.0 </ixx>
+    <iyy unit="SLUG*FT2"> 55814.0 </iyy>
+    <izz unit="SLUG*FT2"> 63100.0 </izz>
+    <ixz unit="SLUG*FT2"> 982.0 </ixz>
+    <emptywt unit="SLUG"> 637.1595 </emptywt>
+    <location name="CG" unit="FT">
+      <x> -1.132 </x>
+      <y> 0.0 </y>
+      <z> 0.0 </z>
+    </location>
+  </mass_balance>
+  <ground_reactions/>
+  <propulsion>
+    <engine file="zero_power">
+      <location unit="FT">
+        <x> -1.132 </x>
+        <y> 0.0 </y>
+        <z> 0.0 </z>
+      </location>
+      <thruster file="direct">
+        <location unit="FT">
+          <x> -1.132 </x>
+          <y> 0.0 </y>
+          <z> 0.0 </z>
+        </location>
+      </thruster>
+    </engine>
+  </propulsion>
+
+  <system name="F16_gnc">
+    <!--
+      Inputs not tied to the vehicle state, set by the scripts: sasOn,
+      apOn, keasCmd, altCmd, latOffset and baseChiCmd of F16_control.dml,
+      circlePoleSW of F16_gnc.dml, and the pilot throttle. The pilot's
+      other controls are fcs/elevator-cmd-norm (longStk),
+      fcs/aileron-cmd-norm (latStk) and fcs/rudder-cmd-norm (pedal).
+      f16/track/* is the logic check-case 13.4 leaves to the simulation
+      (C.1.16): with f16/track/on 1, latOffset is the distance right of the
+      line through (lat0, lon0) along baseChiCmd, less the commanded
+      offset, in the circumnavigator's units (60 nmi per degree).
+    -->
+    <property value="0">f16/control/sas-on</property>
+    <property value="0">f16/control/ap-on</property>
+    <property value="0">f16/control/keas-cmd</property>
+    <property value="0">f16/control/alt-cmd-ft</property>
+    <property value="0">f16/control/lat-offset-ft</property>
+    <property value="0">f16/control/base-course-cmd-deg</property>
+    <property value="0">f16/control/pilot-throttle</property>
+    <property value="0">f16/gnc/guidance-on</property>
+    <property value="0">f16/gnc/circle-pole</property>
+    <property value="0">f16/track/on</property>
+    <property value="0">f16/track/lat0-deg</property>
+    <property value="0">f16/track/lon0-deg</property>
+    <property value="0">f16/track/offset-cmd-ft</property>
+
+    <channel name="Course offset">
+      <fcs_function name="trackLatOffset">
+        <description>distance right of the base course line less the commanded offset, ft</description>
+        <function>
+          <difference>
+            <difference>
+              <product>
+                <product>
+                  <difference>
+                    <property>position/long-gc-deg</property>
+                    <property>f16/track/lon0-deg</property>
+                  </difference>
+                  <product>
+                    <value>60.0</value>
+                    <value>6076.12</value>
+                  </product>
+                  <cos>
+                    <product>
+                      <property>position/lat-geod-deg</property>
+                      <quotient>
+                        <value>3.14159265</value>
+                        <value>180.0</value>
+                      </quotient>
+                    </product>
+                  </cos>
+                </product>
+                <cos>
+                  <product>
+                    <property>f16/control/base-course-cmd-deg</property>
+                    <quotient>
+                      <value>3.14159265</value>
+                      <value>180.0</value>
+                    </quotient>
+                  </product>
+                </cos>
+              </product>
+              <product>
+                <product>
+                  <difference>
+                    <property>position/lat-geod-deg</property>
+                    <property>f16/track/lat0-deg</property>
+                  </difference>
+                  <product>
+                    <value>60.0</value>
+                    <value>6076.12</value>
+                  </product>
+                </product>
+                <sin>
+                  <product>
+                    <property>f16/control/base-course-cmd-deg</property>
+                    <quotient>
+                      <value>3.14159265</value>
+                      <value>180.0</value>
+                    </quotient>
+                  </product>
+                </sin>
+              </product>
+            </difference>
+            <property>f16/track/offset-cmd-ft</property>
+          </difference>
+        </function>
+        <output>f16/track/lat-offset-ft</output>
+      </fcs_function>
+    </channel>
+
+    <channel name="Circumnavigator">
+      <fcs_function name="latOffsetPolar">
+        <description>lateralDeviationErrorPolar, ft</description>
+        <function>
+          <difference>
+            <product>
+              <product>
+                <value>60.0</value>
+                <value>6076.12</value>
+              </product>
+              <difference>
+                <value>90.0</value>
+                <property>position/lat-geod-deg</property>
+              </difference>
+            </product>
+            <product>
+              <value>3.0</value>
+              <value>6076.12</value>
+            </product>
+          </difference>
+        </function>
+        <output>f16/gnc/lat-offset-polar-ft</output>
+      </fcs_function>
+      <fcs_function name="degEFromTgt">
+        <description>degEFromTgt, deg</description>
+        <function>
+          <ifthen>
+            <gt>
+              <property>position/long-gc-deg</property>
+              <value>0.0</value>
+            </gt>
+            <difference>
+              <property>position/long-gc-deg</property>
+              <value>180.0</value>
+            </difference>
+            <sum>
+              <property>position/long-gc-deg</property>
+              <value>180.0</value>
+            </sum>
+          </ifthen>
+        </function>
+        <output>f16/gnc/deg-e-from-tgt</output>
+      </fcs_function>
+      <fcs_function name="ownshipN_ft">
+        <description>ftNFromTgt, ft</description>
+        <function>
+          <product>
+            <property>position/lat-geod-deg</property>
+            <product>
+              <value>60.0</value>
+              <value>6076.12</value>
+            </product>
+          </product>
+        </function>
+        <output>f16/gnc/ft-n-from-tgt</output>
+      </fcs_function>
+      <fcs_function name="ownshipE_ft">
+        <description>ftEFromTgt, ft</description>
+        <function>
+          <product>
+            <property>f16/gnc/deg-e-from-tgt</property>
+            <product>
+              <value>60.0</value>
+              <value>6076.12</value>
+            </product>
+            <cos>
+              <product>
+                <property>position/lat-geod-deg</property>
+                <quotient>
+                  <value>3.14159265</value>
+                  <value>180.0</value>
+                </quotient>
+              </product>
+            </cos>
+          </product>
+        </function>
+        <output>f16/gnc/ft-e-from-tgt</output>
+      </fcs_function>
+      <fcs_function name="ftFromTgt">
+        <description>radiusFromTgt, ft</description>
+        <function>
+          <pow>
+            <sum>
+              <product>
+                <property>f16/gnc/ft-e-from-tgt</property>
+                <property>f16/gnc/ft-e-from-tgt</property>
+              </product>
+              <product>
+                <property>f16/gnc/ft-n-from-tgt</property>
+                <property>f16/gnc/ft-n-from-tgt</property>
+              </product>
+            </sum>
+            <value>0.5</value>
+          </pow>
+        </function>
+        <output>f16/gnc/radius-from-tgt-ft</output>
+      </fcs_function>
+      <fcs_function name="baseChiCmdEquatorIDL">
+        <description>trueBaseCourseCommandEquatorIDL, deg</description>
+        <function>
+          <quotient>
+            <product>
+              <atan2>
+                <property>f16/gnc/ft-n-from-tgt</property>
+                <property>f16/gnc/ft-e-from-tgt</property>
+              </atan2>
+              <value>-180.0</value>
+            </product>
+            <value>3.14159265</value>
+          </quotient>
+        </function>
+        <output>f16/gnc/base-course-cmd-equator-idl-deg</output>
+      </fcs_function>
+      <fcs_function name="latOffsetEquatorIDL">
+        <description>lateralDeviationErrorEquatorIDL, ft</description>
+        <function>
+          <difference>
+            <property>f16/gnc/radius-from-tgt-ft</property>
+            <product>
+              <value>3.0</value>
+              <value>6076.12</value>
+            </product>
+          </difference>
+        </function>
+        <output>f16/gnc/lat-offset-equator-idl-ft</output>
+      </fcs_function>
+      <fcs_function name="latOffset">
+        <description>lateralDeviation: the circumnavigator's when guidance is on, else the course offset's when tracking, else the input</description>
+        <function>
+          <ifthen>
+            <gt>
+              <property>f16/gnc/guidance-on</property>
+              <value>0.5</value>
+            </gt>
+            <ifthen>
+              <gt>
+                <property>f16/gnc/circle-pole</property>
+                <value>0.5</value>
+              </gt>
+              <property>f16/gnc/lat-offset-polar-ft</property>
+              <property>f16/gnc/lat-offset-equator-idl-ft</property>
+            </ifthen>
+            <ifthen>
+              <gt>
+                <property>f16/track/on</property>
+                <value>0.5</value>
+              </gt>
+              <property>f16/track/lat-offset-ft</property>
+              <property>f16/control/lat-offset-ft</property>
+            </ifthen>
+          </ifthen>
+        </function>
+        <output>f16/gnc/lat-offset-ft</output>
+      </fcs_function>
+      <fcs_function name="baseChiCmd">
+        <description>trueBaseCourseCommand: the circumnavigator's when guidance is on</description>
+        <function>
+          <ifthen>
+            <gt>
+              <property>f16/gnc/guidance-on</property>
+              <value>0.5</value>
+            </gt>
+            <ifthen>
+              <gt>
+                <property>f16/gnc/circle-pole</property>
+                <value>0.5</value>
+              </gt>
+              <value>90.0</value>
+              <property>f16/gnc/base-course-cmd-equator-idl-deg</property>
+            </ifthen>
+            <property>f16/control/base-course-cmd-deg</property>
+          </ifthen>
+        </function>
+        <output>f16/gnc/base-course-cmd-deg</output>
+      </fcs_function>
+    </channel>
+
+    <channel name="Autopilot">
+      <fcs_function name="fsasOn">
+        <description>forceStabAugOn_disc</description>
+        <function>
+          <sum>
+            <property>f16/control/sas-on</property>
+            <property>f16/control/ap-on</property>
+          </sum>
+        </function>
+        <output>f16/control/force-sas-on</output>
+      </fcs_function>
+      <fcs_function name="deltaThetaCmd">
+        <description>autopilotDeltaPitchCmd = altErr * thetaCmdAltErrGain, deg, within [-5, 5]</description>
+        <function>
+          <product>
+            <difference>
+              <property>position/h-sl-ft</property>
+              <property>f16/control/alt-cmd-ft</property>
+            </difference>
+            <value>-0.05</value>
+          </product>
+        </function>
+        <clipto>
+          <min>-5.0</min>
+          <max>5.0</max>
+        </clipto>
+        <output>f16/control/delta-pitch-cmd-deg</output>
+      </fcs_function>
+      <fcs_function name="thetaCmd">
+        <description>autopilotPitchCmd = deltaThetaCmd + trimmedTheta, deg</description>
+        <function>
+          <sum>
+            <property>f16/control/delta-pitch-cmd-deg</property>
+            <value>2.653813535191715</value>
+          </sum>
+        </function>
+        <output>f16/control/pitch-cmd-deg</output>
+      </fcs_function>
+      <fcs_function name="deltaChiCmd">
+        <description>autopilotCourseCorrection = chiCmdYErrGain * latOffset, deg, within [-30, 30]</description>
+        <function>
+          <product>
+            <value>-0.01</value>
+            <property>f16/gnc/lat-offset-ft</property>
+          </product>
+        </function>
+        <clipto>
+          <min>-30.0</min>
+          <max>30.0</max>
+        </clipto>
+        <output>f16/control/course-correction-deg</output>
+      </fcs_function>
+      <fcs_function name="chiErrUnwrapped">
+        <description>autopilotTrackError = chiEst - chiCmd, chiEst = beta + psi, chiCmd = deltaChiCmd + baseChiCmd, deg</description>
+        <function>
+          <difference>
+            <sum>
+              <property>aero/beta-deg</property>
+              <property>attitude/psi-deg</property>
+            </sum>
+            <sum>
+              <property>f16/control/course-correction-deg</property>
+              <property>f16/gnc/base-course-cmd-deg</property>
+            </sum>
+          </difference>
+        </function>
+        <output>f16/control/track-error-unwrapped-deg</output>
+      </fcs_function>
+      <fcs_function name="phiCmd">
+        <description>autopilotCommandedBankAngle = phiCmdChiErrGain * chiErr, deg, within [-30, 30]</description>
+        <function>
+          <product>
+            <value>-10.0</value>
+            <ifthen>
+              <gt>
+                <abs>
+                  <property>f16/control/track-error-unwrapped-deg</property>
+                </abs>
+                <value>180.0</value>
+              </gt>
+              <ifthen>
+                <gt>
+                  <property>f16/control/track-error-unwrapped-deg</property>
+                  <value>0.0</value>
+                </gt>
+                <difference>
+                  <property>f16/control/track-error-unwrapped-deg</property>
+                  <value>360.0</value>
+                </difference>
+                <sum>
+                  <property>f16/control/track-error-unwrapped-deg</property>
+                  <value>360.0</value>
+                </sum>
+              </ifthen>
+              <property>f16/control/track-error-unwrapped-deg</property>
+            </ifthen>
+          </product>
+        </function>
+        <clipto>
+          <min>-30.0</min>
+          <max>30.0</max>
+        </clipto>
+        <output>f16/control/bank-cmd-deg</output>
+      </fcs_function>
+    </channel>
+
+    <channel name="LQR">
+      <fcs_function name="deltaVequiv">
+        <description>disturbedEquivalentAirspeed = Vequiv - keasCmdSw, kt</description>
+        <function>
+          <difference>
+            <property>velocities/ve-kts</property>
+            <ifthen>
+              <gt>
+                <property>f16/control/ap-on</property>
+                <value>0.5</value>
+              </gt>
+              <property>f16/control/keas-cmd</property>
+              <value>287.8088596053291</value>
+            </ifthen>
+          </difference>
+        </function>
+        <output>f16/control/delta-keas</output>
+      </fcs_function>
+      <fcs_function name="deltaAlpha">
+        <description>disturbedAngleOfAttack = alpha - trimmedAlpha, deg</description>
+        <function>
+          <difference>
+            <property>aero/alpha-deg</property>
+            <value>2.653813535191715</value>
+          </difference>
+        </function>
+        <output>f16/control/delta-alpha-deg</output>
+      </fcs_function>
+      <fcs_function name="deltaPhi">
+        <description>disturbedEulerAngle_roll = phi - phiCmdSw, deg</description>
+        <function>
+          <difference>
+            <property>attitude/phi-deg</property>
+            <ifthen>
+              <gt>
+                <property>f16/control/ap-on</property>
+                <value>0.5</value>
+              </gt>
+              <property>f16/control/bank-cmd-deg</property>
+              <value>0.0</value>
+            </ifthen>
+          </difference>
+        </function>
+        <output>f16/control/delta-phi-deg</output>
+      </fcs_function>
+      <fcs_function name="deltaTheta">
+        <description>disturbedEulerAngle_pitch = theta - thetaCmdSw, deg</description>
+        <function>
+          <difference>
+            <property>attitude/theta-deg</property>
+            <ifthen>
+              <gt>
+                <property>f16/control/ap-on</property>
+                <value>0.5</value>
+              </gt>
+              <property>f16/control/pitch-cmd-deg</property>
+              <value>2.653813535191715</value>
+            </ifthen>
+          </difference>
+        </function>
+        <output>f16/control/delta-theta-deg</output>
+      </fcs_function>
+      <fcs_function name="longLQRsw">
+        <description>deltaLongLQR when forceStabAugOn_disc, else 0</description>
+        <function>
+          <ifthen>
+            <gt>
+              <property>f16/control/force-sas-on</property>
+              <value>0.5</value>
+            </gt>
+            <product>
+              <value>-1.0</value>
+              <sum>
+                <product>
+                  <value>-0.063009074230494</value>
+                  <property>f16/control/delta-keas</property>
+                </product>
+                <product>
+                  <value>0.113230403179271</value>
+                  <property>f16/control/delta-alpha-deg</property>
+                </product>
+                <product>
+                  <value>10.113432224566077</value>
+                  <property>velocities/q-rad_sec</property>
+                </product>
+                <product>
+                  <value>3.154983341632913</value>
+                  <property>f16/control/delta-theta-deg</property>
+                </product>
+              </sum>
+            </product>
+            <value>0.0</value>
+          </ifthen>
+        </function>
+        <output>f16/control/long-lqr</output>
+      </fcs_function>
+      <fcs_function name="throttleLQRsw">
+        <description>deltaThrottleLQR when forceStabAugOn_disc, else 0</description>
+        <function>
+          <ifthen>
+            <gt>
+              <property>f16/control/force-sas-on</property>
+              <value>0.5</value>
+            </gt>
+            <product>
+              <value>-1.0</value>
+              <sum>
+                <product>
+                  <value>0.997260602961658</value>
+                  <property>f16/control/delta-keas</property>
+                </product>
+                <product>
+                  <value>-0.025467711176391</value>
+                  <property>f16/control/delta-alpha-deg</property>
+                </product>
+                <product>
+                  <value>1.213308488207827</value>
+                  <property>velocities/q-rad_sec</property>
+                </product>
+                <product>
+                  <value>0.208744369535208</value>
+                  <property>f16/control/delta-theta-deg</property>
+                </product>
+              </sum>
+            </product>
+            <value>0.0</value>
+          </ifthen>
+        </function>
+        <output>f16/control/throttle-lqr</output>
+      </fcs_function>
+      <fcs_function name="latLQRsw">
+        <description>deltaLatLQR when forceStabAugOn_disc, else 0</description>
+        <function>
+          <ifthen>
+            <gt>
+              <property>f16/control/force-sas-on</property>
+              <value>0.5</value>
+            </gt>
+            <product>
+              <value>-1.0</value>
+              <sum>
+                <product>
+                  <value>3.078043941515770</value>
+                  <property>f16/control/delta-phi-deg</property>
+                </product>
+                <product>
+                  <value>0.032365863044163</value>
+                  <property>aero/beta-deg</property>
+                </product>
+                <product>
+                  <value>4.557858908828332</value>
+                  <property>velocities/p-rad_sec</property>
+                </product>
+                <product>
+                  <value>0.589443156647647</value>
+                  <property>velocities/r-rad_sec</property>
+                </product>
+              </sum>
+            </product>
+            <value>0.0</value>
+          </ifthen>
+        </function>
+        <output>f16/control/lat-lqr</output>
+      </fcs_function>
+      <fcs_function name="dirLQRsw">
+        <description>deltaDirLQR when forceStabAugOn_disc, else 0</description>
+        <function>
+          <ifthen>
+            <gt>
+              <property>f16/control/force-sas-on</property>
+              <value>0.5</value>
+            </gt>
+            <product>
+              <value>-1.0</value>
+              <sum>
+                <product>
+                  <value>-0.705817452754520</value>
+                  <property>f16/control/delta-phi-deg</property>
+                </product>
+                <product>
+                  <value>-0.256362860634868</value>
+                  <property>aero/beta-deg</property>
+                </product>
+                <product>
+                  <value>-1.073666149713151</value>
+                  <property>velocities/p-rad_sec</property>
+                </product>
+                <product>
+                  <value>0.822114635953878</value>
+                  <property>velocities/r-rad_sec</property>
+                </product>
+              </sum>
+            </product>
+            <value>0.0</value>
+          </ifthen>
+        </function>
+        <output>f16/control/dir-lqr</output>
+      </fcs_function>
+    </channel>
+
+    <channel name="Engage logic, limit and scale">
+      <fcs_function name="totLongStk">
+        <description>totalLongCmd = longStkTrim + longStkSw + longLQRsw, within [-1, 1]; longStk within [-1, 1]</description>
+        <function>
+          <sum>
+            <property>fcs/pitch-trim-cmd-norm</property>
+            <ifthen>
+              <lt>
+                <property>f16/control/ap-on</property>
+                <value>0.5</value>
+              </lt>
+              <max>
+                <value>-1.0</value>
+                <min>
+                  <value>1.0</value>
+                  <property>fcs/elevator-cmd-norm</property>
+                </min>
+              </max>
+              <value>0.0</value>
+            </ifthen>
+            <property>f16/control/long-lqr</property>
+          </sum>
+        </function>
+        <clipto>
+          <min>-1.0</min>
+          <max>1.0</max>
+        </clipto>
+        <output>f16/control/total-long-cmd</output>
+      </fcs_function>
+      <fcs_function name="totLatStk">
+        <description>totalLatCmd = latStkSw + latLQRsw, within [-1, 1]; latStk within [-1, 1]</description>
+        <function>
+          <sum>
+            <ifthen>
+              <lt>
+                <property>f16/control/ap-on</property>
+                <value>0.5</value>
+              </lt>
+              <max>
+                <value>-1.0</value>
+                <min>
+                  <value>1.0</value>
+                  <property>fcs/aileron-cmd-norm</property>
+                </min>
+              </max>
+              <value>0.0</value>
+            </ifthen>
+            <property>f16/control/lat-lqr</property>
+          </sum>
+        </function>
+        <clipto>
+          <min>-1.0</min>
+          <max>1.0</max>
+        </clipto>
+        <output>f16/control/total-lat-cmd</output>
+      </fcs_function>
+      <fcs_function name="totPedal">
+        <description>totalDirCmd = pedalSw + dirLQRsw, within [-1, 1]; pedal within [-1, 1]</description>
+        <function>
+          <sum>
+            <ifthen>
+              <lt>
+                <property>f16/control/ap-on</property>
+                <value>0.5</value>
+              </lt>
+              <max>
+                <value>-1.0</value>
+                <min>
+                  <value>1.0</value>
+                  <property>fcs/rudder-cmd-norm</property>
+                </min>
+              </max>
+              <value>0.0</value>
+            </ifthen>
+            <property>f16/control/dir-lqr</property>
+          </sum>
+        </function>
+        <clipto>
+          <min>-1.0</min>
+          <max>1.0</max>
+        </clipto>
+        <output>f16/control/total-dir-cmd</output>
+      </fcs_function>
+      <fcs_function name="totThrottle">
+        <description>totalThrottle = throttleTrim + throttleSw + throttleLQRsw, within [0, 1]; throttle within [0, 1]</description>
+        <function>
+          <sum>
+            <property>fcs/throttle-cmd-norm[0]</property>
+            <ifthen>
+              <lt>
+                <property>f16/control/ap-on</property>
+                <value>0.5</value>
+              </lt>
+              <max>
+                <value>0.0</value>
+                <min>
+                  <value>1.0</value>
+                  <property>f16/control/pilot-throttle</property>
+                </min>
+              </max>
+              <value>0.0</value>
+            </ifthen>
+            <property>f16/control/throttle-lqr</property>
+          </sum>
+        </function>
+        <clipto>
+          <min>0.0</min>
+          <max>1.0</max>
+        </clipto>
+        <output>f16/control/total-throttle</output>
+      </fcs_function>
+      <fcs_function name="el">
+        <description>elevatorDeflection = -25 * totLongStk, deg</description>
+        <function>
+          <product>
+            <value>-25.0</value>
+            <property>f16/control/total-long-cmd</property>
+          </product>
+        </function>
+        <output>f16/control/el-deg</output>
+      </fcs_function>
+      <fcs_function name="ail">
+        <description>aileronDeflection = -21.5 * totLatStk, deg</description>
+        <function>
+          <product>
+            <value>-21.5</value>
+            <property>f16/control/total-lat-cmd</property>
+          </product>
+        </function>
+        <output>f16/control/ail-deg</output>
+      </fcs_function>
+      <fcs_function name="rdr">
+        <description>rudderDeflection = -30 * totPedal + 0.008 * ail, deg</description>
+        <function>
+          <sum>
+            <product>
+              <value>-30.0</value>
+              <property>f16/control/total-dir-cmd</property>
+            </product>
+            <product>
+              <value>0.008</value>
+              <property>f16/control/ail-deg</property>
+            </product>
+          </sum>
+        </function>
+        <output>f16/control/rdr-deg</output>
+      </fcs_function>
+      <fcs_function name="PWR">
+        <description>powerLeverAngle = 100 * totThrottle, pct</description>
+        <function>
+          <product>
+            <value>100.0</value>
+            <property>f16/control/total-throttle</property>
+          </product>
+        </function>
+        <output>f16/control/pwr-pct</output>
+      </fcs_function>
+    </channel>
+  </system>
+
+  <system name="F16_prop">
+    <channel name="Thrust">
+      <fcs_function name="T_IDLE">
+        <description>idleThrust (T_IDLE), lbf: T_IDLE_fn</description>
+        <function>
+          <table>
+            <independentVar lookup="row">velocities/mach</independentVar>
+            <independentVar lookup="column">position/h-sl-ft</independentVar>
+            <tableData>
+               0.0    10000    20000    30000    40000    50000
+      0.0   1060.0    670.0    880.0   1140.0   1500.0   1860.0
+      0.2    635.0    425.0    690.0   1010.0   1330.0   1700.0
+      0.4     60.0     25.0    345.0    755.0   1130.0   1525.0
+      0.6  -1020.0   -710.0   -300.0    350.0    910.0   1360.0
+      0.8  -2700.0  -1900.0  -1300.0   -247.0    600.0   1100.0
+      1.0  -3600.0  -1400.0   -595.0   -342.0   -200.0    700.0
+            </tableData>
+          </table>
+        </function>
+        <output>f16/prop/t-idle-lbf</output>
+      </fcs_function>
+      <fcs_function name="T_MIL">
+        <description>militaryThrust (T_MIL), lbf: T_MIL_fn</description>
+        <function>
+          <table>
+            <independentVar lookup="row">velocities/mach</independentVar>
+            <independentVar lookup="column">position/h-sl-ft</independentVar>
+            <tableData>
+               0.0    10000    20000    30000    40000    50000
+      0.0  12680.0   9150.0   6200.0   3950.0   2450.0   1400.0
+      0.2  12680.0   9150.0   6313.0   4040.0   2470.0   1400.0
+      0.4  12610.0   9312.0   6610.0   4290.0   2600.0   1560.0
+      0.6  12640.0   9839.0   7090.0   4660.0   2840.0   1660.0
+      0.8  12390.0  10176.0   7750.0   5320.0   3250.0   1930.0
+      1.0  11680.0   9848.0   8050.0   6100.0   3800.0   2310.0
+            </tableData>
+          </table>
+        </function>
+        <output>f16/prop/t-mil-lbf</output>
+      </fcs_function>
+      <fcs_function name="T_MAX">
+        <description>maxThrust (T_MAX), lbf: T_MAX_fn</description>
+        <function>
+          <table>
+            <independentVar lookup="row">velocities/mach</independentVar>
+            <independentVar lookup="column">position/h-sl-ft</independentVar>
+            <tableData>
+               0.0    10000    20000    30000    40000    50000
+      0.0  20000.0  15000.0  10800.0   7000.0   4000.0   2500.0
+      0.2  21420.0  15700.0  11225.0   7323.0   4435.0   2600.0
+      0.4  22700.0  16860.0  12250.0   8154.0   5000.0   2835.0
+      0.6  24240.0  18910.0  13760.0   9285.0   5700.0   3215.3
+      0.8  28070.0  21075.0  15975.0  11115.0   6860.0   3950.0
+      1.0  28885.0  23319.0  18300.0  13484.0   8642.0   5057.0
+            </tableData>
+          </table>
+        </function>
+        <output>f16/prop/t-max-lbf</output>
+      </fcs_function>
+      <fcs_function name="FEX">
+        <description>thrustBodyForce_X (FEX), lbf, with MIL_PWR = 50</description>
+        <function>
+          <ifthen>
+            <lt>
+              <property>f16/control/pwr-pct</property>
+              <value>50.0</value>
+            </lt>
+            <sum>
+              <property>f16/prop/t-idle-lbf</property>
+              <quotient>
+                <product>
+                  <property>f16/control/pwr-pct</property>
+                  <difference>
+                    <property>f16/prop/t-mil-lbf</property>
+                    <property>f16/prop/t-idle-lbf</property>
+                  </difference>
+                </product>
+                <value>50.0</value>
+              </quotient>
+            </sum>
+            <sum>
+              <property>f16/prop/t-mil-lbf</property>
+              <quotient>
+                <product>
+                  <difference>
+                    <property>f16/control/pwr-pct</property>
+                    <value>50.0</value>
+                  </difference>
+                  <difference>
+                    <property>f16/prop/t-max-lbf</property>
+                    <property>f16/prop/t-mil-lbf</property>
+                  </difference>
+                </product>
+                <difference>
+                  <value>100.0</value>
+                  <value>50.0</value>
+                </difference>
+              </quotient>
+            </sum>
+          </ifthen>
+        </function>
+        <output>f16/prop/fex-lbf</output>
+      </fcs_function>
+    </channel>
+  </system>
+
+
+  <aerodynamics>
+    <function name="f16/aero/del">
+      <description>del = el / 25</description>
+      <quotient>
+        <property>f16/control/el-deg</property>
+        <value>25.0</value>
+      </quotient>
+    </function>
+    <function name="f16/aero/dail">
+      <description>dail = ail / 20</description>
+      <quotient>
+        <property>f16/control/ail-deg</property>
+        <value>20.0</value>
+      </quotient>
+    </function>
+    <function name="f16/aero/drdr">
+      <description>drdr = rdr / 30</description>
+      <quotient>
+        <property>f16/control/rdr-deg</property>
+        <value>30.0</value>
+      </quotient>
+    </function>
+    <function name="f16/aero/absbeta">
+      <description>absbeta = |beta|, deg</description>
+      <abs>
+        <property>aero/beta-deg</property>
+      </abs>
+    </function>
+    <function name="f16/aero/tvt">
+      <description>tvt = 2 vt, ft/s, with vt at least 0.1</description>
+      <product>
+        <value>2.0</value>
+        <max>
+          <value>0.1</value>
+          <property>velocities/vt-fps</property>
+        </max>
+      </product>
+    </function>
+    <function name="f16/aero/b2v">
+      <description>b2v = bspan / tvt</description>
+      <quotient>
+        <value>30.0</value>
+        <property>f16/aero/tvt</property>
+      </quotient>
+    </function>
+    <function name="f16/aero/cq2v">
+      <description>cq2v = cbar (q / tvt)</description>
+      <product>
+        <value>11.32</value>
+        <quotient>
+          <property>velocities/q-aero-rad_sec</property>
+          <property>f16/aero/tvt</property>
+        </quotient>
+      </product>
+    </function>
+
+    <function name="f16/aero/cxt">
+      <description>CX0 (cxt): Basic CX</description>
+      <table>
+        <independentVar lookup="row">f16/control/el-deg</independentVar>
+        <independentVar lookup="column">aero/alpha-deg</independentVar>
+        <tableData>
+          -10.    -5.     0.     5.    10.    15.    20.    25.    30.    35.    40.    45.
+   -24.  -.099  -.081  -.081  -.063  -.025   .044   .097   .113   .145   .167   .174   .166
+   -12.  -.048  -.038  -.040  -.021   .016   .083   .127   .137   .162   .177   .179   .167
+     0.  -.022  -.020  -.021  -.004   .032   .094   .128   .130   .154   .161   .155   .138
+    12.  -.040  -.038  -.039  -.025   .006   .062   .087   .085   .100   .110   .104   .091
+    24.  -.083  -.073  -.076  -.072  -.046   .012   .024   .025   .043   .053   .047   .040
+        </tableData>
+      </table>
+    </function>
+    <function name="f16/aero/czt">
+      <description>CZ0 (czt): Basic CZ</description>
+      <table>
+        <independentVar lookup="row">aero/alpha-deg</independentVar>
+        <tableData>
+    -10.    .770
+     -5.    .241
+      0.   -.100
+      5.   -.416
+     10.   -.731
+     15.  -1.053
+     20.  -1.366
+     25.  -1.646
+     30.  -1.917
+     35.  -2.120
+     40.  -2.248
+     45.  -2.229
+        </tableData>
+      </table>
+    </function>
+    <function name="f16/aero/cmt">
+      <description>Cm0 (cmt): Basic Cm</description>
+      <table>
+        <independentVar lookup="row">f16/control/el-deg</independentVar>
+        <independentVar lookup="column">aero/alpha-deg</independentVar>
+        <tableData>
+          -10.    -5.     0.     5.    10.    15.    20.    25.    30.    35.    40.    45.
+   -24.   .205   .168   .186   .196   .213   .251   .245   .238   .252   .231   .198   .192
+   -12.   .081   .077   .107   .110   .110   .141   .127   .119   .133   .108   .081   .093
+     0.  -.046  -.020  -.009  -.005  -.006   .010   .006  -.001   .014   .000  -.013   .032
+    12.  -.174  -.145  -.121  -.127  -.129  -.102  -.097  -.113  -.087  -.084  -.069  -.006
+    24.  -.259  -.202  -.184  -.193  -.199  -.150  -.160  -.167  -.104  -.076  -.041  -.005
+        </tableData>
+      </table>
+    </function>
+    <function name="f16/aero/abs-cl0">
+      <description>absCl0: Basic Cl</description>
+      <table>
+        <independentVar lookup="row">f16/aero/absbeta</independentVar>
+        <independentVar lookup="column">aero/alpha-deg</independentVar>
+        <tableData>
+          -10.    -5.     0.     5.    10.    15.    20.    25.    30.    35.    40.    45.
+    0.0     0.     0.     0.     0.     0.     0.     0.     0.     0.     0.     0.     0.
+    5.0  -.001  -.004  -.008  -.012  -.016  -.022  -.022  -.021  -.015  -.008  -.013  -.015
+   10.0  -.003  -.009  -.017  -.024  -.030  -.041  -.045  -.040  -.016  -.002  -.010  -.019
+   15.0  -.001  -.010  -.020  -.030  -.039  -.054  -.057  -.054  -.023  -.006  -.014  -.027
+   20.0   .000  -.010  -.022  -.034  -.047  -.060  -.069  -.067  -.033  -.036  -.035  -.035
+   25.0   .007  -.010  -.023  -.034  -.049  -.063  -.081  -.079  -.060  -.058  -.062  -.059
+   30.0   .009  -.011  -.023  -.037  -.050  -.068  -.089  -.088  -.091  -.076  -.077  -.076
+        </tableData>
+      </table>
+    </function>
+    <function name="f16/aero/abs-cn0">
+      <description>absCn0: Basic Cn</description>
+      <table>
+        <independentVar lookup="row">f16/aero/absbeta</independentVar>
+        <independentVar lookup="column">aero/alpha-deg</independentVar>
+        <tableData>
+          -10.    -5.     0.     5.    10.    15.    20.    25.    30.    35.    40.    45.
+    0.0     0.     0.     0.     0.     0.     0.     0.     0.     0.     0.     0.     0.
+    5.0   .018   .019   .018   .019   .019   .018   .013   .007   .004  -.014  -.017  -.033
+   10.0   .038   .042   .042   .042   .043   .039   .030   .017   .004  -.035  -.047  -.057
+   15.0   .056   .057   .059   .058   .058   .053   .032   .012   .002  -.046  -.071  -.073
+   20.0   .064   .077   .076   .074   .073   .057   .029   .007   .012  -.034  -.065  -.041
+   25.0   .074   .086   .093   .089   .080   .062   .049   .022   .028  -.012  -.002  -.013
+   30.0   .079   .090   .106   .106   .096   .080   .068   .030   .064   .015   .011  -.001
+        </tableData>
+      </table>
+    </function>
+    <function name="f16/aero/cxq">
+      <description>CXq (cxq), per rad</description>
+      <table>
+        <independentVar lookup="row">aero/alpha-deg</independentVar>
+        <tableData>
+   -10.  -.267
+    -5.  -.110
+     0.   .308
+     5.   1.34
+    10.   2.08
+    15.   2.91
+    20.   2.76
+    25.   2.05
+    30.   1.50
+    35.   1.49
+    40.   1.83
+    45.   1.21
+        </tableData>
+      </table>
+    </function>
+    <function name="f16/aero/cyr">
+      <description>CYr (cyr), per rad</description>
+      <table>
+        <independentVar lookup="row">aero/alpha-deg</independentVar>
+        <tableData>
+   -10.   .882
+    -5.   .852
+     0.   .876
+     5.   .958
+    10.   .962
+    15.   .974
+    20.   .819
+    25.   .483
+    30.   .590
+    35.   1.21
+    40.  -.493
+    45.  -1.04
+        </tableData>
+      </table>
+    </function>
+    <function name="f16/aero/cyp">
+      <description>CYp (cyp), per rad</description>
+      <table>
+        <independentVar lookup="row">aero/alpha-deg</independentVar>
+        <tableData>
+   -10.  -.108
+    -5.  -.108
+     0.  -.188
+     5.   .110
+    10.   .258
+    15.   .226
+    20.   .344
+    25.   .362
+    30.   .611
+    35.   .529
+    40.   .298
+    45.  -.227
+        </tableData>
+      </table>
+    </function>
+    <function name="f16/aero/czq">
+      <description>CZq (czq), per rad</description>
+      <table>
+        <independentVar lookup="row">aero/alpha-deg</independentVar>
+        <tableData>
+   -10.  -8.80
+    -5.  -25.8
+     0.  -28.9
+     5.  -31.4
+    10.  -31.2
+    15.  -30.7
+    20.  -27.7
+    25.  -28.2
+    30.  -29.0
+    35.  -29.8
+    40.  -38.3
+    45.  -35.3
+        </tableData>
+      </table>
+    </function>
+    <function name="f16/aero/clr">
+      <description>Clr (clr), per rad</description>
+      <table>
+        <independentVar lookup="row">aero/alpha-deg</independentVar>
+        <tableData>
+   -10.  -.126
+    -5.  -.026
+     0.   .063
+     5.   .113
+    10.   .208
+    15.   .230
+    20.   .319
+    25.   .437
+    30.   .680
+    35.   .100
+    40.   .447
+    45.  -.330
+        </tableData>
+      </table>
+    </function>
+    <function name="f16/aero/clp">
+      <description>Clp (clp), per rad</description>
+      <table>
+        <independentVar lookup="row">aero/alpha-deg</independentVar>
+        <tableData>
+   -10.  -.360
+    -5.  -.359
+     0.  -.443
+     5.  -.420
+    10.  -.383
+    15.  -.375
+    20.  -.329
+    25.  -.294
+    30.  -.230
+    35.  -.210
+    40.  -.120
+    45.  -.100
+        </tableData>
+      </table>
+    </function>
+    <function name="f16/aero/cmq">
+      <description>Cmq (cmq), per rad</description>
+      <table>
+        <independentVar lookup="row">aero/alpha-deg</independentVar>
+        <tableData>
+   -10.  -7.21
+    -5.  -5.40
+     0.  -5.23
+     5.  -5.26
+    10.  -6.11
+    15.  -6.64
+    20.  -5.69
+    25.  -6.00
+    30.  -6.20
+    35.  -6.40
+    40.  -6.60
+    45.  -6.00
+        </tableData>
+      </table>
+    </function>
+    <function name="f16/aero/cnr">
+      <description>Cnr (cnr), per rad</description>
+      <table>
+        <independentVar lookup="row">aero/alpha-deg</independentVar>
+        <tableData>
+   -10.  -.380
+    -5.  -.363
+     0.  -.378
+     5.  -.386
+    10.  -.370
+    15.  -.453
+    20.  -.550
+    25.  -.582
+    30.  -.595
+    35.  -.637
+    40.  -1.02
+    45.  -.840
+        </tableData>
+      </table>
+    </function>
+    <function name="f16/aero/cnp">
+      <description>Cnp (cnp), per rad</description>
+      <table>
+        <independentVar lookup="row">aero/alpha-deg</independentVar>
+        <tableData>
+   -10.   .061
+    -5.   .052
+     0.   .052
+     5.  -.012
+    10.  -.013
+    15.  -.024
+    20.   .050
+    25.   .150
+    30.   .130
+    35.   .158
+    40.   .240
+    45.   .150
+        </tableData>
+      </table>
+    </function>
+    <function name="f16/aero/dclda">
+      <description>ClDA (dclda)</description>
+      <table>
+        <independentVar lookup="row">aero/beta-deg</independentVar>
+        <independentVar lookup="column">aero/alpha-deg</independentVar>
+        <tableData>
+          -10.    -5.     0.     5.    10.    15.    20.    25.    30.    35.    40.    45.
+  -30.0  -.041  -.052  -.053  -.056  -.050  -.056  -.082  -.059  -.042  -.038  -.027  -.017
+  -20.0  -.041  -.053  -.053  -.053  -.050  -.051  -.066  -.043  -.038  -.027  -.023  -.016
+  -10.0  -.042  -.053  -.052  -.051  -.049  -.049  -.043  -.035  -.026  -.016  -.018  -.014
+    0.0  -.040  -.052  -.051  -.052  -.048  -.048  -.042  -.037  -.031  -.026  -.017  -.012
+   10.0  -.043  -.049  -.048  -.049  -.043  -.042  -.042  -.036  -.025  -.021  -.016  -.011
+   20.0  -.044  -.048  -.048  -.047  -.042  -.041  -.020  -.028  -.013  -.014  -.011  -.010
+   30.0  -.043  -.049  -.047  -.045  -.042  -.037  -.003  -.013  -.010  -.003  -.007  -.008
+        </tableData>
+      </table>
+    </function>
+    <function name="f16/aero/dcldr">
+      <description>ClDR (dcldr)</description>
+      <table>
+        <independentVar lookup="row">aero/beta-deg</independentVar>
+        <independentVar lookup="column">aero/alpha-deg</independentVar>
+        <tableData>
+          -10.    -5.     0.     5.    10.    15.    20.    25.    30.    35.    40.    45.
+  -30.0   .005   .017   .014   .010  -.005   .009   .019   .005   .000  -.005  -.011   .008
+  -20.0   .007   .016   .014   .014   .013   .009   .012   .005   .000   .004   .009   .007
+  -10.0   .013   .013   .011   .012   .011   .009   .008   .005   .000   .005   .003   .005
+    0.0   .018   .015   .015   .014   .014   .014   .014   .015   .013   .011   .006   .001
+   10.0   .015   .014   .013   .013   .012   .011   .011   .010   .008   .008   .007   .003
+   20.0   .021   .011   .010   .011   .010   .009   .008   .010   .006   .005   .000   .001
+   30.0   .023   .010   .011   .011   .011   .010   .008   .010   .006   .014   .020   .000
+        </tableData>
+      </table>
+    </function>
+    <function name="f16/aero/dcnda">
+      <description>CnDA (dcnda)</description>
+      <table>
+        <independentVar lookup="row">aero/beta-deg</independentVar>
+        <independentVar lookup="column">aero/alpha-deg</independentVar>
+        <tableData>
+          -10.    -5.     0.     5.    10.    15.    20.    25.    30.    35.    40.    45.
+  -30.0   .001  -.027  -.017  -.013  -.012  -.016   .001   .017   .011   .017   .008   .016
+  -20.0   .002  -.014  -.016  -.016  -.014  -.019  -.021   .002   .012   .016   .015   .011
+  -10.0  -.006  -.008  -.006  -.006  -.005  -.008  -.005   .007   .004   .007   .006   .006
+    0.0  -.011  -.011  -.010  -.009  -.008  -.006   .000   .004   .007   .010   .004   .010
+   10.0  -.015  -.015  -.014  -.012  -.011  -.008  -.002   .002   .006   .012   .011   .011
+   20.0  -.024  -.010  -.004  -.002  -.001   .003   .014   .006  -.001   .004   .004   .006
+   30.0  -.022   .002  -.003  -.005  -.003  -.001  -.009  -.009  -.001   .003  -.002   .001
+        </tableData>
+      </table>
+    </function>
+    <function name="f16/aero/dcndr">
+      <description>CnDR (dcndr)</description>
+      <table>
+        <independentVar lookup="row">aero/beta-deg</independentVar>
+        <independentVar lookup="column">aero/alpha-deg</independentVar>
+        <tableData>
+          -10.    -5.     0.     5.    10.    15.    20.    25.    30.    35.    40.    45.
+  -30.0  -.018  -.052  -.052  -.052  -.054  -.049  -.059  -.051  -.030  -.037  -.026  -.013
+  -20.0  -.028  -.051  -.043  -.046  -.045  -.049  -.057  -.052  -.030  -.033  -.030  -.008
+  -10.0  -.037  -.041  -.038  -.040  -.040  -.038  -.037  -.030  -.027  -.024  -.019  -.013
+    0.0  -.048  -.045  -.045  -.045  -.044  -.045  -.047  -.048  -.049  -.045  -.033  -.016
+   10.0  -.043  -.044  -.041  -.041  -.040  -.038  -.034  -.035  -.035  -.029  -.022  -.009
+   20.0  -.052  -.034  -.036  -.036  -.035  -.028  -.024  -.023  -.020  -.016  -.010  -.014
+   30.0  -.062  -.034  -.027  -.028  -.027  -.027  -.023  -.023  -.019  -.009  -.025  -.010
+        </tableData>
+      </table>
+    </function>
+
+    <function name="f16/aero/clt">
+      <description>Cl0 (clt) = -absCl0 when beta &lt; 0, else absCl0</description>
+      <ifthen>
+        <lt>
+          <property>aero/beta-deg</property>
+          <value>0.0</value>
+        </lt>
+        <product>
+          <value>-1.0</value>
+          <property>f16/aero/abs-cl0</property>
+        </product>
+        <property>f16/aero/abs-cl0</property>
+      </ifthen>
+    </function>
+    <function name="f16/aero/cnt">
+      <description>Cn0 (cnt) = -absCn0 when beta &lt; 0, else absCn0</description>
+      <ifthen>
+        <lt>
+          <property>aero/beta-deg</property>
+          <value>0.0</value>
+        </lt>
+        <product>
+          <value>-1.0</value>
+          <property>f16/aero/abs-cn0</property>
+        </product>
+        <property>f16/aero/abs-cn0</property>
+      </ifthen>
+    </function>
+
+    <axis name="X">
+      <function name="aero/force/f16-x">
+        <description>aeroBodyForceCoefficient_X qbar S: cx = cxt + cq2v cxq</description>
+        <product>
+          <property>aero/qbar-psf</property>
+          <value>300.0</value>
+          <sum>
+            <property>f16/aero/cxt</property>
+            <product>
+              <property>f16/aero/cq2v</property>
+              <property>f16/aero/cxq</property>
+            </product>
+          </sum>
+        </product>
+      </function>
+    </axis>
+    <axis name="Y">
+      <function name="aero/force/f16-y">
+        <description>aeroBodyForceCoefficient_Y qbar S: cy = cy0 + b2v (cyp p + cyr r), cy0 = -0.02 beta + 0.021 dail + 0.086 drdr</description>
+        <product>
+          <property>aero/qbar-psf</property>
+          <value>300.0</value>
+          <sum>
+            <sum>
+              <product>
+                <value>-0.02</value>
+                <property>aero/beta-deg</property>
+              </product>
+              <product>
+                <value>0.021</value>
+                <property>f16/aero/dail</property>
+              </product>
+              <product>
+                <value>0.086</value>
+                <property>f16/aero/drdr</property>
+              </product>
+            </sum>
+            <product>
+              <property>f16/aero/b2v</property>
+              <sum>
+                <product>
+                  <property>f16/aero/cyp</property>
+                  <property>velocities/p-aero-rad_sec</property>
+                </product>
+                <product>
+                  <property>f16/aero/cyr</property>
+                  <property>velocities/r-aero-rad_sec</property>
+                </product>
+              </sum>
+            </product>
+          </sum>
+        </product>
+      </function>
+    </axis>
+    <axis name="Z">
+      <function name="aero/force/f16-z">
+        <description>aeroBodyForceCoefficient_Z qbar S: cz = czt (1 - (beta/rtd)^2) - 0.19 del + cq2v czq, rtd = 180/3.14159265</description>
+        <product>
+          <property>aero/qbar-psf</property>
+          <value>300.0</value>
+          <sum>
+            <sum>
+              <product>
+                <property>f16/aero/czt</property>
+                <difference>
+                  <value>1.0</value>
+                  <pow>
+                    <quotient>
+                      <property>aero/beta-deg</property>
+                      <quotient>
+                        <value>180.0</value>
+                        <value>3.14159265</value>
+                      </quotient>
+                    </quotient>
+                    <value>2.0</value>
+                  </pow>
+                </difference>
+              </product>
+              <product>
+                <value>-0.19</value>
+                <property>f16/aero/del</property>
+              </product>
+            </sum>
+            <product>
+              <property>f16/aero/cq2v</property>
+              <property>f16/aero/czq</property>
+            </product>
+          </sum>
+        </product>
+      </function>
+    </axis>
+    <axis name="ROLL">
+      <function name="aero/moment/f16-roll">
+        <description>aeroBodyMomentCoefficient_Roll qbar S bspan: cl = clt + dclda dail + dcldr drdr + b2v (clp p + clr r)</description>
+        <product>
+          <property>aero/qbar-psf</property>
+          <value>300.0</value>
+          <value>30.0</value>
+          <sum>
+            <sum>
+              <property>f16/aero/clt</property>
+              <product>
+                <property>f16/aero/dclda</property>
+                <property>f16/aero/dail</property>
+              </product>
+              <product>
+                <property>f16/aero/dcldr</property>
+                <property>f16/aero/drdr</property>
+              </product>
+            </sum>
+            <product>
+              <property>f16/aero/b2v</property>
+              <sum>
+                <product>
+                  <property>f16/aero/clp</property>
+                  <property>velocities/p-aero-rad_sec</property>
+                </product>
+                <product>
+                  <property>f16/aero/clr</property>
+                  <property>velocities/r-aero-rad_sec</property>
+                </product>
+              </sum>
+            </product>
+          </sum>
+        </product>
+      </function>
+    </axis>
+    <axis name="PITCH">
+      <function name="aero/moment/f16-pitch">
+        <description>aeroBodyMomentCoefficient_Pitch qbar S cbar: cm = cmt + cq2v cmq</description>
+        <product>
+          <property>aero/qbar-psf</property>
+          <value>300.0</value>
+          <value>11.32</value>
+          <sum>
+            <property>f16/aero/cmt</property>
+            <product>
+              <property>f16/aero/cq2v</property>
+              <property>f16/aero/cmq</property>
+            </product>
+          </sum>
+        </product>
+      </function>
+    </axis>
+    <axis name="YAW">
+      <function name="aero/moment/f16-yaw">
+        <description>aeroBodyMomentCoefficient_Yaw qbar S bspan: cn = cnt + dcnda dail + dcndr drdr + b2v (cnp p + cnr r)</description>
+        <product>
+          <property>aero/qbar-psf</property>
+          <value>300.0</value>
+          <value>30.0</value>
+          <sum>
+            <sum>
+              <property>f16/aero/cnt</property>
+              <product>
+                <property>f16/aero/dcnda</property>
+                <property>f16/aero/dail</property>
+              </product>
+              <product>
+                <property>f16/aero/dcndr</property>
+                <property>f16/aero/drdr</property>
+              </product>
+            </sum>
+            <product>
+              <property>f16/aero/b2v</property>
+              <sum>
+                <product>
+                  <property>f16/aero/cnp</property>
+                  <property>velocities/p-aero-rad_sec</property>
+                </product>
+                <product>
+                  <property>f16/aero/cnr</property>
+                  <property>velocities/r-aero-rad_sec</property>
+                </product>
+              </sum>
+            </product>
+          </sum>
+        </product>
+      </function>
+    </axis>
+  </aerodynamics>
+
+  <external_reactions>
+    <force name="thrust" frame="BODY">
+      <function>
+        <property>f16/prop/fex-lbf</property>
+      </function>
+      <location unit="FT">
+        <x> -1.132 </x>
+        <y> 0.0 </y>
+        <z> 0.0 </z>
+      </location>
+      <direction>
+        <x> 1.0 </x>
+        <y> 0.0 </y>
+        <z> 0.0 </z>
+      </direction>
+    </force>
+  </external_reactions>
+</fdm_config>

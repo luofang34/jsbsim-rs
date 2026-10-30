@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LGPL-2.1-or-later
+  Check-case 15, F-16 with the F16_gnc circumnavigator around the North
+  Pole: Appendix C.1.18, Table 42; 180 s duration.
+  Written for jsbsim-rs from the parameters in NASA/TM-2015-218675,
+  "Check-Cases for Verification of 6-Degree-of-Freedom Flight Vehicle
+  Simulations", Volume II: Appendices.
+-->
+<runscript name="NASA EOM check-case Atmos 15">
+  <description>Check-case 15 of NASA/TM-2015-218675: circumnavigation of the North pole</description>
+  <use aircraft="f16" initialize="reset_Atmos_15"/>
+  <run start="0.0" end="180" dt="0.01">
+    <event name="Engage the autopilot">
+      <description>
+        Engaged after the trim, which runs with both discretes off. The
+        speed command holds the trimmed equivalent airspeed, the altitude
+        command the initial altitude.
+      </description>
+      <condition> simulation/sim-time-sec ge 0.0 </condition>
+      <set name="f16/control/sas-on" value="1"/>
+      <set name="f16/control/ap-on" value="1"/>
+      <set name="f16/control/keas-cmd">
+        <function>
+          <property>velocities/ve-kts</property>
+        </function>
+      </set>
+      <set name="f16/control/alt-cmd-ft" value="10000.0"/>
+      <set name="f16/gnc/guidance-on" value="1"/>
+      <set name="f16/gnc/circle-pole" value="1"/>
+    </event>
+  </run>
+</runscript>
