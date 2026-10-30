@@ -102,7 +102,7 @@ impl Probe {
                     .unwrap_or(0);
                 self.clock = Some(seconds);
                 if let Some(fdm) = self.fdm.as_mut() {
-                    fdm.models.exec.wall_clock = seconds;
+                    fdm.set_wall_clock(seconds);
                 }
                 " ok".to_owned()
             }
@@ -115,7 +115,7 @@ impl Probe {
             }
             "new" => match Fdm::new() {
                 Ok(mut fdm) => {
-                    fdm.models.exec.wall_clock = self.clock.unwrap_or_else(now);
+                    fdm.set_wall_clock(self.clock.unwrap_or_else(now));
                     fdm.set_aircraft_path(&self.aircraft);
                     fdm.set_systems_path(&self.systems);
                     self.fdm = Some(fdm);

@@ -25,6 +25,7 @@ mod reset_mask;
 mod run;
 mod script;
 mod snapshot;
+mod state;
 mod trim;
 
 #[cfg(test)]

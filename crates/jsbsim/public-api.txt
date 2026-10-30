@@ -843,6 +843,14 @@ pub fn jsbsim::Fdm::last_trim(&self) -> core::option::Option<&jsbsim::trim::Trim
 pub fn jsbsim::Fdm::trim_requested(&self) -> jsbsim::trim::TrimMode
 pub fn jsbsim::Fdm::trims_run(&self) -> u32
 impl jsbsim::Fdm
+pub fn jsbsim::Fdm::dt(&self) -> f64
+pub fn jsbsim::Fdm::location(&self) -> &jsbsim::math::Location
+pub fn jsbsim::Fdm::quaternion(&self) -> &jsbsim::math::Quaternion
+pub fn jsbsim::Fdm::quaternion_ecef(&self) -> &jsbsim::math::Quaternion
+pub fn jsbsim::Fdm::quaternion_eci(&self) -> &jsbsim::math::Quaternion
+pub fn jsbsim::Fdm::set_wall_clock(&mut self, i64)
+pub fn jsbsim::Fdm::sim_time(&self) -> f64
+impl jsbsim::Fdm
 pub fn jsbsim::Fdm::fingerprint(&mut self) -> core::result::Result<jsbsim::snapshot::Fingerprint, jsbsim::error::Error>
 pub fn jsbsim::Fdm::restore(&mut self, &jsbsim::snapshot::Snapshot) -> core::result::Result<(), jsbsim::error::Error>
 pub fn jsbsim::Fdm::snapshot_into(&mut self, &mut jsbsim::snapshot::Snapshot) -> core::result::Result<(), jsbsim::error::Error>

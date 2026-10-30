@@ -16,7 +16,9 @@
 //!    and trim with [`Fdm::do_trim`] if wanted.
 //! 5. Step with [`Fdm::run`]; read and write properties by name
 //!    ([`Fdm::get_property`], [`Fdm::set_property`]) or by [`NodeId`]
-//!    ([`Fdm::node`], [`Fdm::read_node`], [`Fdm::write_node`]).
+//!    ([`Fdm::node`], [`Fdm::read_node`], [`Fdm::write_node`]); read the
+//!    pose free of Euler singularities with [`Fdm::location`] and
+//!    [`Fdm::quaternion`].
 //! 6. Save and restore the dynamic state with [`snapshot::Snapshot`].
 //!
 //! ```
