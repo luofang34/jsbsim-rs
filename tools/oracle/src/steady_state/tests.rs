@@ -2,11 +2,13 @@
 use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
 
+use jsbsim::Fdm;
 use jsbsim::FileResolver;
-use jsbsim::fdm::Fdm;
-use jsbsim::models::atmosphere::AtmosphereModel;
-use jsbsim::models::propulsion::families::{REGISTERED_ENGINES, REGISTERED_THRUSTERS};
-use jsbsim::xml::DocumentLoader;
+use jsbsim::oracle_support::models::atmosphere::AtmosphereModel;
+use jsbsim::oracle_support::models::propulsion::families::{
+    REGISTERED_ENGINES, REGISTERED_THRUSTERS,
+};
+use jsbsim::oracle_support::xml::DocumentLoader;
 
 use super::*;
 use crate::manifest::{self, CaseSpec, Manifest};

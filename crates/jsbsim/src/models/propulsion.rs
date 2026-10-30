@@ -34,9 +34,9 @@ pub mod turbine;
 pub mod turboprop;
 
 pub use bind::{bind, bind_engine};
-pub use engine::{Engine, EngineBase, EngineType};
+pub use engine::{Engine, EngineType};
 pub use tank::{Tank, TankType};
-pub use thruster::{Thruster, ThrusterBase};
+pub use thruster::ThrusterBase;
 
 use super::base::ModelBase;
 use super::mass_balance::MassBalance;

@@ -2,7 +2,8 @@
 use crate::Error;
 use crate::MemoryResolver;
 use crate::fdm::Fdm;
-use crate::models::atmosphere::{AtmosphereModel, MMARS, RSTAR};
+use crate::models::atmosphere::mars::MMARS;
+use crate::models::atmosphere::{AtmosphereModel, RSTAR};
 
 const BOX: &str = r#"<fdm_config name="box">
   <metrics/>

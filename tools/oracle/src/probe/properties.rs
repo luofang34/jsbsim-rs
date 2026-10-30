@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 //! Property-tree probe; twin of `tools/oracle/cpp/probe_properties.cpp`.
 
-use jsbsim::c_numeric::format_g;
-use jsbsim::properties::{Attribute, NodeId, PathError, PropertyTree, Value, ValueType};
+use jsbsim::oracle_support::c_numeric::format_g;
+use jsbsim::oracle_support::properties::{
+    Attribute, NodeId, PathError, PropertyTree, Value, ValueType,
+};
 
 fn attribute(name: &str) -> Attribute {
     match name {
@@ -157,7 +159,7 @@ impl Probe {
             }
             "mkname" => format!(
                 "\"{}\"",
-                jsbsim::properties::mk_property_name(rest, a == "1")
+                jsbsim::oracle_support::properties::mk_property_name(rest, a == "1")
             ),
             "relname" => {
                 let id = self.require(a)?;

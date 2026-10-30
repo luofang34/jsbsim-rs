@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 //! Math probe; twin of `tools/oracle/cpp/probe_math.cpp`.
 
-use jsbsim::c_numeric::format_g;
 use jsbsim::math::{
     Axis, ColumnVector3, E_X, E_Y, E_Z, Location, Matrix33, Quaternion, dot_product,
 };
+use jsbsim::oracle_support::c_numeric::format_g;
 
 #[derive(Default)]
 struct Out(String);

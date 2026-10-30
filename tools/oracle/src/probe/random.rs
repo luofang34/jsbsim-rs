@@ -3,9 +3,9 @@
 
 use std::sync::Arc;
 
-use jsbsim::c_numeric::format_g;
-use jsbsim::fdm::Fdm;
-use jsbsim::random::{RandomNumberGenerator, SharedGenerator};
+use jsbsim::Fdm;
+use jsbsim::oracle_support::c_numeric::format_g;
+use jsbsim::oracle_support::random::{RandomNumberGenerator, SharedGenerator};
 
 #[derive(Default)]
 struct Probe {
@@ -21,7 +21,7 @@ fn num(out: &mut String, v: f64) {
 /// `>>` into an `int`: a word that does not start with a number reads 0.
 fn int(words: &[&str], i: usize) -> i32 {
     let word = words.get(i).copied().unwrap_or_default();
-    jsbsim::c_numeric::atoi(word)
+    jsbsim::oracle_support::c_numeric::atoi(word)
 }
 
 fn draw(out: &mut String, g: &RandomNumberGenerator, kind: char) {

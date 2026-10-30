@@ -4,7 +4,7 @@
 use std::fmt::Write as _;
 use std::path::PathBuf;
 
-use jsbsim::xml::{Element, parse_document};
+use jsbsim::oracle_support::xml::{Element, parse_document};
 
 use super::ProbeContext;
 

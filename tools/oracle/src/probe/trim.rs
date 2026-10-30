@@ -4,10 +4,10 @@
 
 use std::path::PathBuf;
 
+use jsbsim::Fdm;
 use jsbsim::FileResolver;
-use jsbsim::c_numeric::format_g;
-use jsbsim::fdm::Fdm;
-use jsbsim::linearization::Linearization;
+use jsbsim::oracle_support::c_numeric::format_g;
+use jsbsim::oracle_support::linearization::Linearization;
 use jsbsim::trim::{Control, Trim, TrimMode, TrimReport};
 
 use super::ProbeContext;

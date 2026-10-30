@@ -11,7 +11,6 @@ pub mod base;
 pub mod buoyant_forces;
 pub mod external_reactions;
 pub mod fcs;
-pub mod forces;
 pub mod ground_reactions;
 pub mod inertial;
 pub mod input;

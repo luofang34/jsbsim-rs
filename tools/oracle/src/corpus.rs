@@ -9,7 +9,7 @@ use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use jsbsim::xml::{DocumentLoader, Element, IncludeKind};
+use jsbsim::oracle_support::xml::{DocumentLoader, Element, IncludeKind};
 use jsbsim::{Error, FileResolver};
 use tracing::{error, info};
 

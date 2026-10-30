@@ -205,6 +205,8 @@ impl Fdm {
         for event_el in run.find_elements("event") {
             script.events.push(parse_event(event_el, self)?);
         }
+        // `FGScript::Debug` names the script as it loads.
+        tracing::debug!(script = %script.name, events = script.events.len(), "script loaded");
         self.script = Some(script);
         Ok(())
     }

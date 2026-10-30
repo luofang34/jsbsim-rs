@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 //! Atmosphere probe; twin of `tools/oracle/cpp/probe_atmosphere.cpp`.
 
-use jsbsim::c_numeric::format_g;
-use jsbsim::fdm::Fdm;
-use jsbsim::models::atmosphere::{PressureUnit, TemperatureUnit};
+use jsbsim::Fdm;
+use jsbsim::oracle_support::c_numeric::format_g;
+use jsbsim::oracle_support::models::atmosphere::{PressureUnit, TemperatureUnit};
 
 const PROPERTIES: [&str; 21] = [
     "atmosphere/T-R",

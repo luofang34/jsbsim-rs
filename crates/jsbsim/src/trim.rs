@@ -14,11 +14,11 @@
 //! Each cycle visits the axes in mode order: an axis without a bracket
 //! first checks its control range for a sign change, one with a bracket
 //! searches around its current control, and either is then solved by
-//! regula falsi ([`Solver`]). The trim succeeds once every axis is within
+//! regula falsi. The trim succeeds once every axis is within
 //! its tolerance and fails after 60 cycles, or when all but one axis are
 //! within tolerance and the last cannot change sign over its range.
 
-pub mod axis;
+mod axis;
 mod ground;
 mod maneuver;
 mod report;
@@ -27,9 +27,10 @@ mod solve;
 #[cfg(test)]
 mod tests;
 
-pub use axis::{Control, DEFAULT_TOLERANCE, State, TrimAxis};
+pub(crate) use axis::TrimAxis;
+pub use axis::{Control, State};
 pub use report::{AxisReport, TrimReport};
-pub use solve::Solver;
+pub(crate) use solve::Solver;
 
 use crate::Error;
 use crate::fdm::Fdm;
@@ -50,7 +51,7 @@ pub enum TrimMode {
     Ground = 2,
     /// `tPullup`: the load factor with alpha at the pitch rate it needs.
     Pullup = 3,
-    /// `tCustom`: the axes added with [`Trim::add_state`].
+    /// `tCustom`: the axes added with `Trim::add_state`.
     Custom = 4,
     /// `tTurn`: a coordinated turn at the initial bank angle.
     Turn = 5,
@@ -84,6 +85,7 @@ struct Commands {
     pitch_trim: f64,
 }
 
+#[doc(hidden)]
 /// `FGTrim`.
 #[derive(Debug, Clone)]
 pub struct Trim {

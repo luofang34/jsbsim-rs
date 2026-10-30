@@ -197,11 +197,13 @@ impl Fdm {
     }
 
     /// `FGFDMExec::EnableInput`.
+    #[doc(hidden)]
     pub fn enable_input(&mut self) {
         self.models.input.enable();
     }
 
     /// `FGFDMExec::DisableInput`.
+    #[doc(hidden)]
     pub fn disable_input(&mut self) {
         self.models.input.disable();
     }

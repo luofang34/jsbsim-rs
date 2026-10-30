@@ -17,7 +17,7 @@ use std::process::ExitCode;
 use std::time::Instant;
 
 use clap::{Arg, ArgMatches, Command, value_parser};
-use jsbsim::fdm::Fdm;
+use jsbsim::Fdm;
 use jsbsim::snapshot::Snapshot;
 use tracing::{error, info};
 

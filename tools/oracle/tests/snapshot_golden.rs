@@ -12,8 +12,8 @@
 
 use std::path::{Path, PathBuf};
 
+use jsbsim::Fdm;
 use jsbsim::FileResolver;
-use jsbsim::fdm::Fdm;
 use jsbsim::snapshot::{FORMAT_VERSION, Snapshot};
 
 #[cfg(test)]

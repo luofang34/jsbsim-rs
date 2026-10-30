@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
+use super::gust::{GustFrame, GustProfile};
 use super::*;
 use crate::fdm::Fdm;
 use crate::random::RandomNumberGenerator;

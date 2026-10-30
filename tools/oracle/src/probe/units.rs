@@ -3,9 +3,9 @@
 
 use std::rc::Rc;
 
-use jsbsim::c_numeric::format_g;
-use jsbsim::units;
-use jsbsim::xml::{Element, XmlError};
+use jsbsim::oracle_support::c_numeric::format_g;
+use jsbsim::oracle_support::units;
+use jsbsim::oracle_support::xml::{Element, XmlError};
 
 fn constant(name: &str) -> f64 {
     match name {

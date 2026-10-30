@@ -4,8 +4,8 @@
 
 use std::path::Path;
 
+use jsbsim::Fdm;
 use jsbsim::FileResolver;
-use jsbsim::fdm::Fdm;
 
 #[test]
 fn the_vendored_ball_loads() {

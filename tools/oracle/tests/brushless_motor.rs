@@ -5,8 +5,8 @@
 
 use std::path::Path;
 
+use jsbsim::Fdm;
 use jsbsim::FileResolver;
-use jsbsim::fdm::Fdm;
 
 /// Below the F450's hover throttle: it stays on the ground.
 #[cfg(test)]

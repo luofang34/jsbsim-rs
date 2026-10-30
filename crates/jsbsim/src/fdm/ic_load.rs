@@ -10,7 +10,7 @@ use crate::Error;
 
 impl Fdm {
     /// `FGInitialCondition::Load(file)` for `dir/name` (`.xml` added when
-    /// it has no extension), applied to [`Models::ic`](super::Models::ic). False, with the
+    /// it has no extension), applied to the executive's initial conditions. False, with the
     /// problem logged, where JSBSim's `Load` returns false.
     pub fn load_initial_conditions(
         &mut self,
@@ -37,6 +37,7 @@ impl Fdm {
     }
 
     /// `FGInitialCondition::Load` on a parsed `<initialize>` document.
+    #[doc(hidden)]
     pub fn load_initial_conditions_document(
         &mut self,
         document: &crate::xml::Element,

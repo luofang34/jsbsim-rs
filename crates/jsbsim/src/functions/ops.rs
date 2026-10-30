@@ -29,7 +29,9 @@ macro_rules! operations {
             )*
         }
 
-        /// Names of every operation element, in `FGFunction::Load` order.
+        /// Names of every operation element, in `FGFunction::Load` order,
+        /// which a unit test pins against JSBSim's.
+        #[cfg(test)]
         pub const OPERATIONS: &[&str] = &[$($name),*];
 
         impl Op {

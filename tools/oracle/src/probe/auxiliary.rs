@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 //! Auxiliary probe; twin of `tools/oracle/cpp/probe_auxiliary.cpp`.
 
-use jsbsim::c_numeric::format_g;
-use jsbsim::fdm::Fdm;
+use jsbsim::Fdm;
 use jsbsim::math::{Axis, ColumnVector3, Location, Matrix33};
-use jsbsim::models::auxiliary::{Inputs, mach_from_impact_pressure, pitot_total_pressure};
+use jsbsim::oracle_support::c_numeric::format_g;
+use jsbsim::oracle_support::models::auxiliary::{
+    Inputs, mach_from_impact_pressure, pitot_total_pressure,
+};
 
 const PROPERTIES: [&str; 60] = [
     "propulsion/tat-r",

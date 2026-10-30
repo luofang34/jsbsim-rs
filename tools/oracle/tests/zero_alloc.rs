@@ -20,7 +20,7 @@
 
 use std::path::{Path, PathBuf};
 
-use jsbsim::fdm::Fdm;
+use jsbsim::Fdm;
 use jsbsim::snapshot::{Snapshot, SnapshotError};
 use jsbsim::{Error, FileResolver};
 use oracle::steady_state::{

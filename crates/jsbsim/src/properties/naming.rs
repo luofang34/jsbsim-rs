@@ -87,10 +87,3 @@ pub fn mk_property_name(name: &str, lowercase: bool) -> String {
     // Only ASCII bytes were replaced by ASCII bytes, so UTF-8 is intact.
     String::from_utf8_lossy(&bytes).into_owned()
 }
-
-/// `GetPrintableName`: the node name with `_` replaced by spaces.
-#[must_use]
-pub fn printable_name(name: &str) -> String {
-    let tail = name.rfind('/').map_or(name, |at| &name[at..]);
-    tail.replace('_', " ")
-}

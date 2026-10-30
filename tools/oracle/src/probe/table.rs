@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 //! Table probe; twin of `tools/oracle/cpp/probe_table.cpp`.
 
-use jsbsim::c_numeric::format_g;
-use jsbsim::functions::{FunctionSet, Table};
-use jsbsim::properties::PropertyTree;
-use jsbsim::xml::parse_document;
+use jsbsim::oracle_support::c_numeric::format_g;
+use jsbsim::oracle_support::functions::{FunctionSet, Table};
+use jsbsim::oracle_support::properties::PropertyTree;
+use jsbsim::oracle_support::xml::parse_document;
 
 use super::ProbeContext;
 

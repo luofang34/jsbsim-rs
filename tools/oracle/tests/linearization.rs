@@ -6,8 +6,8 @@
 
 use std::path::{Path, PathBuf};
 
+use jsbsim::Fdm;
 use jsbsim::FileResolver;
-use jsbsim::fdm::Fdm;
 
 #[cfg(test)]
 fn inputs() -> PathBuf {

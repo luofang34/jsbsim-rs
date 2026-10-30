@@ -5,8 +5,8 @@
 
 use std::path::{Path, PathBuf};
 
+use jsbsim::Fdm;
 use jsbsim::FileResolver;
-use jsbsim::fdm::Fdm;
 use jsbsim::math::{ColumnVector3, Location, Matrix33, Quaternion};
 
 #[cfg(test)]

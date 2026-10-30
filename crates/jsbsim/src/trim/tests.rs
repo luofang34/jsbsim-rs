@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
+use super::axis::DEFAULT_TOLERANCE;
 use super::*;
 use crate::math::{E_X, E_Z};
 use crate::{Error, MemoryResolver};

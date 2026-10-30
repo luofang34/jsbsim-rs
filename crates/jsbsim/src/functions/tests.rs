@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
+use super::ops::OPERATIONS;
 use super::*;
 use crate::Error;
 use crate::properties::Attribute;

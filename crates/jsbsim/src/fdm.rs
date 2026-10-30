@@ -29,9 +29,7 @@ mod trim;
 #[cfg(test)]
 mod tests;
 
-pub use bindings::{
-    Binder, Bindings, Getter, Kind, ModelEvaluator, ModelGetters, Setter, convert_write,
-};
+pub use bindings::{Binder, Bindings, Kind, ModelEvaluator, ModelGetters, convert_write};
 pub use exec_bind::ExecRequest;
 pub use load::{LoadContext, ModelFunctions};
 pub use run::InitialState;
@@ -160,6 +158,7 @@ pub struct Models {
 pub struct Fdm {
     env: env::Env,
     /// The models.
+    #[doc(hidden)]
     pub models: Models,
     /// Declarations and pre/post functions of each model, by `Model`.
     model_functions: order::PerModel<ModelFunctions>,
@@ -267,6 +266,7 @@ impl Fdm {
 
     /// `FGMassBalance::Load(<mass_balance>)`, tying the point mass
     /// properties as it adds them.
+    #[doc(hidden)]
     pub fn load_mass_balance(&mut self, el: &crate::xml::Element) -> Result<(), Error> {
         let loaded = self.models.mass_balance.load(el, &mut self.env.binder());
         self.loaded_without_documents();
@@ -299,6 +299,7 @@ impl Fdm {
 
     /// The property tree.
     #[must_use]
+    #[doc(hidden)]
     pub fn tree(&self) -> &PropertyTree {
         &self.env.tree
     }

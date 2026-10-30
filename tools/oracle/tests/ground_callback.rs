@@ -8,10 +8,10 @@
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 
+use jsbsim::Fdm;
 use jsbsim::FileResolver;
-use jsbsim::fdm::Fdm;
 use jsbsim::math::{ColumnVector3, E_X, E_Y, E_Z, Location, dot_product};
-use jsbsim::models::inertial::{Contact, GroundCallback};
+use jsbsim::{Contact, GroundCallback};
 
 /// A plane through (a, 0, 0) at time 0, the planet's surface at latitude
 /// and longitude 0, with unit normal `normal`, moving at `velocity`.
@@ -44,13 +44,7 @@ impl GroundCallback for Plane {
         let mut point = Location::from_ecef(r - agl * self.normal);
         point.set_ellipse(self.a, self.b);
         point.cache_derived();
-        Contact {
-            agl,
-            point,
-            normal: self.normal,
-            velocity: self.velocity,
-            angular_velocity: ColumnVector3::zero(),
-        }
+        Contact::new(agl, point, self.normal).with_motion(self.velocity, ColumnVector3::zero())
     }
 
     fn set_ellipse(&mut self, semimajor: f64, semiminor: f64) {

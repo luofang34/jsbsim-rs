@@ -12,6 +12,7 @@ use crate::xml::Location;
 
 /// Error raised while loading or evaluating a table, function or condition.
 #[derive(Debug, Clone, PartialEq, Eq, Error)]
+#[non_exhaustive]
 pub enum FunctionError {
     /// An operation has the wrong number of arguments.
     #[error("{at}: <{element}> {message}")]

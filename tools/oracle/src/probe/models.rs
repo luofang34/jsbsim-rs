@@ -3,10 +3,10 @@
 //! aircraft that needs a construct the port does not cover yet prints
 //! `unsupported <construct> (<where>)` instead of its properties.
 
+use jsbsim::Fdm;
 use jsbsim::FileResolver;
-use jsbsim::c_numeric::format_g;
-use jsbsim::fdm::Fdm;
-use jsbsim::properties::{NodeId, ValueType};
+use jsbsim::oracle_support::c_numeric::format_g;
+use jsbsim::oracle_support::properties::{NodeId, ValueType};
 
 use super::ProbeContext;
 

@@ -75,7 +75,6 @@ fn the_default_callback_is_flat_terrain_at_the_elevation() {
     assert_eq!(contact.angular_velocity, ColumnVector3::zero());
     let mut flat = DefaultGroundCallback::new(inertial.a, inertial.b);
     flat.set_terrain_elevation(250.0);
-    assert_eq!(flat.terrain_elevation(), 250.0);
     assert_eq!(bits(&flat.ag_level(5.0, &location)), bits(&contact));
 }
 

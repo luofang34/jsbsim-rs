@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
+use super::contact::{BrakeGroup, DampType, SteerType};
 use super::*;
 use crate::fdm::Fdm;
 use crate::math::{E_X, E_Z};

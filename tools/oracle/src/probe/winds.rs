@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 //! Winds probe; twin of `tools/oracle/cpp/probe_winds.cpp`.
 
-use jsbsim::c_numeric::format_g;
-use jsbsim::fdm::Fdm;
+use jsbsim::Fdm;
 use jsbsim::math::{ColumnVector3, Matrix33};
+use jsbsim::oracle_support::c_numeric::format_g;
 
 const PROPERTIES: [&str; 24] = [
     "atmosphere/psiw-rad",

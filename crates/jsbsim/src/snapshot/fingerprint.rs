@@ -16,6 +16,7 @@ use crate::{Error, Resolver};
 
 /// The identity of a loaded model that a snapshot must match to restore.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[non_exhaustive]
 pub struct Fingerprint {
     /// SHA-256 over every document the loads resolved, in load order,
     /// each as its length (`u64`, little-endian) and bytes.

@@ -8,8 +8,8 @@
 
 use std::path::Path;
 
+use jsbsim::Fdm;
 use jsbsim::FileResolver;
-use jsbsim::fdm::Fdm;
 
 use crate::port_script::Stop;
 

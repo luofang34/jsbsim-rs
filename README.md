@@ -23,10 +23,13 @@ cargo test --workspace --all-targets
 scripts/ci.sh            # every local CI gate, in order
 ```
 
-`scripts/ci.sh` runs `cargo fmt --check`, Clippy with `-D warnings`, the tests,
-`cargo doc` with `-D missing_docs -D broken_intra_doc_links`, a release build,
-the `wasm32-unknown-unknown` build of `jsbsim`, and the structural checks in
-`scripts/check-*.sh`.
+`scripts/ci.sh` runs `cargo fmt --check`, Clippy with `-D warnings`, the tests
+and doc tests, `cargo doc` with `-D missing_docs -D broken_intra_doc_links`, a
+release build, the `wasm32-unknown-unknown` build of `jsbsim`, and the checks in
+`scripts/check-*.sh`. One of them, `scripts/check-public-api.sh`, compares the
+public API of `jsbsim` with `crates/jsbsim/public-api.txt` and needs
+`cargo install --locked cargo-public-api@0.52.0`; after an intended API change,
+`scripts/check-public-api.sh --bless` rewrites the listing.
 
 ## Oracle
 

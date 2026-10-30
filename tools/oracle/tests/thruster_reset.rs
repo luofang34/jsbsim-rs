@@ -9,8 +9,8 @@
 
 use std::path::Path;
 
+use jsbsim::Fdm;
 use jsbsim::FileResolver;
-use jsbsim::fdm::Fdm;
 
 #[cfg(test)]
 const STATE: [&str; 12] = [

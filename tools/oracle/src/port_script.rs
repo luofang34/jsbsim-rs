@@ -5,7 +5,7 @@
 
 use std::path::Path;
 
-use jsbsim::fdm::Fdm;
+use jsbsim::Fdm;
 use jsbsim::{FileResolver, LoadOptions};
 
 use crate::manifest::ScriptSpec;

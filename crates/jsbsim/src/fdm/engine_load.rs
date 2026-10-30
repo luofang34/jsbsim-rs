@@ -32,12 +32,6 @@ impl EngineLoad<'_> {
         self.number
     }
 
-    /// The `<engine>` element (with any engine file merged into it).
-    #[must_use]
-    pub fn parent(&self) -> &Element {
-        self.parent
-    }
-
     /// Functions, tables and ties, for what the type itself loads.
     pub fn context(&mut self) -> LoadContext<'_> {
         let options = self.fdm.options;
@@ -76,11 +70,6 @@ impl EngineLoad<'_> {
     /// The engine's base, once [`EngineLoad::load_base`] has loaded it.
     pub fn base_mut(&mut self) -> Option<&mut EngineBase> {
         self.loaded.as_mut().map(|(base, _)| base)
-    }
-
-    /// The engine's thruster, once [`EngineLoad::load_base`] has loaded it.
-    pub fn thruster_mut(&mut self) -> Option<&mut Thruster> {
-        self.loaded.as_mut().map(|(_, thruster)| thruster)
     }
 
     /// `FGEngine::Load(exec, el)` for the type's element `el`: the engine's

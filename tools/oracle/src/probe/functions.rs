@@ -3,10 +3,10 @@
 
 use std::collections::BTreeSet;
 
-use jsbsim::c_numeric::format_g;
-use jsbsim::functions::{Evaluator, FnId, FunctionSet};
-use jsbsim::properties::{Attribute, PropertyTree};
-use jsbsim::xml::{Element, parse_document};
+use jsbsim::oracle_support::c_numeric::format_g;
+use jsbsim::oracle_support::functions::{Evaluator, FnId, FunctionSet};
+use jsbsim::oracle_support::properties::{Attribute, PropertyTree};
+use jsbsim::oracle_support::xml::{Element, parse_document};
 
 use super::ProbeContext;
 

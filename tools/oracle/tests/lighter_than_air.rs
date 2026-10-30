@@ -6,8 +6,8 @@
 
 use std::path::{Path, PathBuf};
 
+use jsbsim::Fdm;
 use jsbsim::FileResolver;
-use jsbsim::fdm::Fdm;
 
 /// `mol2lbs`: the weight of one mole of hydrogen, lbs.
 #[cfg(test)]

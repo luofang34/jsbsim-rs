@@ -11,6 +11,7 @@ use crate::math::{ColumnVector3, Location};
 /// What a ground callback reports about the terrain under a location
 /// (the out-parameters and the return value of `GetAGLevel`).
 #[derive(Debug, Clone, Copy)]
+#[non_exhaustive]
 pub struct Contact {
     /// Height of the location above the terrain, ft.
     pub agl: f64,
@@ -27,12 +28,39 @@ pub struct Contact {
     pub angular_velocity: ColumnVector3,
 }
 
+impl Contact {
+    /// A contact with stationary terrain: `agl` ft above `point`, whose
+    /// surface has the ECEF `normal`.
+    #[must_use]
+    pub const fn new(agl: f64, point: Location, normal: ColumnVector3) -> Self {
+        Self {
+            agl,
+            point,
+            normal,
+            velocity: ColumnVector3::zero(),
+            angular_velocity: ColumnVector3::zero(),
+        }
+    }
+
+    /// This contact on a moving surface: [`velocity`](Self::velocity) and
+    /// [`angular_velocity`](Self::angular_velocity) replaced.
+    #[must_use]
+    pub const fn with_motion(
+        mut self,
+        velocity: ColumnVector3,
+        angular_velocity: ColumnVector3,
+    ) -> Self {
+        self.velocity = velocity;
+        self.angular_velocity = angular_velocity;
+        self
+    }
+}
+
 /// `FGGroundCallback`: the terrain the vehicle's contacts and the
 /// altitude above ground are measured against.
 ///
-/// Install one with [`Fdm::set_ground_callback`](crate::fdm::Fdm::set_ground_callback);
-/// the [`Inertial`](super::Inertial) model owns it and queries it with the
-/// simulation time it was last given.
+/// Install one with [`Fdm::set_ground_callback`](crate::Fdm::set_ground_callback);
+/// the executive owns it and queries it with the current simulation time.
 ///
 /// # Contract
 ///
@@ -62,8 +90,8 @@ pub struct Contact {
 ///
 /// The location queried may have no ellipse (gear positions come from
 /// `LocalToLocation`), so a callback should read only its ECEF
-/// coordinates, or copy it and set the ellipse first as
-/// [`DefaultGroundCallback`] does.
+/// coordinates, or copy it and set the ellipse first as the default
+/// callback, terrain at a uniform height, does.
 pub trait GroundCallback: Send {
     /// `GetAGLevel(t, location, contact, normal, v, w)`: the terrain under
     /// `location` at simulation time `time`, s.
@@ -100,12 +128,6 @@ impl DefaultGroundCallback {
             terrain_elevation: 0.0,
         }
     }
-
-    /// The terrain's height above the ellipsoid, ft.
-    #[must_use]
-    pub fn terrain_elevation(&self) -> f64 {
-        self.terrain_elevation
-    }
 }
 
 impl GroundCallback for DefaultGroundCallback {
@@ -121,13 +143,7 @@ impl GroundCallback for DefaultGroundCallback {
         let mut point = Location::default();
         point.set_ellipse(self.a, self.b);
         point.set_position_geodetic(longitude, latitude, self.terrain_elevation);
-        Contact {
-            agl: l.geod_altitude() - self.terrain_elevation,
-            point,
-            normal,
-            velocity: ColumnVector3::zero(),
-            angular_velocity: ColumnVector3::zero(),
-        }
+        Contact::new(l.geod_altitude() - self.terrain_elevation, point, normal)
     }
 
     fn set_terrain_elevation(&mut self, elevation: f64) {

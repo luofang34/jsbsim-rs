@@ -18,12 +18,9 @@ mod reporting;
 #[cfg(test)]
 mod tests;
 
-pub use contact::{
-    BrakeGroup, Contact, ContactState, ContactType, DampType, Friction, SteerType, Steering, Strut,
-};
-pub use contact_bind::indexed_name;
-pub use force::{ContactForce, FrictionType, Multipliers, Reporting};
-pub use frame::{Compressed, FrameContext};
+pub use contact::{Contact, ContactType};
+pub use force::FrictionType;
+pub use frame::FrameContext;
 
 use super::accelerations::LagrangeMultiplier;
 use super::base::ModelBase;

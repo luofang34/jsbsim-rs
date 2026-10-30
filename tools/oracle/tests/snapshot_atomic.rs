@@ -15,8 +15,8 @@
 
 use std::path::{Path, PathBuf};
 
-use jsbsim::fdm::Fdm;
-use jsbsim::properties::PropertyTree;
+use jsbsim::Fdm;
+use jsbsim::oracle_support::properties::PropertyTree;
 use jsbsim::snapshot::{HEADER_LEN, Snapshot, SnapshotError};
 use jsbsim::{Error, FileResolver};
 

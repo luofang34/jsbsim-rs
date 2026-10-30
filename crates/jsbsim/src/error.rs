@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
-//! Error type shared by the whole crate.
+//! Error type shared by the whole crate, and the errors it wraps.
 
 use thiserror::Error as ThisError;
 
-use crate::functions::FunctionError;
-use crate::properties::PathError;
-use crate::xml::XmlError;
+pub use crate::functions::FunctionError;
+pub use crate::properties::PathError;
+pub use crate::xml::{Location as SourceLocation, XmlError};
 
 /// Errors produced while loading or running a simulation.
 #[derive(Debug, ThisError, Clone, PartialEq)]
+#[non_exhaustive]
 pub enum Error {
     /// The resolver has no resource at the requested path.
     #[error("resource not found: {path}")]

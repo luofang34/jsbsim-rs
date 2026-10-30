@@ -5,9 +5,9 @@
 //! where the planet's surface crosses latitude 0 and longitude 0 (local
 //! north is +z, east +y, up +x); see that file for what each does.
 
-use jsbsim::fdm::Fdm;
+use jsbsim::Fdm;
 use jsbsim::math::{ColumnVector3, Location, dot_product};
-use jsbsim::models::inertial::{Contact, GroundCallback};
+use jsbsim::{Contact, GroundCallback};
 
 use crate::OracleError;
 
@@ -95,13 +95,7 @@ impl GroundCallback for OracleGround {
         let mut contact = Location::from_ecef(point);
         contact.set_ellipse(self.a, self.b);
         contact.cache_derived();
-        Contact {
-            agl,
-            point: contact,
-            normal: n,
-            velocity: vel,
-            angular_velocity: omega,
-        }
+        Contact::new(agl, contact, n).with_motion(vel, omega)
     }
 }
 

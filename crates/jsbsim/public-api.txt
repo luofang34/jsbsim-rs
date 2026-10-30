@@ -1,0 +1,974 @@
+pub mod jsbsim
+pub mod jsbsim::error
+#[non_exhaustive] pub enum jsbsim::error::Error
+pub jsbsim::error::Error::Function(jsbsim::error::FunctionError)
+pub jsbsim::error::Error::Geographic
+pub jsbsim::error::Error::Geographic::message: alloc::string::String
+pub jsbsim::error::Error::Model
+pub jsbsim::error::Error::Model::message: alloc::string::String
+pub jsbsim::error::Error::PropertyPath(jsbsim::error::PathError)
+pub jsbsim::error::Error::ResourceNotFound
+pub jsbsim::error::Error::ResourceNotFound::path: alloc::string::String
+pub jsbsim::error::Error::Snapshot(jsbsim::snapshot::SnapshotError)
+pub jsbsim::error::Error::TrimFailed
+pub jsbsim::error::Error::TrimFailed::message: alloc::string::String
+pub jsbsim::error::Error::UnknownInputType
+pub jsbsim::error::Error::UnknownInputType::kind: alloc::string::String
+pub jsbsim::error::Error::UnknownInputType::path: alloc::string::String
+pub jsbsim::error::Error::Unsupported
+pub jsbsim::error::Error::Unsupported::construct: alloc::string::String
+pub jsbsim::error::Error::Unsupported::path: alloc::string::String
+pub jsbsim::error::Error::Xml(jsbsim::error::XmlError)
+impl core::clone::Clone for jsbsim::error::Error
+pub fn jsbsim::error::Error::clone(&self) -> jsbsim::error::Error
+impl core::cmp::PartialEq for jsbsim::error::Error
+pub fn jsbsim::error::Error::eq(&self, &jsbsim::error::Error) -> bool
+impl core::convert::From<jsbsim::error::FunctionError> for jsbsim::error::Error
+pub fn jsbsim::error::Error::from(jsbsim::error::FunctionError) -> Self
+impl core::convert::From<jsbsim::error::PathError> for jsbsim::error::Error
+pub fn jsbsim::error::Error::from(jsbsim::error::PathError) -> Self
+impl core::convert::From<jsbsim::error::XmlError> for jsbsim::error::Error
+pub fn jsbsim::error::Error::from(jsbsim::error::XmlError) -> Self
+impl core::convert::From<jsbsim::snapshot::SnapshotError> for jsbsim::error::Error
+pub fn jsbsim::error::Error::from(jsbsim::snapshot::SnapshotError) -> Self
+impl core::error::Error for jsbsim::error::Error
+pub fn jsbsim::error::Error::source(&self) -> core::option::Option<&(dyn core::error::Error + 'static)>
+impl core::fmt::Debug for jsbsim::error::Error
+pub fn jsbsim::error::Error::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for jsbsim::error::Error
+pub fn jsbsim::error::Error::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for jsbsim::error::Error
+impl core::marker::Freeze for jsbsim::error::Error
+impl core::marker::Send for jsbsim::error::Error
+impl core::marker::Sync for jsbsim::error::Error
+impl core::marker::Unpin for jsbsim::error::Error
+impl core::marker::UnsafeUnpin for jsbsim::error::Error
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::error::Error
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::error::Error
+#[non_exhaustive] pub enum jsbsim::error::FunctionError
+pub jsbsim::error::FunctionError::AlreadyBound
+pub jsbsim::error::FunctionError::AlreadyBound::at: jsbsim::error::SourceLocation
+pub jsbsim::error::FunctionError::AlreadyBound::property: alloc::string::String
+pub jsbsim::error::FunctionError::Arguments
+pub jsbsim::error::FunctionError::Arguments::at: jsbsim::error::SourceLocation
+pub jsbsim::error::FunctionError::Arguments::element: alloc::string::String
+pub jsbsim::error::FunctionError::Arguments::message: alloc::string::String
+pub jsbsim::error::FunctionError::Attribute
+pub jsbsim::error::FunctionError::Attribute::at: jsbsim::error::SourceLocation
+pub jsbsim::error::FunctionError::Attribute::message: alloc::string::String
+pub jsbsim::error::FunctionError::Condition
+pub jsbsim::error::FunctionError::Condition::at: jsbsim::error::SourceLocation
+pub jsbsim::error::FunctionError::Condition::message: alloc::string::String
+pub jsbsim::error::FunctionError::IllegalHash
+pub jsbsim::error::FunctionError::IllegalHash::at: jsbsim::error::SourceLocation
+pub jsbsim::error::FunctionError::Index
+pub jsbsim::error::FunctionError::Index::at: jsbsim::error::SourceLocation
+pub jsbsim::error::FunctionError::Index::message: alloc::string::String
+pub jsbsim::error::FunctionError::InternalTableInFunction
+pub jsbsim::error::FunctionError::InternalTableInFunction::at: jsbsim::error::SourceLocation
+pub jsbsim::error::FunctionError::MissingProperty
+pub jsbsim::error::FunctionError::MissingProperty::at: jsbsim::error::SourceLocation
+pub jsbsim::error::FunctionError::MissingProperty::property: alloc::string::String
+pub jsbsim::error::FunctionError::ModByZero
+pub jsbsim::error::FunctionError::ModByZero::at: jsbsim::error::SourceLocation
+pub jsbsim::error::FunctionError::NotBinary
+pub jsbsim::error::FunctionError::NotBinary::at: jsbsim::error::SourceLocation
+pub jsbsim::error::FunctionError::Recursion
+pub jsbsim::error::FunctionError::Recursion::property: alloc::string::String
+pub jsbsim::error::FunctionError::Strict
+pub jsbsim::error::FunctionError::Strict::at: jsbsim::error::SourceLocation
+pub jsbsim::error::FunctionError::Strict::message: alloc::string::String
+pub jsbsim::error::FunctionError::Table
+pub jsbsim::error::FunctionError::Table::at: jsbsim::error::SourceLocation
+pub jsbsim::error::FunctionError::Table::message: alloc::string::String
+pub jsbsim::error::FunctionError::UnboundTemplateParameter
+pub jsbsim::error::FunctionError::UnboundTemplateParameter::at: jsbsim::error::SourceLocation
+pub jsbsim::error::FunctionError::UnknownId
+pub jsbsim::error::FunctionError::UnknownId::id: usize
+pub jsbsim::error::FunctionError::UnknownId::what: &'static str
+impl core::clone::Clone for jsbsim::error::FunctionError
+pub fn jsbsim::error::FunctionError::clone(&self) -> jsbsim::error::FunctionError
+impl core::cmp::Eq for jsbsim::error::FunctionError
+impl core::cmp::PartialEq for jsbsim::error::FunctionError
+pub fn jsbsim::error::FunctionError::eq(&self, &jsbsim::error::FunctionError) -> bool
+impl core::convert::From<jsbsim::error::FunctionError> for jsbsim::error::Error
+pub fn jsbsim::error::Error::from(jsbsim::error::FunctionError) -> Self
+impl core::error::Error for jsbsim::error::FunctionError
+impl core::fmt::Debug for jsbsim::error::FunctionError
+pub fn jsbsim::error::FunctionError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for jsbsim::error::FunctionError
+pub fn jsbsim::error::FunctionError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for jsbsim::error::FunctionError
+impl core::marker::Freeze for jsbsim::error::FunctionError
+impl core::marker::Send for jsbsim::error::FunctionError
+impl core::marker::Sync for jsbsim::error::FunctionError
+impl core::marker::Unpin for jsbsim::error::FunctionError
+impl core::marker::UnsafeUnpin for jsbsim::error::FunctionError
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::error::FunctionError
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::error::FunctionError
+#[non_exhaustive] pub enum jsbsim::error::XmlError
+pub jsbsim::error::XmlError::Encoding
+pub jsbsim::error::XmlError::Encoding::encoding: alloc::string::String
+pub jsbsim::error::XmlError::Encoding::file: alloc::string::String
+pub jsbsim::error::XmlError::IncludeNotFound
+pub jsbsim::error::XmlError::IncludeNotFound::at: jsbsim::error::SourceLocation
+pub jsbsim::error::XmlError::IncludeNotFound::file: alloc::string::String
+pub jsbsim::error::XmlError::Inconvertible
+pub jsbsim::error::XmlError::Inconvertible::at: jsbsim::error::SourceLocation
+pub jsbsim::error::XmlError::Inconvertible::from: alloc::string::String
+pub jsbsim::error::XmlError::Inconvertible::to: alloc::string::String
+pub jsbsim::error::XmlError::InvalidNumber
+pub jsbsim::error::XmlError::InvalidNumber::at: jsbsim::error::SourceLocation
+pub jsbsim::error::XmlError::InvalidNumber::element: alloc::string::String
+pub jsbsim::error::XmlError::InvalidNumber::message: alloc::string::String
+pub jsbsim::error::XmlError::Malformed
+pub jsbsim::error::XmlError::Malformed::column: u32
+pub jsbsim::error::XmlError::Malformed::file: alloc::string::String
+pub jsbsim::error::XmlError::Malformed::line: u32
+pub jsbsim::error::XmlError::Malformed::message: alloc::string::String
+pub jsbsim::error::XmlError::MissingAttribute
+pub jsbsim::error::XmlError::MissingAttribute::at: jsbsim::error::SourceLocation
+pub jsbsim::error::XmlError::MissingAttribute::attribute: alloc::string::String
+pub jsbsim::error::XmlError::MissingAttribute::element: alloc::string::String
+pub jsbsim::error::XmlError::MissingElement
+pub jsbsim::error::XmlError::MissingElement::at: jsbsim::error::SourceLocation
+pub jsbsim::error::XmlError::MissingElement::name: alloc::string::String
+pub jsbsim::error::XmlError::MissingElement::parent: alloc::string::String
+pub jsbsim::error::XmlError::MultipleLines
+pub jsbsim::error::XmlError::MultipleLines::at: jsbsim::error::SourceLocation
+pub jsbsim::error::XmlError::MultipleLines::element: alloc::string::String
+pub jsbsim::error::XmlError::MultipleLines::lines: usize
+pub jsbsim::error::XmlError::NoData
+pub jsbsim::error::XmlError::NoData::at: jsbsim::error::SourceLocation
+pub jsbsim::error::XmlError::NoData::element: alloc::string::String
+pub jsbsim::error::XmlError::UnknownUnit
+pub jsbsim::error::XmlError::UnknownUnit::at: jsbsim::error::SourceLocation
+pub jsbsim::error::XmlError::UnknownUnit::unit: alloc::string::String
+impl core::clone::Clone for jsbsim::error::XmlError
+pub fn jsbsim::error::XmlError::clone(&self) -> jsbsim::error::XmlError
+impl core::cmp::Eq for jsbsim::error::XmlError
+impl core::cmp::PartialEq for jsbsim::error::XmlError
+pub fn jsbsim::error::XmlError::eq(&self, &jsbsim::error::XmlError) -> bool
+impl core::convert::From<jsbsim::error::XmlError> for jsbsim::error::Error
+pub fn jsbsim::error::Error::from(jsbsim::error::XmlError) -> Self
+impl core::error::Error for jsbsim::error::XmlError
+impl core::fmt::Debug for jsbsim::error::XmlError
+pub fn jsbsim::error::XmlError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for jsbsim::error::XmlError
+pub fn jsbsim::error::XmlError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for jsbsim::error::XmlError
+impl core::marker::Freeze for jsbsim::error::XmlError
+impl core::marker::Send for jsbsim::error::XmlError
+impl core::marker::Sync for jsbsim::error::XmlError
+impl core::marker::Unpin for jsbsim::error::XmlError
+impl core::marker::UnsafeUnpin for jsbsim::error::XmlError
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::error::XmlError
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::error::XmlError
+#[non_exhaustive] pub struct jsbsim::error::PathError
+pub jsbsim::error::PathError::message: alloc::string::String
+impl core::clone::Clone for jsbsim::error::PathError
+pub fn jsbsim::error::PathError::clone(&self) -> jsbsim::error::PathError
+impl core::cmp::Eq for jsbsim::error::PathError
+impl core::cmp::PartialEq for jsbsim::error::PathError
+pub fn jsbsim::error::PathError::eq(&self, &jsbsim::error::PathError) -> bool
+impl core::convert::From<jsbsim::error::PathError> for jsbsim::error::Error
+pub fn jsbsim::error::Error::from(jsbsim::error::PathError) -> Self
+impl core::error::Error for jsbsim::error::PathError
+impl core::fmt::Debug for jsbsim::error::PathError
+pub fn jsbsim::error::PathError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for jsbsim::error::PathError
+pub fn jsbsim::error::PathError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for jsbsim::error::PathError
+impl core::marker::Freeze for jsbsim::error::PathError
+impl core::marker::Send for jsbsim::error::PathError
+impl core::marker::Sync for jsbsim::error::PathError
+impl core::marker::Unpin for jsbsim::error::PathError
+impl core::marker::UnsafeUnpin for jsbsim::error::PathError
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::error::PathError
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::error::PathError
+#[non_exhaustive] pub struct jsbsim::error::SourceLocation
+pub jsbsim::error::SourceLocation::file: alloc::string::String
+pub jsbsim::error::SourceLocation::line: u32
+impl core::clone::Clone for jsbsim::error::SourceLocation
+pub fn jsbsim::error::SourceLocation::clone(&self) -> jsbsim::error::SourceLocation
+impl core::cmp::Eq for jsbsim::error::SourceLocation
+impl core::cmp::PartialEq for jsbsim::error::SourceLocation
+pub fn jsbsim::error::SourceLocation::eq(&self, &jsbsim::error::SourceLocation) -> bool
+impl core::default::Default for jsbsim::error::SourceLocation
+pub fn jsbsim::error::SourceLocation::default() -> jsbsim::error::SourceLocation
+impl core::fmt::Debug for jsbsim::error::SourceLocation
+pub fn jsbsim::error::SourceLocation::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for jsbsim::error::SourceLocation
+pub fn jsbsim::error::SourceLocation::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for jsbsim::error::SourceLocation
+impl core::marker::Freeze for jsbsim::error::SourceLocation
+impl core::marker::Send for jsbsim::error::SourceLocation
+impl core::marker::Sync for jsbsim::error::SourceLocation
+impl core::marker::Unpin for jsbsim::error::SourceLocation
+impl core::marker::UnsafeUnpin for jsbsim::error::SourceLocation
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::error::SourceLocation
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::error::SourceLocation
+pub mod jsbsim::math
+pub enum jsbsim::math::Axis
+pub jsbsim::math::Axis::X
+pub jsbsim::math::Axis::Y
+pub jsbsim::math::Axis::Z
+impl jsbsim::math::Axis
+pub const jsbsim::math::Axis::ALL: [Self; 3]
+pub const fn jsbsim::math::Axis::from_index1(usize) -> core::option::Option<Self>
+pub const fn jsbsim::math::Axis::index1(self) -> usize
+impl core::clone::Clone for jsbsim::math::Axis
+pub fn jsbsim::math::Axis::clone(&self) -> jsbsim::math::Axis
+impl core::cmp::Eq for jsbsim::math::Axis
+impl core::cmp::Ord for jsbsim::math::Axis
+pub fn jsbsim::math::Axis::cmp(&self, &jsbsim::math::Axis) -> core::cmp::Ordering
+impl core::cmp::PartialEq for jsbsim::math::Axis
+pub fn jsbsim::math::Axis::eq(&self, &jsbsim::math::Axis) -> bool
+impl core::cmp::PartialOrd for jsbsim::math::Axis
+pub fn jsbsim::math::Axis::partial_cmp(&self, &jsbsim::math::Axis) -> core::option::Option<core::cmp::Ordering>
+impl core::fmt::Debug for jsbsim::math::Axis
+pub fn jsbsim::math::Axis::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for jsbsim::math::Axis
+pub fn jsbsim::math::Axis::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for jsbsim::math::Axis
+impl core::marker::StructuralPartialEq for jsbsim::math::Axis
+impl core::ops::index::Index<jsbsim::math::Axis> for jsbsim::math::ColumnVector3
+pub type jsbsim::math::ColumnVector3::Output = f64
+pub fn jsbsim::math::ColumnVector3::index(&self, jsbsim::math::Axis) -> &f64
+impl core::ops::index::IndexMut<jsbsim::math::Axis> for jsbsim::math::ColumnVector3
+pub fn jsbsim::math::ColumnVector3::index_mut(&mut self, jsbsim::math::Axis) -> &mut f64
+impl core::marker::Freeze for jsbsim::math::Axis
+impl core::marker::Send for jsbsim::math::Axis
+impl core::marker::Sync for jsbsim::math::Axis
+impl core::marker::Unpin for jsbsim::math::Axis
+impl core::marker::UnsafeUnpin for jsbsim::math::Axis
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::math::Axis
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::math::Axis
+pub struct jsbsim::math::ColumnVector3
+impl jsbsim::math::ColumnVector3
+pub fn jsbsim::math::ColumnVector3::cross(self, Self) -> Self
+pub fn jsbsim::math::ColumnVector3::magnitude(&self) -> f64
+pub fn jsbsim::math::ColumnVector3::magnitude2(&self, jsbsim::math::Axis, jsbsim::math::Axis) -> f64
+pub const fn jsbsim::math::ColumnVector3::new(f64, f64, f64) -> Self
+pub fn jsbsim::math::ColumnVector3::normalize(&mut self) -> &mut Self
+pub fn jsbsim::math::ColumnVector3::set(&mut self, f64, f64, f64)
+pub const fn jsbsim::math::ColumnVector3::to_array(self) -> [f64; 3]
+pub const fn jsbsim::math::ColumnVector3::zero() -> Self
+impl core::clone::Clone for jsbsim::math::ColumnVector3
+pub fn jsbsim::math::ColumnVector3::clone(&self) -> jsbsim::math::ColumnVector3
+impl core::cmp::PartialEq for jsbsim::math::ColumnVector3
+pub fn jsbsim::math::ColumnVector3::eq(&self, &jsbsim::math::ColumnVector3) -> bool
+impl core::default::Default for jsbsim::math::ColumnVector3
+pub fn jsbsim::math::ColumnVector3::default() -> jsbsim::math::ColumnVector3
+impl core::fmt::Debug for jsbsim::math::ColumnVector3
+pub fn jsbsim::math::ColumnVector3::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for jsbsim::math::ColumnVector3
+impl core::marker::StructuralPartialEq for jsbsim::math::ColumnVector3
+impl core::ops::arith::Add for jsbsim::math::ColumnVector3
+pub type jsbsim::math::ColumnVector3::Output = jsbsim::math::ColumnVector3
+pub fn jsbsim::math::ColumnVector3::add(self, Self) -> Self
+impl core::ops::arith::AddAssign for jsbsim::math::ColumnVector3
+pub fn jsbsim::math::ColumnVector3::add_assign(&mut self, Self)
+impl core::ops::arith::Div<f64> for jsbsim::math::ColumnVector3
+pub type jsbsim::math::ColumnVector3::Output = jsbsim::math::ColumnVector3
+pub fn jsbsim::math::ColumnVector3::div(self, f64) -> Self
+impl core::ops::arith::DivAssign<f64> for jsbsim::math::ColumnVector3
+pub fn jsbsim::math::ColumnVector3::div_assign(&mut self, f64)
+impl core::ops::arith::Mul<f64> for jsbsim::math::ColumnVector3
+pub type jsbsim::math::ColumnVector3::Output = jsbsim::math::ColumnVector3
+pub fn jsbsim::math::ColumnVector3::mul(self, f64) -> Self
+impl core::ops::arith::Mul<jsbsim::math::ColumnVector3> for f64
+pub type f64::Output = jsbsim::math::ColumnVector3
+pub fn f64::mul(self, jsbsim::math::ColumnVector3) -> jsbsim::math::ColumnVector3
+impl core::ops::arith::Mul<jsbsim::math::ColumnVector3> for jsbsim::math::Matrix33
+pub type jsbsim::math::Matrix33::Output = jsbsim::math::ColumnVector3
+pub fn jsbsim::math::Matrix33::mul(self, jsbsim::math::ColumnVector3) -> jsbsim::math::ColumnVector3
+impl core::ops::arith::MulAssign<f64> for jsbsim::math::ColumnVector3
+pub fn jsbsim::math::ColumnVector3::mul_assign(&mut self, f64)
+impl core::ops::arith::Neg for jsbsim::math::ColumnVector3
+pub type jsbsim::math::ColumnVector3::Output = jsbsim::math::ColumnVector3
+pub fn jsbsim::math::ColumnVector3::neg(self) -> Self
+impl core::ops::arith::Sub for jsbsim::math::ColumnVector3
+pub type jsbsim::math::ColumnVector3::Output = jsbsim::math::ColumnVector3
+pub fn jsbsim::math::ColumnVector3::sub(self, Self) -> Self
+impl core::ops::arith::SubAssign for jsbsim::math::ColumnVector3
+pub fn jsbsim::math::ColumnVector3::sub_assign(&mut self, Self)
+impl core::ops::index::Index<jsbsim::math::Axis> for jsbsim::math::ColumnVector3
+pub type jsbsim::math::ColumnVector3::Output = f64
+pub fn jsbsim::math::ColumnVector3::index(&self, jsbsim::math::Axis) -> &f64
+impl core::ops::index::IndexMut<jsbsim::math::Axis> for jsbsim::math::ColumnVector3
+pub fn jsbsim::math::ColumnVector3::index_mut(&mut self, jsbsim::math::Axis) -> &mut f64
+impl core::marker::Freeze for jsbsim::math::ColumnVector3
+impl core::marker::Send for jsbsim::math::ColumnVector3
+impl core::marker::Sync for jsbsim::math::ColumnVector3
+impl core::marker::Unpin for jsbsim::math::ColumnVector3
+impl core::marker::UnsafeUnpin for jsbsim::math::ColumnVector3
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::math::ColumnVector3
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::math::ColumnVector3
+pub struct jsbsim::math::Location
+impl jsbsim::math::Location
+pub fn jsbsim::math::Location::add(&self, &Self) -> Self
+pub fn jsbsim::math::Location::add_assign(&mut self, &Self)
+pub fn jsbsim::math::Location::assign_ecef(&mut self, jsbsim::math::ColumnVector3)
+pub fn jsbsim::math::Location::cache_derived(&mut self)
+pub fn jsbsim::math::Location::cos_longitude(&self) -> f64
+pub fn jsbsim::math::Location::distance_to(&self, f64, f64) -> f64
+pub fn jsbsim::math::Location::div_assign(&mut self, f64)
+pub fn jsbsim::math::Location::ecef(&self) -> jsbsim::math::ColumnVector3
+pub fn jsbsim::math::Location::entry(&self, jsbsim::math::Axis) -> f64
+pub fn jsbsim::math::Location::from_ecef(jsbsim::math::ColumnVector3) -> Self
+pub fn jsbsim::math::Location::from_spherical(f64, f64, f64) -> Self
+pub fn jsbsim::math::Location::geod_altitude(&self) -> f64
+pub fn jsbsim::math::Location::geod_latitude_deg(&self) -> f64
+pub fn jsbsim::math::Location::geod_latitude_rad(&self) -> f64
+pub fn jsbsim::math::Location::heading_to(&self, f64, f64) -> f64
+pub fn jsbsim::math::Location::latitude(&self) -> f64
+pub fn jsbsim::math::Location::latitude_deg(&self) -> f64
+pub fn jsbsim::math::Location::local_to_location(&self, jsbsim::math::ColumnVector3) -> Self
+pub fn jsbsim::math::Location::location_to_local(&self, jsbsim::math::ColumnVector3) -> jsbsim::math::ColumnVector3
+pub fn jsbsim::math::Location::longitude(&self) -> f64
+pub fn jsbsim::math::Location::longitude_deg(&self) -> f64
+pub fn jsbsim::math::Location::radius(&self) -> f64
+pub fn jsbsim::math::Location::scale(&self, f64) -> Self
+pub fn jsbsim::math::Location::scale_assign(&mut self, f64)
+pub fn jsbsim::math::Location::sea_level_radius(&self) -> f64
+pub fn jsbsim::math::Location::set_ellipse(&mut self, f64, f64)
+pub fn jsbsim::math::Location::set_entry(&mut self, jsbsim::math::Axis, f64)
+pub fn jsbsim::math::Location::set_latitude(&mut self, f64)
+pub fn jsbsim::math::Location::set_longitude(&mut self, f64)
+pub fn jsbsim::math::Location::set_position(&mut self, f64, f64, f64)
+pub fn jsbsim::math::Location::set_position_geodetic(&mut self, f64, f64, f64)
+pub fn jsbsim::math::Location::set_radius(&mut self, f64)
+pub fn jsbsim::math::Location::sin_longitude(&self) -> f64
+pub fn jsbsim::math::Location::sub(&self, &Self) -> Self
+pub fn jsbsim::math::Location::sub_assign(&mut self, &Self)
+pub fn jsbsim::math::Location::tec2l(&self) -> jsbsim::math::Matrix33
+pub fn jsbsim::math::Location::tl2ec(&self) -> jsbsim::math::Matrix33
+impl core::clone::Clone for jsbsim::math::Location
+pub fn jsbsim::math::Location::clone(&self) -> jsbsim::math::Location
+impl core::cmp::PartialEq for jsbsim::math::Location
+pub fn jsbsim::math::Location::eq(&self, &Self) -> bool
+impl core::default::Default for jsbsim::math::Location
+pub fn jsbsim::math::Location::default() -> Self
+impl core::fmt::Debug for jsbsim::math::Location
+pub fn jsbsim::math::Location::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for jsbsim::math::Location
+impl core::marker::Freeze for jsbsim::math::Location
+impl core::marker::Send for jsbsim::math::Location
+impl core::marker::Sync for jsbsim::math::Location
+impl core::marker::Unpin for jsbsim::math::Location
+impl core::marker::UnsafeUnpin for jsbsim::math::Location
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::math::Location
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::math::Location
+pub struct jsbsim::math::Matrix33
+impl jsbsim::math::Matrix33
+pub fn jsbsim::math::Matrix33::determinant(&self) -> f64
+pub fn jsbsim::math::Matrix33::euler(&self) -> jsbsim::math::ColumnVector3
+pub fn jsbsim::math::Matrix33::inverse(&self) -> Self
+pub fn jsbsim::math::Matrix33::invertible(&self) -> bool
+pub const fn jsbsim::math::Matrix33::new(f64, f64, f64, f64, f64, f64, f64, f64, f64) -> Self
+pub fn jsbsim::math::Matrix33::quaternion(&self) -> jsbsim::math::Quaternion
+pub fn jsbsim::math::Matrix33::transpose(&mut self)
+pub fn jsbsim::math::Matrix33::transposed(&self) -> Self
+pub const fn jsbsim::math::Matrix33::zero() -> Self
+impl core::clone::Clone for jsbsim::math::Matrix33
+pub fn jsbsim::math::Matrix33::clone(&self) -> jsbsim::math::Matrix33
+impl core::cmp::PartialEq for jsbsim::math::Matrix33
+pub fn jsbsim::math::Matrix33::eq(&self, &jsbsim::math::Matrix33) -> bool
+impl core::default::Default for jsbsim::math::Matrix33
+pub fn jsbsim::math::Matrix33::default() -> jsbsim::math::Matrix33
+impl core::fmt::Debug for jsbsim::math::Matrix33
+pub fn jsbsim::math::Matrix33::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for jsbsim::math::Matrix33
+impl core::marker::StructuralPartialEq for jsbsim::math::Matrix33
+impl core::ops::arith::Add for jsbsim::math::Matrix33
+pub type jsbsim::math::Matrix33::Output = jsbsim::math::Matrix33
+pub fn jsbsim::math::Matrix33::add(self, Self) -> Self
+impl core::ops::arith::AddAssign for jsbsim::math::Matrix33
+pub fn jsbsim::math::Matrix33::add_assign(&mut self, Self)
+impl core::ops::arith::Div<f64> for jsbsim::math::Matrix33
+pub type jsbsim::math::Matrix33::Output = jsbsim::math::Matrix33
+pub fn jsbsim::math::Matrix33::div(self, f64) -> Self
+impl core::ops::arith::DivAssign<f64> for jsbsim::math::Matrix33
+pub fn jsbsim::math::Matrix33::div_assign(&mut self, f64)
+impl core::ops::arith::Mul for jsbsim::math::Matrix33
+pub type jsbsim::math::Matrix33::Output = jsbsim::math::Matrix33
+pub fn jsbsim::math::Matrix33::mul(self, Self) -> Self
+impl core::ops::arith::Mul<f64> for jsbsim::math::Matrix33
+pub type jsbsim::math::Matrix33::Output = jsbsim::math::Matrix33
+pub fn jsbsim::math::Matrix33::mul(self, f64) -> Self
+impl core::ops::arith::Mul<jsbsim::math::ColumnVector3> for jsbsim::math::Matrix33
+pub type jsbsim::math::Matrix33::Output = jsbsim::math::ColumnVector3
+pub fn jsbsim::math::Matrix33::mul(self, jsbsim::math::ColumnVector3) -> jsbsim::math::ColumnVector3
+impl core::ops::arith::Mul<jsbsim::math::Matrix33> for f64
+pub type f64::Output = jsbsim::math::Matrix33
+pub fn f64::mul(self, jsbsim::math::Matrix33) -> jsbsim::math::Matrix33
+impl core::ops::arith::MulAssign for jsbsim::math::Matrix33
+pub fn jsbsim::math::Matrix33::mul_assign(&mut self, Self)
+impl core::ops::arith::MulAssign<f64> for jsbsim::math::Matrix33
+pub fn jsbsim::math::Matrix33::mul_assign(&mut self, f64)
+impl core::ops::arith::Sub for jsbsim::math::Matrix33
+pub type jsbsim::math::Matrix33::Output = jsbsim::math::Matrix33
+pub fn jsbsim::math::Matrix33::sub(self, Self) -> Self
+impl core::ops::arith::SubAssign for jsbsim::math::Matrix33
+pub fn jsbsim::math::Matrix33::sub_assign(&mut self, Self)
+impl core::ops::index::Index<(jsbsim::math::Axis, jsbsim::math::Axis)> for jsbsim::math::Matrix33
+pub type jsbsim::math::Matrix33::Output = f64
+pub fn jsbsim::math::Matrix33::index(&self, (jsbsim::math::Axis, jsbsim::math::Axis)) -> &f64
+impl core::ops::index::IndexMut<(jsbsim::math::Axis, jsbsim::math::Axis)> for jsbsim::math::Matrix33
+pub fn jsbsim::math::Matrix33::index_mut(&mut self, (jsbsim::math::Axis, jsbsim::math::Axis)) -> &mut f64
+impl core::marker::Freeze for jsbsim::math::Matrix33
+impl core::marker::Send for jsbsim::math::Matrix33
+impl core::marker::Sync for jsbsim::math::Matrix33
+impl core::marker::Unpin for jsbsim::math::Matrix33
+impl core::marker::UnsafeUnpin for jsbsim::math::Matrix33
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::math::Matrix33
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::math::Matrix33
+pub struct jsbsim::math::Quaternion
+impl jsbsim::math::Quaternion
+pub fn jsbsim::math::Quaternion::cache_derived(&mut self)
+pub fn jsbsim::math::Quaternion::conjugate(&self) -> Self
+pub fn jsbsim::math::Quaternion::cos_euler(&self, jsbsim::math::Axis) -> f64
+pub fn jsbsim::math::Quaternion::euler(&self) -> jsbsim::math::ColumnVector3
+pub fn jsbsim::math::Quaternion::euler_deg(&self) -> jsbsim::math::ColumnVector3
+pub fn jsbsim::math::Quaternion::exp(jsbsim::math::ColumnVector3) -> Self
+pub fn jsbsim::math::Quaternion::from_angle_axis(f64, jsbsim::math::ColumnVector3) -> Self
+pub fn jsbsim::math::Quaternion::from_axis_index(jsbsim::math::Axis, f64) -> Self
+pub fn jsbsim::math::Quaternion::from_components(f64, f64, f64, f64) -> Self
+pub fn jsbsim::math::Quaternion::from_euler(f64, f64, f64) -> Self
+pub fn jsbsim::math::Quaternion::from_euler_vector(jsbsim::math::ColumnVector3) -> Self
+pub fn jsbsim::math::Quaternion::from_matrix(&jsbsim::math::Matrix33) -> Self
+pub fn jsbsim::math::Quaternion::inverse(&self) -> Self
+pub fn jsbsim::math::Quaternion::magnitude(&self) -> f64
+pub fn jsbsim::math::Quaternion::normalize(&mut self)
+pub fn jsbsim::math::Quaternion::q_dot(&self, jsbsim::math::ColumnVector3) -> Self
+pub fn jsbsim::math::Quaternion::sin_euler(&self, jsbsim::math::Axis) -> f64
+pub fn jsbsim::math::Quaternion::sqr_magnitude(&self) -> f64
+pub fn jsbsim::math::Quaternion::t(&self) -> jsbsim::math::Matrix33
+pub fn jsbsim::math::Quaternion::t_inv(&self) -> jsbsim::math::Matrix33
+pub fn jsbsim::math::Quaternion::to_array(&self) -> [f64; 4]
+pub fn jsbsim::math::Quaternion::zero() -> Self
+impl core::clone::Clone for jsbsim::math::Quaternion
+pub fn jsbsim::math::Quaternion::clone(&self) -> jsbsim::math::Quaternion
+impl core::cmp::PartialEq for jsbsim::math::Quaternion
+pub fn jsbsim::math::Quaternion::eq(&self, &Self) -> bool
+impl core::default::Default for jsbsim::math::Quaternion
+pub fn jsbsim::math::Quaternion::default() -> Self
+impl core::fmt::Debug for jsbsim::math::Quaternion
+pub fn jsbsim::math::Quaternion::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for jsbsim::math::Quaternion
+impl core::ops::arith::Add for &jsbsim::math::Quaternion
+pub type &jsbsim::math::Quaternion::Output = jsbsim::math::Quaternion
+pub fn &jsbsim::math::Quaternion::add(self, Self) -> jsbsim::math::Quaternion
+impl core::ops::arith::AddAssign<&jsbsim::math::Quaternion> for jsbsim::math::Quaternion
+pub fn jsbsim::math::Quaternion::add_assign(&mut self, &jsbsim::math::Quaternion)
+impl core::ops::arith::Mul for &jsbsim::math::Quaternion
+pub type &jsbsim::math::Quaternion::Output = jsbsim::math::Quaternion
+pub fn &jsbsim::math::Quaternion::mul(self, Self) -> jsbsim::math::Quaternion
+impl core::ops::arith::Mul<&jsbsim::math::Quaternion> for f64
+pub type f64::Output = jsbsim::math::Quaternion
+pub fn f64::mul(self, &jsbsim::math::Quaternion) -> jsbsim::math::Quaternion
+impl core::ops::arith::Mul<f64> for &jsbsim::math::Quaternion
+pub type &jsbsim::math::Quaternion::Output = jsbsim::math::Quaternion
+pub fn &jsbsim::math::Quaternion::mul(self, f64) -> jsbsim::math::Quaternion
+impl core::ops::arith::MulAssign<&jsbsim::math::Quaternion> for jsbsim::math::Quaternion
+pub fn jsbsim::math::Quaternion::mul_assign(&mut self, &jsbsim::math::Quaternion)
+impl core::ops::arith::MulAssign<f64> for jsbsim::math::Quaternion
+pub fn jsbsim::math::Quaternion::mul_assign(&mut self, f64)
+impl core::ops::arith::Sub for &jsbsim::math::Quaternion
+pub type &jsbsim::math::Quaternion::Output = jsbsim::math::Quaternion
+pub fn &jsbsim::math::Quaternion::sub(self, Self) -> jsbsim::math::Quaternion
+impl core::ops::arith::SubAssign<&jsbsim::math::Quaternion> for jsbsim::math::Quaternion
+pub fn jsbsim::math::Quaternion::sub_assign(&mut self, &jsbsim::math::Quaternion)
+impl core::marker::Freeze for jsbsim::math::Quaternion
+impl core::marker::Send for jsbsim::math::Quaternion
+impl core::marker::Sync for jsbsim::math::Quaternion
+impl core::marker::Unpin for jsbsim::math::Quaternion
+impl core::marker::UnsafeUnpin for jsbsim::math::Quaternion
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::math::Quaternion
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::math::Quaternion
+pub const jsbsim::math::E_DOWN: jsbsim::math::Axis
+pub const jsbsim::math::E_DRAG: jsbsim::math::Axis
+pub const jsbsim::math::E_EAST: jsbsim::math::Axis
+pub const jsbsim::math::E_L: jsbsim::math::Axis
+pub const jsbsim::math::E_LAT: jsbsim::math::Axis
+pub const jsbsim::math::E_LIFT: jsbsim::math::Axis
+pub const jsbsim::math::E_LONG: jsbsim::math::Axis
+pub const jsbsim::math::E_M: jsbsim::math::Axis
+pub const jsbsim::math::E_N: jsbsim::math::Axis
+pub const jsbsim::math::E_NORTH: jsbsim::math::Axis
+pub const jsbsim::math::E_P: jsbsim::math::Axis
+pub const jsbsim::math::E_PHI: jsbsim::math::Axis
+pub const jsbsim::math::E_PITCH: jsbsim::math::Axis
+pub const jsbsim::math::E_PSI: jsbsim::math::Axis
+pub const jsbsim::math::E_Q: jsbsim::math::Axis
+pub const jsbsim::math::E_R: jsbsim::math::Axis
+pub const jsbsim::math::E_RAD: jsbsim::math::Axis
+pub const jsbsim::math::E_ROLL: jsbsim::math::Axis
+pub const jsbsim::math::E_SIDE: jsbsim::math::Axis
+pub const jsbsim::math::E_THT: jsbsim::math::Axis
+pub const jsbsim::math::E_U: jsbsim::math::Axis
+pub const jsbsim::math::E_V: jsbsim::math::Axis
+pub const jsbsim::math::E_W: jsbsim::math::Axis
+pub const jsbsim::math::E_X: jsbsim::math::Axis
+pub const jsbsim::math::E_Y: jsbsim::math::Axis
+pub const jsbsim::math::E_YAW: jsbsim::math::Axis
+pub const jsbsim::math::E_Z: jsbsim::math::Axis
+pub fn jsbsim::math::dot_product(jsbsim::math::ColumnVector3, jsbsim::math::ColumnVector3) -> f64
+pub mod jsbsim::snapshot
+#[non_exhaustive] pub enum jsbsim::snapshot::FingerprintPart
+pub jsbsim::snapshot::FingerprintPart::Documents
+pub jsbsim::snapshot::FingerprintPart::Models
+pub jsbsim::snapshot::FingerprintPart::Tree
+impl core::clone::Clone for jsbsim::snapshot::FingerprintPart
+pub fn jsbsim::snapshot::FingerprintPart::clone(&self) -> jsbsim::snapshot::FingerprintPart
+impl core::cmp::Eq for jsbsim::snapshot::FingerprintPart
+impl core::cmp::PartialEq for jsbsim::snapshot::FingerprintPart
+pub fn jsbsim::snapshot::FingerprintPart::eq(&self, &jsbsim::snapshot::FingerprintPart) -> bool
+impl core::fmt::Debug for jsbsim::snapshot::FingerprintPart
+pub fn jsbsim::snapshot::FingerprintPart::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for jsbsim::snapshot::FingerprintPart
+pub fn jsbsim::snapshot::FingerprintPart::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for jsbsim::snapshot::FingerprintPart
+impl core::marker::StructuralPartialEq for jsbsim::snapshot::FingerprintPart
+impl core::marker::Freeze for jsbsim::snapshot::FingerprintPart
+impl core::marker::Send for jsbsim::snapshot::FingerprintPart
+impl core::marker::Sync for jsbsim::snapshot::FingerprintPart
+impl core::marker::Unpin for jsbsim::snapshot::FingerprintPart
+impl core::marker::UnsafeUnpin for jsbsim::snapshot::FingerprintPart
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::snapshot::FingerprintPart
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::snapshot::FingerprintPart
+#[non_exhaustive] pub enum jsbsim::snapshot::SnapshotError
+pub jsbsim::snapshot::SnapshotError::BadMagic
+pub jsbsim::snapshot::SnapshotError::BadMagic::found: alloc::vec::Vec<u8>
+pub jsbsim::snapshot::SnapshotError::FingerprintMismatch
+pub jsbsim::snapshot::SnapshotError::FingerprintMismatch::part: jsbsim::snapshot::FingerprintPart
+pub jsbsim::snapshot::SnapshotError::InvalidText
+pub jsbsim::snapshot::SnapshotError::InvalidText::offset: usize
+pub jsbsim::snapshot::SnapshotError::InvalidValue
+pub jsbsim::snapshot::SnapshotError::InvalidValue::value: u64
+pub jsbsim::snapshot::SnapshotError::InvalidValue::what: &'static str
+pub jsbsim::snapshot::SnapshotError::LoadNodes
+pub jsbsim::snapshot::SnapshotError::LoadNodes::expected: u32
+pub jsbsim::snapshot::SnapshotError::LoadNodes::found: u32
+pub jsbsim::snapshot::SnapshotError::RuntimeNode
+pub jsbsim::snapshot::SnapshotError::RuntimeNode::name: alloc::string::String
+pub jsbsim::snapshot::SnapshotError::RuntimeNode::nodes: u32
+pub jsbsim::snapshot::SnapshotError::RuntimeNode::parent: u32
+pub jsbsim::snapshot::SnapshotError::Shape
+pub jsbsim::snapshot::SnapshotError::Shape::expected: u64
+pub jsbsim::snapshot::SnapshotError::Shape::found: u64
+pub jsbsim::snapshot::SnapshotError::Shape::what: &'static str
+pub jsbsim::snapshot::SnapshotError::TrailingBytes
+pub jsbsim::snapshot::SnapshotError::TrailingBytes::extra: usize
+pub jsbsim::snapshot::SnapshotError::Truncated
+pub jsbsim::snapshot::SnapshotError::Truncated::len: usize
+pub jsbsim::snapshot::SnapshotError::Truncated::needed: usize
+pub jsbsim::snapshot::SnapshotError::Truncated::offset: usize
+pub jsbsim::snapshot::SnapshotError::VersionMismatch
+pub jsbsim::snapshot::SnapshotError::VersionMismatch::expected: u32
+pub jsbsim::snapshot::SnapshotError::VersionMismatch::found: u32
+impl core::clone::Clone for jsbsim::snapshot::SnapshotError
+pub fn jsbsim::snapshot::SnapshotError::clone(&self) -> jsbsim::snapshot::SnapshotError
+impl core::cmp::Eq for jsbsim::snapshot::SnapshotError
+impl core::cmp::PartialEq for jsbsim::snapshot::SnapshotError
+pub fn jsbsim::snapshot::SnapshotError::eq(&self, &jsbsim::snapshot::SnapshotError) -> bool
+impl core::convert::From<jsbsim::snapshot::SnapshotError> for jsbsim::error::Error
+pub fn jsbsim::error::Error::from(jsbsim::snapshot::SnapshotError) -> Self
+impl core::error::Error for jsbsim::snapshot::SnapshotError
+impl core::fmt::Debug for jsbsim::snapshot::SnapshotError
+pub fn jsbsim::snapshot::SnapshotError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for jsbsim::snapshot::SnapshotError
+pub fn jsbsim::snapshot::SnapshotError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for jsbsim::snapshot::SnapshotError
+impl core::marker::Freeze for jsbsim::snapshot::SnapshotError
+impl core::marker::Send for jsbsim::snapshot::SnapshotError
+impl core::marker::Sync for jsbsim::snapshot::SnapshotError
+impl core::marker::Unpin for jsbsim::snapshot::SnapshotError
+impl core::marker::UnsafeUnpin for jsbsim::snapshot::SnapshotError
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::snapshot::SnapshotError
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::snapshot::SnapshotError
+#[non_exhaustive] pub struct jsbsim::snapshot::Fingerprint
+pub jsbsim::snapshot::Fingerprint::documents: [u8; 32]
+pub jsbsim::snapshot::Fingerprint::load_nodes: u32
+pub jsbsim::snapshot::Fingerprint::models: [u8; 32]
+pub jsbsim::snapshot::Fingerprint::tree: [u8; 32]
+impl jsbsim::snapshot::Fingerprint
+pub fn jsbsim::snapshot::Fingerprint::first_difference(&self, &Self) -> core::option::Option<jsbsim::snapshot::FingerprintPart>
+pub fn jsbsim::snapshot::Fingerprint::to_bytes(&self) -> [u8; 100]
+impl core::clone::Clone for jsbsim::snapshot::Fingerprint
+pub fn jsbsim::snapshot::Fingerprint::clone(&self) -> jsbsim::snapshot::Fingerprint
+impl core::cmp::Eq for jsbsim::snapshot::Fingerprint
+impl core::cmp::PartialEq for jsbsim::snapshot::Fingerprint
+pub fn jsbsim::snapshot::Fingerprint::eq(&self, &jsbsim::snapshot::Fingerprint) -> bool
+impl core::fmt::Debug for jsbsim::snapshot::Fingerprint
+pub fn jsbsim::snapshot::Fingerprint::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for jsbsim::snapshot::Fingerprint
+impl core::marker::StructuralPartialEq for jsbsim::snapshot::Fingerprint
+impl core::marker::Freeze for jsbsim::snapshot::Fingerprint
+impl core::marker::Send for jsbsim::snapshot::Fingerprint
+impl core::marker::Sync for jsbsim::snapshot::Fingerprint
+impl core::marker::Unpin for jsbsim::snapshot::Fingerprint
+impl core::marker::UnsafeUnpin for jsbsim::snapshot::Fingerprint
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::snapshot::Fingerprint
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::snapshot::Fingerprint
+pub struct jsbsim::snapshot::Snapshot
+impl jsbsim::snapshot::Snapshot
+pub fn jsbsim::snapshot::Snapshot::as_bytes(&self) -> &[u8]
+pub fn jsbsim::snapshot::Snapshot::fingerprint(&self) -> core::result::Result<jsbsim::snapshot::Fingerprint, jsbsim::snapshot::SnapshotError>
+pub fn jsbsim::snapshot::Snapshot::from_bytes(&[u8]) -> core::result::Result<Self, jsbsim::snapshot::SnapshotError>
+pub fn jsbsim::snapshot::Snapshot::new() -> Self
+impl core::clone::Clone for jsbsim::snapshot::Snapshot
+pub fn jsbsim::snapshot::Snapshot::clone(&self) -> jsbsim::snapshot::Snapshot
+impl core::cmp::Eq for jsbsim::snapshot::Snapshot
+impl core::cmp::PartialEq for jsbsim::snapshot::Snapshot
+pub fn jsbsim::snapshot::Snapshot::eq(&self, &jsbsim::snapshot::Snapshot) -> bool
+impl core::default::Default for jsbsim::snapshot::Snapshot
+pub fn jsbsim::snapshot::Snapshot::default() -> jsbsim::snapshot::Snapshot
+impl core::fmt::Debug for jsbsim::snapshot::Snapshot
+pub fn jsbsim::snapshot::Snapshot::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for jsbsim::snapshot::Snapshot
+impl core::marker::Freeze for jsbsim::snapshot::Snapshot
+impl core::marker::Send for jsbsim::snapshot::Snapshot
+impl core::marker::Sync for jsbsim::snapshot::Snapshot
+impl core::marker::Unpin for jsbsim::snapshot::Snapshot
+impl core::marker::UnsafeUnpin for jsbsim::snapshot::Snapshot
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::snapshot::Snapshot
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::snapshot::Snapshot
+pub const jsbsim::snapshot::FORMAT_VERSION: u32
+pub const jsbsim::snapshot::HEADER_LEN: usize
+pub const jsbsim::snapshot::MAGIC: [u8; 8]
+pub mod jsbsim::trim
+pub enum jsbsim::trim::Control
+pub jsbsim::trim::Control::Aileron
+pub jsbsim::trim::Control::Alpha
+pub jsbsim::trim::Control::AltAgl
+pub jsbsim::trim::Control::Beta
+pub jsbsim::trim::Control::Elevator
+pub jsbsim::trim::Control::Gamma
+pub jsbsim::trim::Control::Heading
+pub jsbsim::trim::Control::Phi
+pub jsbsim::trim::Control::PitchTrim
+pub jsbsim::trim::Control::RollTrim
+pub jsbsim::trim::Control::Rudder
+pub jsbsim::trim::Control::Theta
+pub jsbsim::trim::Control::Throttle
+pub jsbsim::trim::Control::YawTrim
+impl jsbsim::trim::Control
+pub fn jsbsim::trim::Control::name(self) -> &'static str
+impl core::clone::Clone for jsbsim::trim::Control
+pub fn jsbsim::trim::Control::clone(&self) -> jsbsim::trim::Control
+impl core::cmp::Eq for jsbsim::trim::Control
+impl core::cmp::PartialEq for jsbsim::trim::Control
+pub fn jsbsim::trim::Control::eq(&self, &jsbsim::trim::Control) -> bool
+impl core::fmt::Debug for jsbsim::trim::Control
+pub fn jsbsim::trim::Control::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for jsbsim::trim::Control
+impl core::marker::StructuralPartialEq for jsbsim::trim::Control
+impl core::marker::Freeze for jsbsim::trim::Control
+impl core::marker::Send for jsbsim::trim::Control
+impl core::marker::Sync for jsbsim::trim::Control
+impl core::marker::Unpin for jsbsim::trim::Control
+impl core::marker::UnsafeUnpin for jsbsim::trim::Control
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::trim::Control
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::trim::Control
+pub enum jsbsim::trim::State
+pub jsbsim::trim::State::All
+pub jsbsim::trim::State::Hmgt
+pub jsbsim::trim::State::Nlf
+pub jsbsim::trim::State::Pdot
+pub jsbsim::trim::State::Qdot
+pub jsbsim::trim::State::Rdot
+pub jsbsim::trim::State::Udot
+pub jsbsim::trim::State::Vdot
+pub jsbsim::trim::State::Wdot
+impl jsbsim::trim::State
+pub fn jsbsim::trim::State::name(self) -> &'static str
+impl core::clone::Clone for jsbsim::trim::State
+pub fn jsbsim::trim::State::clone(&self) -> jsbsim::trim::State
+impl core::cmp::Eq for jsbsim::trim::State
+impl core::cmp::PartialEq for jsbsim::trim::State
+pub fn jsbsim::trim::State::eq(&self, &jsbsim::trim::State) -> bool
+impl core::fmt::Debug for jsbsim::trim::State
+pub fn jsbsim::trim::State::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for jsbsim::trim::State
+impl core::marker::StructuralPartialEq for jsbsim::trim::State
+impl core::marker::Freeze for jsbsim::trim::State
+impl core::marker::Send for jsbsim::trim::State
+impl core::marker::Sync for jsbsim::trim::State
+impl core::marker::Unpin for jsbsim::trim::State
+impl core::marker::UnsafeUnpin for jsbsim::trim::State
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::trim::State
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::trim::State
+pub enum jsbsim::trim::TrimMode
+pub jsbsim::trim::TrimMode::Custom = 4
+pub jsbsim::trim::TrimMode::Full = 1
+pub jsbsim::trim::TrimMode::Ground = 2
+pub jsbsim::trim::TrimMode::Longitudinal = 0
+pub jsbsim::trim::TrimMode::None = 6
+pub jsbsim::trim::TrimMode::Pullup = 3
+pub jsbsim::trim::TrimMode::Turn = 5
+impl jsbsim::trim::TrimMode
+pub fn jsbsim::trim::TrimMode::from_i32(i32) -> core::option::Option<Self>
+impl core::clone::Clone for jsbsim::trim::TrimMode
+pub fn jsbsim::trim::TrimMode::clone(&self) -> jsbsim::trim::TrimMode
+impl core::cmp::Eq for jsbsim::trim::TrimMode
+impl core::cmp::PartialEq for jsbsim::trim::TrimMode
+pub fn jsbsim::trim::TrimMode::eq(&self, &jsbsim::trim::TrimMode) -> bool
+impl core::fmt::Debug for jsbsim::trim::TrimMode
+pub fn jsbsim::trim::TrimMode::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for jsbsim::trim::TrimMode
+impl core::marker::StructuralPartialEq for jsbsim::trim::TrimMode
+impl core::marker::Freeze for jsbsim::trim::TrimMode
+impl core::marker::Send for jsbsim::trim::TrimMode
+impl core::marker::Sync for jsbsim::trim::TrimMode
+impl core::marker::Unpin for jsbsim::trim::TrimMode
+impl core::marker::UnsafeUnpin for jsbsim::trim::TrimMode
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::trim::TrimMode
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::trim::TrimMode
+#[non_exhaustive] pub struct jsbsim::trim::AxisReport
+pub jsbsim::trim::AxisReport::avg_stability: f64
+pub jsbsim::trim::AxisReport::control: jsbsim::trim::Control
+pub jsbsim::trim::AxisReport::control_value: f64
+pub jsbsim::trim::AxisReport::run_count: i32
+pub jsbsim::trim::AxisReport::stability: i32
+pub jsbsim::trim::AxisReport::state: jsbsim::trim::State
+pub jsbsim::trim::AxisReport::state_value: f64
+pub jsbsim::trim::AxisReport::sub_iterations: f64
+pub jsbsim::trim::AxisReport::successful: f64
+pub jsbsim::trim::AxisReport::tolerance: f64
+impl core::clone::Clone for jsbsim::trim::AxisReport
+pub fn jsbsim::trim::AxisReport::clone(&self) -> jsbsim::trim::AxisReport
+impl core::cmp::PartialEq for jsbsim::trim::AxisReport
+pub fn jsbsim::trim::AxisReport::eq(&self, &jsbsim::trim::AxisReport) -> bool
+impl core::fmt::Debug for jsbsim::trim::AxisReport
+pub fn jsbsim::trim::AxisReport::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for jsbsim::trim::AxisReport
+impl core::marker::Freeze for jsbsim::trim::AxisReport
+impl core::marker::Send for jsbsim::trim::AxisReport
+impl core::marker::Sync for jsbsim::trim::AxisReport
+impl core::marker::Unpin for jsbsim::trim::AxisReport
+impl core::marker::UnsafeUnpin for jsbsim::trim::AxisReport
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::trim::AxisReport
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::trim::AxisReport
+#[non_exhaustive] pub struct jsbsim::trim::TrimReport
+pub jsbsim::trim::TrimReport::axes: alloc::vec::Vec<jsbsim::trim::AxisReport>
+pub jsbsim::trim::TrimReport::mode: jsbsim::trim::TrimMode
+pub jsbsim::trim::TrimReport::success: bool
+pub jsbsim::trim::TrimReport::total_iterations: u32
+impl core::clone::Clone for jsbsim::trim::TrimReport
+pub fn jsbsim::trim::TrimReport::clone(&self) -> jsbsim::trim::TrimReport
+impl core::cmp::PartialEq for jsbsim::trim::TrimReport
+pub fn jsbsim::trim::TrimReport::eq(&self, &jsbsim::trim::TrimReport) -> bool
+impl core::fmt::Debug for jsbsim::trim::TrimReport
+pub fn jsbsim::trim::TrimReport::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for jsbsim::trim::TrimReport
+impl core::marker::Freeze for jsbsim::trim::TrimReport
+impl core::marker::Send for jsbsim::trim::TrimReport
+impl core::marker::Sync for jsbsim::trim::TrimReport
+impl core::marker::Unpin for jsbsim::trim::TrimReport
+impl core::marker::UnsafeUnpin for jsbsim::trim::TrimReport
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::trim::TrimReport
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::trim::TrimReport
+#[non_exhaustive] pub enum jsbsim::Error
+pub jsbsim::Error::Function(jsbsim::error::FunctionError)
+pub jsbsim::Error::Geographic
+pub jsbsim::Error::Geographic::message: alloc::string::String
+pub jsbsim::Error::Model
+pub jsbsim::Error::Model::message: alloc::string::String
+pub jsbsim::Error::PropertyPath(jsbsim::error::PathError)
+pub jsbsim::Error::ResourceNotFound
+pub jsbsim::Error::ResourceNotFound::path: alloc::string::String
+pub jsbsim::Error::Snapshot(jsbsim::snapshot::SnapshotError)
+pub jsbsim::Error::TrimFailed
+pub jsbsim::Error::TrimFailed::message: alloc::string::String
+pub jsbsim::Error::UnknownInputType
+pub jsbsim::Error::UnknownInputType::kind: alloc::string::String
+pub jsbsim::Error::UnknownInputType::path: alloc::string::String
+pub jsbsim::Error::Unsupported
+pub jsbsim::Error::Unsupported::construct: alloc::string::String
+pub jsbsim::Error::Unsupported::path: alloc::string::String
+pub jsbsim::Error::Xml(jsbsim::error::XmlError)
+impl core::clone::Clone for jsbsim::error::Error
+pub fn jsbsim::error::Error::clone(&self) -> jsbsim::error::Error
+impl core::cmp::PartialEq for jsbsim::error::Error
+pub fn jsbsim::error::Error::eq(&self, &jsbsim::error::Error) -> bool
+impl core::convert::From<jsbsim::error::FunctionError> for jsbsim::error::Error
+pub fn jsbsim::error::Error::from(jsbsim::error::FunctionError) -> Self
+impl core::convert::From<jsbsim::error::PathError> for jsbsim::error::Error
+pub fn jsbsim::error::Error::from(jsbsim::error::PathError) -> Self
+impl core::convert::From<jsbsim::error::XmlError> for jsbsim::error::Error
+pub fn jsbsim::error::Error::from(jsbsim::error::XmlError) -> Self
+impl core::convert::From<jsbsim::snapshot::SnapshotError> for jsbsim::error::Error
+pub fn jsbsim::error::Error::from(jsbsim::snapshot::SnapshotError) -> Self
+impl core::error::Error for jsbsim::error::Error
+pub fn jsbsim::error::Error::source(&self) -> core::option::Option<&(dyn core::error::Error + 'static)>
+impl core::fmt::Debug for jsbsim::error::Error
+pub fn jsbsim::error::Error::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for jsbsim::error::Error
+pub fn jsbsim::error::Error::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for jsbsim::error::Error
+impl core::marker::Freeze for jsbsim::error::Error
+impl core::marker::Send for jsbsim::error::Error
+impl core::marker::Sync for jsbsim::error::Error
+impl core::marker::Unpin for jsbsim::error::Error
+impl core::marker::UnsafeUnpin for jsbsim::error::Error
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::error::Error
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::error::Error
+#[non_exhaustive] pub struct jsbsim::Contact
+pub jsbsim::Contact::agl: f64
+pub jsbsim::Contact::angular_velocity: jsbsim::math::ColumnVector3
+pub jsbsim::Contact::normal: jsbsim::math::ColumnVector3
+pub jsbsim::Contact::point: jsbsim::math::Location
+pub jsbsim::Contact::velocity: jsbsim::math::ColumnVector3
+impl jsbsim::Contact
+pub const fn jsbsim::Contact::new(f64, jsbsim::math::Location, jsbsim::math::ColumnVector3) -> Self
+pub const fn jsbsim::Contact::with_motion(self, jsbsim::math::ColumnVector3, jsbsim::math::ColumnVector3) -> Self
+impl core::clone::Clone for jsbsim::Contact
+pub fn jsbsim::Contact::clone(&self) -> jsbsim::Contact
+impl core::fmt::Debug for jsbsim::Contact
+pub fn jsbsim::Contact::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for jsbsim::Contact
+impl core::marker::Freeze for jsbsim::Contact
+impl core::marker::Send for jsbsim::Contact
+impl core::marker::Sync for jsbsim::Contact
+impl core::marker::Unpin for jsbsim::Contact
+impl core::marker::UnsafeUnpin for jsbsim::Contact
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::Contact
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::Contact
+pub struct jsbsim::Fdm
+impl jsbsim::Fdm
+pub fn jsbsim::Fdm::do_trim(&mut self, i32) -> core::result::Result<(), jsbsim::error::Error>
+pub fn jsbsim::Fdm::last_trim(&self) -> core::option::Option<&jsbsim::trim::TrimReport>
+pub fn jsbsim::Fdm::trim_requested(&self) -> jsbsim::trim::TrimMode
+pub fn jsbsim::Fdm::trims_run(&self) -> u32
+impl jsbsim::Fdm
+pub fn jsbsim::Fdm::fingerprint(&mut self) -> core::result::Result<jsbsim::snapshot::Fingerprint, jsbsim::error::Error>
+pub fn jsbsim::Fdm::restore(&mut self, &jsbsim::snapshot::Snapshot) -> core::result::Result<(), jsbsim::error::Error>
+pub fn jsbsim::Fdm::snapshot_into(&mut self, &mut jsbsim::snapshot::Snapshot) -> core::result::Result<(), jsbsim::error::Error>
+impl jsbsim::Fdm
+pub fn jsbsim::Fdm::get_property(&mut self, &str) -> core::result::Result<f64, jsbsim::error::Error>
+pub fn jsbsim::Fdm::new() -> core::result::Result<Self, jsbsim::error::Error>
+pub fn jsbsim::Fdm::node(&self, &str) -> core::result::Result<core::option::Option<jsbsim::NodeId>, jsbsim::error::Error>
+pub fn jsbsim::Fdm::read_node(&mut self, jsbsim::NodeId) -> core::result::Result<f64, jsbsim::error::Error>
+pub fn jsbsim::Fdm::set_aircraft_path(&mut self, &str)
+pub fn jsbsim::Fdm::set_ground_callback(&mut self, alloc::boxed::Box<dyn jsbsim::GroundCallback>)
+pub fn jsbsim::Fdm::set_property(&mut self, &str, f64) -> core::result::Result<bool, jsbsim::error::Error>
+pub fn jsbsim::Fdm::set_systems_path(&mut self, &str)
+pub fn jsbsim::Fdm::with_options(jsbsim::LoadOptions) -> core::result::Result<Self, jsbsim::error::Error>
+pub fn jsbsim::Fdm::write_node(&mut self, jsbsim::NodeId, f64) -> core::result::Result<bool, jsbsim::error::Error>
+impl jsbsim::Fdm
+pub fn jsbsim::Fdm::load_initial_conditions(&mut self, &dyn jsbsim::Resolver, &str, &str) -> core::result::Result<bool, jsbsim::error::Error>
+impl jsbsim::Fdm
+pub fn jsbsim::Fdm::load_model(&mut self, &dyn jsbsim::Resolver, &str, &str) -> core::result::Result<(), jsbsim::error::Error>
+impl jsbsim::Fdm
+pub fn jsbsim::Fdm::load_script(&mut self, &dyn jsbsim::Resolver, &str) -> core::result::Result<(), jsbsim::error::Error>
+pub fn jsbsim::Fdm::set_sim_time(&mut self, f64)
+impl jsbsim::Fdm
+pub fn jsbsim::Fdm::reset_to_initial_conditions(&mut self, i32) -> core::result::Result<(), jsbsim::error::Error>
+pub fn jsbsim::Fdm::run(&mut self) -> core::result::Result<bool, jsbsim::error::Error>
+pub fn jsbsim::Fdm::run_ic(&mut self) -> core::result::Result<(), jsbsim::error::Error>
+pub fn jsbsim::Fdm::set_dt(&mut self, f64)
+impl !core::marker::Freeze for jsbsim::Fdm
+impl core::marker::Send for jsbsim::Fdm
+impl !core::marker::Sync for jsbsim::Fdm
+impl core::marker::Unpin for jsbsim::Fdm
+impl core::marker::UnsafeUnpin for jsbsim::Fdm
+impl !core::panic::unwind_safe::RefUnwindSafe for jsbsim::Fdm
+impl !core::panic::unwind_safe::UnwindSafe for jsbsim::Fdm
+pub struct jsbsim::FileResolver
+impl jsbsim::FileResolver
+pub fn jsbsim::FileResolver::new(impl core::convert::Into<std::path::PathBuf>) -> Self
+impl core::clone::Clone for jsbsim::FileResolver
+pub fn jsbsim::FileResolver::clone(&self) -> jsbsim::FileResolver
+impl core::fmt::Debug for jsbsim::FileResolver
+pub fn jsbsim::FileResolver::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl jsbsim::Resolver for jsbsim::FileResolver
+pub fn jsbsim::FileResolver::exists(&self, &str) -> bool
+pub fn jsbsim::FileResolver::resolve(&self, &str) -> core::result::Result<alloc::vec::Vec<u8>, jsbsim::error::Error>
+impl core::marker::Freeze for jsbsim::FileResolver
+impl core::marker::Send for jsbsim::FileResolver
+impl core::marker::Sync for jsbsim::FileResolver
+impl core::marker::Unpin for jsbsim::FileResolver
+impl core::marker::UnsafeUnpin for jsbsim::FileResolver
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::FileResolver
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::FileResolver
+#[non_exhaustive] pub struct jsbsim::LoadOptions
+pub jsbsim::LoadOptions::strict: bool
+impl jsbsim::LoadOptions
+pub const fn jsbsim::LoadOptions::new() -> Self
+pub const fn jsbsim::LoadOptions::with_strict(self, bool) -> Self
+impl core::clone::Clone for jsbsim::LoadOptions
+pub fn jsbsim::LoadOptions::clone(&self) -> jsbsim::LoadOptions
+impl core::cmp::Eq for jsbsim::LoadOptions
+impl core::cmp::PartialEq for jsbsim::LoadOptions
+pub fn jsbsim::LoadOptions::eq(&self, &jsbsim::LoadOptions) -> bool
+impl core::default::Default for jsbsim::LoadOptions
+pub fn jsbsim::LoadOptions::default() -> jsbsim::LoadOptions
+impl core::fmt::Debug for jsbsim::LoadOptions
+pub fn jsbsim::LoadOptions::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for jsbsim::LoadOptions
+impl core::marker::StructuralPartialEq for jsbsim::LoadOptions
+impl core::marker::Freeze for jsbsim::LoadOptions
+impl core::marker::Send for jsbsim::LoadOptions
+impl core::marker::Sync for jsbsim::LoadOptions
+impl core::marker::Unpin for jsbsim::LoadOptions
+impl core::marker::UnsafeUnpin for jsbsim::LoadOptions
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::LoadOptions
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::LoadOptions
+pub struct jsbsim::MemoryResolver
+impl jsbsim::MemoryResolver
+pub fn jsbsim::MemoryResolver::insert(&mut self, impl core::convert::Into<alloc::string::String>, impl core::convert::Into<alloc::vec::Vec<u8>>)
+pub fn jsbsim::MemoryResolver::new() -> Self
+impl core::clone::Clone for jsbsim::MemoryResolver
+pub fn jsbsim::MemoryResolver::clone(&self) -> jsbsim::MemoryResolver
+impl core::default::Default for jsbsim::MemoryResolver
+pub fn jsbsim::MemoryResolver::default() -> jsbsim::MemoryResolver
+impl core::fmt::Debug for jsbsim::MemoryResolver
+pub fn jsbsim::MemoryResolver::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl jsbsim::Resolver for jsbsim::MemoryResolver
+pub fn jsbsim::MemoryResolver::exists(&self, &str) -> bool
+pub fn jsbsim::MemoryResolver::resolve(&self, &str) -> core::result::Result<alloc::vec::Vec<u8>, jsbsim::error::Error>
+impl core::marker::Freeze for jsbsim::MemoryResolver
+impl core::marker::Send for jsbsim::MemoryResolver
+impl core::marker::Sync for jsbsim::MemoryResolver
+impl core::marker::Unpin for jsbsim::MemoryResolver
+impl core::marker::UnsafeUnpin for jsbsim::MemoryResolver
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::MemoryResolver
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::MemoryResolver
+pub struct jsbsim::NodeId(_)
+impl core::clone::Clone for jsbsim::NodeId
+pub fn jsbsim::NodeId::clone(&self) -> jsbsim::NodeId
+impl core::cmp::Eq for jsbsim::NodeId
+impl core::cmp::Ord for jsbsim::NodeId
+pub fn jsbsim::NodeId::cmp(&self, &jsbsim::NodeId) -> core::cmp::Ordering
+impl core::cmp::PartialEq for jsbsim::NodeId
+pub fn jsbsim::NodeId::eq(&self, &jsbsim::NodeId) -> bool
+impl core::cmp::PartialOrd for jsbsim::NodeId
+pub fn jsbsim::NodeId::partial_cmp(&self, &jsbsim::NodeId) -> core::option::Option<core::cmp::Ordering>
+impl core::fmt::Debug for jsbsim::NodeId
+pub fn jsbsim::NodeId::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for jsbsim::NodeId
+pub fn jsbsim::NodeId::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for jsbsim::NodeId
+impl core::marker::StructuralPartialEq for jsbsim::NodeId
+impl core::marker::Freeze for jsbsim::NodeId
+impl core::marker::Send for jsbsim::NodeId
+impl core::marker::Sync for jsbsim::NodeId
+impl core::marker::Unpin for jsbsim::NodeId
+impl core::marker::UnsafeUnpin for jsbsim::NodeId
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::NodeId
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::NodeId
+pub trait jsbsim::GroundCallback: core::marker::Send
+pub fn jsbsim::GroundCallback::ag_level(&self, f64, &jsbsim::math::Location) -> jsbsim::Contact
+pub fn jsbsim::GroundCallback::set_ellipse(&mut self, f64, f64)
+pub fn jsbsim::GroundCallback::set_terrain_elevation(&mut self, f64)
+pub trait jsbsim::Resolver
+pub fn jsbsim::Resolver::exists(&self, &str) -> bool
+pub fn jsbsim::Resolver::resolve(&self, &str) -> core::result::Result<alloc::vec::Vec<u8>, jsbsim::error::Error>
+impl jsbsim::Resolver for jsbsim::FileResolver
+pub fn jsbsim::FileResolver::exists(&self, &str) -> bool
+pub fn jsbsim::FileResolver::resolve(&self, &str) -> core::result::Result<alloc::vec::Vec<u8>, jsbsim::error::Error>
+impl jsbsim::Resolver for jsbsim::MemoryResolver
+pub fn jsbsim::MemoryResolver::exists(&self, &str) -> bool
+pub fn jsbsim::MemoryResolver::resolve(&self, &str) -> core::result::Result<alloc::vec::Vec<u8>, jsbsim::error::Error>

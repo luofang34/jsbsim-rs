@@ -11,8 +11,8 @@
 //! the same order, so they perturb both alike.
 
 use jsbsim::Error;
-use jsbsim::fdm::Fdm;
-use jsbsim::properties::{NodeId, PropertyTree};
+use jsbsim::Fdm;
+use jsbsim::oracle_support::properties::{NodeId, PropertyTree};
 use jsbsim::snapshot::Snapshot;
 use sha2::{Digest, Sha256};
 

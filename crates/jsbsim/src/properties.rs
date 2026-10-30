@@ -23,7 +23,7 @@ mod value;
 #[cfg(test)]
 mod tests;
 
-pub use naming::{mk_property_name, printable_name};
+pub use naming::mk_property_name;
 pub use node_map::NodeMap;
 pub use path::PathError;
 pub use value::Value;

@@ -5,6 +5,7 @@ use thiserror::Error as ThisError;
 
 /// The part of a [`Fingerprint`](super::Fingerprint) that differs.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[non_exhaustive]
 pub enum FingerprintPart {
     /// The XML documents the loads resolved, byte for byte.
     Documents,
@@ -29,6 +30,7 @@ impl std::fmt::Display for FingerprintPart {
 
 /// A snapshot that does not decode, or does not fit this executive.
 #[derive(Debug, Clone, PartialEq, Eq, ThisError)]
+#[non_exhaustive]
 pub enum SnapshotError {
     /// The bytes do not start with [`MAGIC`](super::MAGIC).
     #[error("not a jsbsim snapshot: the first bytes are {found:02x?}")]

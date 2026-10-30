@@ -302,12 +302,12 @@ fn warn_unlisted_blocking(paths: &Paths) -> Result<(), OracleError> {
 /// Whether the port calls the platform maths library, as it does under
 /// scripts/oracle-sincos.sh: its patch makes the `libm` crate answer as
 /// the platform does, and its `platform-libm` feature makes
-/// `jsbsim::elementary` forward to it. The `libm` crate's `exp(1)` alone
+/// `jsbsim::oracle_support::elementary` forward to it. The `libm` crate's `exp(1)` alone
 /// is 1 ulp from the platform's.
 // Reason: the check is of what the `libm` crate itself returns.
 #[allow(clippy::disallowed_methods)]
 fn platform_libm_linked() -> bool {
-    jsbsim::elementary::FORWARDS_TO_LIBM
+    jsbsim::oracle_support::elementary::FORWARDS_TO_LIBM
         && (0..64).all(|i| {
             let x = std::hint::black_box(f64::from(i) / 16.0);
             libm::exp(x).to_bits() == x.exp().to_bits()

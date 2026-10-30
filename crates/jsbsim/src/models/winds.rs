@@ -16,7 +16,7 @@ mod tests;
 mod turbulence;
 
 pub use bind::bind;
-pub use gust::{CosineGust, GustFrame, GustProfile};
+pub use gust::CosineGust;
 pub use turbulence::{CulpState, DrydenState, PoeTable, TurbulenceType};
 
 use std::f64::consts::PI;

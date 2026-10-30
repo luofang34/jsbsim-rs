@@ -5,11 +5,11 @@
 
 use std::path::PathBuf;
 
+use jsbsim::Fdm;
 use jsbsim::FileResolver;
-use jsbsim::c_numeric::format_g;
-use jsbsim::fdm::Fdm;
 use jsbsim::math::Axis;
-use jsbsim::models::propulsion::tank::{GrainType, TankType};
+use jsbsim::oracle_support::c_numeric::format_g;
+use jsbsim::oracle_support::models::propulsion::tank::{GrainType, TankType};
 
 use super::ProbeContext;
 

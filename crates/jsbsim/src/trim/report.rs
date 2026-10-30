@@ -10,6 +10,7 @@ use crate::fdm::Fdm;
 
 /// One axis as `FGTrim::Report` and `TrimStats` show it.
 #[derive(Debug, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct AxisReport {
     /// The state.
     pub state: State,
@@ -35,6 +36,7 @@ pub struct AxisReport {
 
 /// What `FGTrim::Report` and `TrimStats` show.
 #[derive(Debug, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct TrimReport {
     /// The mode the trim ran in.
     pub mode: TrimMode,

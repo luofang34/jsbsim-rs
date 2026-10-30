@@ -29,7 +29,6 @@ mod wind;
 mod tests;
 
 pub use bind::bind;
-pub use load::LoadOutcome;
 
 use crate::fdm::InitialState;
 use crate::math::{Axis, ColumnVector3, E_U, E_V, E_W, Location, Matrix33, Quaternion};

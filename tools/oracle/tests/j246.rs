@@ -9,9 +9,9 @@
 
 use std::path::{Path, PathBuf};
 
+use jsbsim::Fdm;
 use jsbsim::FileResolver;
-use jsbsim::fdm::Fdm;
-use jsbsim::xml::{Element, parse_document};
+use jsbsim::oracle_support::xml::{Element, parse_document};
 
 #[cfg(test)]
 fn inputs() -> PathBuf {

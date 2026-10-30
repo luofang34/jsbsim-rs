@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 //! Geodesic probe; twin of `tools/oracle/cpp/probe_geodesic.cpp`.
 
-use jsbsim::c_numeric::format_g;
-use jsbsim::fdm::Fdm;
+use jsbsim::Fdm;
 use jsbsim::math::Location;
-use jsbsim::xml::parse_document;
+use jsbsim::oracle_support::c_numeric::format_g;
+use jsbsim::oracle_support::xml::parse_document;
 
 use super::ProbeContext;
 

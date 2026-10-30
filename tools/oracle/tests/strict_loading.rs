@@ -49,7 +49,7 @@ fn matches_reference(case: &str, options: LoadOptions, end_time: Option<f64>) {
 #[test]
 fn the_input_golden_matches_strict_and_not() {
     for strict in [true, false] {
-        matches_reference("tripod_input", LoadOptions { strict }, None);
+        matches_reference("tripod_input", LoadOptions::new().with_strict(strict), None);
     }
 }
 
@@ -58,6 +58,6 @@ fn aircraft_with_inputs_and_outputs_load_and_fly_strictly() {
     // The 737 carries a TCP and a QTJSBSIM <input> and the c172x three
     // <output>s.
     for case in ["737_cruise", "c1722"] {
-        matches_reference(case, LoadOptions { strict: true }, Some(2.0));
+        matches_reference(case, LoadOptions::new().with_strict(true), Some(2.0));
     }
 }

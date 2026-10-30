@@ -83,6 +83,7 @@ pub const E_RAD: Axis = Axis::Z;
 /// Tracing target of the event a [`Location`] or [`Quaternion`] emits when
 /// a derived value is read without its owner having called
 /// `cache_derived`, so the read computes it again.
+#[doc(hidden)]
 pub const UNCACHED_DERIVED_TARGET: &str = "jsbsim::uncached_derived";
 
 /// A derived value (Euler angles, rotation matrices, geodetic position) read

@@ -19,7 +19,7 @@ pub use airspeed::{
     mach_from_impact_pressure, mach_from_vcalibrated, pitot_total_pressure, vcalibrated_from_mach,
 };
 pub use bind::bind;
-pub use inputs::{Air, Constants, Inputs};
+pub use inputs::{Air, Inputs};
 
 use super::atmosphere::{STD_DAY_SL_DENSITY, STD_DAY_SL_PRESSURE, STD_DAY_SL_TEMPERATURE};
 use super::base::ModelBase;

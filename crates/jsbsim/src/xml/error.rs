@@ -12,6 +12,7 @@ use thiserror::Error;
 
 /// Where in the input an element starts.
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
+#[non_exhaustive]
 pub struct Location {
     /// Resource path of the document.
     pub file: String,
@@ -27,6 +28,7 @@ impl fmt::Display for Location {
 
 /// Error raised while reading or querying XML.
 #[derive(Debug, Clone, PartialEq, Eq, Error)]
+#[non_exhaustive]
 pub enum XmlError {
     /// The document is not well-formed XML.
     #[error("{file}:{line}:{column}: {message}")]

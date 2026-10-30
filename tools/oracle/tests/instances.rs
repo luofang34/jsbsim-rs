@@ -4,8 +4,8 @@
 
 use std::path::{Path, PathBuf};
 
+use jsbsim::Fdm;
 use jsbsim::FileResolver;
-use jsbsim::fdm::Fdm;
 
 #[cfg(test)]
 const PROPERTIES: [&str; 8] = [

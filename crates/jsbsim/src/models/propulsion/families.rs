@@ -183,15 +183,6 @@ macro_rules! engines {
         /// The elements engine types register, in registration order.
         pub const REGISTERED_ENGINES: &[&str] = &[$($(#[$cfg])* $element,)*];
 
-        /// Whether an engine type registers element `name`.
-        #[must_use]
-        pub fn engine_registered(name: &str) -> bool {
-            match name {
-                $($(#[$cfg])* $element => true,)*
-                _ => false,
-            }
-        }
-
         impl crate::snapshot::Visit for EngineKind {
             fn visit<V: crate::snapshot::Visitor>(
                 &mut self,

@@ -10,8 +10,8 @@ use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
+use jsbsim::Fdm;
 use jsbsim::FileResolver;
-use jsbsim::fdm::Fdm;
 use jsbsim::math::UNCACHED_DERIVED_TARGET;
 use oracle::steady_state::{
     FRAMES, PLANET_TRIPOD_ALTITUDE_FT, PLANET_TRIPOD_DIR, PLANET_TRIPODS, SCRIPTS, TRIMMED,

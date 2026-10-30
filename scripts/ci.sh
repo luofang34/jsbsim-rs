@@ -12,6 +12,8 @@ gate() {
 gate cargo fmt --all --check
 gate cargo clippy --workspace --all-targets -- -D warnings
 gate cargo test --workspace --all-targets
+# --all-targets leaves out doc tests.
+gate cargo test --workspace --doc
 RUSTDOCFLAGS="-D missing_docs -D rustdoc::broken_intra_doc_links -D rustdoc::private_intra_doc_links" gate cargo doc --workspace --no-deps
 gate cargo build --workspace --release
 gate cargo build -p jsbsim --target wasm32-unknown-unknown

@@ -11,7 +11,7 @@
 
 use std::path::{Path, PathBuf};
 
-use jsbsim::fdm::Fdm;
+use jsbsim::Fdm;
 use jsbsim::snapshot::{FingerprintPart, Snapshot, SnapshotError};
 use jsbsim::{Error, FileResolver, Resolver};
 use oracle::snapshot_ab::{AbOutcome, ab, ab_with};

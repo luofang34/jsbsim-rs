@@ -179,7 +179,6 @@ fn read_only_ties_reject_outside_writes_but_not_the_owner() {
 fn naming_helpers() {
     assert_eq!(mk_property_name("Left Main Gear", true), "left-main-gear");
     assert_eq!(mk_property_name("Left Main", false), "Left-Main");
-    assert_eq!(printable_name("left_main_gear"), "left main gear");
     let (tree, id) = tree_with("fcs/elevator-cmd-norm");
     assert_eq!(tree.relative_name(id, "/fcs/"), "elevator-cmd-norm");
     assert_eq!(tree.relative_name(id, "/aero/"), "/fcs/elevator-cmd-norm");

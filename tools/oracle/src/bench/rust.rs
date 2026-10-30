@@ -4,8 +4,8 @@
 use std::path::Path;
 use std::time::Instant;
 
+use jsbsim::Fdm;
 use jsbsim::FileResolver;
-use jsbsim::fdm::Fdm;
 use tracing::subscriber::NoSubscriber;
 
 use crate::OracleError;

@@ -8,13 +8,12 @@
 use super::Propagate;
 use crate::math::{ColumnVector3, E_P, E_Q, E_R, Quaternion, dot_product};
 
-/// `eIntegrateType`.
+/// `eIntegrateType`. `eNone` (0) has no variant: a kind without one
+/// leaves the integrand frozen.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Integrator {
-    /// Frozen.
-    None = 0,
     /// Rectangular Euler.
-    RectEuler,
+    RectEuler = 1,
     /// Trapezoidal.
     Trapezoidal,
     /// Adams-Bashforth 2nd order.

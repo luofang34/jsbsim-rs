@@ -12,6 +12,7 @@ use thiserror::Error;
 /// A property path that SimGear would reject.
 #[derive(Debug, Clone, PartialEq, Eq, Error)]
 #[error("{message}")]
+#[non_exhaustive]
 pub struct PathError {
     /// SimGear's message for the problem.
     pub message: String,

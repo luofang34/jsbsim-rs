@@ -15,7 +15,7 @@
 
 mod bind;
 mod humidity;
-mod mars;
+pub(crate) mod mars;
 mod msis;
 pub mod nrlmsise;
 mod override_nodes;
@@ -26,7 +26,6 @@ mod standard;
 mod tests;
 
 pub use bind::{STANDARD_PROPERTIES, bind};
-pub use mars::MMARS;
 pub use msis::Msis;
 pub use override_nodes::OverrideNodes;
 

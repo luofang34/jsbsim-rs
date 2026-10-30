@@ -87,6 +87,7 @@ pub struct Output {
 
 /// Inputs `gtd7` cannot evaluate.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, thiserror::Error)]
+#[non_exhaustive]
 pub enum Error {
     /// Switch 9 asks for the 3-hour ap history, which C dereferences
     /// through a pointer that this input leaves null.
