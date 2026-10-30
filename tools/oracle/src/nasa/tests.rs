@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 
 use super::data::{Column, Simulator};
-use super::{Archive, NasaManifest, Root, compare_column, sha256_hex, verify};
+use super::{
+    Archive, NasaManifest, PARITY_REL, Root, compare_column, report_parity, sha256_hex, verify,
+};
 use crate::{OracleError, Series};
 
 fn sim(name: &str, rows: &[(f64, f64)]) -> Simulator {
@@ -154,8 +156,59 @@ fn the_committed_manifest_is_consistent() {
             case.aircraft_path
         );
     }
+    for case in &manifest.case {
+        if let Some(p) = &case.parity {
+            assert!(
+                p.rel > PARITY_REL && p.rel < 1e-3,
+                "{}: {}",
+                case.name,
+                p.rel
+            );
+            assert!(!p.cause.is_empty(), "{}", case.name);
+        }
+    }
     for archive in &manifest.archive {
         assert_eq!(archive.sha256.len(), 64, "{}", archive.name);
         assert!(archive.url.starts_with("https://"), "{}", archive.name);
     }
+}
+
+#[test]
+fn parity_holds_each_property_to_the_case_bound_of_its_magnitude() {
+    let cpp = Series {
+        columns: vec!["Time".to_owned(), "p".to_owned()],
+        rows: vec![vec![0.0, 1000.0], vec![0.1, 2000.0]],
+    };
+    let mut rust = cpp.clone();
+    rust.rows[0][1] += 2e-6;
+    assert!(!report_parity("c", PARITY_REL, &cpp, &rust));
+    assert!(report_parity("c", 1e-9, &cpp, &rust));
+    assert!(!report_parity("c", 1e-10, &cpp, &rust));
+}
+
+#[test]
+fn a_case_states_a_looser_parity_with_its_cause() {
+    let text = r#"
+archive = []
+[[case]]
+name = "c"
+archive = "a"
+root = "nasa"
+script = "s.xml"
+aircraft_path = "aircraft"
+section = "s"
+[case.parity]
+rel = 1e-9
+cause = "why"
+[[case]]
+name = "d"
+archive = "a"
+root = "nasa"
+script = "s.xml"
+aircraft_path = "aircraft"
+section = "s"
+"#;
+    let manifest: NasaManifest = toml::from_str(text).unwrap();
+    assert_eq!(manifest.case[0].parity_rel(), 1e-9);
+    assert_eq!(manifest.case[1].parity_rel(), PARITY_REL);
 }

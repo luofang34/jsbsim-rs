@@ -84,6 +84,29 @@ pub struct Case {
     /// Variables JSBSim itself misses the simulators on.
     #[serde(default)]
     pub expected_miss: Vec<ExpectedMiss>,
+    /// A looser Rust-vs-C++ bound than [`PARITY_REL`], when the case needs one.
+    #[serde(default)]
+    pub parity: Option<Parity>,
+}
+
+/// The Rust-vs-C++ bound of one case and why it is looser than
+/// [`PARITY_REL`].
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Parity {
+    /// Largest difference allowed, relative as for [`PARITY_REL`].
+    pub rel: f64,
+    /// What makes Rust and C++ differ by more than [`PARITY_REL`].
+    pub cause: String,
+}
+
+impl Case {
+    /// Largest Rust-vs-C++ difference allowed in this case, relative to the
+    /// largest magnitude of the property over the run (or 1 when smaller).
+    #[must_use]
+    pub fn parity_rel(&self) -> f64 {
+        self.parity.as_ref().map_or(PARITY_REL, |p| p.rel)
+    }
 }
 
 /// A variable C++ JSBSim lies outside the simulators on, and why. The
@@ -225,8 +248,9 @@ fn spec(case: &Case) -> ScriptSpec {
 }
 
 /// Largest Rust-vs-C++ difference allowed, relative to the largest
-/// magnitude of the property over the run (or 1 when smaller).
-const PARITY_REL: f64 = 1e-12;
+/// magnitude of the property over the run (or 1 when smaller), unless the
+/// case states a looser [`Parity`].
+pub const PARITY_REL: f64 = 1e-12;
 
 /// Logs each variable's verdict: C++ inside the simulators at every sample,
 /// or missing where the manifest names the cause; Rust outside on exactly
@@ -282,8 +306,8 @@ fn report_case(case: &Case, simulators: &[Simulator], cpp: &Series, rust: &Serie
 }
 
 /// Logs the largest Rust-vs-C++ difference of each property; returns
-/// whether all are within [`PARITY_REL`].
-fn report_parity(case: &str, cpp: &Series, rust: &Series) -> bool {
+/// whether all are within `rel` of their magnitude.
+fn report_parity(case: &str, rel: f64, cpp: &Series, rust: &Series) -> bool {
     let mut pass = cpp.rows.len() == rust.rows.len();
     for (i, property) in cpp.columns.iter().enumerate().skip(1) {
         let (mut max, mut magnitude) = (0.0_f64, 1.0_f64);
@@ -293,10 +317,11 @@ fn report_parity(case: &str, cpp: &Series, rust: &Series) -> bool {
                 magnitude = magnitude.max(a.abs());
             }
         }
-        let ok = max <= PARITY_REL * magnitude;
+        let ok = max <= rel * magnitude;
         pass &= ok;
         info!(
-            "{case} parity {property:<33} max |Rust - C++| {max:.3e}{}",
+            "{case} parity {property:<33} max |Rust - C++| {max:.3e}, {:.3e} of its magnitude{}",
+            max / magnitude,
             if ok { "" } else { " FAIL" }
         );
     }
@@ -335,7 +360,10 @@ pub fn compare_blocking(paths: &Paths, names: &[String]) -> Result<ExitCode, Ora
             continue;
         }
         pass &= report_case(case, &simulators, &cpp, &rust);
-        pass &= report_parity(&case.name, &cpp, &rust);
+        if let Some(p) = &case.parity {
+            info!("{}: parity within {:e} ({})", case.name, p.rel, p.cause);
+        }
+        pass &= report_parity(&case.name, case.parity_rel(), &cpp, &rust);
     }
     Ok(if pass {
         ExitCode::SUCCESS
