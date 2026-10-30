@@ -5,6 +5,7 @@
 
 use jsbsim::Fdm;
 use jsbsim::FileResolver;
+use jsbsim::oracle_support::FdmInternals as _;
 use jsbsim::oracle_support::c_numeric::format_g;
 use jsbsim::oracle_support::properties::{NodeId, ValueType};
 

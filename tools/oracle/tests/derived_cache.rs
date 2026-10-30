@@ -3,7 +3,7 @@
 //! matrices, geodetic position) from a `Location` or `Quaternion` whose
 //! owner forgot `cache_derived`: such a read recomputes the values on every
 //! call. The library reports each such read as a trace event under
-//! `jsbsim::math::UNCACHED_DERIVED_TARGET`; this test counts them over the
+//! `jsbsim::oracle_support::UNCACHED_DERIVED_TARGET`; this test counts them over the
 //! corpus aircraft that load `ok` and the runs of `oracle::steady_state`.
 
 use std::path::{Path, PathBuf};
@@ -12,7 +12,7 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 
 use jsbsim::Fdm;
 use jsbsim::FileResolver;
-use jsbsim::math::UNCACHED_DERIVED_TARGET;
+use jsbsim::oracle_support::UNCACHED_DERIVED_TARGET;
 use oracle::steady_state::{
     FRAMES, PLANET_TRIPOD_ALTITUDE_FT, PLANET_TRIPOD_DIR, PLANET_TRIPODS, SCRIPTS, TRIMMED,
 };

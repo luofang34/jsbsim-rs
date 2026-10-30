@@ -87,7 +87,7 @@ fn sample(
     // condition's trim request runs once, and its result is not checked.
     let mode = fdm.trim_requested();
     if mode != jsbsim::trim::TrimMode::None {
-        jsbsim::trim::Trim::new(&fdm, mode)
+        jsbsim::oracle_support::trim::Trim::new(&fdm, mode)
             .do_trim(&mut fdm)
             .map_err(port_error)?;
     }

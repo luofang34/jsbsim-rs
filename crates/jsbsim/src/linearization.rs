@@ -133,8 +133,7 @@ impl Fdm {
     /// afterwards (the state space's runs suspend integration again, which
     /// saves the suspended step); `simulation/do_linearization` restores
     /// it.
-    #[doc(hidden)]
-    pub fn linearize(&mut self) -> Result<Linearization, Error> {
+    pub(crate) fn linearize(&mut self) -> Result<Linearization, Error> {
         let x = states(self)?;
         let u = vec![
             Component::ThrottleCmd,
@@ -186,8 +185,8 @@ impl Fdm {
 
     /// What the last `simulation/do_linearization` computed.
     #[must_use]
-    #[doc(hidden)]
-    pub fn last_linearization(&self) -> Option<&Linearization> {
+    #[cfg(any(test, feature = "__oracle"))]
+    pub(crate) fn last_linearization(&self) -> Option<&Linearization> {
         self.last_linearization.as_ref()
     }
 }

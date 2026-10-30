@@ -3,6 +3,7 @@
 
 use jsbsim::Fdm;
 use jsbsim::math::Axis;
+use jsbsim::oracle_support::FdmInternals as _;
 use jsbsim::oracle_support::c_numeric::format_g;
 use jsbsim::oracle_support::xml::parse_document;
 

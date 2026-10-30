@@ -83,8 +83,7 @@ pub const E_RAD: Axis = Axis::Z;
 /// Tracing target of the event a [`Location`] or [`Quaternion`] emits when
 /// a derived value is read without its owner having called
 /// `cache_derived`, so the read computes it again.
-#[doc(hidden)]
-pub const UNCACHED_DERIVED_TARGET: &str = "jsbsim::uncached_derived";
+pub(crate) const UNCACHED_DERIVED_TARGET: &str = "jsbsim::uncached_derived";
 
 /// A derived value (Euler angles, rotation matrices, geodetic position) read
 /// through `&self` from a [`Location`] or [`Quaternion`] whose owner did not
@@ -93,5 +92,5 @@ pub const UNCACHED_DERIVED_TARGET: &str = "jsbsim::uncached_derived";
 /// events over steady-state frames and requires none.
 #[cold]
 fn uncached_derived_read(kind: &'static str) {
-    tracing::trace!(target: "jsbsim::uncached_derived", kind);
+    tracing::trace!(target: UNCACHED_DERIVED_TARGET, kind);
 }

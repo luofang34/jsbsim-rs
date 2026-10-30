@@ -6,9 +6,11 @@ use std::path::PathBuf;
 
 use jsbsim::Fdm;
 use jsbsim::FileResolver;
+use jsbsim::oracle_support::FdmInternals as _;
 use jsbsim::oracle_support::c_numeric::format_g;
 use jsbsim::oracle_support::linearization::Linearization;
-use jsbsim::trim::{Control, Trim, TrimMode, TrimReport};
+use jsbsim::oracle_support::trim::Trim;
+use jsbsim::trim::{Control, TrimMode, TrimReport};
 
 use super::ProbeContext;
 

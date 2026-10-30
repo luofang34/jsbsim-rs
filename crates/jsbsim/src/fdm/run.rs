@@ -273,8 +273,7 @@ impl Fdm {
     }
 
     /// `Atmosphere->InitModel()`.
-    #[doc(hidden)]
-    pub fn init_atmosphere(&mut self) -> Result<(), Error> {
+    pub(crate) fn init_atmosphere(&mut self) -> Result<(), Error> {
         let overrides = self.atmosphere_overrides()?;
         self.models.atmosphere.init_model(&overrides);
         Ok(())
@@ -282,8 +281,7 @@ impl Fdm {
 
     /// `Atmosphere->Run(holding)` on the inputs already loaded: the
     /// override properties are read only when the model calculates.
-    #[doc(hidden)]
-    pub fn run_atmosphere(&mut self, holding: bool) -> Result<(), Error> {
+    pub(crate) fn run_atmosphere(&mut self, holding: bool) -> Result<(), Error> {
         if self.models.atmosphere.base.skip() || holding {
             return Ok(());
         }
@@ -395,8 +393,7 @@ impl Fdm {
     }
 
     /// `Initialize(FGIC)` from the state an initial condition gives.
-    #[doc(hidden)]
-    pub fn initialize_from(&mut self, ic: InitialState) -> Result<(), Error> {
+    pub(crate) fn initialize_from(&mut self, ic: InitialState) -> Result<(), Error> {
         let m = &mut self.models;
         m.propagate.set_initial_state(
             &m.inertial,

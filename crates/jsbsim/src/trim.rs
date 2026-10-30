@@ -23,6 +23,7 @@ mod ground;
 mod maneuver;
 mod report;
 mod solve;
+pub(crate) mod trimmer;
 
 #[cfg(test)]
 mod tests;
@@ -31,10 +32,10 @@ pub(crate) use axis::TrimAxis;
 pub use axis::{Control, State};
 pub use report::{AxisReport, TrimReport};
 pub(crate) use solve::Solver;
+pub(crate) use trimmer::Trim;
 
 use crate::Error;
 use crate::fdm::Fdm;
-use crate::initial_condition::InitialCondition;
 use crate::math::{E_P, E_PHI, E_Q, E_R, E_THT};
 use crate::units::DEGTORAD;
 
@@ -83,27 +84,6 @@ struct Commands {
     aileron: f64,
     rudder: f64,
     pitch_trim: f64,
-}
-
-#[doc(hidden)]
-/// `FGTrim`.
-#[derive(Debug, Clone)]
-pub struct Trim {
-    axes: Vec<TrimAxis>,
-    mode: TrimMode,
-    fgic: InitialCondition,
-    solver: Solver,
-    debug_level: i32,
-    sub_iterations: Vec<f64>,
-    successful: Vec<f64>,
-    solution: Vec<bool>,
-    max_iterations: u32,
-    total_its: u32,
-    gamma_fallback: bool,
-    target_nlf: f64,
-    debug_axis: State,
-    psidot: f64,
-    success: bool,
 }
 
 impl Trim {

@@ -12,6 +12,7 @@
 
 use jsbsim::Error;
 use jsbsim::Fdm;
+use jsbsim::oracle_support::FdmInternals as _;
 use jsbsim::oracle_support::properties::{NodeId, PropertyTree};
 use jsbsim::snapshot::Snapshot;
 use sha2::{Digest, Sha256};

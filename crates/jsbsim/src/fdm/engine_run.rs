@@ -97,8 +97,7 @@ impl Fdm {
     /// `GetSteadyState`: each engine calculated with a half-second step
     /// until its thrust settles, in trim mode, and its force summed; true
     /// when the model is not due to run.
-    #[doc(hidden)]
-    pub fn steady_state(&mut self) -> Result<bool, Error> {
+    pub(crate) fn steady_state(&mut self) -> Result<bool, Error> {
         let (trim_mode, time_step) = (self.models.exec.trim_status, self.models.exec.dt);
         let p = &mut self.models.propulsion;
         p.forces = ColumnVector3::zero();

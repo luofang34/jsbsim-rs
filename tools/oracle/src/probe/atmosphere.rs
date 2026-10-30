@@ -2,6 +2,7 @@
 //! Atmosphere probe; twin of `tools/oracle/cpp/probe_atmosphere.cpp`.
 
 use jsbsim::Fdm;
+use jsbsim::oracle_support::FdmInternals as _;
 use jsbsim::oracle_support::c_numeric::format_g;
 use jsbsim::oracle_support::models::atmosphere::{PressureUnit, TemperatureUnit};
 

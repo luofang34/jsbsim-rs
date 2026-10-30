@@ -1,17 +1,83 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
-//! Internals that `tools/oracle` reaches. **Not part of the supported API:**
-//! anything here may change or vanish in any release.
+//! Internals that `tools/oracle` reaches, compiled only with the
+//! `__oracle` feature. **Not part of the supported API:** anything here may
+//! change or vanish in any release.
 //!
 //! The oracle's probes mirror JSBSim's C++ classes one for one and compare
 //! each against its C++ twin, so they need parts of the port that a flight
 //! simulation front end never does. Each submodule re-exports, under the
-//! crate-internal module's name, exactly the items the oracle uses. A few
-//! more hooks are hidden in place rather than re-exported here: the
-//! `Fdm::models` field, `Fdm::tree` and the other `#[doc(hidden)]` methods
-//! of [`Fdm`](crate::Fdm), `trim::Trim`, and
-//! `math::UNCACHED_DERIVED_TARGET`.
+//! crate-internal module's name, exactly the items the oracle uses;
+//! [`FdmInternals`] adds the executive's internal entry points, and the
+//! feature also makes the `Fdm::models` field public.
 
-#![doc(hidden)]
+use crate::{Error, Fdm, Resolver};
+
+/// The executive's internal entry points the probes drive.
+pub trait FdmInternals {
+    /// The property tree.
+    fn tree(&self) -> &properties::PropertyTree;
+    /// `FGMassBalance::Load(<mass_balance>)`, tying the point mass
+    /// properties as it adds them.
+    fn load_mass_balance(&mut self, el: &xml::Element) -> Result<(), Error>;
+    /// `LoadPlanet(PlanetPath, useAircraftPath)`.
+    fn load_planet_file(
+        &mut self,
+        resolver: &dyn Resolver,
+        path: &str,
+        use_aircraft_path: bool,
+    ) -> Result<(), Error>;
+    /// `Atmosphere->InitModel()`.
+    fn init_atmosphere(&mut self) -> Result<(), Error>;
+    /// `Atmosphere->Run(holding)` on the inputs already loaded.
+    fn run_atmosphere(&mut self, holding: bool) -> Result<(), Error>;
+    /// `FGPropulsion::GetSteadyState`.
+    fn steady_state(&mut self) -> Result<bool, Error>;
+    /// `FGLinearization(fdm)` about the current state.
+    fn linearize(&mut self) -> Result<linearization::Linearization, Error>;
+    /// What the last `simulation/do_linearization` computed.
+    fn last_linearization(&self) -> Option<&linearization::Linearization>;
+}
+
+impl FdmInternals for Fdm {
+    fn tree(&self) -> &properties::PropertyTree {
+        Fdm::tree(self)
+    }
+    fn load_mass_balance(&mut self, el: &xml::Element) -> Result<(), Error> {
+        Fdm::load_mass_balance(self, el)
+    }
+    fn load_planet_file(
+        &mut self,
+        resolver: &dyn Resolver,
+        path: &str,
+        use_aircraft_path: bool,
+    ) -> Result<(), Error> {
+        Fdm::load_planet_file(self, resolver, path, use_aircraft_path)
+    }
+    fn init_atmosphere(&mut self) -> Result<(), Error> {
+        Fdm::init_atmosphere(self)
+    }
+    fn run_atmosphere(&mut self, holding: bool) -> Result<(), Error> {
+        Fdm::run_atmosphere(self, holding)
+    }
+    fn steady_state(&mut self) -> Result<bool, Error> {
+        Fdm::steady_state(self)
+    }
+    fn linearize(&mut self) -> Result<linearization::Linearization, Error> {
+        Fdm::linearize(self)
+    }
+    fn last_linearization(&self) -> Option<&linearization::Linearization> {
+        Fdm::last_linearization(self)
+    }
+}
+
+/// Tracing target of the event a `Location` or `Quaternion` emits when a
+/// derived value is read without its owner having called `cache_derived`.
+pub const UNCACHED_DERIVED_TARGET: &str = crate::math::UNCACHED_DERIVED_TARGET;
+
+/// `FGTrim`.
+pub mod trim {
+    pub use crate::trim::trimmer::Trim;
+}
 
 /// C's numeric parsing and printf formatting.
 pub mod c_numeric {

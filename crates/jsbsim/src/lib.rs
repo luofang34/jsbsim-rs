@@ -50,27 +50,41 @@
 //! ```
 
 mod c_numeric;
+// Without `__oracle`, the accessors and C++ mirrors that only tools/oracle
+// reads are unused. Every workspace build compiles the feature in, so
+// anything nothing reads is still reported there.
+#[cfg_attr(not(feature = "__oracle"), allow(dead_code, unused_imports))]
 mod elementary;
+#[cfg_attr(not(feature = "__oracle"), allow(dead_code, unused_imports))]
 mod fdm;
+#[cfg_attr(not(feature = "__oracle"), allow(dead_code, unused_imports))]
 mod functions;
+#[cfg_attr(not(feature = "__oracle"), allow(dead_code, unused_imports))]
 mod initial_condition;
+#[cfg_attr(not(feature = "__oracle"), allow(dead_code, unused_imports))]
 mod linearization;
+#[cfg_attr(not(feature = "__oracle"), allow(dead_code, unused_imports))]
 mod models;
 mod options;
+#[cfg_attr(not(feature = "__oracle"), allow(dead_code, unused_imports))]
 mod properties;
 mod random;
 #[cfg(doctest)]
 mod readme;
 mod resolver;
 mod script;
+#[cfg_attr(not(feature = "__oracle"), allow(dead_code, unused_imports))]
 mod units;
+#[cfg_attr(not(feature = "__oracle"), allow(dead_code, unused_imports))]
 mod xml;
 
 pub mod error;
 pub mod math;
 pub mod snapshot;
+#[cfg_attr(not(feature = "__oracle"), allow(dead_code, unused_imports))]
 pub mod trim;
 
+#[cfg(feature = "__oracle")]
 pub mod oracle_support;
 
 pub use error::Error;

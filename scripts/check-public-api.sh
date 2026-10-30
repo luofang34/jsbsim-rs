@@ -2,18 +2,27 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # Fails when the public API of the jsbsim crate differs from the committed
 # listing, so every API change shows up in review as a change to that file.
-# Items hidden with #[doc(hidden)], among them jsbsim::oracle_support, are
-# not part of the listing. Usage:
+# The listing is of the default build: jsbsim::oracle_support and the other
+# internals tools/oracle uses are behind the __oracle feature. The listing
+# comes from rustdoc, which leaves out #[doc(hidden)] items, so any such
+# item in crates/jsbsim/src fails the check. Usage:
 #   scripts/check-public-api.sh            # compare
 #   scripts/check-public-api.sh --bless    # rewrite the listing
 # Needs cargo-public-api (`cargo install --locked cargo-public-api@0.52.0`)
 # and nothing from the network: it reads rustdoc JSON that the toolchain of
 # rust-toolchain.toml writes. JSBSIM_PUBLIC_API_LISTING overrides the
-# listing compared against (for scripts/check-public-api.test.sh).
+# listing compared against and JSBSIM_PUBLIC_API_SRC the sources searched
+# for #[doc(hidden)] (for scripts/check-public-api.test.sh).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
 listing="${JSBSIM_PUBLIC_API_LISTING:-crates/jsbsim/public-api.txt}"
+src="${JSBSIM_PUBLIC_API_SRC:-crates/jsbsim/src}"
+if grep -rn 'doc *( *hidden' "$src"; then
+  echo "check-public-api: #[doc(hidden)] above would keep a public item out of the listing;" >&2
+  echo "make it pub(crate), or reach it from tools/oracle through jsbsim::oracle_support." >&2
+  exit 1
+fi
 tool_version=0.52.0
 target_dir=target/public-api
 

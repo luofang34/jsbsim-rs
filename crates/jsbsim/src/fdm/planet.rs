@@ -19,8 +19,8 @@ impl Fdm {
     /// `LoadPlanet(PlanetPath, useAircraftPath)`: the `<planet>` document
     /// at `path` (in the aircraft path when `use_aircraft_path`), loaded
     /// as an aircraft's `<planet>` element is.
-    #[doc(hidden)]
-    pub fn load_planet_file(
+    #[cfg(any(test, feature = "__oracle"))]
+    pub(crate) fn load_planet_file(
         &mut self,
         resolver: &dyn Resolver,
         path: &str,

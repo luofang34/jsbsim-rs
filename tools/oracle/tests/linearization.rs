@@ -8,6 +8,7 @@ use std::path::{Path, PathBuf};
 
 use jsbsim::Fdm;
 use jsbsim::FileResolver;
+use jsbsim::oracle_support::FdmInternals as _;
 
 #[cfg(test)]
 fn inputs() -> PathBuf {

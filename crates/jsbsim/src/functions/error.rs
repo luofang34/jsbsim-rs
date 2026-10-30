@@ -91,7 +91,7 @@ pub enum FunctionError {
         message: String,
     },
     /// A function or table id that this set did not create, such as one
-    /// from another [`FunctionSet`](crate::functions::FunctionSet).
+    /// from another function set.
     #[error("no {what} with id {id} in this function set")]
     UnknownId {
         /// `"function"` or `"table"`.

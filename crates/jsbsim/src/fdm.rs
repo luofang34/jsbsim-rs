@@ -160,8 +160,11 @@ pub struct Models {
 pub struct Fdm {
     env: env::Env,
     /// The models.
-    #[doc(hidden)]
+    #[cfg(feature = "__oracle")]
     pub models: Models,
+    /// The models.
+    #[cfg(not(feature = "__oracle"))]
+    pub(crate) models: Models,
     /// Declarations and pre/post functions of each model, by `Model`.
     model_functions: order::PerModel<ModelFunctions>,
     options: crate::LoadOptions,
@@ -268,8 +271,7 @@ impl Fdm {
 
     /// `FGMassBalance::Load(<mass_balance>)`, tying the point mass
     /// properties as it adds them.
-    #[doc(hidden)]
-    pub fn load_mass_balance(&mut self, el: &crate::xml::Element) -> Result<(), Error> {
+    pub(crate) fn load_mass_balance(&mut self, el: &crate::xml::Element) -> Result<(), Error> {
         let loaded = self.models.mass_balance.load(el, &mut self.env.binder());
         self.loaded_without_documents();
         loaded
@@ -301,8 +303,7 @@ impl Fdm {
 
     /// The property tree.
     #[must_use]
-    #[doc(hidden)]
-    pub fn tree(&self) -> &PropertyTree {
+    pub(crate) fn tree(&self) -> &PropertyTree {
         &self.env.tree
     }
 

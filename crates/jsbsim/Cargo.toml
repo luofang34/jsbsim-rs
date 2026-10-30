@@ -30,6 +30,10 @@ fs = []
 # jsbsim::elementary forwards to the libm crate; only for
 # scripts/oracle-sincos.sh, which patches the platform maths library in.
 platform-libm = []
+# The internals tools/oracle compares against C++ JSBSim
+# (jsbsim::oracle_support, the public Fdm::models field). Not for other
+# crates: nothing behind it is covered by semver.
+__oracle = []
 
 [package.metadata.docs.rs]
 # platform-libm is left out: it only serves scripts/oracle-sincos.sh.

@@ -30,7 +30,7 @@ pub use value::Value;
 
 use path::{Component, parse_path};
 
-/// Handle to a node of a [`PropertyTree`].
+/// Handle to a node of the property tree, from [`Fdm::node`](crate::Fdm::node).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct NodeId(u32);
 

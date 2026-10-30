@@ -37,8 +37,7 @@ impl Fdm {
     }
 
     /// `FGInitialCondition::Load` on a parsed `<initialize>` document.
-    #[doc(hidden)]
-    pub fn load_initial_conditions_document(
+    pub(crate) fn load_initial_conditions_document(
         &mut self,
         document: &crate::xml::Element,
     ) -> Result<bool, Error> {
