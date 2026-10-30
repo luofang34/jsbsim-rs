@@ -2,8 +2,12 @@
 # Publishes jsbsim to crates.io when a tag v<version> is pushed whose
 # version is the crate's own, after the package checks pass. Started by
 # hand with an existing tag, it publishes that tag's source with these
-# steps, for a tag whose own release run failed before publishing. The
-# token is the repository secret CARGO_REGISTRY_TOKEN.
+# steps, for a tag whose own release run failed before publishing, or with
+# dry_run checks the same steps, the token exchange included, without
+# uploading. The job runs in the release environment, whose required
+# reviewers approve each run, and crates.io trusted publishing exchanges
+# the run's OIDC token for a short-lived registry token, so no registry
+# token is stored in the repository.
 name: Release
 
 on:
@@ -14,6 +18,10 @@ on:
       tag:
         description: Existing tag to publish, such as v0.1.0
         required: true
+      dry_run:
+        description: Check everything but do not upload
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -29,6 +37,10 @@ jobs:
   publish:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    environment: release
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -50,7 +62,11 @@ jobs:
         run: cargo fetch --locked
       - name: Package checks
         run: scripts/check-package.sh
+      - name: Exchange the OIDC token for a crates.io token
+        id: auth
+        uses: rust-lang/crates-io-auth-action@3268eb413133e2960fa4ae0e963ca76380c54cd9 # v1.0.6
       - name: Publish
         env:
-          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-        run: cargo publish -p jsbsim --locked
+          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
+          DRY_RUN: ${{ inputs.dry_run && '--dry-run' || '' }}
+        run: cargo publish -p jsbsim --locked $DRY_RUN

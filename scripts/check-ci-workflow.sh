@@ -4,7 +4,8 @@
 # exactly the gates of scripts/ci.sh, one `scripts/ci.sh <gate>` each in the
 # script's order, or when a workflow or action under .github uses another
 # repository's action by anything but a full commit SHA, which a tag move
-# could otherwise swap underneath CI. Usage:
+# could otherwise swap underneath CI, or when one reads a stored registry
+# token, which crates.io trusted publishing replaces. Usage:
 #   scripts/check-ci-workflow.sh
 # JSBSIM_CI_WORKFLOW names the workflow to check in place of ci.yml and
 # JSBSIM_CI_GITHUB_DIR the directory searched for uses: lines in place of
@@ -33,6 +34,10 @@ while IFS= read -r line; do
 done < <(grep -rnE '^\s*-?\s*uses:\s*' "$github_dir" \
   | grep -vE 'uses:\s*\./' \
   | grep -vE 'uses:\s*[^@[:space:]]+@[0-9a-f]{40}(\s|$)' || true)
+
+while IFS= read -r line; do
+  fail "reads a stored registry token: $line"
+done < <(grep -rn 'secrets\.CARGO_REGISTRY_TOKEN' "$github_dir" || true)
 
 if [ "$failures" -gt 0 ]; then
   echo "check-ci-workflow: $failures problem(s)" >&2

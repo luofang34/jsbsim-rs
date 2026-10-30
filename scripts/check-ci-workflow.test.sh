@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # Proves scripts/check-ci-workflow.sh accepts the real workflow and rejects
-# one that drops, adds or reorders a gate, or uses an action by tag.
+# one that drops, adds or reorders a gate, uses an action by tag, or reads a
+# stored registry token.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -40,5 +41,8 @@ sed 's|uses: actions/checkout@[0-9a-f]\{40\}|uses: actions/checkout@v7|' "$real"
 expect fail tag "$real" "$scratch/github"
 command cp -f "$real" "$scratch/github/workflows/ci.yml"
 expect pass pinned "$real" "$scratch/github"
+printf '        CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}\n' \
+  > "$scratch/github/workflows/token.yml"
+expect fail token "$real" "$scratch/github"
 
 echo "check-ci-workflow.test: ok"

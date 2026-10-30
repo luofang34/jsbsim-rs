@@ -41,7 +41,9 @@ goldens' `upstream_commit`. `.github/workflows/oracle-extended.yml` runs
 `scripts/oracle-nasa.sh` weekly and `scripts/oracle-bench.sh` on request.
 `.github/workflows/release.yml` publishes `jsbsim` to crates.io when a tag
 `v<version>` matching `crates/jsbsim/Cargo.toml` is pushed, or when started
-by hand with an existing tag whose own release run failed before publishing.
+by hand with an existing tag, as a dry run by default. Each run waits for a
+reviewer of the `release` environment to approve it, and publishes through
+crates.io trusted publishing, with no registry token stored in the repository.
 `scripts/check-ci-workflow.sh` fails when the workflow's steps and the
 script's gates differ, or when an action is not pinned to a commit SHA.
 
