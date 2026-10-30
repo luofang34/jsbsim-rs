@@ -3,9 +3,18 @@ name = "jsbsim"
 version = "0.0.0"
 description = "Unofficial pure-Rust port of the JSBSim flight dynamics model"
 edition.workspace = true
-license.workspace = true
+# The geodesic code is also MIT (GeographicLib) and the elementary
+# functions also MIT OR Apache-2.0 WITH LLVM-exception (ARM
+# optimized-routines), as their SPDX lines say.
+license = "LGPL-2.1-or-later AND MIT AND (MIT OR Apache-2.0 WITH LLVM-exception)"
 publish.workspace = true
 rust-version.workspace = true
+readme = "README.md"
+keywords = ["jsbsim", "flight-dynamics", "flight-simulator", "aircraft", "simulation"]
+categories = ["aerospace::simulation", "simulation", "science", "wasm"]
+# LICENSE and LICENSES are symlinks to the repository root's licence
+# texts; cargo packages the files they point to.
+include = ["/src/**/*.rs", "/README.md", "/LICENSE", "/LICENSES/*.txt"]
 
 [dependencies]
 libm.workspace = true
@@ -21,6 +30,11 @@ fs = []
 # jsbsim::elementary forwards to the libm crate; only for
 # scripts/oracle-sincos.sh, which patches the platform maths library in.
 platform-libm = []
+
+[package.metadata.docs.rs]
+# platform-libm is left out: it only serves scripts/oracle-sincos.sh.
+features = ["fs"]
+targets = ["x86_64-unknown-linux-gnu", "wasm32-unknown-unknown"]
 
 [lints]
 workspace = true

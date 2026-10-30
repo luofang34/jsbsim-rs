@@ -59,6 +59,8 @@ mod models;
 mod options;
 mod properties;
 mod random;
+#[cfg(doctest)]
+mod readme;
 mod resolver;
 mod script;
 mod units;
