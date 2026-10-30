@@ -7,7 +7,7 @@
 # tools/oracle/src/sincos.rs under target/oracle-sincos, and requires the
 # port, linked with the platform maths library (tools/libm-platform in
 # place of the libm crate, and jsbsim::elementary forwarding to it through
-# the platform-libm feature), to reproduce them bit for bit. Exits non-zero
+# the __platform-libm feature), to reproduce them bit for bit. Exits non-zero
 # at any difference. The gate's build, goldens and tolerances are not used.
 # Usage: scripts/oracle-sincos.sh [case...]
 set -euo pipefail
@@ -32,7 +32,7 @@ status=0
 CARGO_TARGET_DIR="$work/cargo" cargo run --release -q \
   --manifest-path "$ws/Cargo.toml" -p oracle \
   --config "patch.crates-io.libm.path=\"$PWD/tools/libm-platform\"" \
-  --features jsbsim/platform-libm -- check-sincos "$@" || status=$?
+  --features jsbsim/__platform-libm -- check-sincos "$@" || status=$?
 if [ "$(shasum -a 256 Cargo.lock)" != "$lock_before" ]; then
   echo "oracle-sincos: Cargo.lock changed during the run" >&2
   status=1

@@ -27,16 +27,17 @@ tracing.workspace = true
 [features]
 # Filesystem resolver for native front ends; the core itself does no I/O.
 fs = []
-# jsbsim::elementary forwards to the libm crate; only for
-# scripts/oracle-sincos.sh, which patches the platform maths library in.
-platform-libm = []
+# jsbsim::elementary forwards to the libm crate instead of the bundled
+# exp and pow, which changes results; only for scripts/oracle-sincos.sh,
+# which patches the platform maths library in. Not for other crates.
+__platform-libm = []
 # The internals tools/oracle compares against C++ JSBSim
 # (jsbsim::oracle_support, the public Fdm::models field). Not for other
 # crates: nothing behind it is covered by semver.
 __oracle = []
 
 [package.metadata.docs.rs]
-# platform-libm is left out: it only serves scripts/oracle-sincos.sh.
+# __platform-libm is left out: it only serves scripts/oracle-sincos.sh.
 features = ["fs"]
 targets = ["x86_64-unknown-linux-gnu", "wasm32-unknown-unknown"]
 

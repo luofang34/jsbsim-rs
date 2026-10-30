@@ -2,12 +2,20 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # Fails when the jsbsim crate package would ship anything beyond its Rust
 # sources, README and licence texts (oracle data, NASA data, goldens,
-# tools, the API listing), or when it would lack a licence text. Builds the
+# tools, the API listing), when it would lack a licence text, or when its
+# manifest pins a dependency exactly (=x.y.z) or caps it (<x), which would
+# make the resolver fail for any dependent that needs another release of
+# that dependency; Cargo.lock pins the workspace's own builds. Features
+# other than fs must start with "__", the mark of an internal hook that
+# dependents leave off, so a new public feature is a reviewed change here.
+# Builds the
 # .crate offline and checks the archive itself, so the symlinked LICENSE
 # and LICENSES are seen as the regular files cargo packs. Usage:
 #   scripts/check-package.sh
 # JSBSIM_PACKAGE_LIST names a file to check in place of the listing (for
-# scripts/check-package.test.sh); the archive check is then skipped.
+# scripts/check-package.test.sh); the archive checks are then skipped.
+# JSBSIM_PACKAGE_MANIFEST names a manifest to check in place of the
+# packaged Cargo.toml (for the same test).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -48,6 +56,22 @@ for path in ${notices[@]+"${notices[@]}"}; do
     fail "$crate does not hold $path as a regular file"
   fi
 done
+
+manifest="${JSBSIM_PACKAGE_MANIFEST:-}"
+if [ -z "$manifest" ] && [ -z "${JSBSIM_PACKAGE_LIST:-}" ]; then
+  manifest="$(mktemp)"
+  trap 'rm -f "$manifest"' EXIT
+  tar -xOzf "$crate" "$(basename "$crate" .crate)/Cargo.toml" > "$manifest"
+fi
+if [ -n "$manifest" ]; then
+  while IFS= read -r line; do
+    fail "the packaged manifest restricts a dependency to one release or caps it: $line"
+  done < <(awk '/^\[/ { deps = /dependencies/ } deps && /"=|</' "$manifest")
+  while IFS= read -r feature; do
+    fail "feature $feature is public; only fs is, internal hooks start with __"
+  done < <(awk '/^\[/ { f = ($0 == "[features]") } f && /^[A-Za-z0-9_-]+ *=/ { print $1 }' "$manifest" \
+    | grep -vxE 'fs|__[A-Za-z0-9_-]+' || true)
+fi
 
 if [ "$failures" -gt 0 ]; then
   echo "check-package: $failures problem(s)" >&2

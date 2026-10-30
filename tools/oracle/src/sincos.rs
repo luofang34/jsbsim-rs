@@ -309,7 +309,7 @@ fn warn_unlisted_blocking(paths: &Paths) -> Result<(), OracleError> {
 
 /// Whether the port calls the platform maths library, as it does under
 /// scripts/oracle-sincos.sh: its patch makes the `libm` crate answer as
-/// the platform does, and its `platform-libm` feature makes
+/// the platform does, and its `__platform-libm` feature makes
 /// `jsbsim::oracle_support::elementary` forward to it. The `libm` crate's `exp(1)` alone
 /// is 1 ulp from the platform's.
 // Reason: the check is of what the `libm` crate itself returns.
