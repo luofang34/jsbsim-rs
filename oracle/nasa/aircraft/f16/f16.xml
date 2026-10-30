@@ -37,6 +37,9 @@
     (Table 7), so the CM lies 0.1 cbar = 1.132 ft ahead of the moment
     reference center (35% MAC), which is AERORP. JSBSim moves the aero
     forces from AERORP to the CM; the aero model itself is about the MRC.
+    The products of inertia are the integrals of the TM's equation (4)
+    (Ixz = +982), which the inertia tensor negates, so the mass balance
+    declares negated_crossproduct_inertia="false".
   - Propulsion: F16_prop.dml's steady-state thrust acts at the CM along
     body X as an external force. The zero-power engine exists only
     so that JSBSim's trim has a throttle to move: fcs/throttle-cmd-norm[0]
@@ -74,7 +77,7 @@
       <z> 0.0 </z>
     </location>
   </metrics>
-  <mass_balance>
+  <mass_balance negated_crossproduct_inertia="false">
     <ixx unit="SLUG*FT2"> 9496.0 </ixx>
     <iyy unit="SLUG*FT2"> 55814.0 </iyy>
     <izz unit="SLUG*FT2"> 63100.0 </izz>
