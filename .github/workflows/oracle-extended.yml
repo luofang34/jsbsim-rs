@@ -1,0 +1,67 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+# The oracle runs that are too slow, noisy or network-bound for every push:
+# the NASA check-cases (they download NASA's data, pinned by sha256) weekly
+# and on request, and the Rust-vs-C++ frame-time benchmark on request only,
+# since shared runners make its ratios noisy.
+name: Oracle (extended)
+
+on:
+  schedule:
+    - cron: "17 4 * * 1"
+  workflow_dispatch:
+    inputs:
+      bench:
+        description: Also run scripts/oracle-bench.sh
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  NO_COLOR: "1"
+
+jobs:
+  nasa:
+    runs-on: macos-15
+    timeout-minutes: 90
+    defaults:
+      run:
+        working-directory: jsbsim-rs
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: jsbsim-rs
+          persist-credentials: false
+      - uses: ./jsbsim-rs/.github/actions/rust
+        with:
+          root: jsbsim-rs
+          cache-key: oracle
+      - uses: ./jsbsim-rs/.github/actions/upstream-jsbsim
+        with:
+          root: jsbsim-rs
+      - name: NASA check-cases and F-16 checks
+        run: scripts/oracle-nasa.sh
+
+  bench:
+    if: github.event_name == 'workflow_dispatch' && inputs.bench
+    runs-on: macos-15
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: jsbsim-rs
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: jsbsim-rs
+          persist-credentials: false
+      - uses: ./jsbsim-rs/.github/actions/rust
+        with:
+          root: jsbsim-rs
+          cache-key: bench
+      - uses: ./jsbsim-rs/.github/actions/upstream-jsbsim
+        with:
+          root: jsbsim-rs
+      - name: Rust vs C++ frame time, both release profiles
+        run: scripts/oracle-bench.sh

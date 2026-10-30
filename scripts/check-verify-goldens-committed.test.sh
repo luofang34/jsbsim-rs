@@ -23,7 +23,8 @@ commit_without() {
   fi
   local tree
   tree=$(GIT_INDEX_FILE="$index" git write-tree)
-  git commit-tree -m "verify-goldens-committed self-test" "$tree"
+  git -c user.name=self-test -c user.email=self-test@localhost \
+    commit-tree -m "verify-goldens-committed self-test" "$tree"
 }
 
 if ! "$checker" "$(commit_without)" > "$scratch/full.log" 2>&1; then

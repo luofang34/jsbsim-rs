@@ -1,0 +1,100 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+# quality-gates runs scripts/ci.sh one gate per step (scripts/
+# check-ci-workflow.sh keeps the steps and the script's gates the same).
+# oracle compares the port with C++ JSBSim on macOS arm64, where the goldens
+# were generated: the C++ side depends on the platform's maths library.
+# wasm-determinism needs no C++ and runs on Linux.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  CARGO_TERM_COLOR: always
+  NO_COLOR: "1"
+
+jobs:
+  quality-gates:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/rust
+        with:
+          cache-key: quality-gates
+      - name: Install cargo-public-api
+        uses: taiki-e/install-action@86f7a0ffb25f40114606501a311ebcfaf882ea32 # v2.88.0
+        with:
+          tool: cargo-public-api@0.52.0
+      - name: fmt
+        run: scripts/ci.sh fmt
+      - name: clippy
+        run: scripts/ci.sh clippy
+      - name: clippy-dependent
+        run: scripts/ci.sh clippy-dependent
+      - name: test
+        run: scripts/ci.sh test
+      - name: doctest
+        run: scripts/ci.sh doctest
+      - name: doc
+        run: scripts/ci.sh doc
+      - name: doc-dependent
+        run: scripts/ci.sh doc-dependent
+      - name: release
+        run: scripts/ci.sh release
+      - name: wasm
+        run: scripts/ci.sh wasm
+      - name: checks
+        run: scripts/ci.sh checks
+
+  wasm-determinism:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - uses: ./.github/actions/rust
+        with:
+          targets: wasm32-wasip1
+          cache-key: wasm-determinism
+      - name: Native and wasm32-wasip1, bit for bit
+        run: scripts/wasm-determinism.sh
+
+  oracle:
+    runs-on: macos-15
+    timeout-minutes: 90
+    defaults:
+      run:
+        working-directory: jsbsim-rs
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: jsbsim-rs
+          persist-credentials: false
+      - uses: ./jsbsim-rs/.github/actions/rust
+        with:
+          root: jsbsim-rs
+          cache-key: oracle
+      - uses: ./jsbsim-rs/.github/actions/upstream-jsbsim
+        with:
+          root: jsbsim-rs
+      - name: Drift, XML, models, sockets, port and sincos against C++
+        run: scripts/oracle-ci.sh
+      - name: The goldens on disk are the committed ones
+        run: scripts/verify-goldens-committed.sh

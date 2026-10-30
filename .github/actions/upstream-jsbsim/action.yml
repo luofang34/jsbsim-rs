@@ -1,0 +1,49 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+name: Upstream JSBSim
+description: >
+  Checks out C++ JSBSim at the commit the committed goldens were generated
+  from (their manifests' upstream_commit), installs Ninja for the oracle's
+  CMake build, and sets JSBSIM_ROOT for the steps after it.
+inputs:
+  root:
+    description: The jsbsim-rs checkout, relative to the workspace.
+    required: true
+  path:
+    description: Where to check JSBSim out, relative to the workspace.
+    default: jsbsim
+runs:
+  using: composite
+  steps:
+    - name: Read the pinned upstream commit
+      id: pin
+      shell: bash
+      working-directory: ${{ inputs.root }}
+      run: |
+        commit=$(sed -n 's/^upstream_commit = "\([0-9a-f]\{40\}\)"$/\1/p' oracle/goldens/ball/manifest.toml)
+        if [ -z "$commit" ]; then
+          echo "no upstream_commit in oracle/goldens/ball/manifest.toml" >&2
+          exit 1
+        fi
+        echo "commit=$commit" >> "$GITHUB_OUTPUT"
+    - name: Check out JSBSim
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        repository: JSBSim-Team/jsbsim
+        ref: ${{ steps.pin.outputs.commit }}
+        path: ${{ inputs.path }}
+        persist-credentials: false
+    - name: Install Ninja
+      shell: bash
+      run: |
+        if ! command -v ninja > /dev/null; then
+          if command -v brew > /dev/null; then
+            brew install ninja
+          else
+            sudo apt-get update && sudo apt-get install -y ninja-build
+          fi
+        fi
+        cmake --version | head -1
+        ninja --version
+    - name: Point the oracle at it
+      shell: bash
+      run: echo "JSBSIM_ROOT=$GITHUB_WORKSPACE/${{ inputs.path }}" >> "$GITHUB_ENV"

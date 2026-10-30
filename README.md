@@ -20,16 +20,27 @@ The toolchain is pinned in `rust-toolchain.toml`.
 ```sh
 cargo build
 cargo test --workspace --all-targets
-scripts/ci.sh            # every local CI gate, in order
+scripts/ci.sh            # every CI gate, in order
+scripts/ci.sh clippy     # one gate; scripts/ci.sh --list names them
 ```
 
-`scripts/ci.sh` runs `cargo fmt --check`, Clippy with `-D warnings`, the tests
-and doc tests, `cargo doc` with `-D missing_docs -D broken_intra_doc_links`, a
-release build, the `wasm32-unknown-unknown` build of `jsbsim`, and the checks in
+`scripts/ci.sh` runs `cargo fmt --check`, Clippy with `-D warnings` (on the
+workspace, and on `jsbsim` alone as a dependent builds it), the tests and doc
+tests, `cargo doc` with `-D missing_docs -D broken_intra_doc_links`, a release
+build, the `wasm32-unknown-unknown` build of `jsbsim`, and the checks in
 `scripts/check-*.sh`. One of them, `scripts/check-public-api.sh`, compares the
 public API of `jsbsim` with `crates/jsbsim/public-api.txt` and needs
 `cargo install --locked cargo-public-api@0.52.0`; after an intended API change,
 `scripts/check-public-api.sh --bless` rewrites the listing.
+
+GitHub Actions runs the same gates (`.github/workflows/ci.yml`): the
+`quality-gates` job runs each `scripts/ci.sh` gate as a step on Linux,
+`wasm-determinism` runs `scripts/wasm-determinism.sh`, and `oracle` runs
+`scripts/oracle-ci.sh` on macOS arm64 against C++ JSBSim checked out at the
+goldens' `upstream_commit`. `.github/workflows/oracle-extended.yml` runs
+`scripts/oracle-nasa.sh` weekly and `scripts/oracle-bench.sh` on request.
+`scripts/check-ci-workflow.sh` fails when the workflow's steps and the
+script's gates differ, or when an action is not pinned to a commit SHA.
 
 ## Oracle
 
@@ -71,7 +82,7 @@ cargo run -p oracle -- generate ball       # rewrite oracle/goldens/ball/{refere
 cargo run -p oracle -- check-drift         # regenerate all cases and compare with the goldens
 cargo run -p oracle -- check-xml           # parse every JSBSim XML file and load its functions in C++ and Rust
 cargo run -p oracle -- port function-ops   # run the Rust side of a transcript case and report differences
-scripts/oracle-ci.sh                       # check-drift and check-xml, as run by CI
+scripts/oracle-ci.sh                       # drift, XML, models, sockets, port and sincos, as CI's oracle job runs it
 scripts/oracle-bench.sh                    # ns/frame of Rust vs C++ on the oracle/bench.toml cases
 scripts/oracle-sincos.sh                   # C++ without sin/cos fusion vs the port on the platform libm, bit for bit
 scripts/wasm-determinism.sh                # the port natively vs as wasm32-wasip1 under Node, bit for bit (oracle/determinism.toml)
