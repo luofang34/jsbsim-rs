@@ -323,7 +323,8 @@ fn run_ic_starts_the_engines_the_initial_conditions_name() {
     // A reset runs the initial conditions again, which start it again.
     fdm.set_property("propulsion/engine/set-running", 0.0)
         .unwrap();
-    fdm.reset_to_initial_conditions(0).unwrap();
+    fdm.reset_to_initial_conditions(crate::ResetMask::empty())
+        .unwrap();
     assert_eq!(
         fdm.get_property("propulsion/engine/set-running").unwrap(),
         1.0

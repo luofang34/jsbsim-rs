@@ -8,7 +8,7 @@
 
 use super::exec_bind::ExecRequest;
 use super::order::{Model, ORDER};
-use super::{Fdm, Models};
+use super::{Fdm, Models, ResetMask};
 use crate::Error;
 use crate::math::{ColumnVector3, E_PHI, E_THT, Location, Quaternion};
 use crate::models::aircraft;
@@ -440,15 +440,18 @@ impl Fdm {
         self.models.exec.dt = dt;
     }
 
-    /// `ResetToInitialConditions(mode)`.
-    pub fn reset_to_initial_conditions(&mut self, mode: i32) -> Result<(), Error> {
+    /// `ResetToInitialConditions(mode)`: puts every model back to its
+    /// initial state and the clock to the script's start (or zero), then
+    /// runs [`run_ic`](Self::run_ic) unless `mode` contains
+    /// [`ResetMask::DONT_EXECUTE_RUN_IC`].
+    pub fn reset_to_initial_conditions(&mut self, mode: ResetMask) -> Result<(), Error> {
         self.initialize_models()?;
         if self.script.is_some() {
             self.reset_events()?;
         } else {
             self.set_sim_time(0.0);
         }
-        if mode & 2 == 0 {
+        if !mode.contains(ResetMask::DONT_EXECUTE_RUN_IC) {
             self.run_ic()?;
         }
         Ok(())
@@ -459,7 +462,7 @@ impl Fdm {
         while let Some(request) = self.models.exec.requests.pop() {
             match request {
                 ExecRequest::Reset(mode) => self.reset_to_initial_conditions(mode)?,
-                ExecRequest::Trim(mode) => self.do_trim(mode)?,
+                ExecRequest::Trim(mode) => self.do_trim_requested(mode)?,
                 ExecRequest::InitRunning(n) => self.init_running(n)?,
                 ExecRequest::Linearize => self.do_linearization()?,
             }

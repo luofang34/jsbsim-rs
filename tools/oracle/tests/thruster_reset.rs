@@ -72,7 +72,8 @@ fn check_reset(
     for (name, value) in thruster.iter().zip(&initial) {
         assert_ne!(fdm.get_property(name).unwrap(), *value, "{name}");
     }
-    fdm.reset_to_initial_conditions(0).unwrap();
+    fdm.reset_to_initial_conditions(jsbsim::ResetMask::empty())
+        .unwrap();
     let at_reset = outputs(&mut fdm, &names);
     assert_eq!(at_reset, initial);
     let again = run_steps(&mut fdm, inputs, &names, steps);

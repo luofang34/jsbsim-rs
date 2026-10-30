@@ -74,7 +74,7 @@ pub mod trim;
 pub mod oracle_support;
 
 pub use error::Error;
-pub use fdm::Fdm;
+pub use fdm::{Fdm, ResetMask};
 pub use models::inertial::{Contact, GroundCallback};
 pub use options::LoadOptions;
 pub use properties::NodeId;

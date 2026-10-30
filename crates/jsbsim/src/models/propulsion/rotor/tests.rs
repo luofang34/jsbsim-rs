@@ -126,7 +126,8 @@ fn a_reset_stops_the_rotor() {
     for _ in 0..60 {
         fdm.run().unwrap();
     }
-    fdm.reset_to_initial_conditions(0).unwrap();
+    fdm.reset_to_initial_conditions(crate::ResetMask::empty())
+        .unwrap();
     let main = rotor(&fdm, 0);
     // RunIC's frame holds it at its minimal speed.
     assert_eq!(main.state.rpm, 1.0);

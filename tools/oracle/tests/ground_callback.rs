@@ -191,7 +191,8 @@ fn a_reset_and_a_planet_load_keep_the_installed_callback() {
     let mut fdm = vehicle("scenarios", "gear_rover", Some(deck), ROLLING_NORTH);
     fdm.run_ic().unwrap();
     run_for(&mut fdm, 1.0);
-    fdm.reset_to_initial_conditions(0).unwrap();
+    fdm.reset_to_initial_conditions(jsbsim::ResetMask::empty())
+        .unwrap();
     assert!(fdm.models.inertial.has_custom_ground_callback());
     assert_eq!(fdm.models.propagate.local_terrain_velocity, deck_velocity);
     run_for(&mut fdm, 0.5);

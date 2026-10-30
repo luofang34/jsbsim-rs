@@ -237,7 +237,11 @@ impl Fdm {
         Ok(declared)
     }
 
-    /// `Setsim_time`.
+    /// `Setsim_time`: sets the simulation clock, and the copies of it the
+    /// inertial and atmosphere models keep, to `t` seconds. It moves no
+    /// state: position, velocities, controls and the integrator histories
+    /// stay as they are. Script start and reset use it to put the clock
+    /// back, as JSBSim's `FGFDMExec::Setsim_time` does.
     pub fn set_sim_time(&mut self, t: f64) {
         self.models.exec.sim_time = t;
         self.models.inertial.set_time(t);

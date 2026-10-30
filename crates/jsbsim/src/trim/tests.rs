@@ -81,6 +81,46 @@ fn a_mode_out_of_range_is_an_illegal_trim() {
 }
 
 #[test]
+fn every_typed_mode_trims_as_simulation_do_simple_trim_does() {
+    // The ground trim needs the tripod on its springs. The other modes fail
+    // without aerodynamics, and clear of the ground they reach that failure
+    // in far fewer iterations.
+    let started = |mode| {
+        let mut fdm = tripod();
+        if mode == TrimMode::Ground {
+            fdm.set_property("ic/h-sl-ft", 0.1).unwrap();
+            fdm.set_property("ic/lat-gc-deg", 90.0).unwrap();
+        } else {
+            fdm.set_property("ic/h-sl-ft", 1000.0).unwrap();
+        }
+        fdm.run_ic().unwrap();
+        fdm
+    };
+    for v in 0..=6 {
+        let mode = TrimMode::from_i32(v).unwrap();
+        let mut typed = started(mode);
+        let typed_result = typed.do_trim(mode);
+        let mut raw = started(mode);
+        let raw_result = raw
+            .set_property("simulation/do_simple_trim", f64::from(v))
+            .map(drop);
+        assert_eq!(typed_result, raw_result, "{mode:?}");
+        // Debug text, as aero-less modes leave NaN states that `==` rejects.
+        assert_eq!(
+            format!("{:?}", typed.last_trim()),
+            format!("{:?}", raw.last_trim())
+        );
+        assert_eq!(typed.last_trim().map(|r| r.mode), Some(mode));
+        let h = "position/h-sl-ft";
+        assert_eq!(
+            typed.get_property(h).unwrap().to_bits(),
+            raw.get_property(h).unwrap().to_bits(),
+            "{mode:?}"
+        );
+    }
+}
+
+#[test]
 fn custom_and_none_trims_have_no_axes_and_succeed_without_moving_time() {
     for mode in [TrimMode::Custom, TrimMode::None] {
         let mut fdm = tripod();
@@ -107,7 +147,7 @@ fn the_ground_trim_rests_the_tripod_on_its_three_springs() {
     fdm.set_property("ic/lat-gc-deg", 90.0).unwrap();
     fdm.run_ic().unwrap();
     let h = fdm.get_property("ic/h-sl-ft").unwrap();
-    fdm.do_trim(TrimMode::Ground as i32).unwrap();
+    fdm.do_trim(TrimMode::Ground).unwrap();
     let report = fdm.last_trim().unwrap().clone();
     assert!(report.success);
     let states: Vec<_> = report.axes.iter().map(|a| (a.state, a.control)).collect();

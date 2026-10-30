@@ -838,7 +838,7 @@ impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::Contact
 impl core::panic::unwind_safe::UnwindSafe for jsbsim::Contact
 pub struct jsbsim::Fdm
 impl jsbsim::Fdm
-pub fn jsbsim::Fdm::do_trim(&mut self, i32) -> core::result::Result<(), jsbsim::error::Error>
+pub fn jsbsim::Fdm::do_trim(&mut self, jsbsim::trim::TrimMode) -> core::result::Result<(), jsbsim::error::Error>
 pub fn jsbsim::Fdm::last_trim(&self) -> core::option::Option<&jsbsim::trim::TrimReport>
 pub fn jsbsim::Fdm::trim_requested(&self) -> jsbsim::trim::TrimMode
 pub fn jsbsim::Fdm::trims_run(&self) -> u32
@@ -865,7 +865,7 @@ impl jsbsim::Fdm
 pub fn jsbsim::Fdm::load_script(&mut self, &dyn jsbsim::Resolver, &str) -> core::result::Result<(), jsbsim::error::Error>
 pub fn jsbsim::Fdm::set_sim_time(&mut self, f64)
 impl jsbsim::Fdm
-pub fn jsbsim::Fdm::reset_to_initial_conditions(&mut self, i32) -> core::result::Result<(), jsbsim::error::Error>
+pub fn jsbsim::Fdm::reset_to_initial_conditions(&mut self, jsbsim::ResetMask) -> core::result::Result<(), jsbsim::error::Error>
 pub fn jsbsim::Fdm::run(&mut self) -> core::result::Result<bool, jsbsim::error::Error>
 pub fn jsbsim::Fdm::run_ic(&mut self) -> core::result::Result<(), jsbsim::error::Error>
 pub fn jsbsim::Fdm::set_dt(&mut self, f64)
@@ -959,6 +959,39 @@ impl core::marker::Unpin for jsbsim::NodeId
 impl core::marker::UnsafeUnpin for jsbsim::NodeId
 impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::NodeId
 impl core::panic::unwind_safe::UnwindSafe for jsbsim::NodeId
+pub struct jsbsim::ResetMask(_)
+impl jsbsim::ResetMask
+pub const jsbsim::ResetMask::DONT_EXECUTE_RUN_IC: Self
+pub const jsbsim::ResetMask::START_NEW_OUTPUT: Self
+pub const fn jsbsim::ResetMask::bits(self) -> u32
+pub const fn jsbsim::ResetMask::contains(self, Self) -> bool
+pub const fn jsbsim::ResetMask::empty() -> Self
+pub const fn jsbsim::ResetMask::from_bits_retain(u32) -> Self
+impl core::clone::Clone for jsbsim::ResetMask
+pub fn jsbsim::ResetMask::clone(&self) -> jsbsim::ResetMask
+impl core::cmp::Eq for jsbsim::ResetMask
+impl core::cmp::PartialEq for jsbsim::ResetMask
+pub fn jsbsim::ResetMask::eq(&self, &jsbsim::ResetMask) -> bool
+impl core::default::Default for jsbsim::ResetMask
+pub fn jsbsim::ResetMask::default() -> jsbsim::ResetMask
+impl core::fmt::Debug for jsbsim::ResetMask
+pub fn jsbsim::ResetMask::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for jsbsim::ResetMask
+pub fn jsbsim::ResetMask::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for jsbsim::ResetMask
+impl core::marker::StructuralPartialEq for jsbsim::ResetMask
+impl core::ops::bit::BitOr for jsbsim::ResetMask
+pub type jsbsim::ResetMask::Output = jsbsim::ResetMask
+pub fn jsbsim::ResetMask::bitor(self, Self) -> Self
+impl core::ops::bit::BitOrAssign for jsbsim::ResetMask
+pub fn jsbsim::ResetMask::bitor_assign(&mut self, Self)
+impl core::marker::Freeze for jsbsim::ResetMask
+impl core::marker::Send for jsbsim::ResetMask
+impl core::marker::Sync for jsbsim::ResetMask
+impl core::marker::Unpin for jsbsim::ResetMask
+impl core::marker::UnsafeUnpin for jsbsim::ResetMask
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::ResetMask
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::ResetMask
 pub trait jsbsim::GroundCallback: core::marker::Send
 pub fn jsbsim::GroundCallback::ag_level(&self, f64, &jsbsim::math::Location) -> jsbsim::Contact
 pub fn jsbsim::GroundCallback::set_ellipse(&mut self, f64, f64)

@@ -5,16 +5,17 @@
 //
 //! Properties of the executive and the model enable flags.
 
-use super::{Binder, Kind, Models};
+use super::{Binder, Kind, Models, ResetMask};
 use crate::Error;
 use crate::models::base::ModelBase;
 
 /// Requests from setters that need the whole executive.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ExecRequest {
-    /// `simulation/reset` with its mode bits.
-    Reset(i32),
-    /// `simulation/do_simple_trim` with its mode.
+    /// `simulation/reset` with its mode bits, unnamed ones included.
+    Reset(ResetMask),
+    /// `simulation/do_simple_trim` with its mode, which may be out of
+    /// range: the executive reports it as JSBSim's illegal trim.
     Trim(i32),
     /// `simulation/do_linearization`.
     Linearize,
@@ -74,7 +75,12 @@ pub fn bind_exec(b: &mut Binder<'_>) -> Result<(), Error> {
         m.exec.requests.push(ExecRequest::Linearize)
     })?;
     b.setter_only("simulation/reset", Kind::Int, |m, v| {
-        m.exec.requests.push(ExecRequest::Reset(v as i32))
+        // The `as u32` keeps the `int`'s two's complement bits, so a
+        // negative mode tests the same flags as C++'s `mode & 0x2`.
+        let bits = v as i32 as u32;
+        m.exec
+            .requests
+            .push(ExecRequest::Reset(ResetMask::from_bits_retain(bits)))
     })?;
     b.typed_getter("simulation/disperse", Kind::Int, |_| 0.0)?;
     b.property(

@@ -10,16 +10,11 @@ use crate::Error;
 use crate::trim::{Trim, TrimMode, TrimReport};
 
 impl Fdm {
-    /// `DoTrim(mode)`: trims in `mode` (a [`TrimMode`] value) and sets
-    /// `simulation/trim-completed`. A mode out of range or a trim that does
-    /// not converge is [`Error::TrimFailed`], as JSBSim throws
-    /// `TrimFailureException`; the failed trim has put the controls back.
-    pub fn do_trim(&mut self, mode: i32) -> Result<(), Error> {
-        let Some(mode) = TrimMode::from_i32(mode) else {
-            return Err(Error::TrimFailed {
-                message: "Illegal trimming mode!".to_owned(),
-            });
-        };
+    /// `DoTrim(mode)`: trims in `mode` and sets `simulation/trim-completed`.
+    /// A trim that does not converge is [`Error::TrimFailed`], as JSBSim
+    /// throws `TrimFailureException`; the failed trim has put the controls
+    /// back.
+    pub fn do_trim(&mut self, mode: TrimMode) -> Result<(), Error> {
         let mut trim = Trim::new(self, mode);
         let success = trim.do_trim(self)?;
         let report = trim.report(self);
@@ -35,6 +30,18 @@ impl Fdm {
         }
         self.models.exec.trim_completed = 1;
         Ok(())
+    }
+
+    /// `DoTrim(mode)` with the `int` that `simulation/do_simple_trim`
+    /// receives: a value outside JSBSim's `tModes` is
+    /// [`Error::TrimFailed`] with JSBSim's "Illegal trimming mode!".
+    pub(super) fn do_trim_requested(&mut self, mode: i32) -> Result<(), Error> {
+        let Some(mode) = TrimMode::from_i32(mode) else {
+            return Err(Error::TrimFailed {
+                message: "Illegal trimming mode!".to_owned(),
+            });
+        };
+        self.do_trim(mode)
     }
 
     /// What the last [`do_trim`](Self::do_trim) reported, as JSBSim's

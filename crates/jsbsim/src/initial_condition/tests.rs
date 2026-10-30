@@ -287,9 +287,55 @@ fn run_ic_applies_the_live_initial_conditions() {
     ));
 
     fdm.set_property("ic/h-sl-ft", 6000.0).unwrap();
-    fdm.reset_to_initial_conditions(0).unwrap();
+    fdm.reset_to_initial_conditions(crate::ResetMask::empty())
+        .unwrap();
     assert!(close(
         fdm.get_property("position/h-sl-ft").unwrap(),
+        6000.0,
+        1e-9
+    ));
+}
+
+#[test]
+fn a_reset_without_run_ic_matches_simulation_reset_2() {
+    use crate::ResetMask;
+    let started = || {
+        let mut fdm = fdm();
+        fdm.set_property("ic/h-sl-ft", 3000.0).unwrap();
+        fdm.run_ic().unwrap();
+        for _ in 0..5 {
+            fdm.run().unwrap();
+        }
+        fdm.set_property("ic/h-sl-ft", 6000.0).unwrap();
+        fdm
+    };
+    let mut typed = started();
+    typed
+        .reset_to_initial_conditions(ResetMask::DONT_EXECUTE_RUN_IC)
+        .unwrap();
+    let mut raw = started();
+    raw.set_property("simulation/reset", 2.0).unwrap();
+    for p in [
+        "position/h-sl-ft",
+        "velocities/u-fps",
+        "simulation/sim-time-sec",
+        "simulation/frame",
+    ] {
+        let (t, r) = (typed.get_property(p).unwrap(), raw.get_property(p).unwrap());
+        assert_eq!(t.to_bits(), r.to_bits(), "{p}: {t} vs {r}");
+    }
+    assert_eq!(typed.get_property("simulation/sim-time-sec").unwrap(), 0.0);
+    assert!(!close(
+        typed.get_property("position/h-sl-ft").unwrap(),
+        6000.0,
+        1.0
+    ));
+
+    let mut full = started();
+    full.reset_to_initial_conditions(ResetMask::empty())
+        .unwrap();
+    assert!(close(
+        full.get_property("position/h-sl-ft").unwrap(),
         6000.0,
         1e-9
     ));

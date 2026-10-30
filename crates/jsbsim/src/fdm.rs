@@ -21,6 +21,7 @@ mod models_run;
 mod order;
 mod planet;
 mod propulsion;
+mod reset_mask;
 mod run;
 mod script;
 mod snapshot;
@@ -32,6 +33,7 @@ mod tests;
 pub use bindings::{Binder, Bindings, Kind, ModelEvaluator, ModelGetters, convert_write};
 pub use exec_bind::ExecRequest;
 pub use load::{LoadContext, ModelFunctions};
+pub use reset_mask::ResetMask;
 pub use run::InitialState;
 
 use crate::Error;
