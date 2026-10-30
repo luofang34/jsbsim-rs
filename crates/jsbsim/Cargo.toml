@@ -1,15 +1,15 @@
 [package]
 name = "jsbsim"
-version = "0.0.0"
+version = "0.1.0"
 description = "Unofficial pure-Rust port of the JSBSim flight dynamics model"
 edition.workspace = true
 # The geodesic code is also MIT (GeographicLib) and the elementary
 # functions also MIT OR Apache-2.0 WITH LLVM-exception (ARM
 # optimized-routines), as their SPDX lines say.
 license = "LGPL-2.1-or-later AND MIT AND (MIT OR Apache-2.0 WITH LLVM-exception)"
-publish.workspace = true
 rust-version.workspace = true
 readme = "README.md"
+repository = "https://github.com/luofang34/jsbsim-rs"
 keywords = ["jsbsim", "flight-dynamics", "flight-simulator", "aircraft", "simulation"]
 categories = ["aerospace::simulation", "simulation", "science", "wasm"]
 # LICENSE and LICENSES are symlinks to the repository root's licence

@@ -39,6 +39,8 @@ GitHub Actions runs the same gates (`.github/workflows/ci.yml`): the
 `scripts/oracle-ci.sh` on macOS arm64 against C++ JSBSim checked out at the
 goldens' `upstream_commit`. `.github/workflows/oracle-extended.yml` runs
 `scripts/oracle-nasa.sh` weekly and `scripts/oracle-bench.sh` on request.
+`.github/workflows/release.yml` publishes `jsbsim` to crates.io when a tag
+`v<version>` matching `crates/jsbsim/Cargo.toml` is pushed.
 `scripts/check-ci-workflow.sh` fails when the workflow's steps and the
 script's gates differ, or when an action is not pinned to a commit SHA.
 
