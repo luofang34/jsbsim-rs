@@ -607,6 +607,16 @@ cause = "Not isolated: outside by up to 1.9e-06 at t=0.0 s; with Adams-Bashforth
 # C++ JSBSim on this hand-translated DAVE-ML F-16; the model lands near,
 # but mostly outside, NASA's sims-4/5 envelope; causes are not isolated and
 # translation error is not excluded.
+#
+# Every F-16 script runs Adams-Bashforth 4 on all four integrators at
+# dt = 0.0025 s. It has converged where the F-16 moves fastest: check-case
+# 13.3's roll rate at 15.3, 15.5 and 15.6 s lies within 2.63, 1.74 and
+# 1.01 deg/s of a run at dt = 0.00125 s and within 1.53, 1.00 and
+# 0.57 deg/s of one at dt = 0.0003125 s, with the same integrators. The
+# TM's JSBSim setting (B.6.7), 120 Hz with Adams-Bashforth 4, is rejected:
+# it sets check-case 13.2 into a roll limit cycle, |p| reaching 31 deg/s
+# after t = 10 s, on which Rust and C++ diverge. JSBSim's default integrators at dt = 0.0025 s are
+# 5.1 and 8.5 deg/s off the dt = 0.00125 s run at 15.3 and 15.5 s.
 [[case]]
 name = "Atmos_11"
 archive = "Atmos_11_TrimCheckSubsonicF16"

@@ -10,7 +10,16 @@
 <runscript name="NASA EOM check-case Atmos 16">
   <description>Check-case 16 of NASA/TM-2015-218675: circular flight around the Equator-IDL intersection</description>
   <use aircraft="f16" initialize="reset_Atmos_16"/>
-  <run start="0.0" end="180" dt="0.01">
+  <run start="0.0" end="180" dt="0.0025">
+    <!--
+      Adams-Bashforth 4 for every integrator at dt = 0.0025 s, for the
+      convergence and stability reasons in the F-16 section of
+      oracle/nasa/manifest.toml.
+    -->
+    <property value="5"> simulation/integrator/rate/rotational </property>
+    <property value="5"> simulation/integrator/rate/translational </property>
+    <property value="5"> simulation/integrator/position/rotational </property>
+    <property value="5"> simulation/integrator/position/translational </property>
     <event name="Engage the autopilot">
       <description>
         Engaged after the trim, which runs with both discretes off. The
