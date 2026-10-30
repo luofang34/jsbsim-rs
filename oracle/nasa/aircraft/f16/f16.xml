@@ -107,6 +107,30 @@
     </engine>
   </propulsion>
 
+  <system name="air_now">
+    <!--
+      F16_control.dml feeds back angle of attack, sideslip and equivalent
+      airspeed of the same instant as the attitude and rates. FGFCS runs
+      after FGPropagate but before FGAuxiliary, so aero/alpha-deg,
+      aero/beta-deg and velocities/ve-kts would be the previous frame's
+      here; these are computed from this frame's body velocities (no wind
+      in these cases) and density instead.
+    -->
+    <channel name="air data from this frame's state">
+      <fcs_function name="alpha_now">
+        <function><todegrees><atan2><property>velocities/w-fps</property><property>velocities/u-fps</property></atan2></todegrees></function>
+        <output>f16/air/alpha-deg</output>
+      </fcs_function>
+      <fcs_function name="beta_now">
+        <function><todegrees><atan2><property>velocities/v-fps</property><sqrt><sum><pow><property>velocities/u-fps</property><value>2</value></pow><pow><property>velocities/w-fps</property><value>2</value></pow></sum></sqrt></atan2></todegrees></function>
+        <output>f16/air/beta-deg</output>
+      </fcs_function>
+      <fcs_function name="ve_now">
+        <function><product><value>0.5924838012958963</value><sqrt><quotient><product><property>atmosphere/rho-slugs_ft3</property><sum><pow><property>velocities/u-fps</property><value>2</value></pow><pow><property>velocities/v-fps</property><value>2</value></pow><pow><property>velocities/w-fps</property><value>2</value></pow></sum></product><property>atmosphere/rho-sl-slugs_ft3</property></quotient></sqrt></product></function>
+        <output>f16/air/ve-kts</output>
+      </fcs_function>
+    </channel>
+  </system>
   <system name="F16_gnc">
     <!--
       Inputs not tied to the vehicle state, set by the scripts: sasOn,
@@ -407,7 +431,7 @@
         <function>
           <difference>
             <sum>
-              <property>aero/beta-deg</property>
+              <property>f16/air/beta-deg</property>
               <property>attitude/psi-deg</property>
             </sum>
             <sum>
@@ -461,7 +485,7 @@
         <description>disturbedEquivalentAirspeed = Vequiv - keasCmdSw, kt</description>
         <function>
           <difference>
-            <property>velocities/ve-kts</property>
+            <property>f16/air/ve-kts</property>
             <ifthen>
               <gt>
                 <property>f16/control/ap-on</property>
@@ -478,7 +502,7 @@
         <description>disturbedAngleOfAttack = alpha - trimmedAlpha, deg</description>
         <function>
           <difference>
-            <property>aero/alpha-deg</property>
+            <property>f16/air/alpha-deg</property>
             <value>2.653813535191715</value>
           </difference>
         </function>
@@ -603,7 +627,7 @@
                 </product>
                 <product>
                   <value>0.032365863044163</value>
-                  <property>aero/beta-deg</property>
+                  <property>f16/air/beta-deg</property>
                 </product>
                 <product>
                   <value>4.557858908828332</value>
@@ -637,7 +661,7 @@
                 </product>
                 <product>
                   <value>-0.256362860634868</value>
-                  <property>aero/beta-deg</property>
+                  <property>f16/air/beta-deg</property>
                 </product>
                 <product>
                   <value>-1.073666149713151</value>
