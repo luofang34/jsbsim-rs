@@ -18,9 +18,9 @@ pub struct PathError {
     pub message: String,
 }
 
-/// One step of a parsed path.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub(crate) enum Component {
+/// One step of a parsed path, borrowing its name from the path.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum Component<'a> {
     /// Leading `/`: start from the root.
     Root,
     /// `.`
@@ -28,7 +28,7 @@ pub(crate) enum Component {
     /// `..`
     Parent,
     /// A child name with its index (0 when no `[n]` is given).
-    Child(String, i32),
+    Child(&'a str, i32),
 }
 
 fn is_name_start(b: u8) -> bool {
@@ -44,21 +44,65 @@ fn error(message: String) -> PathError {
 }
 
 /// Splits `path` into components the way SimGear's `parse_path` does,
-/// including its quirk that `a[1]b` reads as `a[1]/b`.
-pub(crate) fn parse_path(path: &str) -> Result<Vec<Component>, PathError> {
-    let bytes = path.as_bytes();
-    let mut components = Vec::new();
-    let mut pos = 0;
-    if bytes.first() == Some(&b'/') {
-        components.push(Component::Root);
-        pos = skip_slashes(bytes, 1);
-    }
-    while pos < bytes.len() {
-        let (component, next) = parse_component(path, pos)?;
-        components.push(component);
-        pos = skip_slashes(bytes, next);
+/// including its quirk that `a[1]b` reads as `a[1]/b`, with `index` in
+/// place of the last component's index when that is a child. The whole
+/// path is checked before the first component is returned, as SimGear
+/// parses it before walking, and nothing is allocated.
+pub(crate) fn parse_path(path: &str, index: Option<i32>) -> Result<Components<'_>, PathError> {
+    let components = Components::new(path, index);
+    let mut pos = components.pos;
+    while pos < path.len() {
+        pos = skip_slashes(path.as_bytes(), parse_component(path, pos)?.1);
     }
     Ok(components)
+}
+
+/// The components of a path [`parse_path`] has checked.
+pub(crate) struct Components<'a> {
+    path: &'a str,
+    pos: usize,
+    root: bool,
+    index: Option<i32>,
+}
+
+impl<'a> Components<'a> {
+    fn new(path: &'a str, index: Option<i32>) -> Self {
+        let root = path.starts_with('/');
+        let pos = if root {
+            skip_slashes(path.as_bytes(), 1)
+        } else {
+            0
+        };
+        Self {
+            path,
+            pos,
+            root,
+            index,
+        }
+    }
+}
+
+impl<'a> Iterator for Components<'a> {
+    type Item = Component<'a>;
+
+    fn next(&mut self) -> Option<Component<'a>> {
+        if self.root {
+            self.root = false;
+            return Some(Component::Root);
+        }
+        if self.pos >= self.path.len() {
+            return None;
+        }
+        // parse_path checked every component, so none fails here.
+        let (component, next) = parse_component(self.path, self.pos).ok()?;
+        self.pos = skip_slashes(self.path.as_bytes(), next);
+        match (component, self.index) {
+            (Component::Child(name, _), Some(index)) if self.pos >= self.path.len() => {
+                Some(Component::Child(name, index))
+            }
+            _ => Some(component),
+        }
+    }
 }
 
 fn skip_slashes(bytes: &[u8], mut pos: usize) -> usize {
@@ -68,7 +112,7 @@ fn skip_slashes(bytes: &[u8], mut pos: usize) -> usize {
     pos
 }
 
-fn parse_component(path: &str, start: usize) -> Result<(Component, usize), PathError> {
+fn parse_component(path: &str, start: usize) -> Result<(Component<'_>, usize), PathError> {
     let bytes = path.as_bytes();
     let mut i = start;
     if bytes.get(i) == Some(&b'.') {
@@ -106,7 +150,7 @@ fn parse_component(path: &str, start: usize) -> Result<(Component, usize), PathE
             )));
         }
     }
-    let name = path.get(start..i).unwrap_or_default().to_owned();
+    let name = path.get(start..i).unwrap_or_default();
     let (index, next) = parse_index(path, i)?;
     Ok((Component::Child(name, index), next))
 }

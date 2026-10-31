@@ -65,6 +65,23 @@ fn rejects_malformed_paths_with_simgear_messages() {
     assert_eq!(message(".x"), "Illegal character after . in '.x'");
     assert_eq!(message("..."), "Illegal character after .. in '...'");
     assert_eq!(message(".."), "Attempt to move past root with '..'");
+    // The whole path is checked before it is walked, as SimGear parses it
+    // first, so a missing node earlier on does not hide the error.
+    assert_eq!(
+        message("missing/a b"),
+        "name may contain only ._- and alphanumeric characters in 'missing/a b'"
+    );
+}
+
+#[test]
+fn explicit_index_replaces_only_the_last_child_index() {
+    let mut tree = PropertyTree::new();
+    let id = tree
+        .get_or_create_indexed(tree.root(), "x[2]/y", Some(5))
+        .unwrap();
+    assert_eq!(tree.fully_qualified_name(id), "/x[2]/y[5]");
+    let up = tree.get_or_create_indexed(id, "z/..", Some(7)).unwrap();
+    assert_eq!(up, id);
 }
 
 #[test]

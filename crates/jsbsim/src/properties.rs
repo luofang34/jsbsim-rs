@@ -198,14 +198,13 @@ impl PropertyTree {
         path: &str,
         index: Option<i32>,
     ) -> Result<Option<NodeId>, PathError> {
-        let components = components_with_index(path, index)?;
         let mut current = from;
-        for component in &components {
+        for component in parse_path(path, index)? {
             current = match component {
                 Component::Root => Self::true_root(),
                 Component::Current => current,
                 Component::Parent => self.parent(current).ok_or_else(past_root)?,
-                Component::Child(name, index) => match self.child(current, name, *index) {
+                Component::Child(name, index) => match self.child(current, name, index) {
                     Some(child) => child,
                     None => return Ok(None),
                 },
@@ -234,16 +233,15 @@ impl PropertyTree {
                 message: format!("node {} is not in this property tree", from.slot()),
             });
         }
-        let components = components_with_index(path, index)?;
         let mut current = from;
-        for component in components {
+        for component in parse_path(path, index)? {
             current = match component {
                 Component::Root => Self::true_root(),
                 Component::Current => current,
                 Component::Parent => self.parent(current).ok_or_else(past_root)?,
-                Component::Child(name, index) => match self.child(current, &name, index) {
+                Component::Child(name, index) => match self.child(current, name, index) {
                     Some(child) => child,
-                    None => self.add_child(current, name, index),
+                    None => self.add_child(current, name.to_owned(), index),
                 },
             };
         }
@@ -378,12 +376,4 @@ fn past_root() -> PathError {
     PathError {
         message: "Attempt to move past root with '..'".to_owned(),
     }
-}
-
-fn components_with_index(path: &str, index: Option<i32>) -> Result<Vec<Component>, PathError> {
-    let mut components = parse_path(path)?;
-    if let (Some(index), Some(Component::Child(_, last))) = (index, components.last_mut()) {
-        *last = index;
-    }
-    Ok(components)
 }

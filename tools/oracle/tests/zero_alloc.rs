@@ -17,6 +17,9 @@
 //! appended is restored: the check that precedes every restore decodes
 //! all of it, of a state frames older, before it refuses the extra byte,
 //! so that check alone is measured too.
+//!
+//! Reading and writing existing properties by name, as a host bridging
+//! controls and sensors each frame does, allocates nothing either.
 
 use std::path::{Path, PathBuf};
 
@@ -211,6 +214,48 @@ fn measure_scripts(report: &mut Vec<(String, u32, (u64, u64))>) {
     }
 }
 
+/// Properties a host reads or writes by name every frame, in the forms a
+/// name takes: plain, indexed, from the root and through `..`.
+const BY_NAME: [&str; 4] = [
+    "velocities/vc-kts",
+    "fcs/throttle-cmd-norm[0]",
+    "/position/h-sl-ft",
+    "fcs/../fcs/elevator-cmd-norm",
+];
+
+/// Heap blocks and bytes allocated across `frames` frames of the c172x
+/// that each read and write the [`BY_NAME`] properties by name, after
+/// warm-up frames that do so too (a first write may set up its setter's
+/// state once, as the altitude's does).
+#[cfg(test)]
+fn measure_by_name(resolver: &FileResolver, frames: u32) -> (u64, u64) {
+    let mut fdm = Fdm::new().unwrap();
+    fdm.load_model(resolver, "aircraft", "c172x").unwrap();
+    for (property, value) in oracle::bench::AIRBORNE_IC {
+        fdm.set_property(property, value).unwrap();
+    }
+    fdm.run_ic().unwrap();
+    let frame = |fdm: &mut Fdm| {
+        for name in BY_NAME {
+            let value = fdm.get_property(name).unwrap();
+            fdm.set_property(name, value).unwrap();
+        }
+        fdm.run().unwrap();
+    };
+    for _ in 0..WARM_UP {
+        frame(&mut fdm);
+    }
+    let before = dhat::HeapStats::get();
+    for _ in 0..frames {
+        frame(&mut fdm);
+    }
+    let after = dhat::HeapStats::get();
+    (
+        after.total_blocks - before.total_blocks,
+        after.total_bytes - before.total_bytes,
+    )
+}
+
 #[test]
 fn steady_state_frames_allocate_nothing() {
     let _profiler = dhat::Profiler::builder().testing().build();
@@ -250,6 +295,9 @@ fn steady_state_frames_allocate_nothing() {
 
     measure_scripts(&mut report);
     measure_trimmed(&mut report);
+    record(&mut report, "properties by name".to_owned(), FRAMES, || {
+        measure_by_name(&resolver, FRAMES)
+    });
 
     assert!(
         !report
