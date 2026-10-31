@@ -52,7 +52,8 @@ pub enum TrimMode {
     Ground = 2,
     /// `tPullup`: the load factor with alpha at the pitch rate it needs.
     Pullup = 3,
-    /// `tCustom`: the axes added with `Trim::add_state`.
+    /// `tCustom`: the axes given to [`Fdm::do_trim_custom`](crate::Fdm::do_trim_custom);
+    /// none when requested any other way.
     Custom = 4,
     /// `tTurn`: a coordinated turn at the initial bank angle.
     Turn = 5,

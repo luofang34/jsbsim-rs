@@ -256,3 +256,35 @@ fn turn_and_pullup_set_the_rates_of_their_load_factor() {
     pullup.setup_pullup(&fdm);
     assert!(pullup.fgic.pqr_radps()[crate::math::E_Q] > 0.0);
 }
+
+/// `do_trim_custom` trims the axes it is given, in order, and keeps the
+/// first control of a repeated state.
+#[test]
+fn a_custom_trim_trims_the_axes_it_is_given() {
+    let mut fdm = tripod();
+    fdm.set_property("ic/h-sl-ft", 0.1).unwrap();
+    fdm.set_property("ic/lat-gc-deg", 90.0).unwrap();
+    fdm.run_ic().unwrap();
+    fdm.do_trim_custom(&[
+        (State::Wdot, Control::AltAgl),
+        (State::Qdot, Control::Theta),
+        (State::Wdot, Control::Throttle),
+        (State::Pdot, Control::Phi),
+    ])
+    .unwrap();
+    let report = fdm.last_trim().unwrap();
+    assert!(report.success);
+    let axes: Vec<_> = report.axes.iter().map(|a| (a.state, a.control)).collect();
+    assert_eq!(
+        axes,
+        [
+            (State::Wdot, Control::AltAgl),
+            (State::Qdot, Control::Theta),
+            (State::Pdot, Control::Phi)
+        ]
+    );
+    for a in &report.axes {
+        assert!(a.state_value.abs() <= a.tolerance, "{a:?}");
+    }
+    assert_eq!(fdm.get_property("simulation/trim-completed").unwrap(), 1.0);
+}

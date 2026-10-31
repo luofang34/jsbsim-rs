@@ -7,7 +7,7 @@
 
 use super::Fdm;
 use crate::Error;
-use crate::trim::{Trim, TrimMode, TrimReport};
+use crate::trim::{Control, State, Trim, TrimMode, TrimReport};
 
 impl Fdm {
     /// `DoTrim(mode)`: trims in `mode` and sets `simulation/trim-completed`.
@@ -21,7 +21,28 @@ impl Fdm {
     /// [`Error::Function`] when a function the trimmed frames evaluate
     /// fails.
     pub fn do_trim(&mut self, mode: TrimMode) -> Result<(), Error> {
-        let mut trim = Trim::new(self, mode);
+        let trim = Trim::new(self, mode);
+        self.run_trim(trim)
+    }
+
+    /// A [`TrimMode::Custom`] trim of `axes`, each a state and the control
+    /// that trims it, in order: `FGTrim(fdm, tCustom)` with `AddState` for
+    /// each. A state given twice keeps its first control, as `AddState`
+    /// refuses the second. Otherwise as [`do_trim`](Self::do_trim).
+    ///
+    /// # Errors
+    ///
+    /// Those of [`do_trim`](Self::do_trim).
+    pub fn do_trim_custom(&mut self, axes: &[(State, Control)]) -> Result<(), Error> {
+        let mut trim = Trim::new(self, TrimMode::Custom);
+        for &(state, control) in axes {
+            trim.add_state(self, state, control);
+        }
+        self.run_trim(trim)
+    }
+
+    /// Runs `trim` and records its report, as `DoTrim` does.
+    fn run_trim(&mut self, mut trim: Trim) -> Result<(), Error> {
         let success = trim.do_trim(self)?;
         let report = trim.report(self);
         if self.models.exec.debug_level > 0 {
