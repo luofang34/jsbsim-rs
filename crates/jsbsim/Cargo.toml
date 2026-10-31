@@ -1,6 +1,6 @@
 [package]
 name = "jsbsim"
-version = "0.1.0"
+version = "0.1.1"
 description = "Unofficial pure-Rust port of the JSBSim flight dynamics model"
 edition.workspace = true
 # The geodesic code is also MIT (GeographicLib) and the elementary
