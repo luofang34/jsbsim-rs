@@ -443,3 +443,42 @@ fn wind_components_add_to_the_ground_velocity() {
     assert!(close(ic.wind_ned_fps()[E_Z], 5.0 * KTS, 1e-12));
     assert_eq!(ic.ned_vel_fps(E_X), 100.0, "the ground velocity is kept");
 }
+
+/// `load_initial_conditions_file` reads the file at a path, `.xml` added
+/// when it has no extension, a file at the resolver's root included,
+/// where `load_initial_conditions` with no directory reads `/name`.
+#[test]
+fn an_initialization_file_loads_by_its_path() {
+    let xml = r#"<initialize name="t">
+             <ubody unit="FT/SEC"> 500.0 </ubody>
+             <latitude unit="DEG"> 30.0 </latitude>
+             <longitude unit="DEG"> 90.0 </longitude>
+             <theta unit="DEG"> 40.0 </theta>
+             <altitude unit="FT"> 1234.0 </altitude>
+             <trim> 0 </trim>
+           </initialize>"#;
+    let mut resolver = MemoryResolver::new();
+    resolver.insert("reset00.xml", xml);
+    resolver.insert("scenarios/takeoff.xml", xml);
+    for path in [
+        "reset00",
+        "reset00.xml",
+        "scenarios/takeoff",
+        "scenarios/./takeoff.xml",
+    ] {
+        let mut fdm = fdm();
+        assert!(
+            fdm.load_initial_conditions_file(&resolver, path).unwrap(),
+            "{path}"
+        );
+        assert!(
+            close(fdm.get_property("ic/h-agl-ft").unwrap(), 1234.0, 1e-9),
+            "{path}"
+        );
+    }
+    let rooted = fdm().load_initial_conditions(&resolver, "", "reset00");
+    assert!(
+        matches!(&rooted, Err(Error::ResourceNotFound { path }) if path == "/reset00.xml"),
+        "{rooted:?}"
+    );
+}

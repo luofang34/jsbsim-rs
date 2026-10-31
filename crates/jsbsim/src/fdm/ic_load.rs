@@ -10,8 +10,11 @@ use crate::Error;
 
 impl Fdm {
     /// `FGInitialCondition::Load(file)` for `dir/name` (`.xml` added when
-    /// it has no extension), applied to the executive's initial conditions. False, with the
-    /// problem logged, where JSBSim's `Load` returns false.
+    /// it has no extension), applied to the executive's initial
+    /// conditions. False, with the problem logged, where JSBSim's `Load`
+    /// returns false. For a file named by one path, such as one at the
+    /// resolver's root, use
+    /// [`load_initial_conditions_file`](Self::load_initial_conditions_file).
     ///
     /// # Errors
     ///
@@ -32,6 +35,26 @@ impl Fdm {
     ) -> Result<bool, Error> {
         self.hashed_load(resolver, |fdm, r| {
             fdm.load_initial_conditions_from(r, dir, name)
+        })
+    }
+
+    /// `FGInitialCondition::Load(path, false)`: the initialization file at
+    /// `path`, relative to the resolver's root, with `.xml` added when it
+    /// has no extension. Unlike
+    /// [`load_initial_conditions`](Self::load_initial_conditions), a file at
+    /// the root needs no directory, which there would read `/name`.
+    ///
+    /// # Errors
+    ///
+    /// Those of [`load_initial_conditions`](Self::load_initial_conditions).
+    pub fn load_initial_conditions_file(
+        &mut self,
+        resolver: &dyn crate::Resolver,
+        path: &str,
+    ) -> Result<bool, Error> {
+        self.hashed_load(resolver, |fdm, r| {
+            let document = crate::xml::DocumentLoader::new(r, ".").load_document(path)?;
+            fdm.load_initial_conditions_document(&document)
         })
     }
 

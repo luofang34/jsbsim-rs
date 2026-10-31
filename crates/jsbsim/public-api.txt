@@ -869,6 +869,7 @@ pub fn jsbsim::Fdm::with_options(jsbsim::LoadOptions) -> core::result::Result<Se
 pub fn jsbsim::Fdm::write_node(&mut self, jsbsim::NodeId, f64) -> core::result::Result<bool, jsbsim::error::Error>
 impl jsbsim::Fdm
 pub fn jsbsim::Fdm::load_initial_conditions(&mut self, &dyn jsbsim::Resolver, &str, &str) -> core::result::Result<bool, jsbsim::error::Error>
+pub fn jsbsim::Fdm::load_initial_conditions_file(&mut self, &dyn jsbsim::Resolver, &str) -> core::result::Result<bool, jsbsim::error::Error>
 impl jsbsim::Fdm
 pub fn jsbsim::Fdm::load_model(&mut self, &dyn jsbsim::Resolver, &str, &str) -> core::result::Result<(), jsbsim::error::Error>
 pub fn jsbsim::Fdm::load_model_file(&mut self, &dyn jsbsim::Resolver, &str) -> core::result::Result<(), jsbsim::error::Error>
