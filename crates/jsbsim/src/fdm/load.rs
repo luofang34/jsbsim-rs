@@ -217,18 +217,24 @@ impl Fdm {
         })
     }
 
-    /// `FGFDMExec::LoadModel(model, false)` for the model file at `path`
-    /// (`.xml` may be left off), such as `models/Rascal/Rascal110-JSBSim`
-    /// in PX4's `jsbsim_bridge` tree, where a model is not in a directory
-    /// of its own name. The file's directory is the aircraft directory its
-    /// includes are found in.
+    /// `FGFDMExec::LoadModel(model, false)` for the model file at `path`,
+    /// such as `models/Rascal/Rascal110-JSBSim` in PX4's `jsbsim_bridge`
+    /// tree, where a model is not in a directory of its own name. As
+    /// JSBSim appends `.xml` to the model name, `.xml` is added unless
+    /// `path` ends in it. The file's directory is the aircraft directory
+    /// its includes are found in.
     ///
     /// # Errors
     ///
     /// Those of [`load_model`](Self::load_model).
     pub fn load_model_file(&mut self, resolver: &dyn Resolver, path: &str) -> Result<(), Error> {
-        let dir = path.rfind('/').map_or(".", |at| &path[..at]);
-        self.hashed_load(resolver, |fdm, r| fdm.load_model_document(r, dir, path))
+        let file = crate::xml::xml_file_path(path);
+        let dir = match file.rfind('/') {
+            Some(0) => "/",
+            Some(at) => &file[..at],
+            None => ".",
+        };
+        self.hashed_load(resolver, |fdm, r| fdm.load_model_document(r, dir, &file))
     }
 
     /// [`load_model`](Self::load_model) within another load.

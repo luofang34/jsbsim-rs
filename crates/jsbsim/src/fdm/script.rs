@@ -214,7 +214,7 @@ impl Fdm {
             None => ".",
         };
         // An output's include falls back on the full aircraft path.
-        let mut outputs = DocumentLoader::new(resolver, format!("{aircraft_path}/{aircraft}"));
+        let mut outputs = self.document_loader(resolver, &self.full_aircraft_path);
         self.io_directives(&document, &mut outputs, Some(script_dir))?;
         script.local_properties = self.declare_script_properties(run)?;
         for event_el in run.find_elements("event") {

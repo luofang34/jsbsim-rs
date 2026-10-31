@@ -150,13 +150,19 @@ impl<'r> DocumentLoader<'r> {
     /// `CheckPathName`: `dir/file`, with `.xml` appended unless that is
     /// already the extension, if it exists.
     fn check_path_name(&self, dir: &str, file: &str) -> Option<String> {
-        let mut full = format!("{dir}/{file}");
-        if extension(&full) != "xml" {
-            full.push_str(".xml");
-        }
-        let full = normalize(&full);
+        let full = xml_file_path(&format!("{dir}/{file}"));
         self.resolver.exists(&full).then_some(full)
     }
+}
+
+/// `path` normalised, with `.xml` appended unless that is already its
+/// extension, as `CheckPathName` and `LoadModel` name XML files.
+pub(crate) fn xml_file_path(path: &str) -> String {
+    let mut full = normalize(path);
+    if extension(&full) != "xml" {
+        full.push_str(".xml");
+    }
+    full
 }
 
 /// `SGPath::extension`: the text after the last `.` of the file name.

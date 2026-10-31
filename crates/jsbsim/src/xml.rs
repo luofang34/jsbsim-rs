@@ -23,6 +23,7 @@ use std::collections::BTreeMap;
 use std::rc::Rc;
 
 pub use error::{Location, XmlError};
+pub(crate) use loader::xml_file_path;
 pub use loader::{DocumentLoader, IncludeKind};
 pub use numbers::atof_locale_c;
 pub use parse::parse_document;

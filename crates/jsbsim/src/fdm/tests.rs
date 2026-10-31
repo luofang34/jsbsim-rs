@@ -168,8 +168,8 @@ fn a_reset_from_a_script_event_rearms_the_events() {
     assert_eq!(fdm.get_property("test/fired").unwrap(), 1.0);
 }
 
-/// `load_model_file` loads the model at a path, with or without `.xml`,
-/// and finds its includes beside it, where `load_model` looks in a
+/// `load_model_file` loads the model at a path, adding `.xml` unless the
+/// path ends in it, and finds its includes beside it, where `load_model` looks in a
 /// directory of the model's name.
 #[test]
 fn a_model_file_loads_with_its_includes_beside_it() {
@@ -187,12 +187,23 @@ fn a_model_file_loads_with_its_includes_beside_it() {
     r.insert("models/Flat/Mass.xml", mass);
     r.insert("flat.xml", aircraft);
     r.insert("Mass.xml", mass);
+    r.insert("models/Dot/flat.v2.xml", aircraft);
+    r.insert("models/Dot/Mass.xml", mass);
+    r.insert("/abs/flat.xml", aircraft);
+    r.insert("/abs/Mass.xml", mass);
     let missing = Fdm::new().unwrap().load_model(&r, "models/Flat", "flat");
     assert!(
         matches!(&missing, Err(Error::ResourceNotFound { path }) if path == "models/Flat/flat/flat.xml"),
         "{missing:?}"
     );
-    for path in ["models/Flat/flat", "models/Flat/flat.xml", "flat.xml"] {
+    for (path, dir) in [
+        ("models/Flat/flat", "models/Flat"),
+        ("models/Flat/flat.xml", "models/Flat"),
+        ("models/Flat/./flat.xml", "models/Flat"),
+        ("flat.xml", "."),
+        ("models/Dot/flat.v2", "models/Dot"),
+        ("/abs/flat", "/abs"),
+    ] {
         let mut fdm = Fdm::new().unwrap();
         fdm.load_model_file(&r, path).unwrap();
         assert_eq!(
@@ -200,6 +211,7 @@ fn a_model_file_loads_with_its_includes_beside_it() {
             100.0,
             "{path}"
         );
+        assert_eq!(fdm.full_aircraft_path, dir, "{path}");
     }
 }
 
