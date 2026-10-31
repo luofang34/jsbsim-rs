@@ -42,7 +42,7 @@ runs:
             sudo apt-get update && sudo apt-get install -y ninja-build
           fi
         fi
-        cmake --version | head -1
+        cmake --version | sed -n 1p
         ninja --version
     - name: Point the oracle at it
       shell: bash

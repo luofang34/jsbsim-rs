@@ -48,7 +48,7 @@ require_notice() {
     printf '%s\n' "$text" | grep -qxF -e "$line" || echo "$line"
   done)
   if [ -n "$missing" ]; then
-    fail "$file: $name without the full MIT notice (first missing line: $(echo "$missing" | head -n 1))"
+    fail "$file: $name without the full MIT notice (first missing line: $(echo "$missing" | sed -n 1p))"
   fi
 }
 
@@ -125,7 +125,7 @@ while IFS= read -r lib; do
   if [ "$lines" -gt "$max_lib_lines" ]; then
     fail "$lib: $lines lines (max $max_lib_lines)"
   fi
-  first_doc=$(grep -v '^// SPDX-License-Identifier' "$lib" | head -n 1)
+  first_doc=$(grep -v '^// SPDX-License-Identifier' "$lib" | sed -n 1p)
   case "$first_doc" in
     '//!'*) ;;
     *) fail "$lib: must start with a crate-level //! doc comment" ;;
@@ -182,6 +182,17 @@ while IFS= read -r manifest; do
     fail "$manifest: outside the workspace, so it must repeat the workspace lints; missing $(echo "$missing" | tr '\n' ' ')"
   fi
 done < <(find_tree -name Cargo.toml -type f | grep -v '^\./Cargo.toml$')
+
+# Under pipefail a pipeline fails when head exits while its writer is still
+# writing (SIGPIPE or EPIPE), so whether it fails depends on output size and
+# timing. sed -n 1p reads all of its input.
+shell_dirs=()
+for dir in scripts .github; do [ -d "$dir" ] && shell_dirs+=("$dir"); done
+if [ "${#shell_dirs[@]}" -gt 0 ] &&
+    find "${shell_dirs[@]}" \( -name '*.sh' -o -name '*.yml' -o -name '*.yaml' \) -type f |
+    xargs grep -n -E '\|[[:space:]]*head\b' /dev/null; then
+  fail "take the first line with sed -n 1p, not a pipe into head"
+fi
 
 if find . -path ./target -prune -o -path ./.git -prune -o -path ./.claude -prune -o \
     \( -name '* 2.*' -o -name '*.bak' -o -name '*.orig' -o -name '*~' \) -print | grep .; then

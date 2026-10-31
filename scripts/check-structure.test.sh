@@ -93,6 +93,9 @@ expect pass excluded-repeats-lints "$excluded && own_lints deny forbid > crates/
 expect fail excluded-relaxes-clippy "$excluded && own_lints forbid deny > crates/a/Cargo.toml"
 expect fail excluded-allows-unsafe "$excluded && own_lints allow forbid > crates/a/Cargo.toml"
 expect fail member-repeats-lints "printf '[workspace]\n\n$root_lints' > Cargo.toml && own_lints forbid forbid > crates/a/Cargo.toml"
+expect fail pipe-into-head "mkdir scripts && printf 'x=\$(ls | sort | %sd -n 1)\\n' hea > scripts/x.sh"
+expect fail workflow-pipe-into-head "mkdir -p .github/workflows && printf '      - run: ls | %sd -1\\n' hea > .github/workflows/x.yml"
+expect pass first-line-with-sed "mkdir scripts && printf 'x=\$(ls | sort | sed -n 1p)\\n' > scripts/x.sh"
 expect fail stray-copy "cp crates/a/src/b.rs 'crates/a/src/b 2.rs'"
 
 echo "check-structure.test: ok"

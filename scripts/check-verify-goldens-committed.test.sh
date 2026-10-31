@@ -33,7 +33,7 @@ if ! "$checker" "$(commit_without)" > "$scratch/full.log" 2>&1; then
   exit 1
 fi
 for dir in "${dirs[@]}"; do
-  file=$(find "$dir" -type f | LC_ALL=C sort | head -n 1)
+  file=$(find "$dir" -type f | LC_ALL=C sort | sed -n 1p)
   if "$checker" "$(commit_without "$file")" > "$scratch/case.log" 2>&1; then
     echo "check-verify-goldens-committed.test: missing $file passed" >&2
     exit 1
