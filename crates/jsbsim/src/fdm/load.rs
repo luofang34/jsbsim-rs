@@ -213,21 +213,18 @@ impl Fdm {
         })
     }
 
-    /// `FGFDMExec::LoadModel(model, false)` for `dir/model.xml`: a model
-    /// kept directly in `dir` rather than in a `model` directory of its
-    /// own, as in PX4's `jsbsim_bridge` tree. Engines and systems are found
-    /// relative to `dir`.
+    /// `FGFDMExec::LoadModel(model, false)` for the model file at `path`
+    /// (`.xml` may be left off), such as `models/Rascal/Rascal110-JSBSim`
+    /// in PX4's `jsbsim_bridge` tree, where a model is not in a directory
+    /// of its own name. The file's directory is the aircraft directory its
+    /// includes are found in.
     ///
     /// # Errors
     ///
     /// Those of [`load_model`](Self::load_model).
-    pub fn load_model_in_dir(
-        &mut self,
-        resolver: &dyn Resolver,
-        dir: &str,
-        model: &str,
-    ) -> Result<(), Error> {
-        self.hashed_load(resolver, |fdm, r| fdm.load_model_in_dir_from(r, dir, model))
+    pub fn load_model_file(&mut self, resolver: &dyn Resolver, path: &str) -> Result<(), Error> {
+        let dir = path.rfind('/').map_or(".", |at| &path[..at]);
+        self.hashed_load(resolver, |fdm, r| fdm.load_model_document(r, dir, path))
     }
 
     /// [`load_model`](Self::load_model) within another load.
@@ -237,20 +234,33 @@ impl Fdm {
         aircraft_path: &str,
         model: &str,
     ) -> Result<(), Error> {
-        self.load_model_in_dir_from(resolver, &format!("{aircraft_path}/{model}"), model)
+        let dir = format!("{aircraft_path}/{model}");
+        self.load_model_document(resolver, &dir, &format!("{dir}/{model}.xml"))
     }
 
-    fn load_model_in_dir_from(
+    /// Loads the model document at `path` with `dir` as `FullAircraftPath`.
+    fn load_model_document(
         &mut self,
         resolver: &dyn Resolver,
         dir: &str,
-        model: &str,
+        path: &str,
     ) -> Result<(), Error> {
         dir.clone_into(&mut self.full_aircraft_path);
-        let mut loader = DocumentLoader::new(resolver, dir.to_owned())
-            .with_systems_dir(self.systems_path.clone());
-        let document = loader.load_document(&format!("{dir}/{model}.xml"))?;
+        let mut loader = self.document_loader(resolver, dir);
+        let document = loader.load_document(path)?;
         self.load_document(&mut loader, document)
+    }
+
+    /// A loader for the aircraft in `dir` with this executive's systems
+    /// and engine paths.
+    pub(super) fn document_loader<'r>(
+        &self,
+        resolver: &'r dyn Resolver,
+        dir: &str,
+    ) -> DocumentLoader<'r> {
+        DocumentLoader::new(resolver, dir)
+            .with_systems_dir(self.systems_path.clone())
+            .with_engine_dir(self.engine_path.clone())
     }
 
     fn load_document(

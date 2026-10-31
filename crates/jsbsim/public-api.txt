@@ -860,6 +860,7 @@ pub fn jsbsim::Fdm::new() -> core::result::Result<Self, jsbsim::error::Error>
 pub fn jsbsim::Fdm::node(&self, &str) -> core::result::Result<core::option::Option<jsbsim::NodeId>, jsbsim::error::Error>
 pub fn jsbsim::Fdm::read_node(&mut self, jsbsim::NodeId) -> core::result::Result<f64, jsbsim::error::Error>
 pub fn jsbsim::Fdm::set_aircraft_path(&mut self, &str)
+pub fn jsbsim::Fdm::set_engine_path(&mut self, &str)
 pub fn jsbsim::Fdm::set_ground_callback(&mut self, alloc::boxed::Box<dyn jsbsim::GroundCallback>)
 pub fn jsbsim::Fdm::set_property(&mut self, &str, f64) -> core::result::Result<bool, jsbsim::error::Error>
 pub fn jsbsim::Fdm::set_systems_path(&mut self, &str)
@@ -869,7 +870,7 @@ impl jsbsim::Fdm
 pub fn jsbsim::Fdm::load_initial_conditions(&mut self, &dyn jsbsim::Resolver, &str, &str) -> core::result::Result<bool, jsbsim::error::Error>
 impl jsbsim::Fdm
 pub fn jsbsim::Fdm::load_model(&mut self, &dyn jsbsim::Resolver, &str, &str) -> core::result::Result<(), jsbsim::error::Error>
-pub fn jsbsim::Fdm::load_model_in_dir(&mut self, &dyn jsbsim::Resolver, &str, &str) -> core::result::Result<(), jsbsim::error::Error>
+pub fn jsbsim::Fdm::load_model_file(&mut self, &dyn jsbsim::Resolver, &str) -> core::result::Result<(), jsbsim::error::Error>
 impl jsbsim::Fdm
 pub fn jsbsim::Fdm::load_script(&mut self, &dyn jsbsim::Resolver, &str) -> core::result::Result<(), jsbsim::error::Error>
 pub fn jsbsim::Fdm::set_sim_time(&mut self, f64)

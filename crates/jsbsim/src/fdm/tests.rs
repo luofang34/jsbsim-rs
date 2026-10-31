@@ -168,10 +168,11 @@ fn a_reset_from_a_script_event_rearms_the_events() {
     assert_eq!(fdm.get_property("test/fired").unwrap(), 1.0);
 }
 
-/// `load_model_in_dir` reads `dir/model.xml` and resolves the model's
-/// own files against `dir`, where `load_model` looks in `dir/model/`.
+/// `load_model_file` loads the model at a path, with or without `.xml`,
+/// and finds its includes beside it, where `load_model` looks in a
+/// directory of the model's name.
 #[test]
-fn a_model_kept_directly_in_its_directory_loads_in_dir() {
+fn a_model_file_loads_with_its_includes_beside_it() {
     let aircraft = r#"<fdm_config name="flat">
   <metrics/>
   <mass_balance file="Mass.xml"/>
@@ -184,12 +185,41 @@ fn a_model_kept_directly_in_its_directory_loads_in_dir() {
     let mut r = crate::MemoryResolver::new();
     r.insert("models/Flat/flat.xml", aircraft);
     r.insert("models/Flat/Mass.xml", mass);
+    r.insert("flat.xml", aircraft);
+    r.insert("Mass.xml", mass);
     let missing = Fdm::new().unwrap().load_model(&r, "models/Flat", "flat");
     assert!(
         matches!(&missing, Err(Error::ResourceNotFound { path }) if path == "models/Flat/flat/flat.xml"),
         "{missing:?}"
     );
+    for path in ["models/Flat/flat", "models/Flat/flat.xml", "flat.xml"] {
+        let mut fdm = Fdm::new().unwrap();
+        fdm.load_model_file(&r, path).unwrap();
+        assert_eq!(
+            fdm.get_property("inertia/empty-weight-lbs").unwrap(),
+            100.0,
+            "{path}"
+        );
+    }
+}
+
+/// `set_engine_path` is the engine directory searched after the aircraft's
+/// own engine directories.
+#[test]
+fn engine_includes_fall_back_to_the_engine_path() {
+    let mut r = crate::MemoryResolver::new();
+    r.insert("shared/Engines/motor.xml", "<electric_engine/>");
     let mut fdm = Fdm::new().unwrap();
-    fdm.load_model_in_dir(&r, "models/Flat", "flat").unwrap();
-    assert_eq!(fdm.get_property("inertia/empty-weight-lbs").unwrap(), 100.0);
+    let mut engine = crate::xml::parse_document(br#"<engine file="motor"/>"#, "t.xml").unwrap();
+    let kind = crate::xml::IncludeKind::Engine;
+    assert!(
+        fdm.document_loader(&r, "models/x")
+            .open(&mut engine, kind)
+            .is_err()
+    );
+    fdm.set_engine_path("shared/Engines");
+    fdm.document_loader(&r, "models/x")
+        .open(&mut engine, kind)
+        .unwrap();
+    assert_eq!(engine.children()[0].name(), "electric_engine");
 }

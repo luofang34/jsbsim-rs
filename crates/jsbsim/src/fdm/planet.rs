@@ -41,8 +41,7 @@ impl Fdm {
             true => format!("{}/{path}", self.aircraft_path),
             false => path.to_owned(),
         };
-        let mut loader = DocumentLoader::new(resolver, self.full_aircraft_path.clone())
-            .with_systems_dir(self.systems_path.clone());
+        let mut loader = self.document_loader(resolver, &self.full_aircraft_path);
         let mut document = loader.load_document(&file)?;
         if document.name() != "planet" {
             return Err(Error::Model {

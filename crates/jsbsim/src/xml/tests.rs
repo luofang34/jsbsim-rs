@@ -190,6 +190,9 @@ fn includes_search_jsbsim_directories_in_order() {
     assert_eq!(engine.children()[0].name(), "piston_engine");
     let mut beside = parse("<engine file=\"only_here\"/>");
     assert!(loader.open(&mut beside, IncludeKind::Engine).is_err());
+    let mut moved = parse("<engine file=\"eng\"/>");
+    let mut elsewhere = DocumentLoader::new(&r, "aircraft/x").with_engine_dir("nowhere");
+    assert!(elsewhere.open(&mut moved, IncludeKind::Engine).is_err());
     let mut plain = parse("<aerodynamics/>");
     assert_eq!(loader.open(&mut plain, IncludeKind::Model).unwrap(), None);
 }

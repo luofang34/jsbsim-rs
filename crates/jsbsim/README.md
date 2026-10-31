@@ -47,9 +47,11 @@ assert!(fdm.read_node(altitude)? < 1000.0);
 
 With the `fs` feature, `FileResolver::new("path/to/jsbsim")` serves a JSBSim
 data tree instead, and `Fdm::load_script` runs a script from it.
-`load_model` reads `aircraft/box/box.xml`; for a model kept directly in its
-directory, such as PX4's `models/Rascal/Rascal110-JSBSim.xml`, use
-`Fdm::load_model_in_dir(&files, "models/Rascal", "Rascal110-JSBSim")`.
+`load_model` reads `aircraft/box/box.xml`; a model not in a directory of its
+own name, such as PX4's `models/Rascal/Rascal110-JSBSim.xml`, loads with
+`Fdm::load_model_file(&files, "models/Rascal/Rascal110-JSBSim.xml")`.
+`set_systems_path` and `set_engine_path` name the shared directories searched
+after the aircraft's own.
 
 ## Terrain
 

@@ -175,6 +175,7 @@ pub struct Fdm {
     /// includes are found.
     full_aircraft_path: String,
     systems_path: String,
+    engine_path: String,
     last_trim: Option<crate::trim::TrimReport>,
     trims_run: u32,
     pub(crate) last_linearization: Option<crate::linearization::Linearization>,
@@ -217,6 +218,7 @@ impl Fdm {
             aircraft_path: "aircraft".to_owned(),
             full_aircraft_path: String::new(),
             systems_path: "systems".to_owned(),
+            engine_path: "engine".to_owned(),
             last_trim: None,
             trims_run: 0,
             last_linearization: None,
@@ -306,10 +308,18 @@ impl Fdm {
     }
 
     /// `SetSystemsPath`: where `<system file="...">` includes are found
-    /// after the aircraft's own directories, relative to the resolver's
-    /// root.
+    /// after the aircraft's own directories (the aircraft directory, then
+    /// its `Systems` and `systems`), relative to the resolver's root.
     pub fn set_systems_path(&mut self, path: &str) {
         self.systems_path = path.to_owned();
+    }
+
+    /// `SetEnginePath`: where `<engine file="...">` and
+    /// `<thruster file="...">` includes are found after the aircraft's
+    /// `Engines`, `engines`, `Engine` and `engine` directories (not the
+    /// aircraft directory itself), relative to the resolver's root.
+    pub fn set_engine_path(&mut self, path: &str) {
+        self.engine_path = path.to_owned();
     }
 
     /// The property tree.

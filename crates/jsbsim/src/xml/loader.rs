@@ -58,6 +58,13 @@ impl<'r> DocumentLoader<'r> {
         self
     }
 
+    /// The loader with `dir` as the engine directory (`SetEnginePath`).
+    #[must_use]
+    pub fn with_engine_dir(mut self, dir: impl Into<String>) -> Self {
+        self.engine_dir = dir.into();
+        self
+    }
+
     /// `FGXMLFileRead::LoadXMLDocument`: reads and parses `path`, adding
     /// `.xml` when it has no extension.
     pub fn load_document(&self, path: &str) -> Result<Element, Error> {
