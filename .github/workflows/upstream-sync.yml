@@ -1,0 +1,57 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+# Weekly, and on request, reports upstream JSBSim master commits since the
+# port's pin that touch what the port follows (scripts/upstream-report.sh)
+# in one issue labelled upstream-sync. The report's first line names the
+# newest such commit: a report naming the same commit as the newest
+# labelled issue, open or closed, posts nothing; one naming a newer commit
+# updates that issue while it is open and opens a new one once it is closed.
+# It only reads upstream, through the public API.
+name: Upstream sync
+
+on:
+  schedule:
+    - cron: "41 5 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: upstream-sync
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Report upstream changes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          scripts/upstream-report.sh > "$RUNNER_TEMP/report.md"
+          if [ ! -s "$RUNNER_TEMP/report.md" ]; then
+            echo "Nothing upstream touches what the port follows."
+            exit 0
+          fi
+          marker=$(sed -n 1p "$RUNNER_TEMP/report.md")
+          latest=$(gh issue list --label upstream-sync --state all --limit 1 \
+            --json number,state,body --jq '.[0] // empty | "\(.number)\t\(.state)\t\(.body | split("\n")[0])"')
+          IFS=$'\t' read -r number state seen <<<"$latest" || true
+          if [ "${seen:-}" = "$marker" ]; then
+            echo "Issue #$number already reports these changes."
+          elif [ "${state:-}" = OPEN ]; then
+            gh issue edit "$number" --body-file "$RUNNER_TEMP/report.md"
+          else
+            gh label create upstream-sync --force --color 5319e7 \
+              --description "Upstream JSBSim changes the port may follow"
+            gh issue create --title "Upstream JSBSim changes to review" \
+              --label upstream-sync --body-file "$RUNNER_TEMP/report.md"
+          fi
