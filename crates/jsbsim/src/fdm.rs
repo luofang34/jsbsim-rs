@@ -176,6 +176,9 @@ pub struct Fdm {
     full_aircraft_path: String,
     systems_path: String,
     engine_path: String,
+    /// Whether a model document has begun loading, after which another
+    /// load would mix two aircraft.
+    model_loaded: bool,
     last_trim: Option<crate::trim::TrimReport>,
     trims_run: u32,
     pub(crate) last_linearization: Option<crate::linearization::Linearization>,
@@ -219,6 +222,7 @@ impl Fdm {
             full_aircraft_path: String::new(),
             systems_path: "systems".to_owned(),
             engine_path: "engine".to_owned(),
+            model_loaded: false,
             last_trim: None,
             trims_run: 0,
             last_linearization: None,

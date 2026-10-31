@@ -223,3 +223,48 @@ fn engine_includes_fall_back_to_the_engine_path() {
         .unwrap();
     assert_eq!(engine.children()[0].name(), "electric_engine");
 }
+
+/// One `Fdm` holds one aircraft: a second model, or a script that loads
+/// one, is refused before it changes anything, while a model document
+/// that was not found does not count as a load.
+#[test]
+fn a_second_model_is_refused() {
+    let model = |weight: u32| {
+        format!(
+            r#"<fdm_config name="m">
+  <metrics/>
+  <mass_balance>
+    <ixx>10</ixx><iyy>10</iyy><izz>10</izz><emptywt>{weight}</emptywt>
+    <location name="CG" unit="IN"><x>0</x><y>0</y><z>0</z></location>
+  </mass_balance>
+  <ground_reactions/>
+</fdm_config>"#
+        )
+    };
+    let mut r = crate::MemoryResolver::new();
+    r.insert("aircraft/a/a.xml", model(100));
+    r.insert("aircraft/b/b.xml", model(200));
+    r.insert(
+        "scripts/b.xml",
+        r#"<runscript><use aircraft="b" initialize="ic"/><run start="0" end="1" dt="0.01"/></runscript>"#,
+    );
+    let mut fdm = Fdm::new().unwrap();
+    assert!(matches!(
+        fdm.load_model(&r, "aircraft", "missing"),
+        Err(Error::ResourceNotFound { .. })
+    ));
+    fdm.load_model(&r, "aircraft", "a").unwrap();
+    let dt = fdm.dt();
+    for second in [
+        fdm.load_model(&r, "aircraft", "b"),
+        fdm.load_model_file(&r, "aircraft/b/b.xml"),
+        fdm.load_script(&r, "scripts/b.xml"),
+    ] {
+        assert!(
+            matches!(&second, Err(Error::Model { message }) if message.contains("aircraft/a")),
+            "{second:?}"
+        );
+    }
+    assert_eq!(fdm.get_property("inertia/empty-weight-lbs").unwrap(), 100.0);
+    assert_eq!(fdm.dt(), dt);
+}

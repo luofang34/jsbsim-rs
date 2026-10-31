@@ -145,7 +145,9 @@ impl Fdm {
     /// [`Error::UnknownInputType`] for an `<input>` without an input class;
     /// [`Error::Geographic`] for a planet GeographicLib refuses; and
     /// [`Error::PropertyPath`] for a property name SimGear would reject.
-    /// A failed load is not rolled back: start again from a new `Fdm`.
+    /// [`Error::Model`] too when this `Fdm` has loaded a model already,
+    /// as for [`load_model`](Self::load_model). A failed load is not
+    /// rolled back: start again from a new `Fdm`.
     pub fn load_script(&mut self, resolver: &dyn Resolver, script_path: &str) -> Result<(), Error> {
         self.hashed_load(resolver, |fdm, r| fdm.load_script_from(r, script_path))
     }
@@ -155,6 +157,7 @@ impl Fdm {
         resolver: &dyn Resolver,
         script_path: &str,
     ) -> Result<(), Error> {
+        self.refuse_second_model()?;
         let loader = DocumentLoader::new(resolver, self.aircraft_path.clone());
         let document = loader.load_document(script_path)?;
         if document.name() != "runscript" {

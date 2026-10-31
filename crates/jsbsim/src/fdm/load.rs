@@ -201,7 +201,11 @@ impl Fdm {
     /// [`Error::UnknownInputType`] for an `<input>` without an input class;
     /// [`Error::Geographic`] for a planet GeographicLib refuses; and
     /// [`Error::PropertyPath`] for a property name SimGear would reject.
-    /// A failed load is not rolled back: start again from a new `Fdm`.
+    /// [`Error::Model`] too when this `Fdm` has loaded a model already,
+    /// or begun to: each `Fdm` holds one aircraft, where JSBSim would
+    /// deallocate the first. A failed load is not rolled back: start again
+    /// from a new `Fdm`. A model document that is not found begins no
+    /// load, so another may follow.
     pub fn load_model(
         &mut self,
         resolver: &dyn Resolver,
@@ -245,10 +249,25 @@ impl Fdm {
         dir: &str,
         path: &str,
     ) -> Result<(), Error> {
-        dir.clone_into(&mut self.full_aircraft_path);
+        self.refuse_second_model()?;
         let mut loader = self.document_loader(resolver, dir);
         let document = loader.load_document(path)?;
+        dir.clone_into(&mut self.full_aircraft_path);
+        self.model_loaded = true;
         self.load_document(&mut loader, document)
+    }
+
+    /// [`Error::Model`] once a model has begun loading.
+    pub(super) fn refuse_second_model(&self) -> Result<(), Error> {
+        match self.model_loaded {
+            true => Err(Error::Model {
+                message: format!(
+                    "A model is already loaded from {}: load another into a new Fdm.",
+                    self.full_aircraft_path
+                ),
+            }),
+            false => Ok(()),
+        }
     }
 
     /// A loader for the aircraft in `dir` with this executive's systems
