@@ -167,3 +167,29 @@ fn a_reset_from_a_script_event_rearms_the_events() {
     // The third run fired the first event again.
     assert_eq!(fdm.get_property("test/fired").unwrap(), 1.0);
 }
+
+/// `load_model_in_dir` reads `dir/model.xml` and resolves the model's
+/// own files against `dir`, where `load_model` looks in `dir/model/`.
+#[test]
+fn a_model_kept_directly_in_its_directory_loads_in_dir() {
+    let aircraft = r#"<fdm_config name="flat">
+  <metrics/>
+  <mass_balance file="Mass.xml"/>
+  <ground_reactions/>
+</fdm_config>"#;
+    let mass = r#"<mass_balance>
+  <ixx>10</ixx><iyy>10</iyy><izz>10</izz><emptywt>100</emptywt>
+  <location name="CG" unit="IN"><x>0</x><y>0</y><z>0</z></location>
+</mass_balance>"#;
+    let mut r = crate::MemoryResolver::new();
+    r.insert("models/Flat/flat.xml", aircraft);
+    r.insert("models/Flat/Mass.xml", mass);
+    let missing = Fdm::new().unwrap().load_model(&r, "models/Flat", "flat");
+    assert!(
+        matches!(&missing, Err(Error::ResourceNotFound { path }) if path == "models/Flat/flat/flat.xml"),
+        "{missing:?}"
+    );
+    let mut fdm = Fdm::new().unwrap();
+    fdm.load_model_in_dir(&r, "models/Flat", "flat").unwrap();
+    assert_eq!(fdm.get_property("inertia/empty-weight-lbs").unwrap(), 100.0);
+}

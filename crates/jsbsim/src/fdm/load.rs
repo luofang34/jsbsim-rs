@@ -213,6 +213,23 @@ impl Fdm {
         })
     }
 
+    /// `FGFDMExec::LoadModel(model, false)` for `dir/model.xml`: a model
+    /// kept directly in `dir` rather than in a `model` directory of its
+    /// own, as in PX4's `jsbsim_bridge` tree. Engines and systems are found
+    /// relative to `dir`.
+    ///
+    /// # Errors
+    ///
+    /// Those of [`load_model`](Self::load_model).
+    pub fn load_model_in_dir(
+        &mut self,
+        resolver: &dyn Resolver,
+        dir: &str,
+        model: &str,
+    ) -> Result<(), Error> {
+        self.hashed_load(resolver, |fdm, r| fdm.load_model_in_dir_from(r, dir, model))
+    }
+
     /// [`load_model`](Self::load_model) within another load.
     pub(super) fn load_model_from(
         &mut self,
@@ -220,10 +237,18 @@ impl Fdm {
         aircraft_path: &str,
         model: &str,
     ) -> Result<(), Error> {
-        let dir = format!("{aircraft_path}/{model}");
-        self.full_aircraft_path.clone_from(&dir);
-        let mut loader =
-            DocumentLoader::new(resolver, dir.clone()).with_systems_dir(self.systems_path.clone());
+        self.load_model_in_dir_from(resolver, &format!("{aircraft_path}/{model}"), model)
+    }
+
+    fn load_model_in_dir_from(
+        &mut self,
+        resolver: &dyn Resolver,
+        dir: &str,
+        model: &str,
+    ) -> Result<(), Error> {
+        dir.clone_into(&mut self.full_aircraft_path);
+        let mut loader = DocumentLoader::new(resolver, dir.to_owned())
+            .with_systems_dir(self.systems_path.clone());
         let document = loader.load_document(&format!("{dir}/{model}.xml"))?;
         self.load_document(&mut loader, document)
     }

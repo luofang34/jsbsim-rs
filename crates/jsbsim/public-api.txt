@@ -869,6 +869,7 @@ impl jsbsim::Fdm
 pub fn jsbsim::Fdm::load_initial_conditions(&mut self, &dyn jsbsim::Resolver, &str, &str) -> core::result::Result<bool, jsbsim::error::Error>
 impl jsbsim::Fdm
 pub fn jsbsim::Fdm::load_model(&mut self, &dyn jsbsim::Resolver, &str, &str) -> core::result::Result<(), jsbsim::error::Error>
+pub fn jsbsim::Fdm::load_model_in_dir(&mut self, &dyn jsbsim::Resolver, &str, &str) -> core::result::Result<(), jsbsim::error::Error>
 impl jsbsim::Fdm
 pub fn jsbsim::Fdm::load_script(&mut self, &dyn jsbsim::Resolver, &str) -> core::result::Result<(), jsbsim::error::Error>
 pub fn jsbsim::Fdm::set_sim_time(&mut self, f64)
