@@ -6,6 +6,13 @@ use std::path::PathBuf;
 use crate::Error;
 
 /// Resolves paths relative to a JSBSim root directory on disk.
+///
+/// Paths follow the platform's rules, as JSBSim's `SGPath` does: an
+/// absolute path, such as an include's `file="/..."`, names that file
+/// wherever it is, and a leading `..` reaches above the root. It is not a
+/// sandbox; to load an untrusted tree, serve it through a
+/// [`MemoryResolver`](super::MemoryResolver) or a [`Resolver`](super::Resolver)
+/// of your own that confines its paths.
 #[derive(Debug, Clone)]
 pub struct FileResolver {
     root: PathBuf,
