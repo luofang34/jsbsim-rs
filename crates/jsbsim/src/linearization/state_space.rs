@@ -34,7 +34,7 @@ enum Which {
 }
 
 impl StateSpace {
-    pub(super) fn new(x: Vec<Component>, u: Vec<Component>, y: Vec<Component>) -> Self {
+    pub(crate) fn new(x: Vec<Component>, u: Vec<Component>, y: Vec<Component>) -> Self {
         Self { x, u, y }
     }
 
@@ -137,14 +137,10 @@ impl StateSpace {
         x0: &[f64],
         derivative: bool,
     ) -> Result<Matrix, Error> {
-        let (ny, nx) = (self.vector(y).len(), self.vector(x).len());
-        let mut j = vec![vec![0.0; nx]; ny];
-        for (iy, row) in j.iter_mut().enumerate() {
-            for (ix, cell) in row.iter_mut().enumerate() {
-                let (Some(&yc), Some(&xc)) = (self.vector(y).get(iy), self.vector(x).get(ix))
-                else {
-                    continue;
-                };
+        let (ys, xs) = (self.vector(y), self.vector(x));
+        let mut j = Vec::with_capacity(ys.len() * xs.len());
+        for &yc in ys {
+            for &xc in xs {
                 let mut f = [0.0; 4];
                 for (slot, step) in f.iter_mut().zip([H, 2.0 * H, -H, -2.0 * H]) {
                     self.set_all(fdm, x, x0)?;
@@ -186,15 +182,15 @@ impl StateSpace {
                     _ => {}
                 }
                 // Third-order Taylor approximation (Stevens and Lewis, p. 203).
-                *cell = (8.0 * diff1 - diff2) / (12.0 * H);
+                j.push((8.0 * diff1 - diff2) / (12.0 * H));
                 self.set_all(fdm, x, x0)?;
             }
         }
-        Ok(j)
+        Ok(Matrix::from_row_major(ys.len(), xs.len(), j))
     }
 
     /// `linearize`: A, B, C and D about `x0` and `u0`.
-    pub(super) fn linearize(
+    pub(crate) fn linearize(
         &self,
         fdm: &mut Fdm,
         x0: &[f64],

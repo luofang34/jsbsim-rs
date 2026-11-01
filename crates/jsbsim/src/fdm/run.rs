@@ -460,7 +460,9 @@ impl Fdm {
                 ExecRequest::Reset(mode) => self.reset_to_initial_conditions(mode)?,
                 ExecRequest::Trim(mode) => self.do_trim_requested(mode)?,
                 ExecRequest::InitRunning(n) => self.init_running(n)?,
-                ExecRequest::Linearize => self.do_linearization()?,
+                ExecRequest::Linearize => {
+                    self.do_linearization()?;
+                }
             }
         }
         Ok(())

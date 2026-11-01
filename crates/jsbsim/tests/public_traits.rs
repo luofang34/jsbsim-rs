@@ -7,6 +7,7 @@ use std::fmt::Debug;
 use std::hash::Hash;
 
 use jsbsim::error::SourceLocation;
+use jsbsim::linearization::{Component, Linearization, Matrix};
 use jsbsim::math::{ColumnVector3, Location};
 use jsbsim::snapshot::{Fingerprint, FingerprintPart};
 use jsbsim::trim::{Control, State, TrimMode};
@@ -21,6 +22,9 @@ const _: () = {
     assert_debug::<Fdm>();
     assert_eq_trait::<Error>();
     assert_partial_eq::<Contact>();
+    assert_partial_eq::<Linearization>();
+    assert_partial_eq::<Matrix>();
+    assert_hash::<Component>();
     assert_hash::<Fingerprint>();
     assert_hash::<FingerprintPart>();
     assert_hash::<SourceLocation>();

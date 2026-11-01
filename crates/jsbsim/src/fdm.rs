@@ -12,6 +12,7 @@ mod engine_run;
 mod exec_bind;
 mod ic_load;
 mod input;
+mod linearization;
 mod load;
 mod models_run;
 mod order;
@@ -67,7 +68,7 @@ pub struct Fdm {
     model_loaded: bool,
     last_trim: Option<crate::trim::TrimReport>,
     trims_run: u32,
-    pub(crate) last_linearization: Option<crate::linearization::Linearization>,
+    last_linearization: Option<crate::linearization::Linearization>,
     /// What the loads so far contribute to a snapshot's fingerprint.
     snapshot_record: crate::snapshot::LoadRecord,
 }

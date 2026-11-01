@@ -14,7 +14,8 @@
 //! 4. Set initial conditions (`ic/...` properties, or a file with
 //!    [`Fdm::load_initial_conditions`] or
 //!    [`Fdm::load_initial_conditions_file`]), apply them with [`Fdm::run_ic`],
-//!    and trim with [`Fdm::do_trim`] or [`Fdm::do_trim_custom`] if wanted.
+//!    and trim with [`Fdm::do_trim`] or [`Fdm::do_trim_custom`] if wanted;
+//!    [`Fdm::do_linearization`] gives the state-space model about that state.
 //! 5. Step with [`Fdm::run`]; read and write properties by name
 //!    ([`Fdm::get_property`], [`Fdm::set_property`]) or by [`NodeId`]
 //!    ([`Fdm::node`], [`Fdm::read_node`], [`Fdm::write_node`]); read the
@@ -56,7 +57,6 @@ mod elementary;
 mod fdm;
 mod functions;
 mod initial_condition;
-mod linearization;
 mod models;
 mod options;
 mod properties;
@@ -69,6 +69,7 @@ mod units;
 mod xml;
 
 pub mod error;
+pub mod linearization;
 pub mod math;
 pub mod snapshot;
 pub mod trim;

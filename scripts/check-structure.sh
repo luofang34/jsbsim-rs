@@ -157,6 +157,14 @@ while IFS= read -r file; do
   fi
 done < <(production_files | grep '^\./crates/jsbsim/src/models/' || true)
 
+# Fdm's methods all live with the executive; a trait impl for it may sit
+# with the trait.
+while IFS= read -r file; do
+  if grep -n -E '^[[:space:]]*impl(<[^>]*>)?[[:space:]]+([[:alnum:]_]+::)*Fdm\b' "$file"; then
+    fail "$file: inherent impl Fdm belongs in crates/jsbsim/src/fdm.rs or fdm/"
+  fi
+done < <(rust_files | grep '^\./crates/jsbsim/src/' | grep -v -E '^\./crates/jsbsim/src/fdm(\.rs$|/)' || true)
+
 if grep -rn --include='*.rs' --include='Cargo.toml' -E '\banyhow\b' --exclude-dir=target --exclude-dir=.claude . ; then
   fail "anyhow is not used in this workspace; use thiserror"
 fi

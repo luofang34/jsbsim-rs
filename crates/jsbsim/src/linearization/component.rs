@@ -12,8 +12,8 @@ use crate::initial_condition::Environment;
 use crate::math::{Axis, E_P, E_PHI, E_PSI, E_Q, E_R, E_THT};
 
 /// One state or input (`FGStateSpace::Component`).
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[non_exhaustive]
 pub enum Component {
     /// True airspeed, ft/s.
     Vt,
@@ -51,11 +51,9 @@ pub enum Component {
     DrCmd,
 }
 
-#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl Component {
-    /// `getName`.
+    /// JSBSim's name for the component (`getName`).
     #[must_use]
-    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn name(self) -> &'static str {
         match self {
             Self::Vt => "Vt",
@@ -81,7 +79,7 @@ impl Component {
         }
     }
 
-    /// `getUnit`.
+    /// The unit of the component's value (`getUnit`).
     #[must_use]
     pub fn unit(self) -> &'static str {
         match self {

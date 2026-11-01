@@ -214,6 +214,102 @@ impl core::marker::Unpin for jsbsim::error::SourceLocation
 impl core::marker::UnsafeUnpin for jsbsim::error::SourceLocation
 impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::error::SourceLocation
 impl core::panic::unwind_safe::UnwindSafe for jsbsim::error::SourceLocation
+pub mod jsbsim::linearization
+#[non_exhaustive] pub enum jsbsim::linearization::Component
+pub jsbsim::linearization::Component::Alpha
+pub jsbsim::linearization::Component::Alt
+pub jsbsim::linearization::Component::Beta
+pub jsbsim::linearization::Component::DaCmd
+pub jsbsim::linearization::Component::DeCmd
+pub jsbsim::linearization::Component::DrCmd
+pub jsbsim::linearization::Component::Latitude
+pub jsbsim::linearization::Component::Longitude
+pub jsbsim::linearization::Component::P
+pub jsbsim::linearization::Component::Phi
+pub jsbsim::linearization::Component::Psi
+pub jsbsim::linearization::Component::Q
+pub jsbsim::linearization::Component::R
+pub jsbsim::linearization::Component::Rpm(usize)
+pub jsbsim::linearization::Component::Theta
+pub jsbsim::linearization::Component::ThrottleCmd
+pub jsbsim::linearization::Component::Vt
+impl jsbsim::linearization::Component
+pub fn jsbsim::linearization::Component::name(self) -> &'static str
+pub fn jsbsim::linearization::Component::unit(self) -> &'static str
+impl core::clone::Clone for jsbsim::linearization::Component
+pub fn jsbsim::linearization::Component::clone(&self) -> jsbsim::linearization::Component
+impl core::cmp::Eq for jsbsim::linearization::Component
+impl core::cmp::PartialEq for jsbsim::linearization::Component
+pub fn jsbsim::linearization::Component::eq(&self, &jsbsim::linearization::Component) -> bool
+impl core::fmt::Debug for jsbsim::linearization::Component
+pub fn jsbsim::linearization::Component::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for jsbsim::linearization::Component
+pub fn jsbsim::linearization::Component::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for jsbsim::linearization::Component
+impl core::marker::StructuralPartialEq for jsbsim::linearization::Component
+impl core::marker::Freeze for jsbsim::linearization::Component
+impl core::marker::Send for jsbsim::linearization::Component
+impl core::marker::Sync for jsbsim::linearization::Component
+impl core::marker::Unpin for jsbsim::linearization::Component
+impl core::marker::UnsafeUnpin for jsbsim::linearization::Component
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::linearization::Component
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::linearization::Component
+#[non_exhaustive] pub struct jsbsim::linearization::Linearization
+pub jsbsim::linearization::Linearization::a: jsbsim::linearization::Matrix
+pub jsbsim::linearization::Linearization::aircraft_name: alloc::string::String
+pub jsbsim::linearization::Linearization::b: jsbsim::linearization::Matrix
+pub jsbsim::linearization::Linearization::c: jsbsim::linearization::Matrix
+pub jsbsim::linearization::Linearization::d: jsbsim::linearization::Matrix
+pub jsbsim::linearization::Linearization::u: alloc::vec::Vec<jsbsim::linearization::Component>
+pub jsbsim::linearization::Linearization::u0: alloc::vec::Vec<f64>
+pub jsbsim::linearization::Linearization::x: alloc::vec::Vec<jsbsim::linearization::Component>
+pub jsbsim::linearization::Linearization::x0: alloc::vec::Vec<f64>
+pub jsbsim::linearization::Linearization::y: alloc::vec::Vec<jsbsim::linearization::Component>
+pub jsbsim::linearization::Linearization::y0: alloc::vec::Vec<f64>
+impl jsbsim::linearization::Linearization
+pub fn jsbsim::linearization::Linearization::u_names(&self) -> alloc::vec::Vec<&'static str>
+pub fn jsbsim::linearization::Linearization::u_units(&self) -> alloc::vec::Vec<&'static str>
+pub fn jsbsim::linearization::Linearization::x_names(&self) -> alloc::vec::Vec<&'static str>
+pub fn jsbsim::linearization::Linearization::x_units(&self) -> alloc::vec::Vec<&'static str>
+pub fn jsbsim::linearization::Linearization::y_names(&self) -> alloc::vec::Vec<&'static str>
+pub fn jsbsim::linearization::Linearization::y_units(&self) -> alloc::vec::Vec<&'static str>
+impl core::clone::Clone for jsbsim::linearization::Linearization
+pub fn jsbsim::linearization::Linearization::clone(&self) -> jsbsim::linearization::Linearization
+impl core::cmp::PartialEq for jsbsim::linearization::Linearization
+pub fn jsbsim::linearization::Linearization::eq(&self, &jsbsim::linearization::Linearization) -> bool
+impl core::fmt::Debug for jsbsim::linearization::Linearization
+pub fn jsbsim::linearization::Linearization::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for jsbsim::linearization::Linearization
+impl core::marker::Freeze for jsbsim::linearization::Linearization
+impl core::marker::Send for jsbsim::linearization::Linearization
+impl core::marker::Sync for jsbsim::linearization::Linearization
+impl core::marker::Unpin for jsbsim::linearization::Linearization
+impl core::marker::UnsafeUnpin for jsbsim::linearization::Linearization
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::linearization::Linearization
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::linearization::Linearization
+pub struct jsbsim::linearization::Matrix
+impl jsbsim::linearization::Matrix
+pub fn jsbsim::linearization::Matrix::as_slice(&self) -> &[f64]
+pub fn jsbsim::linearization::Matrix::get(&self, usize, usize) -> core::option::Option<f64>
+pub fn jsbsim::linearization::Matrix::ncols(&self) -> usize
+pub fn jsbsim::linearization::Matrix::nrows(&self) -> usize
+pub fn jsbsim::linearization::Matrix::row(&self, usize) -> core::option::Option<&[f64]>
+pub fn jsbsim::linearization::Matrix::rows(&self) -> impl core::iter::traits::exact_size::ExactSizeIterator<Item = &[f64]>
+pub fn jsbsim::linearization::Matrix::shape(&self) -> (usize, usize)
+impl core::clone::Clone for jsbsim::linearization::Matrix
+pub fn jsbsim::linearization::Matrix::clone(&self) -> jsbsim::linearization::Matrix
+impl core::cmp::PartialEq for jsbsim::linearization::Matrix
+pub fn jsbsim::linearization::Matrix::eq(&self, &jsbsim::linearization::Matrix) -> bool
+impl core::fmt::Debug for jsbsim::linearization::Matrix
+pub fn jsbsim::linearization::Matrix::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for jsbsim::linearization::Matrix
+impl core::marker::Freeze for jsbsim::linearization::Matrix
+impl core::marker::Send for jsbsim::linearization::Matrix
+impl core::marker::Sync for jsbsim::linearization::Matrix
+impl core::marker::Unpin for jsbsim::linearization::Matrix
+impl core::marker::UnsafeUnpin for jsbsim::linearization::Matrix
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::linearization::Matrix
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::linearization::Matrix
 pub mod jsbsim::math
 pub enum jsbsim::math::Axis
 pub jsbsim::math::Axis::X
@@ -895,6 +991,9 @@ impl core::marker::UnsafeUnpin for jsbsim::Contact
 impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::Contact
 impl core::panic::unwind_safe::UnwindSafe for jsbsim::Contact
 pub struct jsbsim::Fdm
+impl jsbsim::Fdm
+pub fn jsbsim::Fdm::do_linearization(&mut self) -> core::result::Result<&jsbsim::linearization::Linearization, jsbsim::error::Error>
+pub fn jsbsim::Fdm::last_linearization(&self) -> core::option::Option<&jsbsim::linearization::Linearization>
 impl jsbsim::Fdm
 pub fn jsbsim::Fdm::do_trim(&mut self, jsbsim::trim::TrimMode) -> core::result::Result<(), jsbsim::error::Error>
 pub fn jsbsim::Fdm::do_trim_custom(&mut self, &[(jsbsim::trim::State, jsbsim::trim::Control)]) -> core::result::Result<(), jsbsim::error::Error>

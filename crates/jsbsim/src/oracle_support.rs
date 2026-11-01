@@ -38,10 +38,9 @@ pub trait FdmInternals {
     fn run_atmosphere(&mut self, holding: bool) -> Result<(), Error>;
     /// `FGPropulsion::GetSteadyState`.
     fn steady_state(&mut self) -> Result<bool, Error>;
-    /// `FGLinearization(fdm)` about the current state.
-    fn linearize(&mut self) -> Result<linearization::Linearization, Error>;
-    /// What the last `simulation/do_linearization` computed.
-    fn last_linearization(&self) -> Option<&linearization::Linearization>;
+    /// `FGLinearization(fdm)` about the current state, which leaves the time
+    /// step at zero as JSBSim does.
+    fn linearize(&mut self) -> Result<crate::linearization::Linearization, Error>;
 }
 
 impl FdmInternals for Fdm {
@@ -68,11 +67,8 @@ impl FdmInternals for Fdm {
     fn steady_state(&mut self) -> Result<bool, Error> {
         Self::steady_state(self)
     }
-    fn linearize(&mut self) -> Result<linearization::Linearization, Error> {
+    fn linearize(&mut self) -> Result<crate::linearization::Linearization, Error> {
         Self::linearize(self)
-    }
-    fn last_linearization(&self) -> Option<&linearization::Linearization> {
-        Self::last_linearization(self)
     }
 }
 
@@ -103,11 +99,6 @@ pub mod functions {
 /// Initial conditions.
 pub mod initial_condition {
     pub use crate::initial_condition::SpeedSet;
-}
-
-/// Linearization about the trimmed state.
-pub mod linearization {
-    pub use crate::linearization::Linearization;
 }
 
 /// The models.

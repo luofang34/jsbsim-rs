@@ -89,6 +89,15 @@ expect fail models-path-into-fdm "mkdir -p $models_dir/x && printf '%s\nfn f(b: 
 expect fail models-grouped-fdm "mkdir -p $models_dir && printf '%s\nuse crate::{fdm, units};\n' \"$spdx\" > $models_dir/x.rs"
 expect pass models-unit-test-may-use-fdm "mkdir -p $models_dir/x && printf '%s\nuse crate::fdm::Fdm;\n' \"$spdx\" > $models_dir/x/tests.rs"
 expect pass fdm-may-use-models "mkdir -p crates/jsbsim/src/fdm && printf '%s\nuse crate::models::Models;\n' \"$spdx\" > crates/jsbsim/src/fdm/x.rs"
+jsbsim_src=crates/jsbsim/src
+expect fail impl-fdm-outside-fdm "mkdir -p $jsbsim_src && printf '%s\nimpl Fdm {\n}\n' \"$spdx\" > $jsbsim_src/x.rs"
+expect fail impl-fdm-by-path "mkdir -p $jsbsim_src/x && printf '%s\nimpl crate::fdm::Fdm {\n}\n' \"$spdx\" > $jsbsim_src/x/y.rs"
+expect fail impl-fdm-indented "mkdir -p $jsbsim_src && printf '%s\nmod m {\n    impl Fdm {\n    }\n}\n' \"$spdx\" > $jsbsim_src/x.rs"
+expect pass impl-fdm-in-fdm-rs "mkdir -p $jsbsim_src && printf '%s\nimpl Fdm {\n}\n' \"$spdx\" > $jsbsim_src/fdm.rs"
+expect pass impl-fdm-under-fdm "mkdir -p $jsbsim_src/fdm/x && printf '%s\nimpl Fdm {\n}\n' \"$spdx\" > $jsbsim_src/fdm/x/y.rs"
+expect pass trait-impl-for-fdm-elsewhere "mkdir -p $jsbsim_src && printf '%s\nimpl FdmInternals for Fdm {\n}\nimpl std::fmt::Debug for Fdm {\n}\n' \"$spdx\" > $jsbsim_src/x.rs"
+expect pass impl-of-another-type-named-like-fdm "mkdir -p $jsbsim_src && printf '%s\nimpl FdmRecord {\n}\n' \"$spdx\" > $jsbsim_src/x.rs"
+expect pass impl-fdm-in-another-crate "printf '%s\nimpl Fdm {\n}\n' \"$spdx\" > crates/a/src/b.rs"
 expect fail anyhow "printf 'anyhow = \"1\"\n' >> crates/a/Cargo.toml"
 expect fail no-workspace-lints "printf '[package]\nname = \"a\"\n' > crates/a/Cargo.toml"
 # A crate the workspace excludes repeats its lints; unsafe_code may be deny.

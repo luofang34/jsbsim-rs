@@ -60,11 +60,10 @@ fn the_trimmed_737_linearizes_into_twelve_states_and_four_inputs() {
     assert_eq!(lin.x0.len(), 12);
     assert_eq!(lin.u0.len(), 4);
     assert_eq!(lin.y0.len(), 12);
-    let shape = |m: &Vec<Vec<f64>>| (m.len(), m.first().map_or(0, Vec::len));
-    assert_eq!(shape(&lin.a), (12, 12));
-    assert_eq!(shape(&lin.b), (12, 4));
-    assert_eq!(shape(&lin.c), (12, 12));
-    assert_eq!(shape(&lin.d), (12, 4));
+    assert_eq!(lin.a.shape(), (12, 12));
+    assert_eq!(lin.b.shape(), (12, 4));
+    assert_eq!(lin.c.shape(), (12, 12));
+    assert_eq!(lin.d.shape(), (12, 4));
     assert_eq!(lin.x_names(), STATES);
     assert_eq!(lin.y_names(), STATES);
     assert_eq!(lin.u_names(), ["ThtlCmd", "DaCmd", "DeCmd", "DrCmd"]);
@@ -85,11 +84,41 @@ fn do_linearization_keeps_the_result_and_restores_the_time_step() {
         .unwrap();
     let lin = fdm.last_linearization().unwrap();
     assert_eq!(lin.aircraft_name, "737");
-    assert_eq!(lin.a.len(), 12);
+    assert_eq!(lin.a.nrows(), 12);
     assert_eq!(fdm.get_property("simulation/dt").unwrap(), dt);
     let t = fdm.get_property("simulation/sim-time-sec").unwrap();
     fdm.run().unwrap();
     assert_eq!(fdm.get_property("simulation/sim-time-sec").unwrap(), t + dt);
+}
+
+#[test]
+fn do_linearization_returns_what_the_property_computes_and_keeps_it() {
+    let (mut called, mut written) = (cruise(), cruise());
+    called
+        .set_property("simulation/do_simple_trim", 1.0)
+        .unwrap();
+    written
+        .set_property("simulation/do_simple_trim", 1.0)
+        .unwrap();
+    let dt = called.get_property("simulation/dt").unwrap();
+
+    let lin = called.do_linearization().unwrap().clone();
+    assert_eq!(called.last_linearization(), Some(&lin));
+    assert_eq!(called.get_property("simulation/dt").unwrap(), dt);
+
+    written
+        .set_property("simulation/do_linearization", 1.0)
+        .unwrap();
+    assert_eq!(written.last_linearization(), Some(&lin));
+
+    assert_eq!(lin.a.rows().len(), 12);
+    assert_eq!(lin.b.ncols(), 4);
+    let b_last = lin.b.row(11).and_then(<[f64]>::last).copied();
+    assert_eq!(lin.b.get(11, 3), b_last);
+    assert_eq!(lin.b.as_slice().last().copied(), b_last);
+    assert_eq!(lin.b.get(11, 4), None);
+    assert_eq!(lin.b.get(12, 0), None);
+    assert!(lin.a.as_slice().iter().all(|x| x.is_finite()));
 }
 
 /// Every property of the state a frame produces, by bits.

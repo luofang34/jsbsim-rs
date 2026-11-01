@@ -6,9 +6,9 @@ use std::path::PathBuf;
 
 use jsbsim::Fdm;
 use jsbsim::FileResolver;
+use jsbsim::linearization::Linearization;
 use jsbsim::oracle_support::FdmInternals as _;
 use jsbsim::oracle_support::c_numeric::format_g;
-use jsbsim::oracle_support::linearization::Linearization;
 use jsbsim::oracle_support::trim::Trim;
 use jsbsim::trim::{Control, TrimMode, TrimReport};
 
@@ -277,7 +277,7 @@ fn linearization(lin: &Linearization) -> String {
     }
     for (tag, m) in [("A", &lin.a), ("B", &lin.b), ("C", &lin.c), ("D", &lin.d)] {
         out.push_str(&format!(" {tag}"));
-        for x in m.iter().flatten() {
+        for x in m.as_slice() {
             out.push_str(&format!(" {}", number(*x)));
         }
     }
