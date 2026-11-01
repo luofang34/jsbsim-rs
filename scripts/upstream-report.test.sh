@@ -53,7 +53,10 @@ fixtures "$dir" 3 "$ported:2026-01-02:Port me" "$skipped:2026-01-03:Skip me"
 commit_json src/models/FGAircraft.cpp aircraft/c172x/c172x.xml README.md \
   check_cases/NASA_EOM_2015/scripts/Atmos_02.xml check_cases/orbit/logged_data/orbit.csv \
   src/CMakeLists.txt tests/tripod.xml tests/nested/gain.xml \
-  tests/TestAero.py tests/JSBSim_utils.py tests/CMakeLists.txt > "$dir/${repo}_commits_$ported.json"
+  tests/TestAero.py tests/JSBSim_utils.py tests/CMakeLists.txt \
+  tests/unit_tests/FGColumnVector3Test.h tests/unit_tests/CMakeLists.txt \
+  tests/unit_tests/CMakeModules/FindGcov.cmake tests/unit_tests/CMakeModules/LICENSE \
+  > "$dir/${repo}_commits_$ported.json"
 commit_json src/simgear/xml/expat.h JSBSim.vcxproj src/JSBSim.vcxproj.filters python/setup.py > "$dir/${repo}_commits_$skipped.json"
 out=$(report "$dir")
 [ "$(sed -n 1p <<<"$out")" = "<!-- upstream-sync last-relevant: $ported -->" ] ||
@@ -61,11 +64,12 @@ out=$(report "$dir")
 for want in "Port me" '`src/models/FGAircraft.cpp` +3 -1' '`aircraft/c172x/c172x.xml`' \
     '`check_cases/NASA_EOM_2015/scripts/Atmos_02.xml` +3 -1' '`check_cases/orbit/logged_data/orbit.csv`' \
     '`src/CMakeLists.txt`' '`tests/tripod.xml` +3 -1' '`tests/nested/gain.xml`' \
-    '`tests/TestAero.py` +3 -1' '`tests/JSBSim_utils.py`' \
+    '`tests/TestAero.py` +3 -1' '`tests/JSBSim_utils.py`' '`tests/unit_tests/FGColumnVector3Test.h` +3 -1' \
     "has 3 commit(s)" "(v1.0.0)" "1 of them" "newest upstream tag is v1.0.1" "oldest 2 of the 3"; do
   grep -qF -- "$want" <<<"$out" || fail "report lacks '$want':"$'\n'"$out"
 done
-for unwanted in "Skip me" README.md expat.h vcxproj python/ tests/CMakeLists.txt; do
+for unwanted in "Skip me" README.md expat.h vcxproj python/ tests/CMakeLists.txt \
+    tests/unit_tests/CMakeLists.txt tests/unit_tests/CMakeModules/; do
   if grep -qF -- "$unwanted" <<<"$out"; then fail "report lists '$unwanted':"$'\n'"$out"; fi
 done
 
