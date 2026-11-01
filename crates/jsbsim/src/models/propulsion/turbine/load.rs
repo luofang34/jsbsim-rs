@@ -60,10 +60,7 @@ fn parameter(el: &Element, name: &str, default: f64) -> Result<f64, Error> {
     };
     match atof_locale_c(p.data_line(0)) {
         Ok(v) => Ok(v),
-        Err(_) => Err(Error::Unsupported {
-            construct: format!("<{name}> function (FGTurbine)"),
-            path: p.location().to_string(),
-        }),
+        Err(_) => Err(p.unsupported(format!("<{name}> function (FGTurbine)"))),
     }
 }
 
@@ -136,11 +133,10 @@ fn spool(ctx: &mut dyn EngineHost, name: &str, bpr: f64, factor: f64) -> Result<
 
 /// A lookup function `Calculate` dereferences unconditionally.
 fn required(ctx: &mut dyn EngineHost, el: &Element, name: &str) -> Result<FnId, Error> {
-    pre_function(ctx, name)?.ok_or_else(|| Error::Model {
-        message: format!(
-            "{}: turbine engine has no function {name}, which JSBSim dereferences",
-            el.location()
-        ),
+    pre_function(ctx, name)?.ok_or_else(|| {
+        el.model_error(format!(
+            "turbine engine has no function {name}, which JSBSim dereferences"
+        ))
     })
 }
 

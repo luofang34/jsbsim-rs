@@ -7,6 +7,9 @@ pub use crate::functions::FunctionError;
 pub use crate::properties::PathError;
 pub use crate::xml::{SourceLocation, XmlError};
 
+#[cfg(test)]
+mod tests;
+
 /// Errors produced while loading or running a simulation.
 #[derive(Debug, ThisError, Clone, PartialEq, Eq)]
 #[non_exhaustive]
@@ -20,13 +23,12 @@ pub enum Error {
     /// The input uses a construct this port does not support, or one
     /// JSBSim does not know under strict loading. Loading fails rather than
     /// silently ignoring it.
-    #[error("{path}: unsupported {construct}")]
+    #[error("{at}: unsupported {construct}")]
     Unsupported {
         /// Element or attribute that is not supported, e.g. `<child>`.
         construct: String,
-        /// Where it appeared: the element's [`SourceLocation`] as displayed,
-        /// `In file foo.xml: line 12`.
-        path: String,
+        /// Where it appeared.
+        at: SourceLocation,
     },
     /// Malformed XML or an invalid value in it.
     #[error(transparent)]
@@ -36,18 +38,20 @@ pub enum Error {
     Function(#[from] FunctionError),
     /// An `<input>` whose `type` JSBSim has no input class for (`NONE`
     /// among them), which fails the whole load in JSBSim.
-    #[error("{path}: no input type for <input type=\"{kind}\">")]
+    #[error("{at}: no input type for <input type=\"{kind}\">")]
     UnknownInputType {
         /// The `type` attribute as written.
         kind: String,
-        /// Where it appeared: the element's [`SourceLocation`] as displayed,
-        /// `In file foo.xml: line 12`.
-        path: String,
+        /// Where it appeared.
+        at: SourceLocation,
     },
-    /// A model configuration JSBSim refuses to load.
-    #[error("{message}")]
+    /// A model configuration or runtime state JSBSim refuses.
+    #[error("{}", located_message(.at.as_ref(), .message))]
     Model {
-        /// What is wrong, with the location.
+        /// Where in the XML input the offending element starts, when the
+        /// refusal comes from an element.
+        at: Option<SourceLocation>,
+        /// What is wrong, without a location prefix.
         message: String,
     },
     /// `TrimFailureException`: a trim run by
@@ -84,6 +88,49 @@ pub enum Error {
         /// Why the read failed.
         kind: std::io::ErrorKind,
     },
+}
+
+/// `{at}: {message}`, or the bare message without a location.
+fn located_message(at: Option<&SourceLocation>, message: &str) -> String {
+    match at {
+        Some(at) => format!("{at}: {message}"),
+        None => message.to_owned(),
+    }
+}
+
+impl Error {
+    /// An [`Error::Model`] no element of the input is responsible for.
+    pub(crate) fn model(message: impl Into<String>) -> Self {
+        Self::Model {
+            at: None,
+            message: message.into(),
+        }
+    }
+
+    /// An [`Error::Model`] raised by the element at `at`.
+    pub(crate) fn model_at(at: SourceLocation, message: impl Into<String>) -> Self {
+        Self::Model {
+            at: Some(at),
+            message: message.into(),
+        }
+    }
+
+    /// Where in the XML input the error arose, for the errors that know.
+    #[must_use]
+    pub fn location(&self) -> Option<&SourceLocation> {
+        match self {
+            Self::Unsupported { at, .. } | Self::UnknownInputType { at, .. } => Some(at),
+            Self::Model { at, .. } => at.as_ref(),
+            Self::Xml(e) => e.location(),
+            Self::Function(e) => e.location(),
+            Self::ResourceNotFound { .. }
+            | Self::TrimFailed { .. }
+            | Self::Geographic { .. }
+            | Self::Snapshot(_)
+            | Self::PropertyPath(_)
+            | Self::ResourceUnreadable { .. } => None,
+        }
+    }
 }
 
 impl From<PathError> for Error {

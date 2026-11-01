@@ -18,12 +18,6 @@ fn at_least(value: f64, floor: f64) -> f64 {
     if value < floor { floor } else { value }
 }
 
-fn model_error(el: &Element, message: &str) -> Error {
-    Error::Model {
-        message: format!("{}: {message}", el.location()),
-    }
-}
-
 /// `FGTable(PropertyManager, el)`: loaded (and, when named and not
 /// internal, bound) through the function set, of which the propeller
 /// keeps its own copy to look up without the set.
@@ -56,10 +50,9 @@ fn load_tables(el: &Element, ctx: &mut LoadContext<'_>) -> Result<Box<PropellerT
         *slot = Some(load_table(ctx, table_el)?);
     }
     let (Some(c_thrust), Some(c_power)) = (c_thrust, c_power) else {
-        return Err(model_error(
-            el,
-            "Propeller configuration must contain C_THRUST and C_POWER tables!",
-        ));
+        return Err(
+            el.model_error("Propeller configuration must contain C_THRUST and C_POWER tables!")
+        );
     };
     Ok(Box::new(PropellerTables {
         c_thrust,
@@ -134,8 +127,7 @@ fn sense_and_p_factor(thruster_el: &Element) -> Result<(f64, f64), Error> {
     }
     if p_factor < 0.0 {
         let at = p_factor_el.unwrap_or(thruster_el);
-        return Err(model_error(
-            at,
+        return Err(at.model_error(
             "P-Factor value in propeller configuration file must be greater than zero",
         ));
     }

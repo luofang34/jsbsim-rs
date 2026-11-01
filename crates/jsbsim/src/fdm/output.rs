@@ -33,14 +33,11 @@ impl Fdm {
                 })?;
             let doc = loader.load_document(&path)?;
             if doc.name() != el.name() {
-                return Err(Error::Model {
-                    message: format!(
-                        "{}: Read model '{}' while expecting model '{}'",
-                        el.location(),
-                        doc.name(),
-                        el.name()
-                    ),
-                });
+                return Err(el.model_error(format!(
+                    "Read model '{}' while expecting model '{}'",
+                    doc.name(),
+                    el.name()
+                )));
             }
             let mut copy = el.clone();
             copy.merge_attributes(&doc);

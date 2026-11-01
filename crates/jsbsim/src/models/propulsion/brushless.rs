@@ -95,9 +95,7 @@ fn bind(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
 /// A mandatory parameter `name` of `el`, converted to `unit`.
 fn mandatory(el: &Element, name: &str, unit: Option<&str>) -> Result<f64, Error> {
     if el.find_element(name).is_none() {
-        return Err(Error::Model {
-            message: format!("{}: <{name}> is a mandatory parameter", el.location()),
-        });
+        return Err(el.model_error(format!("<{name}> is a mandatory parameter")));
     }
     Ok(match unit {
         Some(unit) => el.find_element_value_as_number_convert_to(name, unit)?,

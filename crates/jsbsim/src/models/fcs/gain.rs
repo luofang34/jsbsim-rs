@@ -4,7 +4,7 @@
 //
 //! `<pure_gain>`, `<scheduled_gain>` and `<aerosurface_scale>`.
 
-use super::component::{Base, Tick, lenient, model_error, parameter_value};
+use super::component::{Base, Tick, lenient, parameter_value};
 use super::families::{ComponentAt, Family};
 use crate::Error;
 use crate::functions::{Parameter, TableId};
@@ -72,16 +72,10 @@ fn load_scale(el: &Element) -> Result<Scale, Error> {
         scale.in_min = domain.find_element_value_as_number("min")?;
     }
     let Some(range) = el.find_element("range") else {
-        return Err(model_error(
-            el,
-            "No range supplied for aerosurface scale component",
-        ));
+        return Err(el.model_error("No range supplied for aerosurface scale component"));
     };
     if !both(range) {
-        return Err(model_error(
-            range,
-            "Maximum and minimum output values must be supplied for the aerosurface scale component",
-        ));
+        return Err(range.model_error("Maximum and minimum output values must be supplied for the aerosurface scale component"));
     }
     scale.out_max = range.find_element_value_as_number("max")?;
     scale.out_min = range.find_element_value_as_number("min")?;
@@ -116,10 +110,9 @@ impl Family for Gain {
             "aerosurface_scale" => GainType::AerosurfaceScale(load_scale(el)?),
             "scheduled_gain" => {
                 let Some(table) = el.find_element("table") else {
-                    return Err(model_error(
-                        el,
-                        "A table must be provided for the scheduled gain component",
-                    ));
+                    return Err(
+                        el.model_error("A table must be provided for the scheduled gain component")
+                    );
                 };
                 GainType::Scheduled(ctx.functions.load_table(ctx.binder.tree, table, "")?)
             }

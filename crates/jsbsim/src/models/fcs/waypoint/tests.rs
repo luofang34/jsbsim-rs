@@ -28,7 +28,7 @@ fn distance(unit: &str) -> String {
 
 fn model_message(err: &Error) -> &str {
     match err {
-        Error::Model { message } => message,
+        Error::Model { message, .. } => message,
         _ => "",
     }
 }

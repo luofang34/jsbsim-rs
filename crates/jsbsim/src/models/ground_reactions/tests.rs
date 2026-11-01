@@ -228,7 +228,7 @@ fn unknown_brake_groups_and_tables_are_logged_or_refused_when_strict() {
 #[test]
 fn a_missing_location_is_refused() {
     let r = load_with(LoadOptions::default(), r#"<contact name="X"/>"#);
-    assert!(matches!(r, Err(Error::Model { message }) if message.contains("No location")));
+    assert!(matches!(r, Err(Error::Model { message, .. }) if message.contains("No location")));
 }
 
 /// One contact at the CG, pressed `depth` ft into the ground by the

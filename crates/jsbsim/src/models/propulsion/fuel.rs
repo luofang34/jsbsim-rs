@@ -48,11 +48,9 @@ impl Propulsion {
                     .ok()
                     .and_then(|i| self.tanks.get(i).map(|t| (i, t)));
                 let Some((i, t)) = tank else {
-                    return Err(Error::Model {
-                        message: format!(
-                            "engine {engine} feeds from tank {id}, which does not exist"
-                        ),
-                    });
+                    return Err(Error::model(format!(
+                        "engine {engine} feeds from tank {id}, which does not exist"
+                    )));
                 };
                 // JSBSim compares the priority as unsigned.
                 let tank_priority = t.priority as u32;

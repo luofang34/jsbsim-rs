@@ -50,7 +50,7 @@ fn a_kinematic_needs_a_traverse_of_two_settings() {
         );
         let err = load_error(&system, LoadOptions::default());
         assert!(
-            matches!(&err, Error::Model { message } if message.contains(expected)),
+            matches!(&err, Error::Model { message, .. } if message.contains(expected)),
             "{err:?}"
         );
     }

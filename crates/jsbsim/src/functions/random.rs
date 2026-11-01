@@ -64,13 +64,10 @@ fn attribute_or(el: &Element, name: &str, default: f64) -> Result<f64, Error> {
 fn generator(el: &Element) -> Result<Option<RandomNumberGenerator>, Error> {
     match el.attribute("seed") {
         "" => Ok(None),
-        "time_now" => Err(Error::Unsupported {
-            construct: format!(
-                "<{} seed=\"time_now\"> (a clock-seeded generator)",
-                el.name()
-            ),
-            path: el.location().to_string(),
-        }),
+        "time_now" => Err(el.unsupported(format!(
+            "<{} seed=\"time_now\"> (a clock-seeded generator)",
+            el.name()
+        ))),
         seed => Ok(Some(RandomNumberGenerator::new(
             crate::c_numeric::atoi(seed) as u32,
         ))),

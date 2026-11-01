@@ -21,9 +21,9 @@ fn states(fdm: &Fdm) -> Result<Vec<Component>, Error> {
     let Some(first) = engines.first() else {
         // `GetEngine(0)` of an aircraft without engines reads past the end
         // of JSBSim's vector.
-        return Err(Error::Model {
-            message: "FGLinearization needs an aircraft with an engine".to_owned(),
-        });
+        return Err(Error::model(
+            "FGLinearization needs an aircraft with an engine",
+        ));
     };
     let mut x = vec![
         Component::Vt,

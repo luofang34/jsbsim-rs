@@ -151,9 +151,9 @@ fn input_types_jsbsim_has_no_class_for_fail_the_load() {
         for options in [STRICT, LENIENT] {
             let input = format!(r#"<input type="{kind}"/>"#);
             match load_box(options, &input) {
-                Err(Error::UnknownInputType { kind: k, path }) => {
+                Err(Error::UnknownInputType { kind: k, at }) => {
                     assert_eq!(k, kind);
-                    assert!(path.contains("box.xml"), "{path}");
+                    assert!(at.file.contains("box.xml"), "{at}");
                 }
                 other => panic!("{kind}: expected UnknownInputType, got {:?}", other.err()),
             }

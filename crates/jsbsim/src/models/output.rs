@@ -87,13 +87,10 @@ impl Output {
             if kind != "TERMINAL" && kind != "NONE" {
                 tracing::error!("Unknown type of output specified in config file");
             }
-            return Err(Error::Model {
-                message: format!(
-                    "{}: no output type for <output type=\"{}\">, so the aircraft does not load",
-                    el.location(),
-                    el.attribute("type")
-                ),
-            });
+            return Err(el.model_error(format!(
+                "no output type for <output type=\"{}\">, so the aircraft does not load",
+                el.attribute("type")
+            )));
         }
         let idx = self.types.len();
         self.types.push(OutputType::default());

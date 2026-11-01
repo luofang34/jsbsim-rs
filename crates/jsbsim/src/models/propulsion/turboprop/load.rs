@@ -116,11 +116,10 @@ fn power_vc_function(ctx: &mut dyn EngineHost) -> Result<Option<FnId>, Error> {
 
 /// A table `Calculate` dereferences unconditionally.
 fn required<T>(el: &Element, what: &str, value: Option<T>) -> Result<T, Error> {
-    value.ok_or_else(|| Error::Model {
-        message: format!(
-            "{}: turboprop engine has no {what}, which JSBSim dereferences",
-            el.location()
-        ),
+    value.ok_or_else(|| {
+        el.model_error(format!(
+            "turboprop engine has no {what}, which JSBSim dereferences"
+        ))
     })
 }
 

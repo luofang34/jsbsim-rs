@@ -31,12 +31,9 @@ impl ThrusterFamily for Nozzle {
         _site: &ThrusterSite<'_>,
     ) -> Result<Self, Error> {
         if el.find_element("area").is_none() {
-            return Err(Error::Model {
-                message: format!(
-                    "{}: Fatal Error: Nozzle exit area must be given in nozzle config file.",
-                    el.location()
-                ),
-            });
+            return Err(el.model_error(
+                "Fatal Error: Nozzle exit area must be given in nozzle config file.",
+            ));
         }
         let area = el.find_element_value_as_number_convert_to("area", "FT2")?;
         base.thrust = 0.0;

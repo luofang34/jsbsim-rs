@@ -336,12 +336,10 @@ impl EngineFamily for Turbine {
     ) -> Result<TurbineSample, Error> {
         let l = &self.lookups;
         if l.injection.is_none() && self.config.injected == 1 && self.flags.injection {
-            return Err(Error::Model {
-                message: format!(
-                    "engine {}: water injection commanded without an Injection function, which JSBSim dereferences",
-                    self.number
-                ),
-            });
+            return Err(Error::model(format!(
+                "engine {}: water injection commanded without an Injection function, which JSBSim dereferences",
+                self.number
+            )));
         }
         Ok(TurbineSample {
             idle_thrust: ev.function(l.idle_thrust)?,

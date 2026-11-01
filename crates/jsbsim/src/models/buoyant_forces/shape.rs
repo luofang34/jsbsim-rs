@@ -120,25 +120,16 @@ impl Envelope {
     /// (`what` names it in errors).
     pub(crate) fn load(el: &Element, what: &str) -> Result<Self, Error> {
         let Some(location) = el.find_element("location") else {
-            return Err(Error::Model {
-                message: format!(
-                    "{}: Fatal Error: No location found for this {what}.",
-                    el.location()
-                ),
-            });
+            return Err(el.model_error(format!("Fatal Error: No location found for this {what}.")));
         };
         let xyz = location.find_element_triplet_convert_to("IN")?;
         let has = |a: &str, b: &str| el.find_element(a).is_some() || el.find_element(b).is_some();
         if !(has("x_radius", "x_width") && has("y_radius", "y_width") && has("z_radius", "z_width"))
         {
-            let message = match what {
-                "gas cell" => format!("{}: Gas cell shape must be given.", el.location()),
-                _ => format!(
-                    "{}: Fatal Error: Ballonet shape must be given.",
-                    el.location()
-                ),
-            };
-            return Err(Error::Model { message });
+            return Err(el.model_error(match what {
+                "gas cell" => "Gas cell shape must be given.",
+                _ => "Fatal Error: Ballonet shape must be given.",
+            }));
         }
         let shape = Shape {
             x_radius: optional_ft(el, "x_radius")?,

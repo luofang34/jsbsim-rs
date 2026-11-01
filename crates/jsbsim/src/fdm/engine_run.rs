@@ -17,9 +17,7 @@ impl Fdm {
         let count = self.models.propulsion.engines.len();
         match usize::try_from(n) {
             Ok(i) if i >= count => {
-                return Err(Error::Model {
-                    message: "Tried to initialize a non-existent engine!".to_owned(),
-                });
+                return Err(Error::model("Tried to initialize a non-existent engine!"));
             }
             Ok(i) => self.set_engine_running(i)?,
             Err(_) => {

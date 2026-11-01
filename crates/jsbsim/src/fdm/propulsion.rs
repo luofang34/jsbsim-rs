@@ -68,9 +68,7 @@ impl Fdm {
             }
             self.models.propulsion.tanks.push(tank);
             if tank_type == TankType::Unknown {
-                return Err(Error::Model {
-                    message: format!("{}: Unknown tank type specified.", tank_el.location()),
-                });
+                return Err(tank_el.model_error("Unknown tank type specified."));
             }
         }
         let mut engines: Vec<Element> = el.find_elements("engine").cloned().collect();

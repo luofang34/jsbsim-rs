@@ -44,10 +44,7 @@ impl Fdm {
         // `FGInputType::Load` would open a nested include and, on a root
         // of another name, stop without its post-functions.
         if opened.is_some() && element.has_attribute("file") {
-            return Err(Error::Unsupported {
-                construct: "<input file=...> whose file is itself an include".to_owned(),
-                path: element.location().to_string(),
-            });
+            return Err(element.unsupported("<input file=...> whose file is itself an include"));
         }
         self.load_dead_functions(element, true)?;
         let kind = element.attribute("type");
@@ -63,7 +60,7 @@ impl Fdm {
                 }
                 return Err(Error::UnknownInputType {
                     kind: kind.to_owned(),
-                    path: element.location().to_string(),
+                    at: element.location(),
                 });
             }
         };

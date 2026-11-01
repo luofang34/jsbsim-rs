@@ -94,9 +94,7 @@ impl Ballonet {
         }
         if let Some(blower) = el.find_element("blower_input") {
             let Some(f) = blower.find_element("function") else {
-                return Err(Error::Model {
-                    message: format!("{}: <blower_input> has no function", blower.location()),
-                });
+                return Err(blower.model_error("<blower_input> has no function"));
             };
             self.blower = Some(ctx.functions.load_function(ctx.binder.tree, f, "")?);
         }

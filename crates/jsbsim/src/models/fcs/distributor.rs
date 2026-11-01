@@ -19,7 +19,7 @@ mod tests;
 
 use super::Fcs;
 use super::Kind;
-use super::component::{Base, Tick, model_error};
+use super::component::{Base, Tick};
 use super::families::{ComponentAt, Family};
 use crate::Error;
 use crate::functions::{Condition, Parameter, PropertyValue};
@@ -114,11 +114,11 @@ impl Distributor {
         let Some(p) = self.cases.get(case).and_then(|c| c.pairs.get(pair)) else {
             return Ok(None);
         };
-        let not_known = |_| Error::Model {
-            message: format!(
+        let not_known = |_| {
+            Error::model(format!(
                 "{} in distributor component is not known",
                 p.property.name()
-            ),
+            ))
         };
         let value = ev.parameter(&p.value).map_err(not_known)?;
         let node = p.property.node(ev.tree()).map_err(not_known)?;
@@ -144,12 +144,9 @@ impl Family for Distributor {
             "inclusive" => false,
             "exclusive" => true,
             other => {
-                return Err(model_error(
-                    el,
-                    format!(
+                return Err(el.model_error(format!(
                         "Distributor type should be \"inclusive\" or \"exclusive\" but got \"{other}\" instead."
-                    ),
-                ));
+                    )));
             }
         };
         let mut cases = Vec::new();

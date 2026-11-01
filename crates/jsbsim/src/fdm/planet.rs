@@ -46,12 +46,7 @@ impl Fdm {
         let mut loader = self.document_loader(resolver, &self.full_aircraft_path);
         let mut document = loader.load_document(&file)?;
         if document.name() != "planet" {
-            return Err(Error::Model {
-                message: format!(
-                    "{}: File: {file} is not a planet file.",
-                    document.location()
-                ),
-            });
+            return Err(document.model_error(format!("File: {file} is not a planet file.")));
         }
         self.load_planet(&mut loader, &mut document)
     }

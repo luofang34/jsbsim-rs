@@ -6,7 +6,7 @@
 //! `<washout_filter>`: Tustin discretisations of first and second order
 //! transfer functions.
 
-use super::component::{Base, Tick, model_error, parameter_value};
+use super::component::{Base, Tick, parameter_value};
 use super::families::{ComponentAt, Family};
 use crate::Error;
 use crate::functions::{Evaluator, GetterSource, Parameter};
@@ -176,10 +176,7 @@ impl Family for Filter {
         }
         // JSBSim dereferences a missing coefficient here.
         if let Some(i) = c.iter().take(kind.coefficients()).position(Option::is_none) {
-            return Err(model_error(
-                el,
-                format!("Filter {} has no <c{}>", base.name, i + 1),
-            ));
+            return Err(el.model_error(format!("Filter {} has no <c{}>", base.name, i + 1)));
         }
         let mut filter = Self {
             kind,

@@ -18,13 +18,6 @@ fn optional(el: &Element, name: &str, unit: &str, default: f64) -> Result<f64, X
     }
 }
 
-/// What JSBSim throws as an `XMLLogException` while it reads `el`.
-fn refused(el: &Element, message: String) -> Error {
-    Error::Model {
-        message: format!("{}: {message}", el.location()),
-    }
-}
-
 impl Tank {
     /// `FGTank(exec, el, tank_number)` up to `bind`, which the caller does
     /// once the tank is in place.
@@ -37,10 +30,7 @@ impl Tank {
             tank.load_grain(el, grain)?;
         }
         if tank.grain_density_fault() {
-            return Err(refused(
-                el,
-                "Solid propellant grain density is zero!".to_owned(),
-            ));
+            return Err(el.model_error("Solid propellant grain density is zero!"));
         }
         tank.calculate_inertias();
         if tank.temperature != -9999.0 {
@@ -137,23 +127,17 @@ impl Tank {
         }
         let n = self.number;
         if self.capacity <= self.unusable() {
-            return Err(refused(
-                el,
-                format!(
+            return Err(el.model_error(format!(
                     "Tank capacity ({} lbs) is lower than the amount of unusable fuel ({} lbs) for tank {n}! Did you accidentally swap unusable and capacity?",
                     self.capacity,
                     self.unusable()
-                ),
-            ));
+                )));
         }
         if self.contents > self.capacity {
-            return Err(refused(
-                el,
-                format!(
+            return Err(el.model_error(format!(
                     "Tank content ({} lbs) is greater than tank capacity ({} lbs) for tank {n}! Did you accidentally swap contents and capacity?",
                     self.contents, self.capacity
-                ),
-            ));
+                )));
         }
         if self.contents < self.unusable() {
             tracing::error!(
@@ -173,10 +157,9 @@ impl Tank {
             "CYLINDRICAL" => GrainType::Cylindrical,
             "ENDBURNING" => GrainType::EndBurning,
             "FUNCTION" => {
-                return Err(Error::Unsupported {
-                    construct: "<grain_config type=\"FUNCTION\"> (inertia functions)".to_owned(),
-                    path: grain.location().to_string(),
-                });
+                return Err(
+                    grain.unsupported("<grain_config type=\"FUNCTION\"> (inertia functions)")
+                );
             }
             _ => {
                 tracing::error!("{}: Unknown propellant grain type specified", el.location());
@@ -191,8 +174,7 @@ impl Tank {
         g.volume = match kind {
             GrainType::Cylindrical => {
                 if self.radius <= g.inner_radius {
-                    return Err(refused(
-                        grain,
+                    return Err(grain.model_error(
                         "The bore diameter should be smaller than the total grain diameter!"
                             .to_owned(),
                     ));
@@ -201,8 +183,7 @@ impl Tank {
             }
             GrainType::EndBurning => pi * g.length * self.radius * self.radius,
             GrainType::Unknown => {
-                return Err(refused(
-                    el,
+                return Err(el.model_error(
                     "Unknown grain type found in this rocket engine definition.".to_owned(),
                 ));
             }

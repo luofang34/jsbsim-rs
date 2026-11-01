@@ -132,14 +132,11 @@ impl Fdm {
         if let Some(doc) = &document
             && doc.name() != el.name()
         {
-            return Err(Error::Model {
-                message: format!(
-                    "{}: Read model '{}' while expecting model '{}'",
-                    el.location(),
-                    doc.name(),
-                    el.name()
-                ),
-            });
+            return Err(el.model_error(format!(
+                "Read model '{}' while expecting model '{}'",
+                doc.name(),
+                el.name()
+            )));
         }
         match document {
             None => self.load_model_functions(el, "", slot),
@@ -239,12 +236,10 @@ impl Fdm {
     /// [`Error::Model`] once a model has begun loading.
     pub(super) fn refuse_second_model(&self) -> Result<(), Error> {
         match self.model_loaded {
-            true => Err(Error::Model {
-                message: format!(
-                    "A model is already loaded from {}: load another into a new Fdm.",
-                    self.full_aircraft_path
-                ),
-            }),
+            true => Err(Error::model(format!(
+                "A model is already loaded from {}: load another into a new Fdm.",
+                self.full_aircraft_path
+            ))),
             false => Ok(()),
         }
     }
@@ -272,27 +267,24 @@ impl Fdm {
         }
         let take = |name: &str| document.find_element(name).cloned();
         let Some(mut metrics) = take("metrics") else {
-            return Err(Error::Model {
-                message: "No metrics element was found in the aircraft config file.".to_owned(),
-            });
+            return Err(
+                document.model_error("No metrics element was found in the aircraft config file.")
+            );
         };
         self.upload(loader, &mut metrics, IncludeKind::Model, Model::Aircraft)?;
         self.models.aircraft.load(&metrics)?;
         self.post_load(&metrics, "", Model::Aircraft)?;
         let Some(mut mass) = take("mass_balance") else {
-            return Err(Error::Model {
-                message: "No mass_balance element was found in the aircraft config file."
-                    .to_owned(),
-            });
+            return Err(document
+                .model_error("No mass_balance element was found in the aircraft config file."));
         };
         self.upload(loader, &mut mass, IncludeKind::Model, Model::MassBalance)?;
         self.load_mass_balance(&mass)?;
         self.post_load(&mass, "", Model::MassBalance)?;
         let Some(mut ground) = take("ground_reactions") else {
-            return Err(Error::Model {
-                message: "No ground_reactions element was found in the aircraft config file."
-                    .to_owned(),
-            });
+            return Err(document.model_error(
+                "No ground_reactions element was found in the aircraft config file.",
+            ));
         };
         self.upload(
             loader,
@@ -390,10 +382,7 @@ impl Fdm {
 
 fn unsupported_if_present(document: &Element, name: &str) -> Result<(), Error> {
     match document.find_element(name) {
-        Some(el) => Err(Error::Unsupported {
-            construct: format!("<{name}>"),
-            path: el.location().to_string(),
-        }),
+        Some(el) => Err(el.unsupported(format!("<{name}>"))),
         None => Ok(()),
     }
 }

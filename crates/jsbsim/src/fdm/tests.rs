@@ -280,7 +280,7 @@ fn a_second_model_is_refused() {
         fdm.load_script(&r, "scripts/b.xml"),
     ] {
         assert!(
-            matches!(&second, Err(Error::Model { message }) if message.contains("aircraft/a")),
+            matches!(&second, Err(Error::Model { message, .. }) if message.contains("aircraft/a")),
             "{second:?}"
         );
     }

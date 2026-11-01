@@ -7,7 +7,7 @@ fn a_distributor_must_be_inclusive_or_exclusive() {
     let system = r#"<system><channel name="c"><distributor name="d"/></channel></system>"#;
     let err = load_error(system, LoadOptions::default());
     assert!(
-        matches!(&err, Error::Model { message } if message.contains("but got \"\" instead")),
+        matches!(&err, Error::Model { message, .. } if message.contains("but got \"\" instead")),
         "{err:?}"
     );
 }
@@ -25,7 +25,7 @@ fn a_missing_target_or_value_fails_the_run() {
         let mut fdm = load_system(&system, LoadOptions::default()).unwrap();
         let err = fdm.run_ic().unwrap_err();
         assert!(
-            matches!(&err, Error::Model { message } if *message == format!("{target} in distributor component is not known")),
+            matches!(&err, Error::Model { message, .. } if *message == format!("{target} in distributor component is not known")),
             "{err:?}"
         );
     }

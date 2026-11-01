@@ -246,8 +246,8 @@ impl Probe {
                 }
                 match e {
                     jsbsim::Error::TrimFailed { message } => format!(" trim-failed {message}"),
-                    jsbsim::Error::Unsupported { construct, path } => {
-                        format!(" unsupported {construct} ({path})")
+                    jsbsim::Error::Unsupported { construct, at } => {
+                        format!(" unsupported {construct} ({at})")
                     }
                     e => {
                         tracing::debug!("{op}: error: {e}");
@@ -291,8 +291,8 @@ fn load_failure(e: jsbsim::Error) -> String {
             tracing::debug!("error: {message}");
             " error".to_owned()
         }
-        jsbsim::Error::Unsupported { construct, path } => {
-            format!(" unsupported {construct} ({path})")
+        jsbsim::Error::Unsupported { construct, at } => {
+            format!(" unsupported {construct} ({at})")
         }
         e => {
             tracing::debug!("load-error: {e}");

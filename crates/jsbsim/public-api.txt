@@ -5,6 +5,7 @@ pub jsbsim::error::Error::Function(jsbsim::error::FunctionError)
 pub jsbsim::error::Error::Geographic
 pub jsbsim::error::Error::Geographic::message: alloc::string::String
 pub jsbsim::error::Error::Model
+pub jsbsim::error::Error::Model::at: core::option::Option<jsbsim::error::SourceLocation>
 pub jsbsim::error::Error::Model::message: alloc::string::String
 pub jsbsim::error::Error::PropertyPath(jsbsim::error::PathError)
 pub jsbsim::error::Error::ResourceNotFound
@@ -16,12 +17,14 @@ pub jsbsim::error::Error::Snapshot(jsbsim::snapshot::SnapshotError)
 pub jsbsim::error::Error::TrimFailed
 pub jsbsim::error::Error::TrimFailed::message: alloc::string::String
 pub jsbsim::error::Error::UnknownInputType
+pub jsbsim::error::Error::UnknownInputType::at: jsbsim::error::SourceLocation
 pub jsbsim::error::Error::UnknownInputType::kind: alloc::string::String
-pub jsbsim::error::Error::UnknownInputType::path: alloc::string::String
 pub jsbsim::error::Error::Unsupported
+pub jsbsim::error::Error::Unsupported::at: jsbsim::error::SourceLocation
 pub jsbsim::error::Error::Unsupported::construct: alloc::string::String
-pub jsbsim::error::Error::Unsupported::path: alloc::string::String
 pub jsbsim::error::Error::Xml(jsbsim::error::XmlError)
+impl jsbsim::error::Error
+pub fn jsbsim::error::Error::location(&self) -> core::option::Option<&jsbsim::error::SourceLocation>
 impl core::clone::Clone for jsbsim::error::Error
 pub fn jsbsim::error::Error::clone(&self) -> jsbsim::error::Error
 impl core::cmp::Eq for jsbsim::error::Error
@@ -90,6 +93,8 @@ pub jsbsim::error::FunctionError::UnboundTemplateParameter::at: jsbsim::error::S
 pub jsbsim::error::FunctionError::UnknownId
 pub jsbsim::error::FunctionError::UnknownId::id: usize
 pub jsbsim::error::FunctionError::UnknownId::what: &'static str
+impl jsbsim::error::FunctionError
+pub fn jsbsim::error::FunctionError::location(&self) -> core::option::Option<&jsbsim::error::SourceLocation>
 impl core::clone::Clone for jsbsim::error::FunctionError
 pub fn jsbsim::error::FunctionError::clone(&self) -> jsbsim::error::FunctionError
 impl core::cmp::Eq for jsbsim::error::FunctionError
@@ -148,6 +153,8 @@ pub jsbsim::error::XmlError::NoData::element: alloc::string::String
 pub jsbsim::error::XmlError::UnknownUnit
 pub jsbsim::error::XmlError::UnknownUnit::at: jsbsim::error::SourceLocation
 pub jsbsim::error::XmlError::UnknownUnit::unit: alloc::string::String
+impl jsbsim::error::XmlError
+pub fn jsbsim::error::XmlError::location(&self) -> core::option::Option<&jsbsim::error::SourceLocation>
 impl core::clone::Clone for jsbsim::error::XmlError
 pub fn jsbsim::error::XmlError::clone(&self) -> jsbsim::error::XmlError
 impl core::cmp::Eq for jsbsim::error::XmlError
@@ -894,6 +901,7 @@ pub jsbsim::Error::Function(jsbsim::error::FunctionError)
 pub jsbsim::Error::Geographic
 pub jsbsim::Error::Geographic::message: alloc::string::String
 pub jsbsim::Error::Model
+pub jsbsim::Error::Model::at: core::option::Option<jsbsim::error::SourceLocation>
 pub jsbsim::Error::Model::message: alloc::string::String
 pub jsbsim::Error::PropertyPath(jsbsim::error::PathError)
 pub jsbsim::Error::ResourceNotFound
@@ -905,12 +913,14 @@ pub jsbsim::Error::Snapshot(jsbsim::snapshot::SnapshotError)
 pub jsbsim::Error::TrimFailed
 pub jsbsim::Error::TrimFailed::message: alloc::string::String
 pub jsbsim::Error::UnknownInputType
+pub jsbsim::Error::UnknownInputType::at: jsbsim::error::SourceLocation
 pub jsbsim::Error::UnknownInputType::kind: alloc::string::String
-pub jsbsim::Error::UnknownInputType::path: alloc::string::String
 pub jsbsim::Error::Unsupported
+pub jsbsim::Error::Unsupported::at: jsbsim::error::SourceLocation
 pub jsbsim::Error::Unsupported::construct: alloc::string::String
-pub jsbsim::Error::Unsupported::path: alloc::string::String
 pub jsbsim::Error::Xml(jsbsim::error::XmlError)
+impl jsbsim::error::Error
+pub fn jsbsim::error::Error::location(&self) -> core::option::Option<&jsbsim::error::SourceLocation>
 impl core::clone::Clone for jsbsim::error::Error
 pub fn jsbsim::error::Error::clone(&self) -> jsbsim::error::Error
 impl core::cmp::Eq for jsbsim::error::Error

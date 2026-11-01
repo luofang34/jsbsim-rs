@@ -126,3 +126,26 @@ pub enum XmlError {
         at: SourceLocation,
     },
 }
+
+impl XmlError {
+    /// Where the offending element starts. `None` for [`Malformed`] and
+    /// [`Encoding`], which no element holds: the first gives its position in
+    /// its own fields.
+    ///
+    /// [`Malformed`]: Self::Malformed
+    /// [`Encoding`]: Self::Encoding
+    #[must_use]
+    pub fn location(&self) -> Option<&SourceLocation> {
+        match self {
+            Self::Malformed { .. } | Self::Encoding { .. } => None,
+            Self::InvalidNumber { at, .. }
+            | Self::NoData { at, .. }
+            | Self::MultipleLines { at, .. }
+            | Self::MissingAttribute { at, .. }
+            | Self::MissingElement { at, .. }
+            | Self::UnknownUnit { at, .. }
+            | Self::Inconvertible { at, .. }
+            | Self::IncludeNotFound { at, .. } => Some(at),
+        }
+    }
+}

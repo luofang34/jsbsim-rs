@@ -67,17 +67,10 @@ pub(crate) struct Base {
 /// Logs `message` at `el`, or fails with it in strict mode.
 pub(crate) fn lenient(el: &Element, ctx: &LoadContext<'_>, message: &str) -> Result<(), Error> {
     if ctx.options.strict {
-        return Err(model_error(el, message));
+        return Err(el.model_error(message));
     }
     tracing::error!("{}: {message}", el.location());
     Ok(())
-}
-
-/// A load error at `el`.
-pub(crate) fn model_error(el: &Element, message: impl std::fmt::Display) -> Error {
-    Error::Model {
-        message: format!("{}: {message}", el.location()),
-    }
 }
 
 /// `FGParameterValue(el, pm)`: exactly one non-empty data line, a number
@@ -86,13 +79,10 @@ pub(crate) fn parameter_value(el: &Element, ctx: &mut LoadContext<'_>) -> Result
     let value = el.data_line(0);
     let parameter = Parameter::number_or_property(value, ctx.tree(), el.location())?;
     if el.data_lines().len() != 1 || value.is_empty() {
-        return Err(model_error(
-            el,
-            format!(
-                "The element <{}> must either contain a value number or a property name.",
-                el.name()
-            ),
-        ));
+        return Err(el.model_error(format!(
+            "The element <{}> must either contain a value number or a property name.",
+            el.name()
+        )));
     }
     Ok(parameter)
 }
@@ -173,12 +163,9 @@ impl Base {
     ) -> Result<(), Error> {
         let num = self.inputs.len();
         if num < min {
-            return Err(model_error(
-                el,
-                format!(
+            return Err(el.model_error(format!(
                     "    Not enough <input> nodes are provided\n    Expecting {min} while {num} are provided."
-                ),
-            ));
+                )));
         }
         if num > max {
             lenient(
@@ -267,10 +254,7 @@ fn delay_frames(el: &Element, ctx: &mut LoadContext<'_>, dt: f64) -> Result<usiz
             Parameter::Property(p) => {
                 let node = p.node(ctx.tree())?;
                 if ctx.tree().is_tied(node) {
-                    return Err(Error::Unsupported {
-                        construct: "<delay> read from a tied property".to_owned(),
-                        path: el.location().to_string(),
-                    });
+                    return Err(el.unsupported("<delay> read from a tied property"));
                 }
                 ctx.tree().get_double(node) * p.sign()
             }
@@ -292,7 +276,7 @@ fn delay_frames(el: &Element, ctx: &mut LoadContext<'_>, dt: f64) -> Result<usiz
 fn unsigned_frames(el: &Element, frames: f64) -> Result<usize, Error> {
     // Defined when the truncated value fits in an unsigned int.
     if !(frames > -1.0 && frames < f64::from(u32::MAX) + 1.0) {
-        return Err(model_error(el, format!("Invalid delay of {frames} frames")));
+        return Err(el.model_error(format!("Invalid delay of {frames} frames")));
     }
     Ok(frames as u32 as usize)
 }

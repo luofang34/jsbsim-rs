@@ -71,12 +71,9 @@ impl EngineHost for EngineLoad<'_> {
             tracing::warn!("Engine orientation ignored, only thruster orientation is used.");
         }
         let Some(thruster_el) = self.parent.find_element("thruster") else {
-            return Err(Error::Model {
-                message: format!(
-                    "{}: No thruster definition supplied with engine definition.",
-                    self.parent.location()
-                ),
-            });
+            return Err(self
+                .parent
+                .model_error("No thruster definition supplied with engine definition."));
         };
         let mut thruster = self.fdm.load_thruster(thruster_el, n)?;
         base.reset_to_ic();
@@ -96,12 +93,9 @@ impl EngineHost for EngineLoad<'_> {
         engine_type: EngineType,
     ) -> Result<(EngineBase, Thruster, &mut Vec<Engine>), Error> {
         let Some((mut base, thruster)) = self.loaded.take() else {
-            return Err(Error::Model {
-                message: format!(
-                    "{}: the engine type did not load its FGEngine base",
-                    self.parent.location()
-                ),
-            });
+            return Err(self
+                .parent
+                .model_error("the engine type did not load its FGEngine base"));
         };
         base.engine_type = engine_type;
         Ok((base, thruster, &mut self.fdm.models.propulsion.engines))
@@ -142,10 +136,7 @@ impl Fdm {
                 continue;
             };
             if !families::thruster_registered(name) {
-                return Err(Error::Unsupported {
-                    construct: format!("<{name}>"),
-                    path: el.location().to_string(),
-                });
+                return Err(el.unsupported(format!("<{name}>")));
             }
             let mut base = ThrusterBase {
                 name: el.attribute("name").to_owned(),
@@ -161,16 +152,10 @@ impl Fdm {
                 dt: self.models.exec.dt,
                 engines: &self.models.propulsion.engines,
             };
-            return families::load_thruster(name, el, thruster_el, base, ctx, &site)?.ok_or_else(
-                || Error::Unsupported {
-                    construct: format!("<{name}>"),
-                    path: el.location().to_string(),
-                },
-            );
+            return families::load_thruster(name, el, thruster_el, base, ctx, &site)?
+                .ok_or_else(|| el.unsupported(format!("<{name}>")));
         }
-        Err(Error::Model {
-            message: format!("{}: Unknown thruster type", thruster_el.location()),
-        })
+        Err(thruster_el.model_error("Unknown thruster type"))
     }
 
     /// `FGPropulsion::Load`'s engine loop for `<engine>` number `n`: its
@@ -187,12 +172,9 @@ impl Fdm {
             .iter_mut()
             .find(|c| c.name() == "thruster")
         else {
-            return Err(Error::Model {
-                message: format!(
-                    "{}: No thruster definition supplied with engine definition.",
-                    engine_el.location()
-                ),
-            });
+            return Err(
+                engine_el.model_error("No thruster definition supplied with engine definition.")
+            );
         };
         loader.open(thruster, IncludeKind::Engine)?;
         #[cfg(test)]
@@ -214,13 +196,8 @@ impl Fdm {
             if families::load_engine(name, el, &mut ctx)? {
                 return Ok(());
             }
-            return Err(Error::Unsupported {
-                construct: format!("<{name}>"),
-                path: el.location().to_string(),
-            });
+            return Err(el.unsupported(format!("<{name}>")));
         }
-        Err(Error::Model {
-            message: format!("{}: Unknown engine type", engine_el.location()),
-        })
+        Err(engine_el.model_error("Unknown engine type"))
     }
 }

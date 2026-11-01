@@ -8,7 +8,7 @@
 
 use std::f64::consts::FRAC_PI_2;
 
-use super::component::{Base, Tick, model_error};
+use super::component::{Base, Tick};
 use super::families::{ComponentAt, Family};
 use crate::Error;
 use crate::functions::PropertyValue;
@@ -93,10 +93,7 @@ fn coordinate(
     ctx: &mut LoadContext<'_>,
 ) -> Result<Coordinate, Error> {
     let Some(coord_el) = el.find_element(tag) else {
-        return Err(model_error(
-            el,
-            format!("{what} is required for waypoint component: {name}"),
-        ));
+        return Err(el.model_error(format!("{what} is required for waypoint component: {name}")));
     };
     let value = PropertyValue::new(coord_el.data_line(0), ctx.tree(), coord_el.location())?;
     let unit = if coord_el.attribute("unit") == "DEG" {
@@ -113,26 +110,22 @@ fn output_unit(el: &Element, kind: WaypointType, name: &str) -> Result<Unit, Err
     match (kind, unit) {
         (WaypointType::Heading, "" | "RAD") => Ok(Unit::Rad),
         (WaypointType::Heading, "DEG") => Ok(Unit::Deg),
-        (WaypointType::Heading, _) => Err(model_error(
-            el,
-            format!("Unknown unit {unit} in HEADING waypoint component, "),
-        )),
+        (WaypointType::Heading, _) => Err(el.model_error(format!(
+            "Unknown unit {unit} in HEADING waypoint component, "
+        ))),
         (WaypointType::Distance, "" | "FT") => Ok(Unit::Feet),
         (WaypointType::Distance, "M") => Ok(Unit::Meters),
-        (WaypointType::Distance, _) => Err(model_error(
-            el,
-            format!("Unknown unit {unit} in DISTANCE waypoint component, {name}"),
-        )),
+        (WaypointType::Distance, _) => Err(el.model_error(format!(
+            "Unknown unit {unit} in DISTANCE waypoint component, {name}"
+        ))),
     }
 }
 
 /// JSBSim's run-time error for a latitude beyond +-90 degrees.
 fn latitude_error(which: &str, name: &str) -> Error {
-    Error::Model {
-        message: format!(
-            "{which} latitude in waypoint \"{name}\" must be less than or equal to 90 degrees.\n(is longitude being mistakenly supplied?)"
-        ),
-    }
+    Error::model(format!(
+        "{which} latitude in waypoint \"{name}\" must be less than or equal to 90 degrees.\n(is longitude being mistakenly supplied?)"
+    ))
 }
 
 fn read(c: &Coordinate, ev: &mut ModelEvaluator<'_>) -> Result<f64, Error> {
@@ -155,7 +148,7 @@ impl Family for Waypoint {
         };
         let source = ctx
             .ic_position
-            .ok_or_else(|| model_error(el, "a waypoint loads only with an initial condition"))?;
+            .ok_or_else(|| el.model_error("a waypoint loads only with an initial condition"))?;
         let name = base.name.as_str();
         let target_latitude = coordinate(el, "target_latitude", "Target latitude", name, ctx)?;
         let target_longitude = coordinate(el, "target_longitude", "Target longitude", name, ctx)?;

@@ -146,9 +146,9 @@ impl<'a, G: GetterSource> Evaluator<'a, G> {
     #[inline(never)]
     fn take_failure(&mut self) -> Error {
         // Only `fail` makes a `Failed`, so the error is there.
-        self.failure.take().unwrap_or_else(|| Error::Model {
-            message: "a function evaluation failed without recording why".to_owned(),
-        })
+        self.failure
+            .take()
+            .unwrap_or_else(|| Error::model("a function evaluation failed without recording why"))
     }
 
     /// Records `error` as the evaluation's.

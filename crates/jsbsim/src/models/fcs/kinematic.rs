@@ -8,7 +8,7 @@
 #[cfg(test)]
 mod tests;
 
-use super::component::{Base, Tick, model_error};
+use super::component::{Base, Tick};
 use super::families::{ComponentAt, Family};
 use crate::Error;
 use crate::models::{LoadContext, ModelEvaluator};
@@ -108,10 +108,10 @@ impl Family for Kinemat {
         let do_scale = el.find_element("noscale").is_none();
         // JSBSim dereferences the missing element.
         let traverse = el.find_element("traverse").ok_or_else(|| {
-            model_error(
-                el,
-                format!("Kinematic component {} has no <traverse>", base.name),
-            )
+            el.model_error(format!(
+                "Kinematic component {} has no <traverse>",
+                base.name
+            ))
         })?;
         let mut detents = Vec::new();
         let mut transition_times = Vec::new();
@@ -120,13 +120,10 @@ impl Family for Kinemat {
             transition_times.push(setting.find_element_value_as_number("time")?);
         }
         if detents.len() <= 1 {
-            return Err(model_error(
-                el,
-                format!(
-                    "\nKinematic component {} must have more than 1 setting element",
-                    base.name
-                ),
-            ));
+            return Err(el.model_error(format!(
+                "\nKinematic component {} must have more than 1 setting element",
+                base.name
+            )));
         }
         base.bind(ctx)?;
         Ok(Self {

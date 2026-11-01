@@ -8,7 +8,7 @@
 #[cfg(test)]
 mod tests;
 
-use super::component::{Base, Tick, model_error};
+use super::component::{Base, Tick};
 use super::families::{ComponentAt, Family};
 use crate::Error;
 use crate::models::{LoadContext, ModelEvaluator};
@@ -57,13 +57,10 @@ fn angle(
     ctx: &mut LoadContext<'_>,
 ) -> Result<(String, Option<NodeId>, f64), Error> {
     let Some(angle_el) = el.find_element(name) else {
-        return Err(model_error(
-            el,
-            format!(
-                "{what} angle is required for Angles component: {}",
-                base.name
-            ),
-        ));
+        return Err(el.model_error(format!(
+            "{what} angle is required for Angles component: {}",
+            base.name
+        )));
     };
     let path = el.find_element_value(name).to_owned();
     let node = ctx.tree().get(&path)?;
@@ -84,12 +81,10 @@ fn read(
 ) -> Result<f64, Error> {
     match node {
         Some(node) => ev.read_node(node),
-        None => Err(Error::Model {
-            message: format!(
-                "Angles component {}: the property {path} did not exist when it loaded",
-                base.name
-            ),
-        }),
+        None => Err(Error::model(format!(
+            "Angles component {}: the property {path} did not exist when it loaded",
+            base.name
+        ))),
     }
 }
 
@@ -109,10 +104,10 @@ impl Family for Angles {
             "" | "RAD" => 1.0,
             "DEG" => 180.0 / std::f64::consts::PI,
             unit => {
-                return Err(model_error(
-                    el,
-                    format!("Unknown unit {unit} in angle component, {}", base.name),
-                ));
+                return Err(el.model_error(format!(
+                    "Unknown unit {unit} in angle component, {}",
+                    base.name
+                )));
             }
         };
         base.bind(ctx)?;

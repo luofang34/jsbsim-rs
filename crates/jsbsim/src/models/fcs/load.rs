@@ -4,7 +4,7 @@
 //
 //! Loading channels and their components.
 
-use super::component::{Base, model_error};
+use super::component::Base;
 use super::families::{self, Component, ComponentAt};
 use super::{Channel, Fcs};
 use crate::Error;
@@ -58,13 +58,10 @@ impl Fcs {
             let on_off = match channel_el.attribute("execute") {
                 "" => None,
                 property => Some(ctx.tree().get(property)?.ok_or_else(|| {
-                    model_error(
-                        channel_el,
-                        format!(
+                    channel_el.model_error(format!(
                             "The On/Off property, {property} specified for channel {} is undefined or not understood. The simulation will abort",
                             channel_el.attribute("name")
-                        ),
-                    )
+                        ))
                 })?),
             };
             let mut channel = Channel::new(
@@ -100,10 +97,7 @@ fn load_component(
     let name = el.name();
     if !KNOWN.contains(&name) {
         if ctx.options.strict {
-            return Err(Error::Unsupported {
-                construct: format!("unknown FCS component <{name}>"),
-                path: el.location().to_string(),
-            });
+            return Err(el.unsupported(format!("unknown FCS component <{name}>")));
         }
         tracing::error!("{}: Unknown FCS component: {name}", el.location());
         return Ok(None);

@@ -26,7 +26,7 @@ fn angles_need_both_angles_and_a_known_unit() {
     ] {
         let err = load_error(&system(body), LoadOptions::default());
         assert!(
-            matches!(&err, Error::Model { message } if message.contains(expected)),
+            matches!(&err, Error::Model { message, .. } if message.contains(expected)),
             "{body}: {err:?}"
         );
     }

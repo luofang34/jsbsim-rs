@@ -7,7 +7,7 @@ fn a_linear_actuator_needs_an_input() {
     let system = r#"<system><channel name="c"><linear_actuator name="l"/></channel></system>"#;
     let err = load_error(system, LoadOptions::default());
     assert!(
-        matches!(&err, Error::Model { message } if message.contains("Not enough <input> nodes")),
+        matches!(&err, Error::Model { message, .. } if message.contains("Not enough <input> nodes")),
         "{err:?}"
     );
 }

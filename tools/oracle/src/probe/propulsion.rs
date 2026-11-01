@@ -102,8 +102,8 @@ impl Probe {
         };
         match fdm.load_model(&resolver, &self.aircraft, model) {
             Ok(()) => " ok".to_owned(),
-            Err(jsbsim::Error::Unsupported { construct, path }) => {
-                format!(" unsupported {construct} ({path})")
+            Err(jsbsim::Error::Unsupported { construct, at }) => {
+                format!(" unsupported {construct} ({at})")
             }
             Err(e) => {
                 tracing::debug!("{model}: load-error: {e}");

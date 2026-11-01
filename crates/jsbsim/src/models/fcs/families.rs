@@ -155,10 +155,7 @@ macro_rules! families {
         ) -> Result<Kind, Error> {
             match el.name() {
                 $($($element)|+ => <$ty as Family>::load(el, base, ctx, at).map(Kind::$variant),)+
-                name => Err(Error::Unsupported {
-                    construct: format!("<{name}> FCS component"),
-                    path: el.location().to_string(),
-                }),
+                name => Err(el.unsupported(format!("<{name}> FCS component"))),
             }
         }
 

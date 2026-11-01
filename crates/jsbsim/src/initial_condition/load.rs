@@ -32,10 +32,6 @@ pub(crate) struct LoadOutcome {
     pub planet_rotation_changed: bool,
 }
 
-fn model_error(message: String) -> Error {
-    Error::Model { message }
-}
-
 /// `SetTrimRequest`: the trim mode `value` asks for; anything unknown,
 /// including `0`, leaves the request as it was.
 fn trim_mode(value: &str) -> Option<TrimMode> {
@@ -60,7 +56,7 @@ impl InitialCondition {
         inertial: &mut Inertial,
     ) -> Result<LoadOutcome, Error> {
         if document.name() != "initialize" {
-            return Err(model_error(format!(
+            return Err(document.model_error(format!(
                 "File: {} is not a reset file.",
                 document.file_name()
             )));
@@ -71,10 +67,8 @@ impl InitialCondition {
             None
         };
         if version.is_some_and(|v| v >= 3.0) {
-            return Err(model_error(format!(
-                "{}: Only initialization file formats 1 and 2 are currently supported",
-                document.location()
-            )));
+            return Err(document
+                .model_error("Only initialization file formats 1 and 2 are currently supported"));
         }
         let mut outcome = LoadOutcome::default();
         match version {

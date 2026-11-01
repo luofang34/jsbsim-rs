@@ -8,7 +8,7 @@
 use super::Signal;
 use crate::Error;
 use crate::models::fcs::Kind;
-use crate::models::fcs::component::{Base, model_error, own_property};
+use crate::models::fcs::component::{Base, own_property};
 use crate::models::fcs::families::{self, ComponentAt};
 use crate::models::{self, LoadContext, Models};
 use crate::properties::mk_property_name;
@@ -114,10 +114,9 @@ pub(super) fn bind(
     let tree = ctx.tree();
     let node = tree.get_or_create(tree.root(), &qprop)?;
     if tree.is_tied(node) {
-        return Err(model_error(
-            el,
-            format!("Property {tmp} has already been successfully bound (late)."),
-        ));
+        return Err(el.model_error(format!(
+            "Property {tmp} has already been successfully bound (late)."
+        )));
     }
     ctx.binder
         .typed_getter(&qprop, models::Kind::Int, move |m| {

@@ -354,7 +354,7 @@ impl Family for Actuator {
         let input = base.read_input(0, ev)?;
         let failed_input = if self.fail_zero { 0.0 } else { input };
         if self.fail_hardover && failed_input < 0.0 && self.clip_min_missing {
-            return Err(model_error_at(base));
+            return Err(hardover_error(base));
         }
         // The lag and the rate limits are read only by an initialized,
         // healthy actuator. JSBSim also skips them on a trim frame, which
@@ -416,13 +416,11 @@ impl Family for Actuator {
 }
 
 /// The error for a hardover failure JSBSim would crash on.
-fn model_error_at(base: &Base) -> Error {
-    Error::Model {
-        message: format!(
-            "actuator {}: fail_hardover with a negative input reads the <clipto> <min> JSBSim discards when <max> is missing",
-            base.name
-        ),
-    }
+fn hardover_error(base: &Base) -> Error {
+    Error::model(format!(
+        "actuator {}: fail_hardover with a negative input reads the <clipto> <min> JSBSim discards when <max> is missing",
+        base.name
+    ))
 }
 
 crate::snapshot::visit_fields! {

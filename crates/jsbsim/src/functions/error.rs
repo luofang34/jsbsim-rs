@@ -128,3 +128,28 @@ pub enum FunctionError {
         at: SourceLocation,
     },
 }
+
+impl FunctionError {
+    /// Where the table, function or condition is. `None` for
+    /// [`UnknownId`](Self::UnknownId) and [`Recursion`](Self::Recursion),
+    /// which arise from no one element.
+    #[must_use]
+    pub fn location(&self) -> Option<&SourceLocation> {
+        match self {
+            Self::UnknownId { .. } | Self::Recursion { .. } => None,
+            Self::Arguments { at, .. }
+            | Self::Attribute { at, .. }
+            | Self::IllegalHash { at }
+            | Self::InternalTableInFunction { at }
+            | Self::AlreadyBound { at, .. }
+            | Self::Table { at, .. }
+            | Self::Condition { at, .. }
+            | Self::MissingProperty { at, .. }
+            | Self::NotBinary { at }
+            | Self::Index { at, .. }
+            | Self::ModByZero { at }
+            | Self::Strict { at, .. }
+            | Self::UnboundTemplateParameter { at } => Some(at),
+        }
+    }
+}

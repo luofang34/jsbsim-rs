@@ -16,7 +16,7 @@ pub(crate) mod magvar;
 #[cfg(test)]
 mod tests;
 
-use super::component::{Base, Tick, model_error};
+use super::component::{Base, Tick};
 use super::families::{ComponentAt, Family};
 use super::sensor::Signal;
 use super::sensor::orientation::Orientation;
@@ -130,7 +130,7 @@ impl Family for Magnetometer {
         let signal = Signal::load(el, base, ctx, at)?;
         let orientation = Orientation::load(el, ctx)?;
         let Some(location_el) = el.find_element("location") else {
-            return Err(model_error(el, "No location given for magnetometer."));
+            return Err(el.model_error("No location given for magnetometer."));
         };
         Ok(Self {
             signal,

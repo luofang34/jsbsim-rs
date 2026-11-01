@@ -45,7 +45,7 @@ fn an_actuator_needs_an_input() {
     let system = r#"<system><channel name="c"><actuator name="a"/></channel></system>"#;
     let err = load_error(system, LoadOptions::default());
     assert!(
-        matches!(&err, Error::Model { message } if message.contains("Not enough <input> nodes")),
+        matches!(&err, Error::Model { message, .. } if message.contains("Not enough <input> nodes")),
         "{err:?}"
     );
 }

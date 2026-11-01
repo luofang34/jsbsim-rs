@@ -123,12 +123,9 @@ impl Rocket {
     /// constructor; the isp function, when `<isp>` holds one.
     fn read(&mut self, el: &Element, ctx: &mut dyn EngineHost) -> Result<(), Error> {
         let Some(isp_el) = el.find_element("isp") else {
-            return Err(Error::Model {
-                message: format!(
-                    "{}: Specific Impulse <isp> must be specified for a rocket engine",
-                    el.location()
-                ),
-            });
+            return Err(
+                el.model_error("Specific Impulse <isp> must be specified for a rocket engine")
+            );
         };
         match isp_el.find_element("function") {
             Some(f) => {
@@ -142,9 +139,9 @@ impl Rocket {
         if let Some(t) = number(el, "builduptime")? {
             self.buildup_time = t;
         }
-        let base = ctx.base_mut().ok_or_else(|| Error::Model {
-            message: format!("{}: the rocket did not load its base", el.location()),
-        })?;
+        let base = ctx
+            .base_mut()
+            .ok_or_else(|| el.model_error("the rocket did not load its base"))?;
         base.min_throttle = 0.0;
         base.max_throttle = 1.0;
         if let Some(t) = number(el, "maxthrottle")? {

@@ -7,7 +7,7 @@
 //! `<ki>`, integrating trapezoidally unless `<c1>` names a `type`.
 
 use super::Kind;
-use super::component::{Base, Tick, model_error, own_property, parameter_value};
+use super::component::{Base, Tick, own_property, parameter_value};
 use super::families::{self, Component, ComponentAt, Family};
 use crate::Error;
 use crate::functions::{Parameter, PropertyValue};
@@ -99,13 +99,10 @@ fn ki_element(el: &Element) -> Result<Option<(&Element, Integration)>, Error> {
             .map(|ki| (ki, integration(ki.attribute("type")))));
     }
     let Some(c1) = el.find_element("c1") else {
-        return Err(model_error(
-            el,
-            format!(
-                "INTEGRATOR component {} does not provide the parameter <c1>",
-                el.attribute("name")
-            ),
-        ));
+        return Err(el.model_error(format!(
+            "INTEGRATOR component {} does not provide the parameter <c1>",
+            el.attribute("name")
+        )));
     };
     let scheme = match c1.has_attribute("type") {
         true => integration(c1.attribute("type")),

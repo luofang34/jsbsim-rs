@@ -72,6 +72,19 @@ impl Element {
         }
     }
 
+    /// An [`Error::Model`](crate::Error::Model) at this element.
+    pub(crate) fn model_error(&self, message: impl Into<String>) -> crate::Error {
+        crate::Error::model_at(self.location(), message)
+    }
+
+    /// An [`Error::Unsupported`](crate::Error::Unsupported) at this element.
+    pub(crate) fn unsupported(&self, construct: impl Into<String>) -> crate::Error {
+        crate::Error::Unsupported {
+            construct: construct.into(),
+            at: self.location(),
+        }
+    }
+
     /// Resource path of the document the element came from.
     #[must_use]
     pub(crate) fn file_name(&self) -> &str {

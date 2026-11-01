@@ -165,9 +165,7 @@ fn process_frame(
         "STABILITY" => AxisType::Stability,
         "WIND" => AxisType::Wind,
         _ => {
-            return Err(Error::Model {
-                message: format!("{}: Unknown axis frame type of - {frame}", el.location()),
-            });
+            return Err(el.model_error(format!("Unknown axis frame type of - {frame}")));
         }
     };
     if *axis_type == AxisType::None {
@@ -241,12 +239,7 @@ impl Aerodynamics {
                     ),
                 },
                 _ => {
-                    return Err(Error::Model {
-                        message: format!(
-                            "{}: An unknown axis type, {axis} has been specified in the aircraft configuration file.",
-                            axis_el.location()
-                        ),
-                    });
+                    return Err(axis_el.model_error(format!("An unknown axis type, {axis} has been specified in the aircraft configuration file.")));
                 }
             }
         }
@@ -380,9 +373,9 @@ impl Aerodynamics {
                 self.state.ts2b * v
             }
             AxisType::None => {
-                return Err(Error::Model {
-                    message: "A proper axis type has NOT been selected. Check your aerodynamics definition.".to_owned(),
-                });
+                return Err(Error::model(
+                    "A proper axis type has NOT been selected. Check your aerodynamics definition.",
+                ));
             }
         })
     }
@@ -406,9 +399,9 @@ impl Aerodynamics {
             AxisType::Stability => self.state.ts2b * values.moments_mrc,
             AxisType::Wind => self.input.tw2b * values.moments_mrc,
             _ => {
-                return Err(Error::Model {
-                    message: "A proper axis type has NOT been selected. Check your aerodynamics definition.".to_owned(),
-                });
+                return Err(Error::model(
+                    "A proper axis type has NOT been selected. Check your aerodynamics definition.",
+                ));
             }
         };
         let s = &mut self.state;

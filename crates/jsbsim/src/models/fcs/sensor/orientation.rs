@@ -8,7 +8,6 @@
 use crate::Error;
 use crate::math::{Axis, ColumnVector3, Matrix33};
 use crate::models::LoadContext;
-use crate::models::fcs::component::model_error;
 use crate::xml::Element;
 
 /// `FGSensorOrientation`.
@@ -35,7 +34,7 @@ impl Orientation {
             _ => {
                 let message = "  Incorrect/no axis specified for this sensor; assuming X axis";
                 if ctx.options.strict {
-                    return Err(model_error(el, message));
+                    return Err(el.model_error(message));
                 }
                 tracing::warn!("{}: {message}", el.location());
                 Axis::X

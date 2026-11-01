@@ -97,8 +97,8 @@ fn load(name: &str, context: &ProbeContext) -> String {
             }
             out
         }
-        Err(jsbsim::Error::Unsupported { construct, path }) => {
-            format!(" unsupported {construct} ({path})")
+        Err(jsbsim::Error::Unsupported { construct, at }) => {
+            format!(" unsupported {construct} ({at})")
         }
         Err(e) => {
             tracing::debug!("{name}: load-error: {e}");

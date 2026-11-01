@@ -4,7 +4,7 @@
 //
 //! `<fcs_function>`: a function, scaled by the first input if any.
 
-use super::component::{Base, Tick, model_error};
+use super::component::{Base, Tick};
 use super::families::{ComponentAt, Family};
 use crate::Error;
 use crate::functions::FnId;
@@ -29,10 +29,7 @@ impl Family for FcsFunction {
         _at: ComponentAt,
     ) -> Result<Self, Error> {
         let Some(function_el) = el.find_element("function") else {
-            return Err(model_error(
-                el,
-                "FCS Function should contain a \"function\" element",
-            ));
+            return Err(el.model_error("FCS Function should contain a \"function\" element"));
         };
         let function = ctx
             .functions

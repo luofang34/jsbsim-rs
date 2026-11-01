@@ -74,7 +74,7 @@ fn the_execute_property_must_exist() {
     let system = COUNTER.replace("execrate=\"4\"", "execute=\"test/missing\"");
     let err = load_error(&system, LoadOptions::default());
     assert!(
-        matches!(&err, Error::Model { message } if message.contains("The On/Off property, test/missing")),
+        matches!(&err, Error::Model { message, .. } if message.contains("The On/Off property, test/missing")),
         "{err:?}"
     );
 }
@@ -105,7 +105,7 @@ fn a_component_without_a_function_is_refused() {
     let system = "<system><channel name=\"c\"><fcs_function name=\"f\"/></channel></system>";
     let err = load_error(system, LoadOptions::default());
     assert!(
-        matches!(&err, Error::Model { message } if message.contains("should contain a \"function\"")),
+        matches!(&err, Error::Model { message, .. } if message.contains("should contain a \"function\"")),
         "{err:?}"
     );
 }
@@ -183,7 +183,7 @@ fn delays_convert_seconds_with_the_channel_step() {
 fn component_error(body: &str) -> String {
     let system = format!("<system><channel name=\"c\">{body}</channel></system>");
     match load_error(&system, LoadOptions::default()) {
-        Error::Model { message } => message,
+        Error::Model { message, .. } => message,
         other => panic!("{other:?}"),
     }
 }
@@ -246,7 +246,7 @@ fn a_switch_ignores_malformed_tests_unless_strict() {
     let strict = LoadOptions { strict: true };
     let err = load_error(SWITCH_WITH_BAD_TESTS, strict);
     assert!(
-        matches!(&err, Error::Model { message } if message.contains("No VALUE supplied for switch component: s")),
+        matches!(&err, Error::Model { message, .. } if message.contains("No VALUE supplied for switch component: s")),
         "{err:?}"
     );
 }

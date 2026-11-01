@@ -15,7 +15,7 @@ pub(crate) mod orientation;
 #[cfg(test)]
 mod tests;
 
-use super::component::{Base, Tick, lenient, model_error};
+use super::component::{Base, Tick, lenient};
 use super::families::{ComponentAt, Family};
 use crate::Error;
 use crate::models::{LoadContext, ModelEvaluator};
@@ -86,10 +86,7 @@ pub(crate) struct Signal {
 /// conversion or `1 << bits` is undefined.
 fn bits(el: &Element, value: f64) -> Result<i32, Error> {
     if !(value > -1.0 && value < 31.0) {
-        return Err(model_error(
-            el,
-            format!("Invalid quantization of {value} bits"),
-        ));
+        return Err(el.model_error(format!("Invalid quantization of {value} bits")));
     }
     Ok(value as i32)
 }
@@ -260,9 +257,10 @@ fn noise(
 /// The error of a sensor family's [`Family::sample`], which needs the
 /// models that only [`Family::sample_models`] is given.
 pub(super) fn needs_models(base: &Base) -> Error {
-    Error::Model {
-        message: format!("Sensor {} reads the models it was not given", base.name),
-    }
+    Error::model(format!(
+        "Sensor {} reads the models it was not given",
+        base.name
+    ))
 }
 
 /// `FGSensor`.
@@ -291,9 +289,7 @@ impl Family for Sensor {
         match base.inputs.first() {
             Some(input) => ev.property(input),
             // JSBSim dereferences the missing input here.
-            None => Err(Error::Model {
-                message: format!("Sensor {} has no <input>", base.name),
-            }),
+            None => Err(Error::model(format!("Sensor {} has no <input>", base.name))),
         }
     }
 

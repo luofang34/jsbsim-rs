@@ -181,9 +181,7 @@ pub(crate) struct Contact {
 /// JSBSim logs `message` and goes on; strict loading refuses it.
 fn lenient(ctx: &LoadContext<'_>, el: &Element, message: String) -> Result<(), Error> {
     if ctx.options.strict {
-        return Err(Error::Model {
-            message: format!("{}: {message} (refused in strict mode)", el.location()),
-        });
+        return Err(el.model_error(format!("{message} (refused in strict mode)")));
     }
     tracing::error!("{}: {message}", el.location());
     Ok(())
@@ -211,13 +209,7 @@ impl Contact {
         contact.load_steering(el)?;
         contact.load_tables(el, ctx)?;
         let Some(location) = el.find_element("location") else {
-            return Err(Error::Model {
-                message: format!(
-                    "{}: No location given for contact {}",
-                    el.location(),
-                    contact.name
-                ),
-            });
+            return Err(el.model_error(format!("No location given for contact {}", contact.name)));
         };
         contact.location = location.find_element_triplet_convert_to("IN")?;
         if let Some(orientation) = el.find_element("orientation")
@@ -286,13 +278,10 @@ impl Contact {
     fn load_strut(&mut self, el: &Element, ctx: &mut LoadContext<'_>) -> Result<(), Error> {
         if let Some(strut_force) = el.find_element("strut_force") {
             let Some(function) = strut_force.find_element("function") else {
-                return Err(Error::Model {
-                    message: format!(
-                        "{}: <strut_force> of contact {} has no <function>",
-                        strut_force.location(),
-                        self.name
-                    ),
-                });
+                return Err(strut_force.model_error(format!(
+                    "<strut_force> of contact {} has no <function>",
+                    self.name
+                )));
             };
             self.strut.function =
                 Some(ctx.functions.load_function(ctx.binder.tree, function, "")?);

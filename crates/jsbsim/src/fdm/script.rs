@@ -11,12 +11,6 @@ use crate::script::{Event, Script, Set, SetAction, SetType};
 use crate::xml::{DocumentLoader, Element};
 use crate::{Error, Resolver};
 
-fn script_error(message: impl Into<String>) -> Error {
-    Error::Model {
-        message: message.into(),
-    }
-}
-
 fn parse_set(el: &Element, fdm: &mut Fdm) -> Result<Set, Error> {
     let name = el.attribute("name").to_owned();
     let node = if fdm.env.tree.has_node(&name)? {
@@ -68,9 +62,8 @@ fn parse_set(el: &Element, fdm: &mut Fdm) -> Result<Set, Error> {
 
 fn parse_event(el: &Element, fdm: &mut Fdm) -> Result<Event, Error> {
     let Some(condition_el) = el.find_element("condition") else {
-        return Err(script_error(format!(
-            "{}: No condition specified in script event {}",
-            el.location(),
+        return Err(el.model_error(format!(
+            "No condition specified in script event {}",
             el.attribute("name")
         )));
     };
@@ -161,12 +154,10 @@ impl Fdm {
         let loader = DocumentLoader::new(resolver, self.aircraft_path.clone());
         let document = loader.load_document(script_path)?;
         if document.name() != "runscript" {
-            return Err(script_error(format!(
-                "File: {script_path} is not a script file"
-            )));
+            return Err(document.model_error(format!("File: {script_path} is not a script file")));
         }
         let Some(run) = document.find_element("run") else {
-            return Err(script_error("No \"run\" element found in script."));
+            return Err(document.model_error("No \"run\" element found in script."));
         };
         let mut script = Script {
             name: document.attribute("name").to_owned(),
@@ -179,7 +170,7 @@ impl Fdm {
         };
         self.set_sim_time(script.start_time);
         if !run.has_attribute("end") {
-            return Err(script_error(
+            return Err(run.model_error(
                 "An end time (duration) for the script must be specified in the script <run> element.",
             ));
         }
@@ -188,26 +179,24 @@ impl Fdm {
         self.set_dt(dt);
         script.end_time += 0.99 * self.models.exec.dt;
         let Some(use_el) = document.find_element("use") else {
-            return Err(script_error("No \"use\" directives in the script file."));
+            return Err(document.model_error("No \"use\" directives in the script file."));
         };
         let aircraft = use_el.attribute("aircraft");
         if aircraft.is_empty() {
-            return Err(script_error("Aircraft must be specified in use element."));
+            return Err(use_el.model_error("Aircraft must be specified in use element."));
         }
         let aircraft_path = self.aircraft_path.clone();
         self.load_model_from(resolver, &aircraft_path, aircraft)?;
         let initialize = use_el.attribute("initialize");
         if initialize.is_empty() {
-            return Err(script_error(
-                "Initialization file must be specified in use element.",
-            ));
+            return Err(use_el.model_error("Initialization file must be specified in use element."));
         }
         if !self.load_initial_conditions_from(
             resolver,
             &format!("{aircraft_path}/{aircraft}"),
             initialize,
         )? {
-            return Err(script_error("Initialization unsuccessful"));
+            return Err(use_el.model_error("Initialization unsuccessful"));
         }
         let script_dir = match script_path.rfind('/') {
             Some(at) => &script_path[..at],
@@ -369,7 +358,7 @@ impl Fdm {
                         None
                     };
                     let n = n.ok_or_else(|| {
-                        script_error(format!("No property, \"{}\" is defined.", set.name))
+                        Error::model(format!("No property, \"{}\" is defined.", set.name))
                     })?;
                     set.node = Some(n);
                     n
