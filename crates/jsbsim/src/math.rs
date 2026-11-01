@@ -10,20 +10,20 @@
 //! JSBSim's axis enums), so no index can fall outside a vector or matrix.
 
 mod axis;
+mod column_vector3;
 mod geodesic;
 mod location;
 mod matrix33;
 mod quaternion;
-mod vector3;
 
 #[cfg(test)]
 mod tests;
 
 pub use axis::Axis;
+pub use column_vector3::{ColumnVector3, dot_product};
 pub use location::Location;
 pub use matrix33::Matrix33;
 pub use quaternion::Quaternion;
-pub use vector3::{ColumnVector3, dot_product};
 
 /// Roll moment / x axis (`eL`, `eX`, `eP`, `eU`, `eRoll`).
 pub const E_L: Axis = Axis::X;
