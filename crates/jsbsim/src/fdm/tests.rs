@@ -211,7 +211,7 @@ fn a_model_file_loads_with_its_includes_beside_it() {
             100.0,
             "{path}"
         );
-        assert_eq!(fdm.full_aircraft_path, dir, "{path}");
+        assert_eq!(fdm.full_aircraft_path(), dir, "{path}");
     }
 }
 

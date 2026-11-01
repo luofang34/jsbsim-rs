@@ -189,6 +189,13 @@ impl Fdm {
         }
     }
 
+    /// `GetFullAircraftPath`: the directory of the loaded aircraft, empty
+    /// until a load finds its model document.
+    #[must_use]
+    pub fn full_aircraft_path(&self) -> &str {
+        &self.full_aircraft_path
+    }
+
     /// `FGFDMExec::LoadModel(model)` for `aircraft_path/model/model.xml`.
     ///
     /// # Errors

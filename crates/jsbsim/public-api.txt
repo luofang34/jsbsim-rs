@@ -901,6 +901,10 @@ pub fn jsbsim::Fdm::fingerprint(&mut self) -> core::result::Result<jsbsim::snaps
 pub fn jsbsim::Fdm::restore(&mut self, &jsbsim::snapshot::Snapshot) -> core::result::Result<(), jsbsim::error::Error>
 pub fn jsbsim::Fdm::snapshot_into(&mut self, &mut jsbsim::snapshot::Snapshot) -> core::result::Result<(), jsbsim::error::Error>
 impl jsbsim::Fdm
+pub fn jsbsim::Fdm::full_aircraft_path(&self) -> &str
+pub fn jsbsim::Fdm::load_model(&mut self, &dyn jsbsim::Resolver, &str, &str) -> core::result::Result<(), jsbsim::error::Error>
+pub fn jsbsim::Fdm::load_model_file(&mut self, &dyn jsbsim::Resolver, &str) -> core::result::Result<(), jsbsim::error::Error>
+impl jsbsim::Fdm
 pub fn jsbsim::Fdm::get_property(&mut self, &str) -> core::result::Result<f64, jsbsim::error::Error>
 pub fn jsbsim::Fdm::new() -> core::result::Result<Self, jsbsim::error::Error>
 pub fn jsbsim::Fdm::node(&self, &str) -> core::result::Result<core::option::Option<jsbsim::NodeId>, jsbsim::error::Error>
@@ -915,9 +919,6 @@ pub fn jsbsim::Fdm::write_node(&mut self, jsbsim::NodeId, f64) -> core::result::
 impl jsbsim::Fdm
 pub fn jsbsim::Fdm::load_initial_conditions(&mut self, &dyn jsbsim::Resolver, &str, &str) -> core::result::Result<bool, jsbsim::error::Error>
 pub fn jsbsim::Fdm::load_initial_conditions_file(&mut self, &dyn jsbsim::Resolver, &str) -> core::result::Result<bool, jsbsim::error::Error>
-impl jsbsim::Fdm
-pub fn jsbsim::Fdm::load_model(&mut self, &dyn jsbsim::Resolver, &str, &str) -> core::result::Result<(), jsbsim::error::Error>
-pub fn jsbsim::Fdm::load_model_file(&mut self, &dyn jsbsim::Resolver, &str) -> core::result::Result<(), jsbsim::error::Error>
 impl jsbsim::Fdm
 pub fn jsbsim::Fdm::load_script(&mut self, &dyn jsbsim::Resolver, &str) -> core::result::Result<(), jsbsim::error::Error>
 pub fn jsbsim::Fdm::set_sim_time(&mut self, f64)
