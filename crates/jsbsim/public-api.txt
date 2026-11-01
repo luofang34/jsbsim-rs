@@ -21,6 +21,7 @@ pub jsbsim::error::Error::Unsupported::path: alloc::string::String
 pub jsbsim::error::Error::Xml(jsbsim::error::XmlError)
 impl core::clone::Clone for jsbsim::error::Error
 pub fn jsbsim::error::Error::clone(&self) -> jsbsim::error::Error
+impl core::cmp::Eq for jsbsim::error::Error
 impl core::cmp::PartialEq for jsbsim::error::Error
 pub fn jsbsim::error::Error::eq(&self, &jsbsim::error::Error) -> bool
 impl core::convert::From<jsbsim::error::FunctionError> for jsbsim::error::Error
@@ -200,6 +201,8 @@ impl core::fmt::Debug for jsbsim::error::SourceLocation
 pub fn jsbsim::error::SourceLocation::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::fmt::Display for jsbsim::error::SourceLocation
 pub fn jsbsim::error::SourceLocation::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for jsbsim::error::SourceLocation
+pub fn jsbsim::error::SourceLocation::hash<__H: core::hash::Hasher>(&self, &mut __H)
 impl core::marker::StructuralPartialEq for jsbsim::error::SourceLocation
 impl core::marker::Freeze for jsbsim::error::SourceLocation
 impl core::marker::Send for jsbsim::error::SourceLocation
@@ -529,6 +532,8 @@ impl core::fmt::Debug for jsbsim::snapshot::FingerprintPart
 pub fn jsbsim::snapshot::FingerprintPart::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::fmt::Display for jsbsim::snapshot::FingerprintPart
 pub fn jsbsim::snapshot::FingerprintPart::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for jsbsim::snapshot::FingerprintPart
+pub fn jsbsim::snapshot::FingerprintPart::hash<__H: core::hash::Hasher>(&self, &mut __H)
 impl core::marker::Copy for jsbsim::snapshot::FingerprintPart
 impl core::marker::StructuralPartialEq for jsbsim::snapshot::FingerprintPart
 impl core::marker::Freeze for jsbsim::snapshot::FingerprintPart
@@ -603,6 +608,8 @@ impl core::cmp::PartialEq for jsbsim::snapshot::Fingerprint
 pub fn jsbsim::snapshot::Fingerprint::eq(&self, &jsbsim::snapshot::Fingerprint) -> bool
 impl core::fmt::Debug for jsbsim::snapshot::Fingerprint
 pub fn jsbsim::snapshot::Fingerprint::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for jsbsim::snapshot::Fingerprint
+pub fn jsbsim::snapshot::Fingerprint::hash<__H: core::hash::Hasher>(&self, &mut __H)
 impl core::marker::Copy for jsbsim::snapshot::Fingerprint
 impl core::marker::StructuralPartialEq for jsbsim::snapshot::Fingerprint
 impl core::marker::Freeze for jsbsim::snapshot::Fingerprint
@@ -663,6 +670,8 @@ impl core::cmp::PartialEq for jsbsim::trim::Control
 pub fn jsbsim::trim::Control::eq(&self, &jsbsim::trim::Control) -> bool
 impl core::fmt::Debug for jsbsim::trim::Control
 pub fn jsbsim::trim::Control::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for jsbsim::trim::Control
+pub fn jsbsim::trim::Control::hash<__H: core::hash::Hasher>(&self, &mut __H)
 impl core::marker::Copy for jsbsim::trim::Control
 impl core::marker::StructuralPartialEq for jsbsim::trim::Control
 impl core::marker::Freeze for jsbsim::trim::Control
@@ -691,6 +700,8 @@ impl core::cmp::PartialEq for jsbsim::trim::State
 pub fn jsbsim::trim::State::eq(&self, &jsbsim::trim::State) -> bool
 impl core::fmt::Debug for jsbsim::trim::State
 pub fn jsbsim::trim::State::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for jsbsim::trim::State
+pub fn jsbsim::trim::State::hash<__H: core::hash::Hasher>(&self, &mut __H)
 impl core::marker::Copy for jsbsim::trim::State
 impl core::marker::StructuralPartialEq for jsbsim::trim::State
 impl core::marker::Freeze for jsbsim::trim::State
@@ -717,6 +728,8 @@ impl core::cmp::PartialEq for jsbsim::trim::TrimMode
 pub fn jsbsim::trim::TrimMode::eq(&self, &jsbsim::trim::TrimMode) -> bool
 impl core::fmt::Debug for jsbsim::trim::TrimMode
 pub fn jsbsim::trim::TrimMode::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for jsbsim::trim::TrimMode
+pub fn jsbsim::trim::TrimMode::hash<__H: core::hash::Hasher>(&self, &mut __H)
 impl core::marker::Copy for jsbsim::trim::TrimMode
 impl core::marker::StructuralPartialEq for jsbsim::trim::TrimMode
 impl core::marker::Freeze for jsbsim::trim::TrimMode
@@ -791,6 +804,7 @@ pub jsbsim::Error::Unsupported::path: alloc::string::String
 pub jsbsim::Error::Xml(jsbsim::error::XmlError)
 impl core::clone::Clone for jsbsim::error::Error
 pub fn jsbsim::error::Error::clone(&self) -> jsbsim::error::Error
+impl core::cmp::Eq for jsbsim::error::Error
 impl core::cmp::PartialEq for jsbsim::error::Error
 pub fn jsbsim::error::Error::eq(&self, &jsbsim::error::Error) -> bool
 impl core::convert::From<jsbsim::error::FunctionError> for jsbsim::error::Error
@@ -826,9 +840,12 @@ pub const fn jsbsim::Contact::new(f64, jsbsim::math::Location, jsbsim::math::Col
 pub const fn jsbsim::Contact::with_motion(self, jsbsim::math::ColumnVector3, jsbsim::math::ColumnVector3) -> Self
 impl core::clone::Clone for jsbsim::Contact
 pub fn jsbsim::Contact::clone(&self) -> jsbsim::Contact
+impl core::cmp::PartialEq for jsbsim::Contact
+pub fn jsbsim::Contact::eq(&self, &jsbsim::Contact) -> bool
 impl core::fmt::Debug for jsbsim::Contact
 pub fn jsbsim::Contact::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::Copy for jsbsim::Contact
+impl core::marker::StructuralPartialEq for jsbsim::Contact
 impl core::marker::Freeze for jsbsim::Contact
 impl core::marker::Send for jsbsim::Contact
 impl core::marker::Sync for jsbsim::Contact
@@ -881,6 +898,8 @@ pub fn jsbsim::Fdm::reset_to_initial_conditions(&mut self, jsbsim::ResetMask) ->
 pub fn jsbsim::Fdm::run(&mut self) -> core::result::Result<bool, jsbsim::error::Error>
 pub fn jsbsim::Fdm::run_ic(&mut self) -> core::result::Result<(), jsbsim::error::Error>
 pub fn jsbsim::Fdm::set_dt(&mut self, f64)
+impl core::fmt::Debug for jsbsim::Fdm
+pub fn jsbsim::Fdm::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl !core::marker::Freeze for jsbsim::Fdm
 impl core::marker::Send for jsbsim::Fdm
 impl !core::marker::Sync for jsbsim::Fdm

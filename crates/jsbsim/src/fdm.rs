@@ -186,6 +186,21 @@ pub struct Fdm {
     snapshot_record: crate::snapshot::LoadRecord,
 }
 
+impl std::fmt::Debug for Fdm {
+    /// A summary: the models and the property tree are far too large to
+    /// show whole.
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let exec = &self.models.exec;
+        f.debug_struct("Fdm")
+            .field("aircraft", &self.models.aircraft.name)
+            .field("sim_time", &exec.sim_time)
+            .field("dt", &exec.dt)
+            .field("frame", &exec.frame)
+            .field("model_loaded", &self.model_loaded)
+            .finish_non_exhaustive()
+    }
+}
+
 impl Fdm {
     /// `FGFDMExec()` with default load options.
     ///

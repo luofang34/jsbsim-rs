@@ -11,7 +11,7 @@ use std::fmt;
 use thiserror::Error;
 
 /// Where in the input an element starts.
-#[derive(Debug, Clone, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Default)]
 #[non_exhaustive]
 pub struct Location {
     /// Resource path of the document.

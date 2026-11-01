@@ -40,7 +40,7 @@ use crate::math::{E_P, E_PHI, E_Q, E_R, E_THT};
 use crate::units::DEGTORAD;
 
 /// `TrimMode`, with JSBSim's values.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum TrimMode {
     /// `tLongitudinal`: wdot with alpha, udot with throttle, qdot with
     /// pitch trim.

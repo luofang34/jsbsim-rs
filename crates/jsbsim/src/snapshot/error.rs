@@ -4,7 +4,7 @@
 use thiserror::Error as ThisError;
 
 /// The part of a [`Fingerprint`](super::Fingerprint) that differs.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum FingerprintPart {
     /// The XML documents the loads resolved, byte for byte.

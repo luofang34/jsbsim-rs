@@ -8,7 +8,7 @@ pub use crate::properties::PathError;
 pub use crate::xml::{Location as SourceLocation, XmlError};
 
 /// Errors produced while loading or running a simulation.
-#[derive(Debug, ThisError, Clone, PartialEq)]
+#[derive(Debug, ThisError, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum Error {
     /// The resolver has no resource at the requested path.

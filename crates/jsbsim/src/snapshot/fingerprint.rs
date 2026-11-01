@@ -15,7 +15,7 @@ use super::{FORMAT_VERSION, FingerprintPart, HEADER_LEN, MAGIC, Reader, Snapshot
 use crate::{Error, Resolver};
 
 /// The identity of a loaded model that a snapshot must match to restore.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub struct Fingerprint {
     /// SHA-256 over every document the loads resolved, in load order,

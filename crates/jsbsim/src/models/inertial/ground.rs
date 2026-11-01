@@ -10,7 +10,7 @@ use crate::math::{ColumnVector3, Location};
 
 /// What a ground callback reports about the terrain under a location
 /// (the out-parameters and the return value of `GetAGLevel`).
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 #[non_exhaustive]
 pub struct Contact {
     /// Height of the location above the terrain, ft.

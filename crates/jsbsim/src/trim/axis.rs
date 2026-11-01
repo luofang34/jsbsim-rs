@@ -16,7 +16,7 @@ use crate::units::{DEGTORAD, RADTODEG};
 pub const DEFAULT_TOLERANCE: f64 = 0.001;
 
 /// What an axis brings to its target (`State`).
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum State {
     /// `tAll`: JSBSim's debug-axis selector, which `FGTrim::DebugState` takes
     /// to mean every axis, and not a physical state to trim. An axis given
@@ -61,7 +61,7 @@ impl State {
 }
 
 /// What an axis moves (`Control`).
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Control {
     /// `tThrottle`: every engine's throttle, as a fraction of its range.
     Throttle,
