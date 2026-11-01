@@ -8,7 +8,10 @@ pub struct LoadOptions {
     /// Turn every input that JSBSim only logs and then ignores (an unknown
     /// operation, an unknown template, a one-argument variadic operation,
     /// ...) into [`FunctionError::Strict`](crate::error::FunctionError::Strict).
-    /// Off by default, which matches JSBSim.
+    /// Lenient FCS, contact and sensor configurations likewise become
+    /// [`Error::Model`](crate::Error::Model), and unknown FCS components
+    /// [`Error::Unsupported`](crate::Error::Unsupported). Off by default,
+    /// which matches JSBSim.
     pub strict: bool,
 }
 
