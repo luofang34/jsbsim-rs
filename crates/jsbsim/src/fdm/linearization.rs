@@ -32,7 +32,7 @@ fn states(fdm: &Fdm) -> Result<Vec<Component>, Error> {
         Component::Q,
     ];
     if matches!(first.thruster.kind, ThrusterKind::Propeller(_)) {
-        x.extend((0..engines.len().min(4)).map(Component::Rpm));
+        x.extend(Component::RPM.into_iter().take(engines.len()));
         if engines.len() > 4 {
             tracing::error!("More than 4 engines not currently handled");
         }

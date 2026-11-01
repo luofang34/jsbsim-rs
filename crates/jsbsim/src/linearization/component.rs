@@ -23,8 +23,14 @@ pub enum Component {
     Theta,
     /// Pitch rate, rad/s.
     Q,
-    /// Propeller speed of engine `n` (`Rpm0` to `Rpm3`), rev/min.
-    Rpm(usize),
+    /// Propeller speed of engine 0, rev/min.
+    Rpm0,
+    /// Propeller speed of engine 1, rev/min.
+    Rpm1,
+    /// Propeller speed of engine 2, rev/min.
+    Rpm2,
+    /// Propeller speed of engine 3, rev/min.
+    Rpm3,
     /// Sideslip, rad.
     Beta,
     /// Roll angle, rad.
@@ -52,6 +58,15 @@ pub enum Component {
 }
 
 impl Component {
+    /// The propeller speeds of engines 0 to 3, the most `FGLinearization`
+    /// handles.
+    pub(crate) const RPM: [Self; 4] = [Self::Rpm0, Self::Rpm1, Self::Rpm2, Self::Rpm3];
+
+    /// The engine an `Rpm` component reads; meaningless for the others.
+    fn engine(self) -> usize {
+        Self::RPM.iter().position(|&c| c == self).unwrap_or(0)
+    }
+
     /// JSBSim's name for the component (`getName`).
     #[must_use]
     pub fn name(self) -> &'static str {
@@ -60,10 +75,10 @@ impl Component {
             Self::Alpha => "Alpha",
             Self::Theta => "Theta",
             Self::Q => "Q",
-            Self::Rpm(0) => "Rpm0",
-            Self::Rpm(1) => "Rpm1",
-            Self::Rpm(2) => "Rpm2",
-            Self::Rpm(_) => "Rpm3",
+            Self::Rpm0 => "Rpm0",
+            Self::Rpm1 => "Rpm1",
+            Self::Rpm2 => "Rpm2",
+            Self::Rpm3 => "Rpm3",
             Self::Beta => "Beta",
             Self::Phi => "Phi",
             Self::P => "P",
@@ -92,7 +107,7 @@ impl Component {
             | Self::Latitude
             | Self::Longitude => "rad",
             Self::Q | Self::P | Self::R => "rad/s",
-            Self::Rpm(_) => "rev/min",
+            Self::Rpm0 | Self::Rpm1 | Self::Rpm2 | Self::Rpm3 => "rev/min",
             Self::Alt => "ft",
             Self::ThrottleCmd | Self::DaCmd | Self::DeCmd | Self::DrCmd => "norm",
         }
@@ -109,10 +124,10 @@ impl Component {
             Self::Alpha => m.auxiliary.alpha,
             Self::Theta => euler()[E_THT],
             Self::Q => p.state.pqr[E_Q],
-            Self::Rpm(n) => m
+            Self::Rpm0 | Self::Rpm1 | Self::Rpm2 | Self::Rpm3 => m
                 .propulsion
                 .engines
-                .get(n)
+                .get(self.engine())
                 .map_or(f64::NAN, |e| e.thruster.rpm()),
             Self::Beta => m.auxiliary.beta,
             Self::Phi => euler()[E_PHI],
@@ -162,8 +177,8 @@ impl Component {
                 ic.set_flight_path_angle_rad(gamma);
             }
             Self::Q => ic.set_pqr_radps(E_Q, val),
-            Self::Rpm(n) => {
-                if let Some(e) = m.propulsion.engines.get_mut(n) {
+            Self::Rpm0 | Self::Rpm1 | Self::Rpm2 | Self::Rpm3 => {
+                if let Some(e) = m.propulsion.engines.get_mut(self.engine()) {
                     e.thruster.set_rpm(val);
                 }
             }
@@ -228,7 +243,14 @@ impl Component {
                 p.vel[Axis::Y] / (libm::cos(latitude) * p.radius())
             }
             Self::Latitude => p.vel[Axis::X] / p.radius(),
-            Self::Rpm(_) | Self::ThrottleCmd | Self::DaCmd | Self::DeCmd | Self::DrCmd => {
+            Self::Rpm0
+            | Self::Rpm1
+            | Self::Rpm2
+            | Self::Rpm3
+            | Self::ThrottleCmd
+            | Self::DaCmd
+            | Self::DeCmd
+            | Self::DrCmd => {
                 return None;
             }
         })

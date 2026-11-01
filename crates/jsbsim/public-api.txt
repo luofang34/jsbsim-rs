@@ -237,7 +237,10 @@ pub jsbsim::linearization::Component::Phi
 pub jsbsim::linearization::Component::Psi
 pub jsbsim::linearization::Component::Q
 pub jsbsim::linearization::Component::R
-pub jsbsim::linearization::Component::Rpm(usize)
+pub jsbsim::linearization::Component::Rpm0
+pub jsbsim::linearization::Component::Rpm1
+pub jsbsim::linearization::Component::Rpm2
+pub jsbsim::linearization::Component::Rpm3
 pub jsbsim::linearization::Component::Theta
 pub jsbsim::linearization::Component::ThrottleCmd
 pub jsbsim::linearization::Component::Vt
