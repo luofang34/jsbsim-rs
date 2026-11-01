@@ -27,8 +27,14 @@ impl FileResolver {
 
 impl super::Resolver for FileResolver {
     fn resolve(&self, path: &str) -> Result<Vec<u8>, Error> {
-        std::fs::read(self.root.join(path)).map_err(|_| Error::ResourceNotFound {
-            path: path.to_owned(),
+        std::fs::read(self.root.join(path)).map_err(|e| match e.kind() {
+            std::io::ErrorKind::NotFound => Error::ResourceNotFound {
+                path: path.to_owned(),
+            },
+            kind => Error::ResourceUnreadable {
+                path: path.to_owned(),
+                kind,
+            },
         })
     }
 

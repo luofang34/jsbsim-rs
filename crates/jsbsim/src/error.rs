@@ -71,7 +71,23 @@ pub enum Error {
     /// A snapshot that does not decode or does not fit this executive.
     #[error(transparent)]
     Snapshot(#[from] crate::snapshot::SnapshotError),
-    /// A property path SimGear would reject.
+    /// A property path SimGear would reject. Its message includes the
+    /// [`PathError`]'s, which is therefore not also given as its source.
     #[error("invalid property path: {0}")]
-    PropertyPath(#[from] PathError),
+    PropertyPath(PathError),
+    /// The resolver found something at the path but could not read it,
+    /// such as a directory or a file without read permission.
+    #[error("cannot read {path}: {kind}")]
+    ResourceUnreadable {
+        /// Path that was requested from the resolver.
+        path: String,
+        /// Why the read failed.
+        kind: std::io::ErrorKind,
+    },
+}
+
+impl From<PathError> for Error {
+    fn from(e: PathError) -> Self {
+        Self::PropertyPath(e)
+    }
 }

@@ -313,3 +313,15 @@ fn a_double_written_at_its_target_converts_to_the_node_type() {
         assert_eq!((ty, text), (got_ty, got_text.as_str()));
     }
 }
+
+/// An invalid path's message appears once in the error and its chain.
+#[test]
+fn a_path_error_is_reported_once() {
+    let Err(path_error) = super::path::parse_path("a b", None) else {
+        panic!("'a b' parsed");
+    };
+    let message = path_error.to_string();
+    let err = crate::Error::from(path_error);
+    assert_eq!(err.to_string(), format!("invalid property path: {message}"));
+    assert!(std::error::Error::source(&err).is_none());
+}

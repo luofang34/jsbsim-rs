@@ -9,6 +9,9 @@ pub jsbsim::error::Error::Model::message: alloc::string::String
 pub jsbsim::error::Error::PropertyPath(jsbsim::error::PathError)
 pub jsbsim::error::Error::ResourceNotFound
 pub jsbsim::error::Error::ResourceNotFound::path: alloc::string::String
+pub jsbsim::error::Error::ResourceUnreadable
+pub jsbsim::error::Error::ResourceUnreadable::kind: core::io::error::ErrorKind
+pub jsbsim::error::Error::ResourceUnreadable::path: alloc::string::String
 pub jsbsim::error::Error::Snapshot(jsbsim::snapshot::SnapshotError)
 pub jsbsim::error::Error::TrimFailed
 pub jsbsim::error::Error::TrimFailed::message: alloc::string::String
@@ -814,6 +817,9 @@ pub jsbsim::Error::Model::message: alloc::string::String
 pub jsbsim::Error::PropertyPath(jsbsim::error::PathError)
 pub jsbsim::Error::ResourceNotFound
 pub jsbsim::Error::ResourceNotFound::path: alloc::string::String
+pub jsbsim::Error::ResourceUnreadable
+pub jsbsim::Error::ResourceUnreadable::kind: core::io::error::ErrorKind
+pub jsbsim::Error::ResourceUnreadable::path: alloc::string::String
 pub jsbsim::Error::Snapshot(jsbsim::snapshot::SnapshotError)
 pub jsbsim::Error::TrimFailed
 pub jsbsim::Error::TrimFailed::message: alloc::string::String

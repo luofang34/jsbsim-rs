@@ -32,3 +32,24 @@ fn usable_as_trait_object() {
     let dynamic: &dyn Resolver = &resolver;
     assert_eq!(dynamic.resolve("a").unwrap(), b"b");
 }
+
+/// Something at the path that cannot be read is not reported as missing.
+#[cfg(feature = "fs")]
+#[test]
+fn file_resolver_tells_missing_from_unreadable() {
+    let resolver = FileResolver::new(env!("CARGO_MANIFEST_DIR"));
+    assert!(!resolver.resolve("Cargo.toml").unwrap().is_empty());
+    assert_eq!(
+        resolver.resolve("none.xml").unwrap_err(),
+        Error::ResourceNotFound {
+            path: "none.xml".to_owned()
+        }
+    );
+    let err = resolver.resolve("src").unwrap_err();
+    assert!(
+        matches!(&err, Error::ResourceUnreadable { path, kind }
+            if path == "src" && *kind != std::io::ErrorKind::NotFound),
+        "{err:?}"
+    );
+    assert!(err.to_string().starts_with("cannot read src: "), "{err}");
+}
