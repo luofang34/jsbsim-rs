@@ -5,7 +5,7 @@ use thiserror::Error as ThisError;
 
 pub use crate::functions::FunctionError;
 pub use crate::properties::PathError;
-pub use crate::xml::{Location as SourceLocation, XmlError};
+pub use crate::xml::{SourceLocation, XmlError};
 
 /// Errors produced while loading or running a simulation.
 #[derive(Debug, ThisError, Clone, PartialEq, Eq)]

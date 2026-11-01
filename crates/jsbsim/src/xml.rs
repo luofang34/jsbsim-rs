@@ -22,7 +22,7 @@ mod tests;
 use std::collections::BTreeMap;
 use std::rc::Rc;
 
-pub use error::{Location, XmlError};
+pub use error::{SourceLocation, XmlError};
 pub(crate) use loader::xml_file_path;
 pub use loader::{DocumentLoader, IncludeKind};
 pub use numbers::atof_locale_c;
@@ -61,8 +61,8 @@ impl Element {
 
     /// Where the element starts.
     #[must_use]
-    pub fn location(&self) -> Location {
-        Location {
+    pub fn location(&self) -> SourceLocation {
+        SourceLocation {
             file: self.file.to_string(),
             line: self.line,
         }

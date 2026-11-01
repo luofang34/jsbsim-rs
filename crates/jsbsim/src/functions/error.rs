@@ -8,7 +8,7 @@
 
 use thiserror::Error;
 
-use crate::xml::Location;
+use crate::xml::SourceLocation;
 
 /// Error raised while loading or evaluating a table, function or condition.
 #[derive(Debug, Clone, PartialEq, Eq, Error)]
@@ -20,7 +20,7 @@ pub enum FunctionError {
         /// Operation element.
         element: String,
         /// Where it is.
-        at: Location,
+        at: SourceLocation,
         /// JSBSim's message, e.g. "should have at least 2 argument(s).".
         message: String,
     },
@@ -28,7 +28,7 @@ pub enum FunctionError {
     #[error("{at}: {message}")]
     Attribute {
         /// Where the element is.
-        at: Location,
+        at: SourceLocation,
         /// JSBSim's message.
         message: String,
     },
@@ -36,13 +36,13 @@ pub enum FunctionError {
     #[error("{at}: Illegal use of the special character '#'")]
     IllegalHash {
         /// Where it is.
-        at: Location,
+        at: SourceLocation,
     },
     /// A `type="internal"` table inside a function.
     #[error("{at}: An internal table cannot be nested within a function.")]
     InternalTableInFunction {
         /// Where the function is.
-        at: Location,
+        at: SourceLocation,
     },
     /// The output property of a function or table is already bound.
     #[error("{at}: Property {property} has already been successfully bound (late).")]
@@ -50,13 +50,13 @@ pub enum FunctionError {
         /// Property path.
         property: String,
         /// Where the function or table is.
-        at: Location,
+        at: SourceLocation,
     },
     /// A malformed table.
     #[error("{at}: FGTable: {message}")]
     Table {
         /// Where the table is.
-        at: Location,
+        at: SourceLocation,
         /// What is wrong.
         message: String,
     },
@@ -64,7 +64,7 @@ pub enum FunctionError {
     #[error("{at}: FGCondition: {message}")]
     Condition {
         /// Where the condition is.
-        at: Location,
+        at: SourceLocation,
         /// What is wrong.
         message: String,
     },
@@ -74,19 +74,19 @@ pub enum FunctionError {
         /// Property path.
         property: String,
         /// Where it was referenced.
-        at: Location,
+        at: SourceLocation,
     },
     /// A logical operand is neither 0 nor 1 (within 1e-9).
     #[error("{at}: Malformed conditional check in function definition.")]
     NotBinary {
         /// Where the operation is.
-        at: Location,
+        at: SourceLocation,
     },
     /// An index operand selects nothing.
     #[error("{at}: {message}")]
     Index {
         /// Where the operation is.
-        at: Location,
+        at: SourceLocation,
         /// JSBSim's message.
         message: String,
     },
@@ -103,7 +103,7 @@ pub enum FunctionError {
     #[error("{at}: <mod> divisor truncates to zero")]
     ModByZero {
         /// Where the operation is.
-        at: Location,
+        at: SourceLocation,
     },
     /// Evaluating a property reads the property itself, which recurses
     /// without end in JSBSim.
@@ -117,7 +117,7 @@ pub enum FunctionError {
     #[error("{at}: {message} (refused in strict mode)")]
     Strict {
         /// Where it is.
-        at: Location,
+        at: SourceLocation,
         /// JSBSim's log message.
         message: String,
     },
@@ -125,6 +125,6 @@ pub enum FunctionError {
     #[error("{at}: template parameter '#' read outside a template call")]
     UnboundTemplateParameter {
         /// Where it is.
-        at: Location,
+        at: SourceLocation,
     },
 }

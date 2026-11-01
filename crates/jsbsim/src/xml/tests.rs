@@ -207,7 +207,7 @@ fn missing_include_names_the_element_location() {
         err,
         Error::Xml(XmlError::IncludeNotFound {
             file: "nope".into(),
-            at: Location {
+            at: SourceLocation {
                 file: "t.xml".into(),
                 line: 1
             }

@@ -48,7 +48,7 @@ pub use table::{Table, TableKind};
 
 use crate::LoadOptions;
 use crate::properties::{Attribute, NodeId, NodeMap, PropertyTree, Value, mk_property_name};
-use crate::xml::{Location, atof_locale_c};
+use crate::xml::{SourceLocation, atof_locale_c};
 
 /// Index of a function in a [`FunctionSet`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -85,7 +85,7 @@ pub struct Function {
 struct FunctionSource {
     /// The `name` attribute (after `#` substitution).
     name: String,
-    at: Location,
+    at: SourceLocation,
 }
 
 impl Function {
@@ -157,7 +157,7 @@ impl FunctionSet {
     }
 
     /// Something JSBSim logs and ignores: logged, or refused when strict.
-    fn lenient(&self, at: &Location, message: String) -> Result<(), crate::Error> {
+    fn lenient(&self, at: &SourceLocation, message: String) -> Result<(), crate::Error> {
         if self.options.strict {
             return Err(FunctionError::Strict {
                 at: at.clone(),
@@ -243,7 +243,7 @@ impl FunctionSet {
         tree: &mut PropertyTree,
         property: &str,
         what: Bound,
-        at: &Location,
+        at: &SourceLocation,
     ) -> Result<NodeId, crate::Error> {
         let node = tree.get_or_create(tree.root(), property)?;
         if tree.is_tied(node) {

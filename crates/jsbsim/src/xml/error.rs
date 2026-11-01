@@ -13,14 +13,14 @@ use thiserror::Error;
 /// Where in the input an element starts.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Default)]
 #[non_exhaustive]
-pub struct Location {
+pub struct SourceLocation {
     /// Resource path of the document.
     pub file: String,
     /// One-based line of the element's start tag.
     pub line: u32,
 }
 
-impl fmt::Display for Location {
+impl fmt::Display for SourceLocation {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "In file {}: line {}", self.file, self.line)
     }
@@ -57,7 +57,7 @@ pub enum XmlError {
         /// Element holding the text.
         element: String,
         /// Where the element is.
-        at: Location,
+        at: SourceLocation,
         /// JSBSim's message, which quotes the text.
         message: String,
     },
@@ -67,7 +67,7 @@ pub enum XmlError {
         /// Element without data.
         element: String,
         /// Where the element is.
-        at: Location,
+        at: SourceLocation,
     },
     /// A numeric element has more than one data line.
     #[error("{at}: Attempting to get single data value in element <{element}> from {lines} lines")]
@@ -75,7 +75,7 @@ pub enum XmlError {
         /// Element with several lines.
         element: String,
         /// Where the element is.
-        at: Location,
+        at: SourceLocation,
         /// Number of data lines.
         lines: usize,
     },
@@ -87,7 +87,7 @@ pub enum XmlError {
         /// Attribute name.
         attribute: String,
         /// Where the element is.
-        at: Location,
+        at: SourceLocation,
     },
     /// A required child element is absent.
     #[error("{at}: <{parent}>: Attempting to get non-existent element {name}")]
@@ -97,7 +97,7 @@ pub enum XmlError {
         /// Child that was not found.
         name: String,
         /// Where the parent is.
-        at: Location,
+        at: SourceLocation,
     },
     /// A `unit` attribute names a unit JSBSim does not know.
     #[error("{at}: Supplied unit: \"{unit}\" does not exist (typo?).")]
@@ -105,7 +105,7 @@ pub enum XmlError {
         /// The unit.
         unit: String,
         /// Where the element is.
-        at: Location,
+        at: SourceLocation,
     },
     /// A unit is known but cannot be converted to the required one.
     #[error("{at}: Supplied unit: \"{from}\" cannot be converted to {to}")]
@@ -115,7 +115,7 @@ pub enum XmlError {
         /// Required unit.
         to: String,
         /// Where the element is.
-        at: Location,
+        at: SourceLocation,
     },
     /// An included file could not be found or read.
     #[error("{at}: Could not open file: {file}")]
@@ -123,6 +123,6 @@ pub enum XmlError {
         /// Value of the `file` attribute.
         file: String,
         /// Where the including element is.
-        at: Location,
+        at: SourceLocation,
     },
 }

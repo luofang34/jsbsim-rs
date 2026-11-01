@@ -11,7 +11,7 @@ use std::cell::Cell;
 use super::{FnId, FunctionError, TableId};
 use crate::Error;
 use crate::properties::{Attribute, NodeId, PropertyTree};
-use crate::xml::{Location, atof_locale_c};
+use crate::xml::{SourceLocation, atof_locale_c};
 
 /// A property operand, bound to its node now or at first read
 /// (`FGPropertyValue`). A leading `-` negates the value.
@@ -33,12 +33,12 @@ pub struct PropertyValue {
 #[derive(Debug, Clone)]
 struct Source {
     name: String,
-    at: Location,
+    at: SourceLocation,
 }
 
 impl PropertyValue {
     /// Binds to `name` if it already exists; otherwise binds at first read.
-    pub fn new(name: &str, tree: &PropertyTree, at: Location) -> Result<Self, Error> {
+    pub fn new(name: &str, tree: &PropertyTree, at: SourceLocation) -> Result<Self, Error> {
         let (name, sign) = match name.strip_prefix('-') {
             Some(rest) => (rest, -1.0),
             None => (name, 1.0),
@@ -127,7 +127,7 @@ pub enum Parameter {
         property: PropertyValue,
     },
     /// The `#` placeholder inside a template body.
-    TemplateArgument(Location),
+    TemplateArgument(SourceLocation),
 }
 
 impl Parameter {
@@ -136,7 +136,7 @@ impl Parameter {
     pub fn number_or_property(
         text: &str,
         tree: &PropertyTree,
-        at: Location,
+        at: SourceLocation,
     ) -> Result<Self, Error> {
         match atof_locale_c(text) {
             Ok(value) => Ok(Self::Real(value)),

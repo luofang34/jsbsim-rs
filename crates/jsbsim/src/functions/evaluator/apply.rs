@@ -14,7 +14,7 @@ use super::{Eval, Evaluator, GetterSource};
 use crate::functions::{Function, FunctionError, Op, Parameter};
 use crate::math::{Axis, ColumnVector3, E_X, E_Y, E_Z, Quaternion};
 use crate::units::{DEGTORAD, RADTODEG};
-use crate::xml::Location;
+use crate::xml::SourceLocation;
 
 #[cfg(test)]
 mod tests;
@@ -24,7 +24,7 @@ const INV_LOG10_2: f64 = 1.0 / std::f64::consts::LOG10_2;
 
 /// `GetBinary`: |v| < 1e-9 is false, |v| - 1 < 1e-9 is true (so 0.5 is
 /// true), anything else is an error.
-fn binary(v: f64, at: &Location) -> Result<bool, FunctionError> {
+fn binary(v: f64, at: &SourceLocation) -> Result<bool, FunctionError> {
     let v = v.abs();
     if v < 1e-9 {
         Ok(false)
@@ -37,7 +37,7 @@ fn binary(v: f64, at: &Location) -> Result<bool, FunctionError> {
 
 impl<G: GetterSource> Evaluator<'_, G> {
     /// [`binary`] of `v`, failing the evaluation when it is not binary.
-    fn binary(&mut self, v: f64, at: &Location) -> Result<bool, super::Failed> {
+    fn binary(&mut self, v: f64, at: &SourceLocation) -> Result<bool, super::Failed> {
         binary(v, at).map_err(|e| self.fail(e))
     }
 
