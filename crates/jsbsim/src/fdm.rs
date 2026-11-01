@@ -19,6 +19,7 @@ mod input;
 mod load;
 mod models_run;
 mod order;
+mod output;
 mod planet;
 mod propulsion;
 mod reset_mask;
