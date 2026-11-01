@@ -194,6 +194,7 @@ fn every_typed_mode_trims_as_simulation_do_simple_trim_does() {
             format!("{:?}", raw.last_trim())
         );
         assert_eq!(typed.last_trim().map(|r| r.mode), Some(mode));
+        assert_eq!((typed.trims_run(), raw.trims_run()), (1, 1));
         let h = "position/h-sl-ft";
         assert_eq!(
             typed.get_property(h).unwrap().to_bits(),
@@ -355,6 +356,7 @@ fn a_custom_trim_trims_the_axes_it_is_given() {
         (State::Pdot, Control::Phi),
     ])
     .unwrap();
+    assert_eq!(fdm.trims_run(), 1);
     let report = fdm.last_trim().unwrap();
     assert!(report.success);
     let axes: Vec<_> = report.axes.iter().map(|a| (a.state, a.control)).collect();

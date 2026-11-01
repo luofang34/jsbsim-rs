@@ -75,14 +75,18 @@ impl Fdm {
         self.do_trim(mode)
     }
 
-    /// What the last [`do_trim`](Self::do_trim) reported, as JSBSim's
-    /// `FGTrim::Report` and `TrimStats` show it.
+    /// What the last trim the executive ran reported, as JSBSim's
+    /// `FGTrim::Report` and `TrimStats` show it: one run by
+    /// [`do_trim`](Self::do_trim), [`do_trim_custom`](Self::do_trim_custom)
+    /// or `simulation/do_simple_trim`.
     #[must_use]
     pub fn last_trim(&self) -> Option<&TrimReport> {
         self.last_trim.as_ref()
     }
 
-    /// How many trims [`do_trim`](Self::do_trim) has run, wrapping.
+    /// How many trims the executive has run, wrapping: those of
+    /// [`do_trim`](Self::do_trim), [`do_trim_custom`](Self::do_trim_custom)
+    /// and `simulation/do_simple_trim`.
     #[must_use]
     pub fn trims_run(&self) -> u32 {
         self.trims_run

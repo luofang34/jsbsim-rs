@@ -49,9 +49,12 @@ pub enum Error {
         /// What is wrong, with the location.
         message: String,
     },
-    /// `TrimFailureException`: the trim requested through
-    /// `simulation/do_simple_trim` did not converge ("Trim Failed") or
-    /// named no trim mode ("Illegal trimming mode!").
+    /// `TrimFailureException`: a trim run by
+    /// [`Fdm::do_trim`](crate::Fdm::do_trim),
+    /// [`Fdm::do_trim_custom`](crate::Fdm::do_trim_custom) or
+    /// `simulation/do_simple_trim` did not converge ("Trim Failed"), or
+    /// `simulation/do_simple_trim` named no trim mode ("Illegal trimming
+    /// mode!").
     #[error("{message}")]
     TrimFailed {
         /// JSBSim's message.
