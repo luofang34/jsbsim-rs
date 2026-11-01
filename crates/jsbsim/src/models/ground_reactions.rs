@@ -18,9 +18,9 @@ mod reporting;
 #[cfg(test)]
 mod tests;
 
-pub use contact::{Contact, ContactType};
-pub use force::FrictionType;
-pub use frame::FrameContext;
+pub(crate) use contact::{Contact, ContactType};
+pub(crate) use force::FrictionType;
+pub(crate) use frame::FrameContext;
 
 use super::accelerations::LagrangeMultiplier;
 use super::base::ModelBase;
@@ -31,6 +31,7 @@ use crate::xml::Element;
 
 /// Surface properties (`FGSurface`).
 #[derive(Debug, Clone, Copy)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Surface {
     /// `ground/solid`.
     pub solid: bool,
@@ -61,7 +62,7 @@ impl Default for Surface {
 
 /// What the executive loads before each run (`FGLGear::Inputs`).
 #[derive(Debug, Clone, Default)]
-pub struct Inputs {
+pub(crate) struct Inputs {
     /// Ground speed, ft/s.
     pub vground: f64,
     /// Calibrated airspeed, kt.
@@ -102,13 +103,14 @@ pub struct Inputs {
 
 /// `FGGroundReactions`.
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct GroundReactions {
     /// Scheduling.
-    pub base: ModelBase,
+    pub(crate) base: ModelBase,
     /// Inputs.
-    pub input: Inputs,
+    pub(crate) input: Inputs,
     /// Contacts in load order.
-    pub contacts: Vec<Contact>,
+    pub(crate) contacts: Vec<Contact>,
     /// Surface.
     pub surface: Surface,
     /// Steering command.
@@ -124,7 +126,7 @@ pub struct GroundReactions {
 
 impl GroundReactions {
     /// `InitModel`.
-    pub fn init_model(&mut self) {
+    pub(crate) fn init_model(&mut self) {
         self.base.init();
         self.forces = ColumnVector3::zero();
         self.moments = ColumnVector3::zero();
@@ -137,7 +139,11 @@ impl GroundReactions {
 
     /// `Load`: the contacts, after the executive's `Upload`, each bound as
     /// it is constructed.
-    pub fn load(&mut self, document: &Element, ctx: &mut LoadContext<'_>) -> Result<(), Error> {
+    pub(crate) fn load(
+        &mut self,
+        document: &Element,
+        ctx: &mut LoadContext<'_>,
+    ) -> Result<(), Error> {
         for el in document.find_elements("contact") {
             let number = self.contacts.len();
             let contact = Contact::load(el, number, self.input.empty_weight, ctx)?;
@@ -149,14 +155,14 @@ impl GroundReactions {
 
     /// `GetWOW`: whether any BOGEY has weight on it.
     #[must_use]
-    pub fn wow(&self) -> bool {
+    pub(crate) fn wow(&self) -> bool {
         self.contacts
             .iter()
             .any(|c| c.kind == ContactType::Bogey && c.state.wow)
     }
 
     /// `SetDsCmd`.
-    pub fn set_ds_cmd(&mut self, cmd: f64) {
+    pub(crate) fn set_ds_cmd(&mut self, cmd: f64) {
         self.ds_cmd = cmd;
         for contact in &mut self.contacts {
             contact.set_steer_cmd(cmd);
@@ -165,7 +171,7 @@ impl GroundReactions {
 
     /// The registered friction constraints, copied in order into `out`
     /// for the solver (`GetMultipliersList`).
-    pub fn load_multipliers(&self, out: &mut Vec<LagrangeMultiplier>) {
+    pub(crate) fn load_multipliers(&self, out: &mut Vec<LagrangeMultiplier>) {
         out.clear();
         for &(c, kind) in &self.multipliers {
             if let Some(contact) = self.contacts.get(c) {
@@ -176,7 +182,7 @@ impl GroundReactions {
 
     /// The solver's values back into the constraints `load_multipliers`
     /// copied them from.
-    pub fn store_multipliers(&mut self, solved: &[LagrangeMultiplier]) {
+    pub(crate) fn store_multipliers(&mut self, solved: &[LagrangeMultiplier]) {
         for (&(c, kind), m) in self.multipliers.iter().zip(solved) {
             if let Some(contact) = self.contacts.get_mut(c) {
                 contact.force.multipliers.get_mut(kind).value = m.value;
@@ -188,7 +194,7 @@ impl GroundReactions {
 impl Surface {
     /// `GetBumpHeight`.
     #[must_use]
-    pub fn bump_height(&self) -> f64 {
+    pub(crate) fn bump_height(&self) -> f64 {
         const MAX_GROUND_BUMP_AMPLITUDE: f64 = 0.4;
         if self.bumpiness < 0.001 {
             return 0.0;
@@ -207,7 +213,7 @@ impl Surface {
 }
 
 /// `FGGroundReactions::bind` with `FGSurface::bind`.
-pub fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
+pub(crate) fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
     let d = Kind::Double;
     b.property(
         "ground/solid",

@@ -14,7 +14,7 @@ use crate::math::ColumnVector3;
 
 /// `eGustFrame`: the frame the gust direction is given in.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum GustFrame {
+pub(crate) enum GustFrame {
     /// `gfNone`.
     None,
     /// `gfBody`.
@@ -29,7 +29,7 @@ impl GustFrame {
     /// The frame of an `atmosphere/cosine-gust/frame` value; `None` for
     /// values outside the enum, which JSBSim's switch also ignores.
     #[must_use]
-    pub fn from_code(code: i32) -> Option<Self> {
+    pub(crate) fn from_code(code: i32) -> Option<Self> {
         match code {
             0 => Some(Self::None),
             1 => Some(Self::Body),
@@ -41,7 +41,7 @@ impl GustFrame {
 
     /// The enum value.
     #[must_use]
-    pub fn code(self) -> i32 {
+    pub(crate) fn code(self) -> i32 {
         match self {
             Self::None => 0,
             Self::Body => 1,
@@ -53,7 +53,7 @@ impl GustFrame {
 
 /// `OneMinusCosineProfile`.
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct GustProfile {
+pub(crate) struct GustProfile {
     /// `Running`: set by `atmosphere/cosine-gust/start`.
     pub running: bool,
     /// `elapsedTime` of the ongoing gust, s.
@@ -83,7 +83,7 @@ impl GustProfile {
     /// `elapsed_time`. A zero startup duration gives NaN at time zero, as
     /// in JSBSim.
     #[must_use]
-    pub fn factor(&self, elapsed_time: f64) -> f64 {
+    pub(crate) fn factor(&self, elapsed_time: f64) -> f64 {
         let (start, steady, end) = (
             self.startup_duration,
             self.steady_duration,
@@ -103,7 +103,7 @@ impl GustProfile {
 
 /// `OneMinusCosineGust`.
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct CosineGust {
+pub(crate) struct CosineGust {
     /// `vWind`: the direction as given, normalized in place every frame the
     /// gust runs.
     pub direction: ColumnVector3,

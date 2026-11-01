@@ -13,7 +13,7 @@ use crate::xml::Element;
 
 /// Forces and moments of every model (`FGAircraft::Inputs`).
 #[derive(Debug, Clone, Copy, Default)]
-pub struct Inputs {
+pub(crate) struct Inputs {
     /// Aerodynamic force and moment.
     pub aero: (ColumnVector3, ColumnVector3),
     /// Propulsion force and moment.
@@ -28,11 +28,12 @@ pub struct Inputs {
 
 /// `FGAircraft`.
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Aircraft {
     /// `AircraftName`: the `name` of the `<fdm_config>` (`ReadPrologue`).
     pub name: String,
     /// Scheduling.
-    pub base: ModelBase,
+    pub(crate) base: ModelBase,
     /// Wing area, ft^2.
     pub wing_area: f64,
     /// Wing span, ft.
@@ -71,14 +72,14 @@ pub struct Aircraft {
 
 impl Aircraft {
     /// `InitModel`.
-    pub fn init_model(&mut self) {
+    pub(crate) fn init_model(&mut self) {
         self.base.init();
         self.forces = ColumnVector3::zero();
         self.moments = ColumnVector3::zero();
     }
 
     /// `Run`, between the pre- and post-functions the executive caches.
-    pub fn run(&mut self, input: &Inputs) {
+    pub(crate) fn run(&mut self, input: &Inputs) {
         self.forces = input.aero.0;
         self.forces += input.propulsion.0;
         self.forces += input.ground.0;
@@ -92,7 +93,7 @@ impl Aircraft {
     }
 
     /// `Load(<metrics>)`.
-    pub fn load(&mut self, el: &Element) -> Result<(), Error> {
+    pub(crate) fn load(&mut self, el: &Element) -> Result<(), Error> {
         let value = |name: &str, unit: &str| -> Result<Option<f64>, Error> {
             match el.find_element(name) {
                 Some(_) => Ok(Some(
@@ -137,7 +138,7 @@ impl Aircraft {
 }
 
 /// `FGAircraft::bind`.
-pub fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
+pub(crate) fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
     b.property(
         "metrics/Sw-sqft",
         Kind::Double,

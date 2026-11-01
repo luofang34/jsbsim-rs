@@ -15,9 +15,9 @@ mod gust;
 mod tests;
 mod turbulence;
 
-pub use bind::bind;
-pub use gust::CosineGust;
-pub use turbulence::{CulpState, DrydenState, PoeTable, TurbulenceType};
+pub(crate) use bind::bind;
+pub(crate) use gust::CosineGust;
+pub(crate) use turbulence::{CulpState, DrydenState, PoeTable, TurbulenceType};
 
 use std::f64::consts::PI;
 
@@ -28,6 +28,7 @@ use crate::math::{Axis, ColumnVector3, E_DOWN, E_EAST, E_NORTH, E_X, E_Y, Matrix
 /// longitude and planet radius serve only the up/downburst distance, which
 /// nothing calls, and the executive never loads them, so they are omitted.
 #[derive(Debug, Clone, Copy, Default)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Inputs {
     /// Body velocity, ft/s.
     pub uvw: ColumnVector3,
@@ -47,6 +48,7 @@ pub struct Inputs {
 
 /// Turbulence parameters set through properties.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct TurbulenceSettings {
     /// `atmosphere/turb-type`, stored as written (any `int`).
     pub turb_type: i32,
@@ -81,6 +83,7 @@ impl Default for TurbulenceSettings {
 
 /// Winds.
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Winds {
     /// Scheduling.
     pub base: ModelBase,
@@ -101,7 +104,7 @@ pub struct Winds {
     /// One-minus-cosine gust velocity (`vCosineGust`), NED, ft/s.
     pub cosine_gust_ned: ColumnVector3,
     /// The one-minus-cosine gust definition and its progress.
-    pub cosine_gust: CosineGust,
+    pub(crate) cosine_gust: CosineGust,
     /// Turbulence parameters.
     pub turbulence: TurbulenceSettings,
     /// Up/downburst cells requested (`NumberOfUpDownburstCells`); their
@@ -113,13 +116,14 @@ pub struct Winds {
     /// The generator `SetRandomSeed` makes from that seed.
     pub generator: Option<crate::random::RandomNumberGenerator>,
     /// Culp's pulse.
-    pub culp: CulpState,
+    pub(crate) culp: CulpState,
     /// The Dryden filters' history.
-    pub dryden: DrydenState,
+    pub(crate) dryden: DrydenState,
     /// MIL-F-8785C's turbulence intensities.
-    pub poe_table: PoeTable,
+    pub(crate) poe_table: PoeTable,
 }
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl Winds {
     /// `FGWinds::InitModel`. The steady wind, the gust definition and the
     /// gust's transformed direction survive, as in JSBSim.
@@ -167,19 +171,19 @@ impl Winds {
     }
 
     /// `SetWindNED(idx, wind)`, which leaves `psiw` alone.
-    pub fn set_wind_ned_component(&mut self, idx: Axis, wind: f64) {
+    pub(crate) fn set_wind_ned_component(&mut self, idx: Axis, wind: f64) {
         self.wind_ned[idx] = wind;
     }
 
     /// `GetWindspeed`, ft/s.
     #[must_use]
-    pub fn windspeed(&self) -> f64 {
+    pub(crate) fn windspeed(&self) -> f64 {
         self.wind_ned.magnitude()
     }
 
     /// `SetWindspeed`: from calm, a north wind with `psiw` reset; otherwise
     /// a horizontal wind towards `psiw`, which drops the down component.
-    pub fn set_windspeed(&mut self, speed: f64) {
+    pub(crate) fn set_windspeed(&mut self, speed: f64) {
         if self.wind_ned.magnitude() == 0.0 {
             self.psiw = 0.0;
             self.wind_ned[E_NORTH] = speed;
@@ -193,7 +197,7 @@ impl Winds {
 
     /// `SetWindPsi`: keeps the magnitude, so a calm wind stays a calm north
     /// "wind" with `psiw` reset to zero.
-    pub fn set_wind_psi(&mut self, dir: f64) {
+    pub(crate) fn set_wind_psi(&mut self, dir: f64) {
         let mag = self.windspeed();
         self.psiw = dir;
         self.set_windspeed(mag);
@@ -201,18 +205,18 @@ impl Winds {
 
     /// `GetRandomSeed`: the winds' own seed once set, else the executive's.
     #[must_use]
-    pub fn random_seed(&self, exec_seed: i32) -> i32 {
+    pub(crate) fn random_seed(&self, exec_seed: i32) -> i32 {
         self.random_seed.unwrap_or(exec_seed)
     }
 
     /// `SetRandomSeed`: a new generator of the winds' own.
-    pub fn set_random_seed(&mut self, seed: i32) {
+    pub(crate) fn set_random_seed(&mut self, seed: i32) {
         self.random_seed = Some(seed);
         self.generator = Some(crate::random::RandomNumberGenerator::new(seed as u32));
     }
 
     /// `NumberOfUpDownburstCells`: a negative count clears the cells.
-    pub fn set_updownburst_cells(&mut self, num: i32) {
+    pub(crate) fn set_updownburst_cells(&mut self, num: i32) {
         self.updownburst_cells = usize::try_from(num).unwrap_or(0);
     }
 }

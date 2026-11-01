@@ -28,7 +28,7 @@ use crate::xml::Element;
 
 /// `FGTurbine::phaseType`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Phase {
+pub(crate) enum Phase {
     /// `tpOff`.
     Off,
     /// `tpRun`.
@@ -48,7 +48,7 @@ pub enum Phase {
 /// A spool rate: an engine function, or JSBSim's default (`FGSpoolUp`),
 /// which scales `delay` down near idle and at altitude.
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub enum Spool {
+pub(crate) enum Spool {
     /// The pre-function `propulsion/engine[n]/N?Spool*`.
     Function(FnId),
     /// `FGSpoolUp(BPR, factor)`: `delay` is `factor * 90 / (BPR + 3)`.
@@ -60,7 +60,7 @@ pub enum Spool {
 
 /// What the engine file sets once.
 #[derive(Debug, Clone)]
-pub struct TurbineConfig {
+pub(crate) struct TurbineConfig {
     /// Unaugmented static sea-level thrust, lbs.
     pub mil_thrust: f64,
     /// Augmented static sea-level thrust, lbs.
@@ -109,7 +109,7 @@ pub struct TurbineConfig {
 
 /// The engine functions `Calculate` reads.
 #[derive(Debug, Clone)]
-pub struct TurbineLookups {
+pub(crate) struct TurbineLookups {
     /// `IdleThrust`: idle over military thrust.
     pub idle_thrust: FnId,
     /// `MilThrust`: military thrust over its static sea-level value.
@@ -119,18 +119,18 @@ pub struct TurbineLookups {
     /// `Injection`: the thrust factor of water injection.
     pub injection: Option<FnId>,
     /// N1 rate up, %/s.
-    pub n1_spool_up: Spool,
+    pub(crate) n1_spool_up: Spool,
     /// N1 rate down, %/s.
     pub n1_spool_down: Spool,
     /// N2 rate up, %/s.
-    pub n2_spool_up: Spool,
+    pub(crate) n2_spool_up: Spool,
     /// N2 rate down, %/s.
     pub n2_spool_down: Spool,
 }
 
 /// What can go wrong or be commanded.
 #[derive(Debug, Clone, Default)]
-pub struct TurbineFlags {
+pub(crate) struct TurbineFlags {
     /// Compressor stall.
     pub stalled: bool,
     /// Inner spool seized.
@@ -151,9 +151,10 @@ pub struct TurbineFlags {
 
 /// The state one `Calculate` updates.
 #[derive(Debug, Clone)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct TurbineState {
     /// Operating phase.
-    pub phase: Phase,
+    pub(crate) phase: Phase,
     /// %.
     pub n1: f64,
     /// %.
@@ -200,15 +201,16 @@ pub struct TurbineState {
 
 /// `FGTurbine`'s members beyond `FGEngine`'s.
 #[derive(Debug, Clone)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Turbine {
     /// Engine number, for its inputs.
     pub number: usize,
     /// Set once.
-    pub config: Box<TurbineConfig>,
+    pub(crate) config: Box<TurbineConfig>,
     /// The engine functions.
-    pub lookups: TurbineLookups,
+    pub(crate) lookups: TurbineLookups,
     /// Failures and commands.
-    pub flags: TurbineFlags,
+    pub(crate) flags: TurbineFlags,
     /// Updated each step.
     pub state: TurbineState,
 }
@@ -216,7 +218,7 @@ pub struct Turbine {
 /// What one `Calculate` reads: the engine functions' cached values (the
 /// executive ran them as pre-functions), then the thruster's reads.
 #[derive(Debug)]
-pub struct TurbineSample {
+pub(crate) struct TurbineSample {
     /// `IdleThrust`.
     pub idle_thrust: f64,
     /// `MilThrust`.
@@ -234,7 +236,7 @@ pub struct TurbineSample {
 /// `FGTurbine::Seek`: `v` moved toward `target` by `accel` or `decel` per
 /// second over `dt`, without passing it.
 #[must_use]
-pub fn seek(dt: f64, v: f64, target: f64, accel: f64, decel: f64) -> f64 {
+pub(crate) fn seek(dt: f64, v: f64, target: f64, accel: f64, decel: f64) -> f64 {
     let mut v = v;
     if v > target {
         v -= dt * decel;
@@ -252,7 +254,7 @@ pub fn seek(dt: f64, v: f64, target: f64, accel: f64, decel: f64) -> f64 {
 
 impl Turbine {
     /// `FGTurbine::ResetToIC` but for `FGEngine`'s.
-    pub fn reset_state(&mut self, input: &Inputs) {
+    pub(crate) fn reset_state(&mut self, input: &Inputs) {
         let s = &mut self.state;
         s.n1 = 0.0;
         s.n2 = 0.0;
@@ -280,7 +282,7 @@ impl Turbine {
     /// `FGSimplifiedTSFC::GetValue`: the TSFC corrected for the ambient
     /// temperature and N2.
     #[must_use]
-    pub fn tsfc(&self, input: &Inputs) -> f64 {
+    pub(crate) fn tsfc(&self, input: &Inputs) -> f64 {
         let n2norm = self.state.n2norm;
         self.config.tsfc
             * (input.temperature / 389.7).sqrt()
@@ -300,23 +302,6 @@ impl Turbine {
                     / (1.0 + 3.0 * (1.0 - n) * (1.0 - n) * (1.0 - n) + (1.0 - input.density_ratio))
             }
         }
-    }
-
-    /// `GetPowerAvailable`, as `FGTurbine` defines it.
-    #[must_use]
-    pub fn power_available(&self) -> f64 {
-        let t = self.state.throttle_pos;
-        if t <= 0.77 {
-            64.94 * t
-        } else {
-            217.38 * t - 117.38
-        }
-    }
-
-    /// `getOilTemp_degF`.
-    #[must_use]
-    pub fn oil_temp_degf(&self) -> f64 {
-        crate::units::kelvin_to_fahrenheit(self.state.oil_temp_degk)
     }
 }
 

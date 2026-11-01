@@ -23,7 +23,7 @@ use crate::random::RandomNumberGenerator;
 /// The filters' past outputs (`xi_*`) and inputs (`nu_*`), one and two
 /// frames back; `InitModel` clears them.
 #[derive(Debug, Clone, Copy, Default, PartialEq)]
-pub struct DrydenState {
+pub(crate) struct DrydenState {
     /// `xi_u_km1`.
     pub xi_u_km1: f64,
     /// `nu_u_km1`.
@@ -58,7 +58,7 @@ pub struct DrydenState {
 /// sigma, ft/s, by probability of exceedance curve (rows, the severity)
 /// and altitude, ft (columns).
 #[derive(Debug, Clone)]
-pub struct PoeTable(Table);
+pub(crate) struct PoeTable(Table);
 
 const POE_ALTITUDES: [f64; 12] = [
     500.0, 1750.0, 3750.0, 7500.0, 15000.0, 25000.0, 35000.0, 45000.0, 55000.0, 65000.0, 75000.0,
@@ -112,7 +112,7 @@ impl Default for PoeTable {
 impl PoeTable {
     /// `POE_Table->GetValue(severity, h)`.
     #[must_use]
-    pub fn sigma(&self, severity: i32, h: f64) -> f64 {
+    pub(crate) fn sigma(&self, severity: i32, h: f64) -> f64 {
         self.0.value_2d(f64::from(severity), h)
     }
 }

@@ -13,7 +13,7 @@ fn escape(s: &str) -> String {
 }
 
 /// Appends the dump of `element` and its descendants.
-pub fn dump(out: &mut String, element: &Element, depth: usize) {
+pub(crate) fn dump(out: &mut String, element: &Element, depth: usize) {
     let indent = " ".repeat(2 * depth);
     writeln!(
         out,
@@ -42,7 +42,7 @@ fn path_of(line: &str, context: &ProbeContext) -> Option<PathBuf> {
 }
 
 /// Dumps every file listed in `input`.
-pub fn run(input: &str, context: &ProbeContext) -> String {
+pub(crate) fn run(input: &str, context: &ProbeContext) -> String {
     let mut out = String::new();
     for line in input.lines() {
         if line.is_empty() || line.starts_with('#') {

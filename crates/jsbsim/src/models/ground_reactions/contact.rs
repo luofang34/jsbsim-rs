@@ -17,7 +17,7 @@ use crate::xml::Element;
 
 /// `FGLGear::ContactType`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ContactType {
+pub(crate) enum ContactType {
     /// A wheel (`ctBOGEY`): tied under `gear/unit[n]`.
     Bogey,
     /// A structural point (`ctSTRUCTURE`): tied under `contact/unit[n]`.
@@ -26,7 +26,7 @@ pub enum ContactType {
 
 /// `FGLGear::SteerType`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum SteerType {
+pub(crate) enum SteerType {
     /// Steered by the FCS (`stSteer`).
     Steer,
     /// Not steerable (`stFixed`).
@@ -37,7 +37,7 @@ pub enum SteerType {
 
 /// `FGLGear::BrakeGroup` (`NOSE` and `TAIL` map to `Center`, as in JSBSim).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum BrakeGroup {
+pub(crate) enum BrakeGroup {
     /// `bgNone`.
     None,
     /// `bgLeft`.
@@ -50,7 +50,7 @@ pub enum BrakeGroup {
 
 /// `FGLGear::DampType`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DampType {
+pub(crate) enum DampType {
     /// Force proportional to the compression speed.
     Linear,
     /// Force proportional to its square (`type="SQUARE"`).
@@ -59,7 +59,7 @@ pub enum DampType {
 
 /// The strut: spring and damping, or a `<strut_force>` function.
 #[derive(Debug, Clone, Copy)]
-pub struct Strut {
+pub(crate) struct Strut {
     /// `kSpring`, lbs/ft.
     pub k_spring: f64,
     /// `bDamp`, lbs/ft/s or lbs/ft²/s².
@@ -76,7 +76,7 @@ pub struct Strut {
 
 /// Friction coefficients and the Pacejka factors.
 #[derive(Debug, Clone, Copy)]
-pub struct Friction {
+pub(crate) struct Friction {
     /// `staticFCoeff`.
     pub static_coeff: f64,
     /// `dynamicFCoeff`.
@@ -97,7 +97,7 @@ pub struct Friction {
 
 /// Steering limits and angle.
 #[derive(Debug, Clone, Copy)]
-pub struct Steering {
+pub(crate) struct Steering {
     /// `maxSteerAngle`, deg.
     pub max_angle: f64,
     /// `eSteerType`.
@@ -110,7 +110,7 @@ pub struct Steering {
 
 /// What `GetBodyForces` updates every frame.
 #[derive(Debug, Clone, Copy, Default)]
-pub struct ContactState {
+pub(crate) struct ContactState {
     /// `WOW`.
     pub wow: bool,
     /// `lastWOW`.
@@ -139,7 +139,7 @@ pub struct ContactState {
 
 /// A `<contact>` (`FGLGear`).
 #[derive(Debug, Clone)]
-pub struct Contact {
+pub(crate) struct Contact {
     /// Contact name.
     pub name: String,
     /// `GearNumber`: index in load order.
@@ -193,7 +193,7 @@ impl Contact {
     /// `FGLGear(el, fdmex, number, in)` up to, not including, `bind`.
     /// `empty_weight` is the executive's last `EmptyWeight` input, the
     /// stiffness a STRUCTURE contact defaults to.
-    pub fn load(
+    pub(crate) fn load(
         el: &Element,
         number: usize,
         empty_weight: f64,
@@ -380,7 +380,7 @@ impl Contact {
     }
 
     /// `ResetToIC`.
-    pub fn reset_to_ic(&mut self) {
+    pub(crate) fn reset_to_ic(&mut self) {
         self.gear_pos = 1.0;
         let s = &mut self.state;
         s.wow = false;
@@ -395,7 +395,7 @@ impl Contact {
     }
 
     /// `GetGearUnitPos`: the FCS gear position once it has left 1.
-    pub fn gear_unit_pos(&mut self, fcs_gear_pos: f64) -> f64 {
+    pub(crate) fn gear_unit_pos(&mut self, fcs_gear_pos: f64) -> f64 {
         if self.use_fcs_gear_pos || fcs_gear_pos != 1.0 {
             self.use_fcs_gear_pos = true;
             return fcs_gear_pos;
@@ -404,32 +404,32 @@ impl Contact {
     }
 
     /// `SetstaticFCoeff`.
-    pub fn set_static_coeff(&mut self, coeff: f64) {
+    pub(crate) fn set_static_coeff(&mut self, coeff: f64) {
         self.friction.static_coeff = coeff;
         self.friction.peak = coeff;
     }
 
     /// `GetSteerAngleDeg`.
     #[must_use]
-    pub fn steer_angle_deg(&self) -> f64 {
+    pub(crate) fn steer_angle_deg(&self) -> f64 {
         RADTODEG * self.steering.angle
     }
 
     /// `SetSteerAngleDeg`: ignored by fixed and castered contacts.
-    pub fn set_steer_angle_deg(&mut self, angle: f64) {
+    pub(crate) fn set_steer_angle_deg(&mut self, angle: f64) {
         if self.steering.kind != SteerType::Fixed && !self.steering.castered {
             self.steering.angle = DEGTORAD * angle;
         }
     }
 
     /// `SetSteerCmd`.
-    pub fn set_steer_cmd(&mut self, cmd: f64) {
+    pub(crate) fn set_steer_cmd(&mut self, cmd: f64) {
         self.set_steer_angle_deg(cmd * self.steering.max_angle);
     }
 
     /// `GetWheelRollVel`.
     #[must_use]
-    pub fn wheel_roll_vel(&self) -> f64 {
+    pub(crate) fn wheel_roll_vel(&self) -> f64 {
         let (v, a) = (&self.state.wheel_vel, self.steering.angle);
         let (sin_a, cos_a) = libm::sincos(a);
         v[E_X] * cos_a + v[E_Y] * sin_a

@@ -115,7 +115,7 @@ fn numeric_data(data: &Element) -> Result<Vec<f64>, Error> {
 impl Table {
     /// `FGTable(pm, el, prefix)`. Binding a named table to its property is
     /// left to the caller.
-    pub fn load(
+    pub(crate) fn load(
         el: &Element,
         tree: &PropertyTree,
         prefix: &str,

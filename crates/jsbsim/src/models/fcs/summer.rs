@@ -12,7 +12,7 @@ use crate::xml::Element;
 
 /// `FGSummer`.
 #[derive(Debug, Clone)]
-pub struct Summer {
+pub(crate) struct Summer {
     /// `<bias>`, a number.
     pub bias: f64,
 }

@@ -20,7 +20,7 @@ use crate::units::{INCHTOFT, sign};
 
 /// What the executive tells every contact about the frame.
 #[derive(Debug, Clone, Copy)]
-pub struct FrameContext {
+pub(crate) struct FrameContext {
     /// `GetTrimStatus`.
     pub trim_status: bool,
     /// `GetSimTime`, s.
@@ -32,7 +32,7 @@ pub struct FrameContext {
 /// A contact compressed against the ground this frame, between
 /// [`Contact::begin_frame`] and [`Contact::finish_compressed`].
 #[derive(Debug, Clone, Copy)]
-pub struct Compressed {
+pub(crate) struct Compressed {
     /// `vWhlContactVec`: the contact patch relative to the CG, body frame,
     /// ft.
     contact_vec: ColumnVector3,
@@ -73,14 +73,14 @@ impl Contact {
     /// `GetBodyLocation`: the contact relative to the CG of `input`, body
     /// frame, ft.
     #[must_use]
-    pub fn body_location(&self, input: &Inputs) -> ColumnVector3 {
+    pub(crate) fn body_location(&self, input: &Inputs) -> ColumnVector3 {
         ts2b() * (self.location - input.xyz_cg)
     }
 
     /// `GetBodyForces` up to the compression speed. Returns what the rest
     /// of a compressed frame needs; otherwise the frame is complete but for
     /// [`Contact::end_frame`].
-    pub fn begin_frame(
+    pub(crate) fn begin_frame(
         &mut self,
         input: &Inputs,
         inertial: &Inertial,
@@ -205,7 +205,7 @@ impl Contact {
     /// function's value when the contact has one; `functions` holds the
     /// cornering table; the friction constraints are registered in
     /// `registry` under `index`, the contact's.
-    pub fn finish_compressed(
+    pub(crate) fn finish_compressed(
         &mut self,
         compressed: Compressed,
         strut: Option<f64>,
@@ -291,7 +291,7 @@ impl Contact {
     /// What every frame of `GetBodyForces` ends with, whether or not the
     /// contact is compressed, including `FGForce::GetBodyForces`;
     /// `structural_to_body` is `FGMassBalance::StructuralToBody`.
-    pub fn end_frame(
+    pub(crate) fn end_frame(
         &mut self,
         input: &Inputs,
         frame: &FrameContext,

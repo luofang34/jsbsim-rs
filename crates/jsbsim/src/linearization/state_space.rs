@@ -19,7 +19,7 @@ const H: f64 = 1e-4;
 const MAX_SETTLE: u32 = 1000;
 
 /// The states, inputs and outputs of the state space.
-pub struct StateSpace {
+pub(crate) struct StateSpace {
     x: Vec<Component>,
     u: Vec<Component>,
     y: Vec<Component>,

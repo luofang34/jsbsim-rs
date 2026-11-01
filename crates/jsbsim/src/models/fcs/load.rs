@@ -44,7 +44,7 @@ impl Fcs {
     /// The channels of one `<flight_control>`, `<autopilot>` or `<system>`
     /// document, after the executive's `Upload`; `exec_dt` is the
     /// executive's step at load.
-    pub fn load_channels(
+    pub(crate) fn load_channels(
         &mut self,
         document: &Element,
         ctx: &mut LoadContext<'_>,

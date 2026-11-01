@@ -20,6 +20,7 @@ use super::{Element, XmlError};
 use crate::c_numeric::is_c_space;
 
 /// Parses a document; `file` names it in errors and element locations.
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub fn parse_document(bytes: &[u8], file: &str) -> Result<Element, XmlError> {
     let text = decode(bytes, file)?;
     let options = ParsingOptions {

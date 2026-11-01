@@ -32,6 +32,7 @@ impl Fdm {
         })
     }
 
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     fn load_planet_file_from(
         &mut self,
         resolver: &dyn Resolver,

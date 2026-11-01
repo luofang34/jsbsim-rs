@@ -165,7 +165,7 @@ fn report(label: &str, run: &Value, dml: &BTreeMap<String, f64>) -> usize {
 
 /// Loads f16.xml in C++ and Rust and compares its mass properties with
 /// F16_inertia.dml; returns how many comparisons failed.
-pub fn check_blocking(paths: &Paths) -> Result<usize, OracleError> {
+pub(crate) fn check_blocking(paths: &Paths) -> Result<usize, OracleError> {
     let dml = inertia_blocking(paths)?;
     let root = rig::create_blocking(paths, "mass", &rig::f16_text_blocking(paths)?)?;
     rig::add_file_blocking(&root, "aircraft/f16/mass.xml", IC)?;

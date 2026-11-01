@@ -100,7 +100,7 @@ fn getters(b: &mut Binder<'_>, table: &[(&str, Get)]) -> Result<(), Error> {
 }
 
 /// `FGAuxiliary::bind`.
-pub fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
+pub(crate) fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
     getters(b, &AIRSPEEDS)?;
     for (name, i) in [("p", E_X), ("q", E_Y), ("r", E_Z)] {
         b.getter(&format!("velocities/{name}-aero-rad_sec"), move |m| {

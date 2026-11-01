@@ -73,7 +73,7 @@ impl Propulsion {
 
     /// `ConsumeFuel(engine)`: finds the tanks feeding it, sets whether it is
     /// starved, and drains what it needs from them equally.
-    pub fn consume_fuel(&mut self, engine: usize, trim_status: bool) -> Result<(), Error> {
+    pub(crate) fn consume_fuel(&mut self, engine: usize, trim_status: bool) -> Result<(), Error> {
         if self.fuel_freeze || trim_status {
             return Ok(());
         }
@@ -119,7 +119,7 @@ impl Propulsion {
     }
 
     /// `SetFuelFreeze`.
-    pub fn set_fuel_freeze(&mut self, freeze: bool) {
+    pub(crate) fn set_fuel_freeze(&mut self, freeze: bool) {
         self.fuel_freeze = freeze;
         for engine in &mut self.engines {
             engine.base.fuel_freeze = freeze;
@@ -135,7 +135,7 @@ impl Propulsion {
     }
 
     /// `SetMagnetos`: piston engines only.
-    pub fn set_magnetos(&mut self, setting: i32) {
+    pub(crate) fn set_magnetos(&mut self, setting: i32) {
         for engine in self.commanded() {
             if engine.kind.engine_type() == EngineType::Piston {
                 engine.kind.set_magnetos(setting);
@@ -144,7 +144,7 @@ impl Propulsion {
     }
 
     /// `SetStarter`.
-    pub fn set_starter(&mut self, setting: i32) {
+    pub(crate) fn set_starter(&mut self, setting: i32) {
         for engine in self.commanded() {
             engine.base.starter = setting != 0;
         }
@@ -152,7 +152,7 @@ impl Propulsion {
 
     /// `GetStarter`: 1 when every commanded engine's starter is on.
     #[must_use]
-    pub fn starter(&self) -> i32 {
+    pub(crate) fn starter(&self) -> i32 {
         let on = match usize::try_from(self.active_engine) {
             Ok(n) => self.engines.get(n).is_some_and(|e| e.base.starter),
             Err(_) => self.engines.iter().all(|e| e.base.starter),
@@ -161,7 +161,7 @@ impl Propulsion {
     }
 
     /// `SetCutoff`: turbine and turboprop engines only.
-    pub fn set_cutoff(&mut self, setting: i32) {
+    pub(crate) fn set_cutoff(&mut self, setting: i32) {
         for engine in self.commanded() {
             if matches!(
                 engine.kind.engine_type(),
@@ -175,7 +175,7 @@ impl Propulsion {
     /// `GetCutoff`: 1 when every commanded engine is cut off, -1 when one
     /// has no cutoff.
     #[must_use]
-    pub fn cutoff(&self) -> i32 {
+    pub(crate) fn cutoff(&self) -> i32 {
         let cutoff = |e: &super::Engine| match e.kind.engine_type() {
             EngineType::Turbine | EngineType::Turboprop => e.kind.cutoff(),
             _ => None,
@@ -199,7 +199,7 @@ impl Propulsion {
     }
 
     /// `SetActiveEngine`: -1 for all engines when `engine` is not one.
-    pub fn set_active_engine(&mut self, engine: i32) {
+    pub(crate) fn set_active_engine(&mut self, engine: i32) {
         let n = i32::try_from(self.engines.len()).unwrap_or(i32::MAX);
         self.active_engine = if engine >= n || engine < 0 {
             -1

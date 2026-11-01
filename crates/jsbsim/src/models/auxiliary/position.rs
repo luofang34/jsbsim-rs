@@ -9,6 +9,7 @@ use super::Auxiliary;
 use crate::math::{ColumnVector3, E_Z, Location};
 use crate::units::FTTOM;
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl Auxiliary {
     /// `SetInitialState`: the NEU frame's origin is the initial position
     /// brought down to the ellipse. JSBSim's initial position always
@@ -28,7 +29,7 @@ impl Auxiliary {
     /// latitude to the initial conditions' longitude `ic_longitude`, which
     /// JSBSim reads live from `FGInitialCondition`.
     #[must_use]
-    pub fn longitude_relative_position(&self, ic_longitude: f64) -> f64 {
+    pub(crate) fn longitude_relative_position(&self, ic_longitude: f64) -> f64 {
         let l = &self.input.location;
         l.distance_to(ic_longitude, l.geod_latitude_rad()) * FTTOM
     }
@@ -36,7 +37,7 @@ impl Auxiliary {
     /// `GetLatitudeRelativePosition`: distance, m, along the current
     /// meridian to the initial conditions' geodetic latitude.
     #[must_use]
-    pub fn latitude_relative_position(&self, ic_geod_latitude: f64) -> f64 {
+    pub(crate) fn latitude_relative_position(&self, ic_geod_latitude: f64) -> f64 {
         let l = &self.input.location;
         l.distance_to(l.longitude(), ic_geod_latitude) * FTTOM
     }
@@ -44,7 +45,11 @@ impl Auxiliary {
     /// `GetDistanceRelativePosition`: geodesic distance, m, to the initial
     /// conditions' longitude and geodetic latitude.
     #[must_use]
-    pub fn distance_relative_position(&self, ic_longitude: f64, ic_geod_latitude: f64) -> f64 {
+    pub(crate) fn distance_relative_position(
+        &self,
+        ic_longitude: f64,
+        ic_geod_latitude: f64,
+    ) -> f64 {
         self.input
             .location
             .distance_to(ic_longitude, ic_geod_latitude)
@@ -55,7 +60,7 @@ impl Auxiliary {
     /// [`Start::neu_location`](super::Start::neu_location). JSBSim caches
     /// it until the next run; it is computed on each call here.
     #[must_use]
-    pub fn neu_position_from_start(&self) -> ColumnVector3 {
+    pub(crate) fn neu_position_from_start(&self) -> ColumnVector3 {
         let mut neu = self
             .start
             .neu_location

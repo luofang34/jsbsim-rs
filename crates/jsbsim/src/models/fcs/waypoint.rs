@@ -26,7 +26,7 @@ const DEG_UNIT: f64 = 0.017453293;
 
 /// Which output a waypoint computes (`WaypointType`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum WaypointType {
+pub(crate) enum WaypointType {
     /// `<waypoint_heading>`.
     Heading,
     /// `<waypoint_distance>`.
@@ -35,7 +35,7 @@ pub enum WaypointType {
 
 /// The output unit (`eUnit`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Unit {
+pub(crate) enum Unit {
     /// Heading in radians, the heading default.
     Rad,
     /// Heading in degrees.
@@ -48,7 +48,7 @@ pub enum Unit {
 
 /// One coordinate: its property and the factor taking it to radians.
 #[derive(Debug, Clone)]
-pub struct Coordinate {
+pub(crate) struct Coordinate {
     /// The property, possibly negated.
     pub value: PropertyValue,
     /// `DEG_UNIT` when `unit="DEG"`, else 1.
@@ -57,7 +57,7 @@ pub struct Coordinate {
 
 /// `FGWaypoint`.
 #[derive(Debug, Clone)]
-pub struct Waypoint {
+pub(crate) struct Waypoint {
     /// Heading or distance.
     pub kind: WaypointType,
     /// The output unit.
@@ -77,7 +77,7 @@ pub struct Waypoint {
 
 /// The coordinates one run reads, in radians.
 #[derive(Debug, Clone, Copy)]
-pub struct Coordinates {
+pub(crate) struct Coordinates {
     source_latitude: f64,
     source_longitude: f64,
     target_latitude: f64,

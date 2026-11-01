@@ -19,9 +19,10 @@ const CV_AIR: f64 = 5.0 / 2.0;
 
 /// `FGBallonet`.
 #[derive(Debug, Clone)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Ballonet {
     /// Location, shape and envelope.
-    pub envelope: Envelope,
+    pub(crate) envelope: Envelope,
     /// `Temperature`, °R.
     pub temperature: f64,
     /// `Pressure`, psf.
@@ -46,7 +47,7 @@ pub struct Ballonet {
 
 /// What `Calculate` keeps from before the blower input is read.
 #[derive(Debug, Clone, Copy)]
-pub struct Started {
+pub(crate) struct Started {
     old_temperature: f64,
     old_pressure: f64,
 }
@@ -54,7 +55,7 @@ pub struct Started {
 impl Ballonet {
     /// `FGBallonet(exec, el, num, parent, in)` without the ties: the
     /// parent's temperature and pressure start it.
-    pub fn load(
+    pub(crate) fn load(
         el: &Element,
         parent_temperature: f64,
         parent_pressure: f64,
@@ -80,7 +81,11 @@ impl Ballonet {
 
     /// The `<heat>` functions, then the `<blower_input>` function, as the
     /// constructor reads them after tying the properties.
-    pub fn load_functions(&mut self, el: &Element, ctx: &mut LoadContext<'_>) -> Result<(), Error> {
+    pub(crate) fn load_functions(
+        &mut self,
+        el: &Element,
+        ctx: &mut LoadContext<'_>,
+    ) -> Result<(), Error> {
         if let Some(heat) = el.find_element("heat") {
             for f in heat.find_elements("function") {
                 self.heat
@@ -100,14 +105,14 @@ impl Ballonet {
 
     /// `GetMass`, slugs.
     #[must_use]
-    pub fn mass(&self) -> f64 {
+    pub(crate) fn mass(&self) -> f64 {
         self.contents * M_AIR
     }
 
     /// `FGBallonet::Calculate(dt)` up to the blower input: temperature
     /// from the heat flow `du`, then pressure, given the parent's
     /// temperature and pressure after the parent's own update.
-    pub fn start(&mut self, du: f64, parent: (f64, f64), dt: f64) -> Started {
+    pub(crate) fn start(&mut self, du: f64, parent: (f64, f64), dt: f64) -> Started {
         let (parent_temperature, parent_pressure) = parent;
         let started = Started {
             old_temperature: self.temperature,
@@ -127,7 +132,7 @@ impl Ballonet {
 
     /// The rest of `Calculate`: the blower's `blower` ft^3/s, valving,
     /// volume and inertia.
-    pub fn finish(
+    pub(crate) fn finish(
         &mut self,
         started: Started,
         blower: Option<f64>,

@@ -8,7 +8,7 @@
 /// `FGJSBBase::Filter`: a first-order low-pass filter discretised with
 /// the bilinear transform at a fixed step.
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct LagFilter {
+pub(crate) struct LagFilter {
     prev_in: f64,
     prev_out: f64,
     ca: f64,
@@ -18,7 +18,7 @@ pub struct LagFilter {
 impl LagFilter {
     /// `Filter(coeff, dt)`: break frequency `coeff`, rad/s, at step `dt`.
     #[must_use]
-    pub fn new(coeff: f64, dt: f64) -> Self {
+    pub(crate) fn new(coeff: f64, dt: f64) -> Self {
         let denom = 2.0 + coeff * dt;
         Self {
             prev_in: 0.0,
@@ -29,7 +29,7 @@ impl LagFilter {
     }
 
     /// `execute(in)`: the filtered value of `input`.
-    pub fn execute(&mut self, input: f64) -> f64 {
+    pub(crate) fn execute(&mut self, input: f64) -> f64 {
         let out = (input + self.prev_in) * self.ca + self.prev_out * self.cb;
         self.prev_in = input;
         self.prev_out = out;
@@ -37,7 +37,7 @@ impl LagFilter {
     }
 
     /// `reset`.
-    pub fn reset(&mut self) {
+    pub(crate) fn reset(&mut self) {
         self.prev_in = 0.0;
         self.prev_out = 0.0;
     }

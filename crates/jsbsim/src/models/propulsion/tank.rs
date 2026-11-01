@@ -9,13 +9,14 @@
 mod bind;
 mod load;
 
-pub use bind::bind;
+pub(crate) use bind::bind;
 
 use crate::math::ColumnVector3;
 use crate::units::LBTOSLUG;
 
 /// `FGTank::TankType`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub enum TankType {
     /// `ttUNKNOWN`: any `type` but the two below, which the propulsion
     /// loader refuses.
@@ -28,6 +29,7 @@ pub enum TankType {
 
 /// `FGTank::GrainType`: the shape of a solid propellant grain.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub enum GrainType {
     /// `gtUNKNOWN`: no `<grain_config>`, a liquid.
     Unknown,
@@ -39,6 +41,7 @@ pub enum GrainType {
 
 /// A solid propellant grain's geometry, inches and cubic inches.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Grain {
     /// Shape.
     pub kind: GrainType,
@@ -52,6 +55,7 @@ pub struct Grain {
 
 /// What `ResetToIC` restores.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Initial {
     /// Contents, lbs. JSBSim leaves `InitialContents` uninitialized when
     /// the tank has no `<contents>`; the port starts it at 0, as the
@@ -67,6 +71,7 @@ pub struct Initial {
 
 /// `FGTank`.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Tank {
     /// Fuel or oxidizer.
     pub tank_type: TankType,
@@ -116,6 +121,7 @@ pub struct Tank {
     pub initial: Initial,
 }
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl Tank {
     /// `GetUnusable`: unusable contents, lbs.
     #[must_use]
@@ -124,7 +130,7 @@ impl Tank {
     }
 
     /// `SetPriority`, which also selects the tank when `p` is positive.
-    pub fn set_priority(&mut self, p: i32) {
+    pub(crate) fn set_priority(&mut self, p: i32) {
         self.priority = p;
         self.selected = p > 0;
     }
@@ -136,7 +142,7 @@ impl Tank {
     }
 
     /// `ResetToIC`.
-    pub fn reset_to_ic(&mut self) {
+    pub(crate) fn reset_to_ic(&mut self) {
         self.temperature = self.initial.temperature;
         self.standpipe = self.initial.standpipe;
         self.set_contents(self.initial.contents);
@@ -147,7 +153,7 @@ impl Tank {
 
     /// `Drain`: removes `used` lbs down to the unusable contents; the
     /// contents left.
-    pub fn drain(&mut self, used: f64) -> f64 {
+    pub(crate) fn drain(&mut self, used: f64) -> f64 {
         let mut remaining = self.contents - used;
         if remaining >= self.unusable() {
             self.contents -= used;
@@ -163,7 +169,7 @@ impl Tank {
     }
 
     /// `Fill`: adds `amount` lbs up to the capacity; what did not fit.
-    pub fn fill(&mut self, amount: f64) -> f64 {
+    pub(crate) fn fill(&mut self, amount: f64) -> f64 {
         let mut overage = 0.0;
         self.contents += amount;
         if self.contents > self.capacity {
@@ -178,7 +184,7 @@ impl Tank {
     }
 
     /// `SetContents`, capped at the capacity.
-    pub fn set_contents(&mut self, amount: f64) {
+    pub(crate) fn set_contents(&mut self, amount: f64) {
         self.contents = amount;
         if self.contents > self.capacity {
             self.contents = self.capacity;
@@ -192,7 +198,7 @@ impl Tank {
     /// `Calculate(dt, TAT_C)`: the external flow over `dt`, then the heat
     /// exchange with air at `tat_c` °C; the temperature, or 0 when the tank
     /// has none.
-    pub fn calculate(&mut self, dt: f64, tat_c: f64) -> f64 {
+    pub(crate) fn calculate(&mut self, dt: f64, tat_c: f64) -> f64 {
         if self.external_flow < 0.0 {
             self.drain(-self.external_flow * dt);
         } else {
@@ -219,7 +225,7 @@ impl Tank {
     /// contents; the loader refuses such a tank (see [`Tank::load`]), and
     /// should contents be set into one later this logs the error and
     /// leaves the inertias as they were.
-    pub fn calculate_inertias(&mut self) {
+    pub(crate) fn calculate_inertias(&mut self) {
         if self.grain_density_fault() {
             tracing::error!(
                 "Solid propellant grain density is zero! (tank {})",
@@ -270,7 +276,7 @@ impl Tank {
 /// `ProcessFuelName`: the density of a named fuel, lbs/gal; 6.6, with an
 /// error logged, for an unknown name.
 #[must_use]
-pub fn fuel_density(name: &str) -> f64 {
+pub(crate) fn fuel_density(name: &str) -> f64 {
     match name {
         "AVGAS" => 6.02,
         "JET-A" | "JET-A1" | "F-35" => 6.74,

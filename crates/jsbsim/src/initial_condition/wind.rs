@@ -7,9 +7,12 @@
 //! airspeed, alpha and beta.
 
 use super::InitialCondition;
-use crate::math::{Axis, ColumnVector3, E_PSI, E_U, E_V, E_W, dot_product};
+#[cfg(test)]
+use crate::math::E_W;
+use crate::math::{Axis, ColumnVector3, E_PSI, E_U, E_V, dot_product};
 use crate::units::{DEGTORAD, KTSTOFPS, RADTODEG};
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl InitialCondition {
     /// The airspeed is the ground velocity plus `wind_ned`.
     fn apply_wind_ned(&mut self, wind_ned: ColumnVector3) {
@@ -19,7 +22,8 @@ impl InitialCondition {
     }
 
     /// `SetWindNEDFpsIC`.
-    pub fn set_wind_ned_fps(&mut self, w_n: f64, w_e: f64, w_d: f64) {
+    #[cfg(test)]
+    pub(crate) fn set_wind_ned_fps(&mut self, w_n: f64, w_e: f64, w_d: f64) {
         self.apply_wind_ned(ColumnVector3::new(w_n, w_e, w_d));
     }
 
@@ -34,7 +38,7 @@ impl InitialCondition {
 
     /// `SetCrossWindKtsIC`: wind across the heading, positive from left to
     /// right.
-    pub fn set_cross_wind_kts(&mut self, cross: f64) {
+    pub(crate) fn set_cross_wind_kts(&mut self, cross: f64) {
         let dir = ColumnVector3::new(
             -self.orientation.sin_euler(E_PSI),
             self.orientation.cos_euler(E_PSI),
@@ -44,7 +48,7 @@ impl InitialCondition {
     }
 
     /// `SetHeadWindKtsIC`: wind against the heading.
-    pub fn set_head_wind_kts(&mut self, head: f64) {
+    pub(crate) fn set_head_wind_kts(&mut self, head: f64) {
         let dir = ColumnVector3::new(
             -self.orientation.cos_euler(E_PSI),
             -self.orientation.sin_euler(E_PSI),
@@ -55,7 +59,8 @@ impl InitialCondition {
 
     /// `SetWindDownKtsIC`: the downward airspeed becomes the downward
     /// ground speed plus `w_d`; the horizontal airspeed is kept.
-    pub fn set_wind_down_kts(&mut self, w_d: f64) {
+    #[cfg(test)]
+    pub(crate) fn set_wind_down_kts(&mut self, w_d: f64) {
         let mut vt_ned = self.vt_ned();
         vt_ned[E_W] = self.uvw_ned[E_W] + w_d * KTSTOFPS;
         self.vt = vt_ned.magnitude();
@@ -64,7 +69,7 @@ impl InitialCondition {
 
     /// `SetWindMagKtsIC`: the horizontal wind speed, keeping its direction
     /// (north when there is next to no wind) and its vertical component.
-    pub fn set_wind_mag_kts(&mut self, mag: f64) {
+    pub(crate) fn set_wind_mag_kts(&mut self, mag: f64) {
         let mut wind_ned = self.vt_ned() - self.uvw_ned;
         let mut head = ColumnVector3::new(wind_ned[E_U], wind_ned[E_V], 0.);
         let wind_mag = head.magnitude();
@@ -79,13 +84,13 @@ impl InitialCondition {
     }
 
     /// `SetWindMagFpsIC`.
-    pub fn set_wind_mag_fps(&mut self, mag: f64) {
+    pub(crate) fn set_wind_mag_fps(&mut self, mag: f64) {
         self.set_wind_mag_kts(mag * crate::units::FPSTOKTS);
     }
 
     /// `SetWindDirDegIC`: the direction the wind blows toward, keeping its
     /// horizontal speed and vertical component.
-    pub fn set_wind_dir_deg(&mut self, dir: f64) {
+    pub(crate) fn set_wind_dir_deg(&mut self, dir: f64) {
         let mut wind_ned = self.vt_ned() - self.uvw_ned;
         let mag = wind_ned.magnitude2(E_U, E_V);
         let (sin_dir, cos_dir) = libm::sincos(dir * DEGTORAD);
@@ -96,7 +101,7 @@ impl InitialCondition {
 
     /// `GetWindNEDFpsIC`.
     #[must_use]
-    pub fn wind_ned_fps(&self) -> ColumnVector3 {
+    pub(crate) fn wind_ned_fps(&self) -> ColumnVector3 {
         self.vt_ned() - self.uvw_ned
     }
 
@@ -108,7 +113,7 @@ impl InitialCondition {
 
     /// `GetWindDirDegIC`; 0 without horizontal wind.
     #[must_use]
-    pub fn wind_dir_deg(&self) -> f64 {
+    pub(crate) fn wind_dir_deg(&self) -> f64 {
         let wind_ned = self.wind_ned_fps();
         if wind_ned.magnitude2(E_U, E_V) == 0.0 {
             0.0
@@ -119,7 +124,7 @@ impl InitialCondition {
 
     /// `GetWindUFpsIC`, `GetWindVFpsIC`, `GetWindWFpsIC` by axis.
     #[must_use]
-    pub fn body_wind_fps(&self, idx: Axis) -> f64 {
+    pub(crate) fn body_wind_fps(&self, idx: Axis) -> f64 {
         let vt_body = self.tw2b * ColumnVector3::new(self.vt, 0., 0.);
         let uvw_body = self.orientation.t() * self.uvw_ned;
         (vt_body - uvw_body)[idx]

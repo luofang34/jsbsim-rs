@@ -24,12 +24,15 @@ use std::rc::Rc;
 
 pub use error::{SourceLocation, XmlError};
 pub(crate) use loader::xml_file_path;
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub use loader::{DocumentLoader, IncludeKind};
-pub use numbers::atof_locale_c;
+pub(crate) use numbers::atof_locale_c;
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub use parse::parse_document;
 
 /// One XML element as JSBSim sees it.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Element {
     name: String,
     attributes: BTreeMap<String, String>,
@@ -39,6 +42,7 @@ pub struct Element {
     line: u32,
 }
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl Element {
     /// Creates an element with no attributes, data or children.
     #[must_use]
@@ -61,7 +65,7 @@ impl Element {
 
     /// Where the element starts.
     #[must_use]
-    pub fn location(&self) -> SourceLocation {
+    pub(crate) fn location(&self) -> SourceLocation {
         SourceLocation {
             file: self.file.to_string(),
             line: self.line,
@@ -70,7 +74,7 @@ impl Element {
 
     /// Resource path of the document the element came from.
     #[must_use]
-    pub fn file_name(&self) -> &str {
+    pub(crate) fn file_name(&self) -> &str {
         &self.file
     }
 
@@ -82,6 +86,7 @@ impl Element {
 
     /// All attributes, sorted by name.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn attributes(&self) -> &BTreeMap<String, String> {
         &self.attributes
     }
@@ -143,7 +148,7 @@ impl Element {
     }
 
     /// `GetDataAsNumber`: the single data line as a number.
-    pub fn data_as_number(&self) -> Result<f64, XmlError> {
+    pub(crate) fn data_as_number(&self) -> Result<f64, XmlError> {
         match self.data_lines.as_slice() {
             [line] => atof_locale_c(line).map_err(|message| self.invalid_number(message)),
             [] => Err(XmlError::NoData {
@@ -195,7 +200,7 @@ impl Element {
     /// call before it was `FindElement(cursor)`: those named `name` after
     /// the first child named `cursor`, or from the start when there is no
     /// such child (which resets the cursor).
-    pub fn find_next_elements_after<'a>(
+    pub(crate) fn find_next_elements_after<'a>(
         &'a self,
         cursor: &str,
         name: &'a str,
@@ -214,7 +219,7 @@ impl Element {
 
     /// `GetNumElements(name)`.
     #[must_use]
-    pub fn num_elements(&self, name: &str) -> usize {
+    pub(crate) fn num_elements(&self, name: &str) -> usize {
         self.find_elements(name).count()
     }
 
@@ -241,7 +246,7 @@ impl Element {
 
     /// `FindElementValueAsBoolean(name)`: non-zero is true; a missing child
     /// is logged and reads as false.
-    pub fn find_element_value_as_boolean(&self, name: &str) -> Result<bool, XmlError> {
+    pub(crate) fn find_element_value_as_boolean(&self, name: &str) -> Result<bool, XmlError> {
         match self.find_element(name) {
             Some(child) => Ok(child.data_as_number()? != 0.0),
             None => {
@@ -256,7 +261,7 @@ impl Element {
 
     /// `MergeAttributes`: copies the attributes of `other` that this
     /// element does not have.
-    pub fn merge_attributes(&mut self, other: &Self) {
+    pub(crate) fn merge_attributes(&mut self, other: &Self) {
         for (key, value) in &other.attributes {
             self.attributes
                 .entry(key.clone())

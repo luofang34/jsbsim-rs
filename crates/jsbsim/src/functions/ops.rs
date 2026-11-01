@@ -9,7 +9,7 @@
 
 /// Argument-count parity rule.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Parity {
+pub(crate) enum Parity {
     /// Any count.
     Either,
     /// An odd count.
@@ -20,7 +20,7 @@ macro_rules! operations {
     ($($variant:ident => $name:literal, $min:expr, $max:expr, $parity:ident, $varargs:expr;)*) => {
         /// A function operation.
         #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-        pub enum Op {
+        pub(crate) enum Op {
             /// The `<function>` element itself: its single operand.
             Identity,
             $(
@@ -32,12 +32,12 @@ macro_rules! operations {
         /// Names of every operation element, in `FGFunction::Load` order,
         /// which a unit test pins against JSBSim's.
         #[cfg(test)]
-        pub const OPERATIONS: &[&str] = &[$($name),*];
+        pub(crate) const OPERATIONS: &[&str] = &[$($name),*];
 
         impl Op {
             /// The operation named `name`.
             #[must_use]
-            pub fn from_name(name: &str) -> Option<Self> {
+            pub(crate) fn from_name(name: &str) -> Option<Self> {
                 match name {
                     $($name => Some(Self::$variant),)*
                     _ => None,
@@ -46,7 +46,7 @@ macro_rules! operations {
 
             /// Element name.
             #[must_use]
-            pub fn name(self) -> &'static str {
+            pub(crate) fn name(self) -> &'static str {
                 match self {
                     Self::Identity => "function",
                     $(Self::$variant => $name,)*
@@ -55,7 +55,7 @@ macro_rules! operations {
 
             /// `(min, max, parity)` argument counts.
             #[must_use]
-            pub fn arity(self) -> (usize, usize, Parity) {
+            pub(crate) fn arity(self) -> (usize, usize, Parity) {
                 match self {
                     Self::Identity => (1, 1, Parity::Either),
                     $(Self::$variant => ($min, $max, Parity::$parity),)*
@@ -65,7 +65,7 @@ macro_rules! operations {
             /// Whether a single argument makes the operation a no-op that
             /// is replaced by its argument (`VarArgsFn`).
             #[must_use]
-            pub fn collapses_single_argument(self) -> bool {
+            pub(crate) fn collapses_single_argument(self) -> bool {
                 match self {
                     Self::Identity => false,
                     $(Self::$variant => $varargs,)*

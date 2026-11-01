@@ -19,17 +19,18 @@ use crate::models::ModelFunctions;
 
 /// `FGInput`.
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Input {
     /// Scheduling, with `enabled` tied to
     /// `simulation/models/FGInput/enabled`.
-    pub base: ModelBase,
+    pub(crate) base: ModelBase,
     /// The input types, in load order.
-    pub types: Vec<InputType>,
+    pub(crate) types: Vec<InputType>,
 }
 
 /// An `FGInputType`: its scheduling, declarations and functions.
 #[derive(Debug, Clone, Default)]
-pub struct InputType {
+pub(crate) struct InputType {
     /// `FGModel`'s scheduling. The rate is one frame unless a `QTJSBSIM`
     /// input with a port sets it from its `rate` attribute.
     pub base: ModelBase,
@@ -39,7 +40,8 @@ pub struct InputType {
 
 impl Input {
     /// `FGInput::Enable`: the model and every type.
-    pub fn enable(&mut self) {
+    #[cfg(test)]
+    pub(crate) fn enable(&mut self) {
         self.base.enabled = true;
         for t in &mut self.types {
             t.base.enabled = true;
@@ -47,7 +49,8 @@ impl Input {
     }
 
     /// `FGInput::Disable`: the model and every type.
-    pub fn disable(&mut self) {
+    #[cfg(test)]
+    pub(crate) fn disable(&mut self) {
         self.base.enabled = false;
         for t in &mut self.types {
             t.base.enabled = false;
@@ -56,7 +59,8 @@ impl Input {
 
     /// `FGInput::Toggle(idx)`: flips type `idx`; its new state, or false
     /// when there is no such type.
-    pub fn toggle(&mut self, idx: usize) -> bool {
+    #[cfg(test)]
+    pub(crate) fn toggle(&mut self, idx: usize) -> bool {
         match self.types.get_mut(idx) {
             Some(t) => {
                 t.base.enabled = !t.base.enabled;
@@ -68,7 +72,7 @@ impl Input {
 
     /// `FGInput::Run` before its types run: false when none runs this
     /// frame. Holding does not stop it.
-    pub fn runs(&mut self, trim_status: bool) -> bool {
+    pub(crate) fn runs(&mut self, trim_status: bool) -> bool {
         !(trim_status || self.base.skip())
     }
 }
@@ -76,7 +80,7 @@ impl Input {
 /// `FGUDPInputSocket::Load`'s `SetRate(0.5 + 1.0/(dt*rate))` for an
 /// integer `rate` attribute.
 #[must_use]
-pub fn udp_rate(rate: i32, dt: f64) -> u32 {
+pub(crate) fn udp_rate(rate: i32, dt: f64) -> u32 {
     // The double converts to `unsigned int` as `as` does on arm64:
     // truncating, and saturating out of range (a zero rate is infinite).
     (0.5 + 1.0 / (dt * f64::from(rate))) as u32

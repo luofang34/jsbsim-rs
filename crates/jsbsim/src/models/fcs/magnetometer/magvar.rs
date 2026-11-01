@@ -111,7 +111,7 @@ impl Grid {
 /// `yymmdd_to_julian_days`: the Julian day of a date of 1950 to 2049,
 /// with `yy` the year since 1900 (or since 2000 below 50).
 #[must_use]
-pub fn yymmdd_to_julian_days(yy: i64, mm: i64, dd: i64) -> i64 {
+pub(crate) fn yymmdd_to_julian_days(yy: i64, mm: i64, dd: i64) -> i64 {
     let yy = if yy < 50 { 2000 + yy } else { 1900 + yy };
     let mut jd = dd - 32075 + 1461 * (yy + 4800 + (mm - 14) / 12) / 4;
     jd += 367 * (mm - 2 - (mm - 14) / 12 * 12) / 12;
@@ -177,7 +177,7 @@ fn coefficients(yearfrac: f64) -> (Grid, Grid) {
 /// (rad), height `h` (km) and Julian day `dat`: `B_r`, `B_theta`, `B_phi`
 /// and the north, east and down components, nT.
 #[must_use]
-pub fn calc_magvar(lat: f64, lon: f64, h: f64, dat: i64) -> [f64; 6] {
+pub(crate) fn calc_magvar(lat: f64, lon: f64, h: f64, dat: i64) -> [f64; 6] {
     let date0_wmm2005 = yymmdd_to_julian_days(5, 1, 1);
     let (sinlat, coslat) = libm::sincos(lat);
     let sr = libm::sqrt(A * A * coslat * coslat + B * B * sinlat * sinlat);

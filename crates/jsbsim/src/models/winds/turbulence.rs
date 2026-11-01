@@ -7,7 +7,7 @@
 
 mod dryden;
 
-pub use dryden::{DrydenState, PoeTable};
+pub(crate) use dryden::{DrydenState, PoeTable};
 
 use super::Winds;
 use crate::math::{ColumnVector3, E_DOWN, E_EAST, E_NORTH, E_P};
@@ -16,7 +16,7 @@ use crate::units::RADTODEG;
 
 /// `tType`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum TurbulenceType {
+pub(crate) enum TurbulenceType {
     /// `ttNone`.
     None,
     /// `ttStandard`: JSBSim does not implement it, so it is turbulence-free.
@@ -33,7 +33,7 @@ impl TurbulenceType {
     /// The model of an `atmosphere/turb-type` value; `None` outside the
     /// enum, which JSBSim's switch treats as no turbulence.
     #[must_use]
-    pub fn from_code(code: i32) -> Option<Self> {
+    pub(crate) fn from_code(code: i32) -> Option<Self> {
         match code {
             0 => Some(Self::None),
             1 => Some(Self::Standard),
@@ -46,7 +46,7 @@ impl TurbulenceType {
 
     /// The enum value.
     #[must_use]
-    pub fn code(self) -> i32 {
+    pub(crate) fn code(self) -> i32 {
         match self {
             Self::None => 0,
             Self::Standard => 1,
@@ -59,7 +59,7 @@ impl TurbulenceType {
 
 /// Culp's state, which `InitModel` leaves alone.
 #[derive(Debug, Clone, Copy, Default, PartialEq)]
-pub struct CulpState {
+pub(crate) struct CulpState {
     /// `spike`: the decaying gust pulse.
     pub spike: f64,
     /// `target_time`: when the next pulse fires; 0 draws a new one.
@@ -76,9 +76,11 @@ const WIND_FROM_CLOCKWISE: f64 = 0.0;
 #[allow(clippy::approx_constant)]
 const CULP_TWO_PI: f64 = 6.283185307;
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl Winds {
     /// `GetTurbMagnitude`, ft/s.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn turbulence_magnitude(&self) -> f64 {
         self.turbulence_ned.magnitude()
     }

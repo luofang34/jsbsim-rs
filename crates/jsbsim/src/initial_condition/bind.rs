@@ -30,7 +30,7 @@ macro_rules! tie {
 }
 
 /// `FGInitialCondition::bind`.
-pub fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
+pub(crate) fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
     bind_speeds(b)?;
     bind_angles_and_position(b)?;
     bind_velocities(b)?;

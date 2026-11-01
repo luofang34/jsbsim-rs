@@ -12,7 +12,7 @@
 //! since the constructor also evaluates the model at the position the
 //! vehicle has then.
 
-pub mod magvar;
+pub(crate) mod magvar;
 #[cfg(test)]
 mod tests;
 
@@ -33,7 +33,7 @@ const INERTIAL_UPDATE_RATE: u32 = 1000;
 
 /// `FGMagnetometer`.
 #[derive(Debug, Clone)]
-pub struct Magnetometer {
+pub(crate) struct Magnetometer {
     /// The degradation.
     pub signal: Signal,
     /// Axis and frame.
@@ -53,7 +53,7 @@ pub struct Magnetometer {
 /// What one run reads: the field when this run evaluates it, and the
 /// local-to-body rotation.
 #[derive(Debug, Clone, Copy)]
-pub struct Sample {
+pub(crate) struct Sample {
     field: Option<ColumnVector3>,
     tl2b: Matrix33,
 }
@@ -100,7 +100,7 @@ impl Magnetometer {
 
 /// The rest of each newly loaded magnetometer's constructor: its date and
 /// its first `updateInertialMag`, at the vehicle's position now.
-pub fn construct(fcs: &mut Fcs, propagate: &Propagate, exec: &ExecState) {
+pub(crate) fn construct(fcs: &mut Fcs, propagate: &Propagate, exec: &ExecState) {
     let date = date(exec);
     for channel in &mut fcs.channels {
         for component in &mut channel.components {

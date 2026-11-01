@@ -7,27 +7,20 @@
 //! is one.
 
 use crate::math::{ColumnVector3, E_PITCH, E_ROLL, E_YAW, Matrix33};
-use crate::models::external_reactions::Transforms;
 use crate::models::mass_balance::MassBalance;
 
 /// `FGForce::TransformType`: the frame the native force is in.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum TransformType {
+pub(crate) enum TransformType {
     /// `tNone`: body axes.
     None,
-    /// `tWindBody`.
-    WindBody,
-    /// `tLocalBody`.
-    LocalBody,
-    /// `tInertialBody`.
-    InertialBody,
     /// `tCustom`: the orientation angles' own transform.
     Custom,
 }
 
 /// `FGForce`.
 #[derive(Debug, Clone, PartialEq)]
-pub struct Force {
+pub(crate) struct Force {
     /// Native force (`vFn`), lbs.
     pub native_force: ColumnVector3,
     /// Native moment (`vMn`), lbs·ft.
@@ -66,34 +59,23 @@ impl Default for Force {
 }
 
 impl Force {
-    /// `Transform`.
-    #[must_use]
-    pub fn transform(&self, t: &Transforms) -> Matrix33 {
-        match self.transform_type {
-            TransformType::WindBody => t.tw2b,
-            TransformType::LocalBody => t.tl2b,
-            TransformType::InertialBody => t.ti2b,
-            TransformType::Custom | TransformType::None => self.transform,
-        }
-    }
-
     /// `GetBodyForces`: the body-frame force, and the moment about the CG
     /// of `mass_balance` it makes at the acting location.
-    pub fn body_forces(&mut self, t: &Transforms, mass_balance: &MassBalance) -> ColumnVector3 {
-        self.body_force = self.transform(t) * self.native_force;
+    pub(crate) fn body_forces(&mut self, mass_balance: &MassBalance) -> ColumnVector3 {
+        self.body_force = self.transform * self.native_force;
         let dxyz = mass_balance.structural_to_body(self.acting_location);
         self.moment = self.native_moment + dxyz.cross(self.body_force);
         self.body_force
     }
 
     /// `SetLocation`, which also moves the acting location.
-    pub fn set_location(&mut self, location: ColumnVector3) {
+    pub(crate) fn set_location(&mut self, location: ColumnVector3) {
         self.location = location;
         self.acting_location = location;
     }
 
     /// `UpdateCustomTransformMatrix`.
-    pub fn update_custom_transform_matrix(&mut self) {
+    pub(crate) fn update_custom_transform_matrix(&mut self) {
         let o = &self.orient;
         let (sp, cp) = libm::sincos(o[E_PITCH]);
         let (sr, cr) = libm::sincos(o[E_ROLL]);
@@ -115,7 +97,7 @@ impl Force {
     }
 
     /// `SetAnglesToBody`: only a custom transform takes angles.
-    pub fn set_angles_to_body(&mut self, angles: ColumnVector3) {
+    pub(crate) fn set_angles_to_body(&mut self, angles: ColumnVector3) {
         if self.transform_type == TransformType::Custom {
             self.orient = angles;
             self.update_custom_transform_matrix();
@@ -123,13 +105,13 @@ impl Force {
     }
 
     /// `SetPitch`.
-    pub fn set_pitch(&mut self, pitch: f64) {
+    pub(crate) fn set_pitch(&mut self, pitch: f64) {
         self.orient[E_PITCH] = pitch;
         self.update_custom_transform_matrix();
     }
 
     /// `SetYaw`.
-    pub fn set_yaw(&mut self, yaw: f64) {
+    pub(crate) fn set_yaw(&mut self, yaw: f64) {
         self.orient[E_YAW] = yaw;
         self.update_custom_transform_matrix();
     }

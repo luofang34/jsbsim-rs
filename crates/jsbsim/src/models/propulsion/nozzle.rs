@@ -14,7 +14,7 @@ use crate::xml::Element;
 
 /// `FGNozzle`'s members beyond `FGThruster`'s.
 #[derive(Debug, Clone, PartialEq)]
-pub struct Nozzle {
+pub(crate) struct Nozzle {
     /// Exit area, ft^2.
     pub area: f64,
 }

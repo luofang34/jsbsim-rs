@@ -87,6 +87,7 @@ struct Commands {
     pitch_trim: f64,
 }
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl Trim {
     /// `FGTrim(fdmex, mode)`: a copy of the executive's initial
     /// conditions and the axes of `mode`.
@@ -115,7 +116,7 @@ impl Trim {
     }
 
     /// `SetMode`: the axes of `mode` replace the current ones.
-    pub fn set_mode(&mut self, fdm: &Fdm, mode: TrimMode) {
+    pub(crate) fn set_mode(&mut self, fdm: &Fdm, mode: TrimMode) {
         use {Control as C, State as S};
         self.clear_states();
         self.mode = mode;
@@ -168,13 +169,13 @@ impl Trim {
     }
 
     /// `ClearStates`.
-    pub fn clear_states(&mut self) {
+    pub(crate) fn clear_states(&mut self) {
         self.mode = TrimMode::Custom;
         self.axes.clear();
     }
 
     /// `AddState`: false when `state` already has an axis.
-    pub fn add_state(&mut self, fdm: &Fdm, state: State, control: Control) -> bool {
+    pub(crate) fn add_state(&mut self, fdm: &Fdm, state: State, control: Control) -> bool {
         self.mode = TrimMode::Custom;
         if self.axes.iter().any(|a| a.state_type() == state) {
             return false;
@@ -186,7 +187,8 @@ impl Trim {
     }
 
     /// `RemoveState`.
-    pub fn remove_state(&mut self, state: State) -> bool {
+    #[cfg(test)]
+    pub(crate) fn remove_state(&mut self, state: State) -> bool {
         self.mode = TrimMode::Custom;
         let before = self.axes.len();
         self.axes.retain(|a| a.state_type() != state);
@@ -198,7 +200,8 @@ impl Trim {
     }
 
     /// `EditState`: the axis of `state` gets `control`, afresh.
-    pub fn edit_state(&mut self, fdm: &Fdm, state: State, control: Control) -> bool {
+    #[cfg(test)]
+    pub(crate) fn edit_state(&mut self, fdm: &Fdm, state: State, control: Control) -> bool {
         self.mode = TrimMode::Custom;
         let fresh = TrimAxis::new(fdm, &self.fgic, state, control);
         match self.axes.iter_mut().find(|a| a.state_type() == state) {
@@ -210,46 +213,23 @@ impl Trim {
         }
     }
 
-    /// `SetGammaFallback`: when udot cannot be trimmed with the throttle,
-    /// trim it with the flight path angle.
-    pub fn set_gamma_fallback(&mut self, on: bool) {
-        self.gamma_fallback = on;
-    }
-
-    /// `SetMaxCycles`.
-    pub fn set_max_cycles(&mut self, n: u32) {
-        self.max_iterations = n;
-    }
-
-    /// `SetMaxCyclesPerAxis`.
-    pub fn set_max_cycles_per_axis(&mut self, n: u32) {
-        self.solver.max_sub_iterations = n;
-    }
-
-    /// `SetDebug`: 1 reports each cycle, 2 each solver step too.
-    pub fn set_debug(&mut self, level: i32) {
-        self.debug_level = level;
-    }
-
-    /// `DebugState`: limits the debug output to the axis of `state`.
-    pub fn debug_state(&mut self, state: State) {
-        self.debug_axis = state;
-    }
-
     /// `SetTargetNlf`.
-    pub fn set_target_nlf(&mut self, nlf: f64) {
+    #[cfg(test)]
+    pub(crate) fn set_target_nlf(&mut self, nlf: f64) {
         self.target_nlf = nlf;
     }
 
     /// `GetTargetNlf`.
     #[must_use]
-    pub fn target_nlf(&self) -> f64 {
+    #[cfg(test)]
+    pub(crate) fn target_nlf(&self) -> f64 {
         self.target_nlf
     }
 
     /// The axes, in trim order.
     #[must_use]
-    pub fn axes(&self) -> &[TrimAxis] {
+    #[cfg(test)]
+    pub(crate) fn axes(&self) -> &[TrimAxis] {
         &self.axes
     }
 

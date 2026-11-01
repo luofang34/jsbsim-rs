@@ -15,11 +15,14 @@ mod position;
 #[cfg(test)]
 mod tests;
 
-pub use airspeed::{
-    mach_from_impact_pressure, mach_from_vcalibrated, pitot_total_pressure, vcalibrated_from_mach,
-};
-pub use bind::bind;
-pub use inputs::{Air, Inputs};
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub, unused_imports))]
+pub use airspeed::{mach_from_impact_pressure, pitot_total_pressure};
+
+pub(crate) use airspeed::{mach_from_vcalibrated, vcalibrated_from_mach};
+pub(crate) use bind::bind;
+pub(crate) use inputs::Air;
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
+pub use inputs::Inputs;
 
 use super::atmosphere::{STD_DAY_SL_DENSITY, STD_DAY_SL_PRESSURE, STD_DAY_SL_TEMPERATURE};
 use super::base::ModelBase;
@@ -31,7 +34,7 @@ use crate::units::{SLUGTOLB, rankine_to_celsius};
 
 /// Airspeeds, Mach numbers and total conditions.
 #[derive(Debug, Clone, Copy)]
-pub struct Airspeeds {
+pub(crate) struct Airspeeds {
     /// Calibrated airspeed, ft/s.
     pub vcas: f64,
     /// Equivalent airspeed, ft/s.
@@ -81,6 +84,7 @@ impl Default for Airspeeds {
 
 /// CG load factors and pilot-sensed accelerations.
 #[derive(Debug, Clone, Copy, Default)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Loads {
     /// Acceleration at the eye point, body frame, ft/s^2.
     pub pilot_accel: ColumnVector3,
@@ -100,16 +104,17 @@ pub struct Loads {
 
 /// Where the flight started, for the positions relative to it.
 #[derive(Debug, Clone, Default)]
-pub struct Start {
+pub(crate) struct Start {
     /// Origin of the NEU frame: the initial position at zero height.
     pub neu_location: Location,
 }
 
 /// Derived quantities.
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Auxiliary {
     /// Scheduling.
-    pub base: ModelBase,
+    pub(crate) base: ModelBase,
     /// Inputs, loaded by the executive before each run.
     pub input: Inputs,
     /// Angle of attack, rad.
@@ -145,13 +150,14 @@ pub struct Auxiliary {
     /// Visual reference point position.
     pub location_vrp: Location,
     /// Airspeeds and total conditions.
-    pub airspeed: Airspeeds,
+    pub(crate) airspeed: Airspeeds,
     /// Load factors and accelerations.
     pub loads: Loads,
     /// The start of the flight.
-    pub start: Start,
+    pub(crate) start: Start,
 }
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl Auxiliary {
     /// `InitModel`. Like JSBSim, `nx`, the CG and wind-axis load factors,
     /// the wind matrices and the VRP keep their values.
@@ -323,7 +329,7 @@ impl Auxiliary {
 
     /// `GetNlf`: the load factor from the wind-axis lift, 0 without mass.
     #[must_use]
-    pub fn nlf(&self) -> f64 {
+    pub(crate) fn nlf(&self) -> f64 {
         if self.input.mass != 0.0 {
             self.input.fw[E_LIFT] / (self.input.mass * SLUGTOLB)
         } else {
@@ -333,7 +339,7 @@ impl Auxiliary {
 
     /// `GetMagBeta`, rad.
     #[must_use]
-    pub fn mag_beta(&self) -> f64 {
+    pub(crate) fn mag_beta(&self) -> f64 {
         self.beta.abs()
     }
 }

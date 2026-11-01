@@ -29,7 +29,7 @@ use crate::xml::Element;
 
 /// A `<property value="...">` of a case.
 #[derive(Debug, Clone)]
-pub struct PropValPair {
+pub(crate) struct PropValPair {
     /// The property set; a sign is ignored, as JSBSim's release build
     /// ignores it.
     pub property: PropertyValue,
@@ -39,7 +39,7 @@ pub struct PropValPair {
 
 /// A `<case>`.
 #[derive(Debug, Clone)]
-pub struct Case {
+pub(crate) struct Case {
     /// The `<test>`, if any.
     pub test: Option<Condition>,
     /// The properties set, in order.
@@ -48,7 +48,7 @@ pub struct Case {
 
 /// `FGDistributor`.
 #[derive(Debug, Clone)]
-pub struct Distributor {
+pub(crate) struct Distributor {
     /// `type="exclusive"`: only the first passing tested case sets.
     pub exclusive: bool,
     /// The cases, in order.
@@ -57,7 +57,7 @@ pub struct Distributor {
 
 /// The distributor at `at`, if the component there is one.
 #[must_use]
-pub fn at(fcs: &Fcs, at: ComponentAt) -> Option<&Distributor> {
+pub(crate) fn at(fcs: &Fcs, at: ComponentAt) -> Option<&Distributor> {
     match &fcs.channels.get(at.channel)?.components.get(at.index)?.kind {
         Kind::Distributor(d) => Some(d),
         _ => None,
@@ -84,7 +84,7 @@ impl Distributor {
     /// `completed` (a tested case has set already): `(sets, completes)`.
     /// The test is evaluated even when an exclusive distributor has
     /// completed, as JSBSim evaluates it first.
-    pub fn fires(
+    pub(crate) fn fires(
         &self,
         case: usize,
         completed: bool,
@@ -105,7 +105,7 @@ impl Distributor {
     /// The node and value of pair `pair` of case `case`
     /// (`SetPropToValue`'s reads): the value first, then the property,
     /// bound now if needed. Either failing is JSBSim's "not known" error.
-    pub fn pair(
+    pub(crate) fn pair(
         &self,
         case: usize,
         pair: usize,
@@ -169,13 +169,13 @@ impl Family for Distributor {
 /// The number of cases of the distributor at `at`; `None` when the
 /// component there is not a distributor.
 #[must_use]
-pub fn cases(fcs: &Fcs, at: ComponentAt) -> Option<usize> {
+pub(crate) fn cases(fcs: &Fcs, at: ComponentAt) -> Option<usize> {
     self::at(fcs, at).map(|d| d.cases.len())
 }
 
 /// The number of pairs of case `case` of the distributor at `at`.
 #[must_use]
-pub fn pairs(fcs: &Fcs, at: ComponentAt, case: usize) -> usize {
+pub(crate) fn pairs(fcs: &Fcs, at: ComponentAt, case: usize) -> usize {
     self::at(fcs, at)
         .and_then(|d| d.cases.get(case))
         .map_or(0, |c| c.pairs.len())

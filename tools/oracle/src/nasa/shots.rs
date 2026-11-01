@@ -246,7 +246,7 @@ fn report(label: &str, comparisons: &[Comparison]) -> (usize, usize) {
 
 /// Totals of a shots run.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
-pub struct Tally {
+pub(crate) struct Tally {
     /// Shots run, in C++ and Rust each.
     pub shots: usize,
     /// Comparisons made.
@@ -316,7 +316,7 @@ fn run_family_blocking(
 
 /// Runs every static shot of F16_aero.dml and F16_prop.dml in C++ and
 /// Rust and logs each comparison.
-pub fn check_blocking(paths: &Paths) -> Result<Tally, OracleError> {
+pub(crate) fn check_blocking(paths: &Paths) -> Result<Tally, OracleError> {
     let models = package::unpack_blocking(paths)?;
     let f16 = without_control_law(&rig::f16_text_blocking(paths)?)?;
     let root = rig::create_blocking(paths, "shots", &f16)?;

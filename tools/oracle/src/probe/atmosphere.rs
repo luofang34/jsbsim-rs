@@ -165,7 +165,7 @@ fn step(fdm: &mut Fdm, op: &str, args: &[&str]) -> Result<String, jsbsim::Error>
 }
 
 /// Executes the operations in `input`, one per line.
-pub fn run(input: &str) -> Result<String, jsbsim::Error> {
+pub(crate) fn run(input: &str) -> Result<String, jsbsim::Error> {
     let mut fdm = Fdm::new()?;
     let mut out = String::new();
     for line in input.lines() {

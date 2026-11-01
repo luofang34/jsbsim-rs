@@ -11,6 +11,7 @@ use crate::initial_condition::InitialCondition;
 
 /// `FGTrim`.
 #[derive(Debug, Clone)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Trim {
     pub(super) axes: Vec<TrimAxis>,
     pub(super) mode: TrimMode,

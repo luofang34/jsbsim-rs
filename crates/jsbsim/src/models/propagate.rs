@@ -10,8 +10,8 @@ mod integrate;
 mod orbit;
 mod snapshot;
 
-pub use bind::bind;
-pub use integrate::Integrator;
+pub(crate) use bind::bind;
+pub(crate) use integrate::Integrator;
 
 use super::base::ModelBase;
 use super::inertial::Inertial;
@@ -20,7 +20,7 @@ use crate::units::RADTODEG;
 
 /// The integrated state (`VehicleState`).
 #[derive(Debug, Clone)]
-pub struct VehicleState {
+pub(crate) struct VehicleState {
     /// ECEF position.
     pub location: Location,
     /// Body velocity relative to the ECEF frame, ft/s.
@@ -51,7 +51,7 @@ pub struct VehicleState {
 
 /// Inputs loaded by the executive (`FGPropagate::Inputs`).
 #[derive(Debug, Clone, Default)]
-pub struct Inputs {
+pub(crate) struct Inputs {
     /// Body angular acceleration relative to ECI.
     pub pqridot: ColumnVector3,
     /// ECI acceleration.
@@ -70,7 +70,7 @@ pub struct Inputs {
 
 /// Orbital elements computed after each step.
 #[derive(Debug, Clone, Copy, Default)]
-pub struct Orbit {
+pub(crate) struct Orbit {
     /// Specific angular momentum, ft^2/s.
     pub h: f64,
     /// Inclination, deg.
@@ -93,6 +93,7 @@ pub struct Orbit {
 
 /// Frame transformations.
 #[derive(Debug, Clone, Copy, Default)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Frames {
     /// ECI to ECEF.
     pub ti2ec: Matrix33,
@@ -122,13 +123,14 @@ pub struct Frames {
 
 /// `FGPropagate`.
 #[derive(Debug, Clone)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Propagate {
     /// Scheduling.
-    pub base: ModelBase,
+    pub(crate) base: ModelBase,
     /// Inputs of the current frame.
-    pub input: Inputs,
+    pub(crate) input: Inputs,
     /// The state.
-    pub state: VehicleState,
+    pub(crate) state: VehicleState,
     /// Frame transformations.
     pub frames: Frames,
     /// ECEF-to-body attitude.
@@ -146,7 +148,7 @@ pub struct Propagate {
     /// See `integrator_rotational_rate`.
     pub integrator_translational_position: i32,
     /// Orbital elements.
-    pub orbit: Orbit,
+    pub(crate) orbit: Orbit,
     /// Terrain velocity under the vehicle, ECEF.
     pub local_terrain_velocity: ColumnVector3,
     /// Terrain angular velocity under the vehicle, ECEF.
@@ -199,7 +201,7 @@ fn rotation_z(angle: f64) -> Matrix33 {
 impl Propagate {
     /// `InitModel`. The derivative histories keep their values: JSBSim
     /// only resizes them, and they are already full.
-    pub fn init_model(&mut self, inertial: &Inertial) {
+    pub(crate) fn init_model(&mut self, inertial: &Inertial) {
         self.base.init();
         self.state
             .location
@@ -214,7 +216,7 @@ impl Propagate {
 
     /// `SetInitialState`.
     #[allow(clippy::too_many_arguments)]
-    pub fn set_initial_state(
+    pub(crate) fn set_initial_state(
         &mut self,
         inertial: &Inertial,
         position: Location,
@@ -244,7 +246,7 @@ impl Propagate {
 
     /// `InitializeDerivatives`: every history slot holds the current
     /// derivative.
-    pub fn initialize_derivatives(&mut self) {
+    pub(crate) fn initialize_derivatives(&mut self) {
         self.state.dq_pqridot = [self.input.pqridot; 5];
         self.state.dq_uvwidot = [self.input.uvwidot; 5];
         self.state.dq_inertial_velocity = [self.state.inertial_velocity; 5];
@@ -252,7 +254,7 @@ impl Propagate {
     }
 
     /// `Run`.
-    pub fn run(&mut self, holding: bool, integration_suspended: bool, inertial: &Inertial) {
+    pub(crate) fn run(&mut self, holding: bool, integration_suspended: bool, inertial: &Inertial) {
         if self.base.skip() || holding {
             return;
         }
@@ -278,7 +280,7 @@ impl Propagate {
     }
 
     /// `NudgeBodyLocation`: moves the vehicle by `delta` (body frame, ft).
-    pub fn nudge_body_location(&mut self, delta: ColumnVector3) {
+    pub(crate) fn nudge_body_location(&mut self, delta: ColumnVector3) {
         self.state.inertial_position -= self.frames.tb2i * delta;
         self.state
             .location
@@ -287,7 +289,7 @@ impl Propagate {
     }
 
     /// `SetHoldDown`.
-    pub fn set_hold_down(&mut self, hd: bool) {
+    pub(crate) fn set_hold_down(&mut self, hd: bool) {
         if hd {
             self.state.uvw = ColumnVector3::zero();
             self.calculate_inertial_velocity();
@@ -346,7 +348,7 @@ impl Propagate {
     }
 
     /// `UpdateVehicleState`: derived state after the location changed.
-    pub fn update_vehicle_state(&mut self, inertial: &Inertial) {
+    pub(crate) fn update_vehicle_state(&mut self, inertial: &Inertial) {
         self.recompute_local_terrain_velocity(inertial);
         self.state.inertial_position = self.frames.tec2i * self.state.location.ecef();
         self.update_location_matrices();
@@ -355,20 +357,14 @@ impl Propagate {
         self.update_local_attitude();
     }
 
-    /// `SetLocation`.
-    pub fn set_location(&mut self, location: Location, inertial: &Inertial) {
-        self.state.location = location;
-        self.update_vehicle_state(inertial);
-    }
-
     /// `GetAltitudeASL`.
     #[must_use]
-    pub fn altitude_asl(&self) -> f64 {
+    pub(crate) fn altitude_asl(&self) -> f64 {
         self.state.location.radius() - self.state.location.sea_level_radius()
     }
 
     /// `SetAltitudeASL`.
-    pub fn set_altitude_asl(&mut self, alt: f64, inertial: &Inertial) {
+    pub(crate) fn set_altitude_asl(&mut self, alt: f64, inertial: &Inertial) {
         let slr = self.state.location.sea_level_radius();
         self.state.location.set_radius(slr + alt);
         self.update_vehicle_state(inertial);
@@ -376,31 +372,31 @@ impl Propagate {
 
     /// `GetDistanceAGL`.
     #[must_use]
-    pub fn distance_agl(&self, inertial: &Inertial) -> f64 {
+    pub(crate) fn distance_agl(&self, inertial: &Inertial) -> f64 {
         inertial.altitude_agl(&self.state.location)
     }
 
     /// `SetDistanceAGL`.
-    pub fn set_distance_agl(&mut self, agl: f64, inertial: &Inertial) {
+    pub(crate) fn set_distance_agl(&mut self, agl: f64, inertial: &Inertial) {
         inertial.set_altitude_agl(&mut self.state.location, agl);
         self.update_vehicle_state(inertial);
     }
 
     /// `GetTerrainElevation`.
     #[must_use]
-    pub fn terrain_elevation(&self, inertial: &Inertial) -> f64 {
+    pub(crate) fn terrain_elevation(&self, inertial: &Inertial) -> f64 {
         inertial.contact(&self.state.location).point.geod_altitude()
     }
 
     /// `GetLocalTerrainRadius`.
     #[must_use]
-    pub fn local_terrain_radius(&self, inertial: &Inertial) -> f64 {
+    pub(crate) fn local_terrain_radius(&self, inertial: &Inertial) -> f64 {
         inertial.contact(&self.state.location).point.radius()
     }
 
     /// `GetRadius`: 1 at the planet centre.
     #[must_use]
-    pub fn radius(&self) -> f64 {
+    pub(crate) fn radius(&self) -> f64 {
         match self.state.location.radius() {
             0.0 => 1.0,
             r => r,
@@ -409,66 +405,31 @@ impl Propagate {
 
     /// `GetECEFVelocity`.
     #[must_use]
-    pub fn ecef_velocity(&self) -> ColumnVector3 {
+    pub(crate) fn ecef_velocity(&self) -> ColumnVector3 {
         self.frames.tb2ec * self.state.uvw
     }
 
     /// `GetEulerDeg(axis)`.
     #[must_use]
-    pub fn euler_deg(&self, axis: Axis) -> f64 {
+    pub(crate) fn euler_deg(&self, axis: Axis) -> f64 {
         self.state.q_attitude_local.euler()[axis] * RADTODEG
     }
 
     /// `Gethdot`.
     #[must_use]
-    pub fn hdot(&self) -> f64 {
+    pub(crate) fn hdot(&self) -> f64 {
         -self.vel[E_DOWN]
     }
 
     /// `SetLongitude`.
-    pub fn set_longitude(&mut self, lon: f64, inertial: &Inertial) {
+    pub(crate) fn set_longitude(&mut self, lon: f64, inertial: &Inertial) {
         self.state.location.set_longitude(lon);
         self.update_vehicle_state(inertial);
     }
 
     /// `SetLatitude`.
-    pub fn set_latitude(&mut self, lat: f64, inertial: &Inertial) {
+    pub(crate) fn set_latitude(&mut self, lat: f64, inertial: &Inertial) {
         self.state.location.set_latitude(lat);
         self.update_vehicle_state(inertial);
-    }
-
-    /// `SetInertialOrientation`.
-    pub fn set_inertial_orientation(&mut self, qi: Quaternion) {
-        self.state.q_attitude_eci = qi;
-        self.state.q_attitude_eci.normalize();
-        self.update_body_matrices();
-        self.update_local_attitude();
-        self.calculate_quatdot();
-    }
-
-    /// `SetInertialVelocity`.
-    pub fn set_inertial_velocity(&mut self, vi: ColumnVector3) {
-        self.state.inertial_velocity = vi;
-        self.calculate_uvw();
-        self.vel = self.frames.tb2l * self.state.uvw;
-    }
-
-    /// `SetInertialRates`.
-    pub fn set_inertial_rates(&mut self, rates: ColumnVector3) {
-        self.state.pqri = self.frames.ti2b * rates;
-        self.state.pqr = self.state.pqri - self.frames.ti2b * self.input.omega_planet;
-        self.calculate_quatdot();
-    }
-
-    /// `SetPQR(i, v)`.
-    pub fn set_pqr(&mut self, i: Axis, v: f64) {
-        self.state.pqr[i] = v;
-        self.state.pqri = self.state.pqr + self.frames.ti2b * self.input.omega_planet;
-    }
-
-    /// `SetUVW(i, v)`.
-    pub fn set_uvw(&mut self, i: Axis, v: f64) {
-        self.state.uvw[i] = v;
-        self.calculate_inertial_velocity();
     }
 }

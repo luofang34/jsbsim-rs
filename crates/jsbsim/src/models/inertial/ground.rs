@@ -111,7 +111,7 @@ pub trait GroundCallback: Send {
 /// `FGDefaultGroundCallback`: terrain at a uniform height above the
 /// ellipsoid, at rest.
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct DefaultGroundCallback {
+pub(crate) struct DefaultGroundCallback {
     a: f64,
     b: f64,
     terrain_elevation: f64,
@@ -121,7 +121,7 @@ impl DefaultGroundCallback {
     /// `FGDefaultGroundCallback(semiMajor, semiMinor)`, terrain at sea
     /// level.
     #[must_use]
-    pub fn new(semimajor: f64, semiminor: f64) -> Self {
+    pub(crate) fn new(semimajor: f64, semiminor: f64) -> Self {
         Self {
             a: semimajor,
             b: semiminor,

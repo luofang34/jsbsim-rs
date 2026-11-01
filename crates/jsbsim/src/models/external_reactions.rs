@@ -17,7 +17,7 @@ use crate::xml::Element;
 
 /// `FGForce::TransformType` of an external force.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Frame {
+pub(crate) enum Frame {
     /// Body axes (`tNone`).
     Body,
     /// Local NED axes.
@@ -30,7 +30,7 @@ pub enum Frame {
 
 /// Where the magnitude comes from.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Magnitude {
+pub(crate) enum Magnitude {
     /// A `<function>`.
     Function(FnId),
     /// The `.../magnitude` property.
@@ -39,13 +39,11 @@ pub enum Magnitude {
 
 /// One `<force>` or `<moment>` (`FGExternalForce`).
 #[derive(Debug, Clone)]
-pub struct ExternalForce {
-    /// Name.
-    pub name: String,
+pub(crate) struct ExternalForce {
     /// True for a `<moment>`.
     pub is_moment: bool,
     /// Frame of the direction.
-    pub frame: Frame,
+    pub(crate) frame: Frame,
     /// Magnitude source.
     pub magnitude: Magnitude,
     /// Direction nodes (`x y z` or `l m n`).
@@ -62,7 +60,7 @@ pub struct ExternalForce {
 
 /// What a force needs from the rest of the simulation.
 #[derive(Debug, Clone, Copy)]
-pub struct Transforms {
+pub(crate) struct Transforms {
     /// Wind to body.
     pub tw2b: Matrix33,
     /// Local to body.
@@ -83,7 +81,7 @@ impl ExternalForce {
 
     /// `GetBodyForces`: from the magnitude and direction just read;
     /// `to_body` is `MassBalance::StructuralToBody`.
-    pub fn update(
+    pub(crate) fn update(
         &mut self,
         magnitude: f64,
         direction: ColumnVector3,
@@ -104,11 +102,12 @@ impl ExternalForce {
 
 /// `FGExternalReactions`.
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct ExternalReactions {
     /// Scheduling.
-    pub base: ModelBase,
+    pub(crate) base: ModelBase,
     /// Forces and moments in load order.
-    pub forces: Vec<ExternalForce>,
+    pub(crate) forces: Vec<ExternalForce>,
     /// Total force, body frame.
     pub total_forces: ColumnVector3,
     /// Total moment about the CG.
@@ -174,14 +173,14 @@ impl ExternalReactions {
     }
 
     /// `InitModel`.
-    pub fn init_model(&mut self) {
+    pub(crate) fn init_model(&mut self) {
         self.base.init();
         self.total_forces = ColumnVector3::zero();
         self.total_moments = ColumnVector3::zero();
     }
 
     /// `Load`: every `<force>`, then every `<moment>`.
-    pub fn load(&mut self, el: &Element, ctx: &mut LoadContext<'_>) -> Result<(), Error> {
+    pub(crate) fn load(&mut self, el: &Element, ctx: &mut LoadContext<'_>) -> Result<(), Error> {
         for force in el.find_elements("force") {
             self.load_one(force, false, ctx)?;
         }
@@ -240,7 +239,6 @@ impl ExternalReactions {
             }
         };
         let mut force = ExternalForce {
-            name,
             is_moment,
             frame,
             magnitude,
@@ -259,7 +257,7 @@ impl ExternalReactions {
 }
 
 /// `FGExternalReactions::bind`.
-pub fn bind(b: &mut crate::models::Binder<'_>) -> Result<(), Error> {
+pub(crate) fn bind(b: &mut crate::models::Binder<'_>) -> Result<(), Error> {
     for (name, i) in [("l", E_L), ("m", E_M), ("n", E_N)] {
         b.getter(&format!("moments/{name}-external-lbsft"), move |m| {
             m.external_reactions.total_moments[i]
@@ -275,6 +273,6 @@ pub fn bind(b: &mut crate::models::Binder<'_>) -> Result<(), Error> {
 
 crate::snapshot::visit_fields! {
     ExternalForce { location, acting_location, body_force, moment }
-    skip { name, is_moment, frame, magnitude, direction }
+    skip { is_moment, frame, magnitude, direction }
 }
 crate::snapshot::visit_fields! { ExternalReactions { base, forces, total_forces, total_moments } }

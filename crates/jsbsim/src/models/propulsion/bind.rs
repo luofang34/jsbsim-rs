@@ -16,7 +16,7 @@ fn flag(b: bool) -> f64 {
 }
 
 /// `FGPropulsion::bind`, given the engines' types.
-pub fn bind(b: &mut Binder<'_>, types: &[EngineType]) -> Result<(), Error> {
+pub(crate) fn bind(b: &mut Binder<'_>, types: &[EngineType]) -> Result<(), Error> {
     let piston = types.contains(&EngineType::Piston);
     let turbo = types
         .iter()
@@ -98,7 +98,7 @@ fn engine(m: &Models, n: usize) -> Option<&super::Engine> {
 }
 
 /// The ties of `FGEngine::Load` for engine `n`.
-pub fn bind_engine(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
+pub(crate) fn bind_engine(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
     let base = format!("propulsion/engine[{n}]");
     b.property(
         &format!("{base}/set-running"),

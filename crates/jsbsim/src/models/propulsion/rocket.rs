@@ -33,6 +33,7 @@ use crate::xml::Element;
 
 /// `FGRocket`'s members beyond `FGEngine`'s.
 #[derive(Debug, Clone)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Rocket {
     /// Engine number, for its inputs.
     pub number: usize,
@@ -191,7 +192,7 @@ impl Rocket {
 /// What a rocket's `Calculate` reads: the isp function's value and its
 /// nozzle's reads.
 #[derive(Debug)]
-pub struct RocketSample {
+pub(crate) struct RocketSample {
     /// The isp function's value, when the rocket has one.
     pub isp: Option<f64>,
     /// The thruster's reads.

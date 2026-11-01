@@ -12,7 +12,7 @@ use crate::models::ModelFunctions;
 
 /// `FGEngine::EngineType`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum EngineType {
+pub(crate) enum EngineType {
     /// `etUnknown`.
     Unknown,
     /// `etRocket`: burns oxidizer too.
@@ -29,7 +29,7 @@ pub enum EngineType {
 
 /// `FGEngine`'s members.
 #[derive(Debug, Clone)]
-pub struct EngineBase {
+pub(crate) struct EngineBase {
     /// `name` attribute of the engine type's element.
     pub name: String,
     /// Index among the propulsion's engines.
@@ -76,7 +76,7 @@ pub struct EngineBase {
 impl EngineBase {
     /// `FGEngine(engine_number, input)`.
     #[must_use]
-    pub fn new(number: usize, engine_type: EngineType) -> Self {
+    pub(crate) fn new(number: usize, engine_type: EngineType) -> Self {
         Self {
             name: String::new(),
             number,
@@ -102,7 +102,7 @@ impl EngineBase {
     }
 
     /// `FGEngine::ResetToIC` but for the thruster's.
-    pub fn reset_to_ic(&mut self) {
+    pub(crate) fn reset_to_ic(&mut self) {
         self.starter = false;
         self.fuel_expended = 0.0;
         self.starved = false;
@@ -118,7 +118,7 @@ impl EngineBase {
 
     /// `FGEngine::CalcFuelNeed`: the fuel burnt over the step at the
     /// current power.
-    pub fn calc_fuel_need(&mut self, input: &Inputs) -> f64 {
+    pub(crate) fn calc_fuel_need(&mut self, input: &Inputs) -> f64 {
         self.fuel_flow_rate = self.sl_fuel_flow_max * self.pct_power;
         self.fuel_expended = self.fuel_flow_rate * input.total_delta_t;
         if !self.starved {
@@ -129,7 +129,7 @@ impl EngineBase {
 
     /// `GetFuelFlowRateGPH`.
     #[must_use]
-    pub fn fuel_flow_rate_gph(&self) -> f64 {
+    pub(crate) fn fuel_flow_rate_gph(&self) -> f64 {
         self.fuel_flow_rate * 3600.0 / self.fuel_density
     }
 }
@@ -137,9 +137,10 @@ impl EngineBase {
 /// An engine: what every engine has, its thruster, and its type's own
 /// state.
 #[derive(Debug, Clone)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Engine {
     /// What every engine has.
-    pub base: EngineBase,
+    pub(crate) base: EngineBase,
     /// Its thruster.
     pub thruster: Thruster,
     /// The engine type and its state.

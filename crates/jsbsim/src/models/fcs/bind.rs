@@ -53,7 +53,7 @@ fn surface(
 }
 
 /// `FGFCS::bind`.
-pub fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
+pub(crate) fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
     commands(b)?;
     surface(b, "left-aileron", |m| &m.fcs.dal, |m| &mut m.fcs.dal, true)?;
     surface(b, "right-aileron", |m| &m.fcs.dar, |m| &mut m.fcs.dar, true)?;

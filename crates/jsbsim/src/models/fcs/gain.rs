@@ -13,7 +13,7 @@ use crate::xml::Element;
 
 /// `<aerosurface_scale>`'s mapping of the domain onto the range.
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Scale {
+pub(crate) struct Scale {
     /// `<domain><min>`, -1 by default.
     pub in_min: f64,
     /// `<domain><max>`, 1 by default.
@@ -29,7 +29,7 @@ pub struct Scale {
 
 /// Which gain.
 #[derive(Debug, Clone, PartialEq)]
-pub enum GainType {
+pub(crate) enum GainType {
     /// `<pure_gain>`.
     Pure,
     /// `<scheduled_gain>` and its table.
@@ -40,7 +40,7 @@ pub enum GainType {
 
 /// `FGGain`.
 #[derive(Debug, Clone)]
-pub struct Gain {
+pub(crate) struct Gain {
     /// `<gain>`, 1 by default.
     pub gain: Parameter,
     /// Which gain.
@@ -49,7 +49,7 @@ pub struct Gain {
 
 /// What one run reads.
 #[derive(Debug, Clone, Copy)]
-pub struct Sample {
+pub(crate) struct Sample {
     input: f64,
     gain: f64,
     scheduled: f64,

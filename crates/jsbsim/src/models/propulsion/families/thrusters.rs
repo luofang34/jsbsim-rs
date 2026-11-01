@@ -14,7 +14,7 @@ use crate::xml::Element;
 
 /// What a thruster type's constructor reads from the executive besides
 /// its elements.
-pub struct ThrusterSite<'a> {
+pub(crate) struct ThrusterSite<'a> {
     /// The executive's step when the thruster loads (`GetDeltaT()`), s.
     pub dt: f64,
     /// The engines loaded before this thruster's.
@@ -22,7 +22,7 @@ pub struct ThrusterSite<'a> {
 }
 
 /// One thruster type (`FGThruster` or a subclass).
-pub trait ThrusterFamily: Sized {
+pub(crate) trait ThrusterFamily: Sized {
     /// What one thrust calculation reads from the property tree.
     type Sample;
 
@@ -67,9 +67,6 @@ pub trait ThrusterFamily: Sized {
     /// `SetRPM`.
     fn set_rpm(&mut self, _rpm: f64) {}
 
-    /// `SetEngineRPM`.
-    fn set_engine_rpm(&mut self, _base: &ThrusterBase, _rpm: f64) {}
-
     /// `FGPropeller::SetAdvance`, which engines call on a propeller only.
     fn set_advance(&mut self, _advance: f64) {}
 
@@ -101,23 +98,24 @@ macro_rules! thrusters {
         // variants would only add an indirection.
         #[allow(clippy::large_enum_variant)]
         #[derive(Debug, Clone)]
-        pub enum ThrusterKind {
+        pub(crate) enum ThrusterKind {
             $($(#[$cfg])* #[doc = concat!("`<", $element, ">`.")] $variant($ty),)*
         }
 
         /// What a thruster's [`ThrusterFamily::sample`] read.
         #[derive(Debug)]
-        pub enum ThrusterSample {
+        pub(crate) enum ThrusterSample {
             $($(#[$cfg])* #[doc = concat!("`<", $element, ">`.")]
             $variant(<$ty as ThrusterFamily>::Sample),)*
         }
 
         /// The elements thruster types register, in registration order.
+        #[cfg_attr(not(feature = "__oracle"), allow(dead_code, unreachable_pub))]
         pub const REGISTERED_THRUSTERS: &[&str] = &[$($(#[$cfg])* $element,)*];
 
         /// Whether a thruster type registers element `name`.
         #[must_use]
-        pub fn thruster_registered(name: &str) -> bool {
+        pub(crate) fn thruster_registered(name: &str) -> bool {
             match name {
                 $($(#[$cfg])* $element => true,)*
                 _ => false,
@@ -164,7 +162,7 @@ macro_rules! thrusters {
         #[allow(unused_variables)]
         impl Thruster {
             /// The reads of the thruster's `Calculate`.
-            pub fn sample(
+            pub(crate) fn sample(
                 &self,
                 models: &Models,
                 ev: &mut ModelEvaluator<'_>,
@@ -178,7 +176,7 @@ macro_rules! thrusters {
 
             /// `Calculate(power)` on what [`Thruster::sample`] read: the
             /// thrust, lbs.
-            pub fn calculate(&mut self, power: f64, sample: &ThrusterSample) -> f64 {
+            pub(crate) fn calculate(&mut self, power: f64, sample: &ThrusterSample) -> f64 {
                 match (&mut self.kind, sample) {
                     $($(#[$cfg])* (ThrusterKind::$variant(f), ThrusterSample::$variant(s)) => {
                         f.calculate(&mut self.base, power, s)
@@ -189,7 +187,7 @@ macro_rules! thrusters {
             }
 
             /// `ResetToIC`.
-            pub fn reset_to_ic(&mut self) {
+            pub(crate) fn reset_to_ic(&mut self) {
                 match self.kind {
                     $($(#[$cfg])* ThrusterKind::$variant(ref mut f) => f.reset_to_ic(&mut self.base),)*
                 }
@@ -197,6 +195,7 @@ macro_rules! thrusters {
 
             /// The element its type registers.
             #[must_use]
+            #[cfg_attr(not(feature = "__oracle"), allow(dead_code, unreachable_pub))]
             pub fn element(&self) -> &'static str {
                 match self.kind {
                     $($(#[$cfg])* ThrusterKind::$variant(_) => $element,)*
@@ -205,7 +204,7 @@ macro_rules! thrusters {
 
             /// `GetRPM`.
             #[must_use]
-            pub fn rpm(&self) -> f64 {
+            pub(crate) fn rpm(&self) -> f64 {
                 match self.kind {
                     $($(#[$cfg])* ThrusterKind::$variant(ref f) => f.rpm(),)*
                 }
@@ -213,35 +212,28 @@ macro_rules! thrusters {
 
             /// `GetEngineRPM`.
             #[must_use]
-            pub fn engine_rpm(&self) -> f64 {
+            pub(crate) fn engine_rpm(&self) -> f64 {
                 match self.kind {
                     $($(#[$cfg])* ThrusterKind::$variant(ref f) => f.engine_rpm(&self.base),)*
                 }
             }
 
             /// `SetRPM`.
-            pub fn set_rpm(&mut self, rpm: f64) {
+            pub(crate) fn set_rpm(&mut self, rpm: f64) {
                 match self.kind {
                     $($(#[$cfg])* ThrusterKind::$variant(ref mut f) => f.set_rpm(rpm),)*
                 }
             }
 
-            /// `SetEngineRPM`.
-            pub fn set_engine_rpm(&mut self, rpm: f64) {
-                match self.kind {
-                    $($(#[$cfg])* ThrusterKind::$variant(ref mut f) => f.set_engine_rpm(&self.base, rpm),)*
-                }
-            }
-
             /// `SetAdvance` of a propeller.
-            pub fn set_advance(&mut self, advance: f64) {
+            pub(crate) fn set_advance(&mut self, advance: f64) {
                 match self.kind {
                     $($(#[$cfg])* ThrusterKind::$variant(ref mut f) => f.set_advance(advance),)*
                 }
             }
 
             /// `SetFeather` of a propeller.
-            pub fn set_feather(&mut self, feather: bool) {
+            pub(crate) fn set_feather(&mut self, feather: bool) {
                 match self.kind {
                     $($(#[$cfg])* ThrusterKind::$variant(ref mut f) => f.set_feather(feather),)*
                 }
@@ -249,21 +241,21 @@ macro_rules! thrusters {
 
             /// Whether it is a propeller.
             #[must_use]
-            pub fn is_propeller(&self) -> bool {
+            pub(crate) fn is_propeller(&self) -> bool {
                 match self.kind {
                     $($(#[$cfg])* ThrusterKind::$variant(ref f) => f.is_propeller(),)*
                 }
             }
 
             /// `SetReverse` of a propeller.
-            pub fn set_reverse(&mut self, reversed: bool) {
+            pub(crate) fn set_reverse(&mut self, reversed: bool) {
                 match self.kind {
                     $($(#[$cfg])* ThrusterKind::$variant(ref mut f) => f.set_reverse(reversed),)*
                 }
             }
 
             /// `SetReverseCoef` of a propeller.
-            pub fn set_reverse_coef(&mut self, coef: f64) {
+            pub(crate) fn set_reverse_coef(&mut self, coef: f64) {
                 match self.kind {
                     $($(#[$cfg])* ThrusterKind::$variant(ref mut f) => f.set_reverse_coef(coef),)*
                 }
@@ -271,7 +263,7 @@ macro_rules! thrusters {
 
             /// `GetTorque` of a propeller.
             #[must_use]
-            pub fn torque(&self) -> f64 {
+            pub(crate) fn torque(&self) -> f64 {
                 match self.kind {
                     $($(#[$cfg])* ThrusterKind::$variant(ref f) => f.torque(),)*
                 }

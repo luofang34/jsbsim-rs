@@ -10,7 +10,7 @@ use crate::units::SLUGTOLB;
 /// `PointMass::esShape`. A cylinder and a ball are solid, a tube and a
 /// sphere hollow.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub enum Shape {
+pub(crate) enum Shape {
     /// No `<form>`: the inertia is read from the point mass element, or
     /// a `<form>` whose shape JSBSim does not know, which has none.
     #[default]
@@ -27,7 +27,7 @@ pub enum Shape {
 
 /// `FGMassBalance::PointMass`.
 #[derive(Debug, Clone, Default)]
-pub struct PointMass {
+pub(crate) struct PointMass {
     /// Shape, which decides the inertia `calculate_shape_inertia` gives.
     pub shape: Shape,
     /// Location, structural frame, in.
@@ -47,7 +47,7 @@ pub struct PointMass {
 impl PointMass {
     /// `PointMass(w, vXYZ)`.
     #[must_use]
-    pub fn new(weight: f64, location: ColumnVector3) -> Self {
+    pub(crate) fn new(weight: f64, location: ColumnVector3) -> Self {
         Self {
             location,
             weight,
@@ -57,7 +57,7 @@ impl PointMass {
 
     /// `CalculateShapeInertia`: only the diagonal of a shaped point mass
     /// is set; an unspecified shape keeps its inertia.
-    pub fn calculate_shape_inertia(&mut self) {
+    pub(crate) fn calculate_shape_inertia(&mut self) {
         let (w, r, l) = (self.weight, self.radius, self.length);
         let m = &mut self.inertia;
         match self.shape {
@@ -86,13 +86,13 @@ impl PointMass {
     }
 
     /// `SetPointMassWeight`: the shape inertia follows the weight.
-    pub fn set_weight(&mut self, weight: f64) {
+    pub(crate) fn set_weight(&mut self, weight: f64) {
         self.weight = weight;
         self.calculate_shape_inertia();
     }
 
     /// `SetPointMassLocation(axis, value)`.
-    pub fn set_location(&mut self, axis: Axis, value: f64) {
+    pub(crate) fn set_location(&mut self, axis: Axis, value: f64) {
         self.location[axis] = value;
     }
 }

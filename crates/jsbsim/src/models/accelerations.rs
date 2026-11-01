@@ -20,7 +20,7 @@ mod tests;
 
 /// A ground friction constraint (`LagrangeMultiplier`).
 #[derive(Debug, Clone, Copy, Default)]
-pub struct LagrangeMultiplier {
+pub(crate) struct LagrangeMultiplier {
     /// Direction of the constraint force, body frame.
     pub force_jacobian: ColumnVector3,
     /// Lever arm from the CG, body frame.
@@ -35,7 +35,7 @@ pub struct LagrangeMultiplier {
 
 /// Inputs loaded by the executive (`FGAccelerations::Inputs`).
 #[derive(Debug, Clone, Default)]
-pub struct Inputs {
+pub(crate) struct Inputs {
     /// Inertia tensor.
     pub j: Matrix33,
     /// Its inverse.
@@ -83,11 +83,12 @@ pub struct Inputs {
 
 /// `FGAccelerations`.
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Accelerations {
     /// Scheduling.
-    pub base: ModelBase,
+    pub(crate) base: ModelBase,
     /// Inputs of the current frame.
-    pub input: Inputs,
+    pub(crate) input: Inputs,
     /// `simulation/gravitational-torque`.
     pub grav_torque: bool,
     /// Body angular acceleration relative to ECEF.
@@ -111,7 +112,7 @@ pub struct Accelerations {
 
 impl Accelerations {
     /// `InitModel`.
-    pub fn init_model(&mut self) {
+    pub(crate) fn init_model(&mut self) {
         self.base.init();
         self.pqridot = ColumnVector3::zero();
         self.uvwidot = ColumnVector3::zero();
@@ -120,7 +121,7 @@ impl Accelerations {
     }
 
     /// `Run`.
-    pub fn run(&mut self, holding: bool, hold_down: bool, trim_status: bool) {
+    pub(crate) fn run(&mut self, holding: bool, hold_down: bool, trim_status: bool) {
         if self.base.skip() || holding {
             return;
         }
@@ -133,17 +134,10 @@ impl Accelerations {
 
     /// Room for `most` friction constraints, so that frames reaching that
     /// many allocate nothing.
-    pub fn reserve_multipliers(&mut self, most: usize) {
+    pub(crate) fn reserve_multipliers(&mut self, most: usize) {
         self.input.multipliers.reserve(most);
         self.scratch.0.reserve(most * most);
         self.scratch.1.reserve(most);
-    }
-
-    /// `InitializeDerivatives`.
-    pub fn initialize_derivatives(&mut self, hold_down: bool, trim_status: bool) {
-        self.calculate_pqrdot(hold_down);
-        self.calculate_uvwdot(hold_down, trim_status);
-        self.calculate_friction_forces(0.);
     }
 
     fn calculate_pqrdot(&mut self, hold_down: bool) {
@@ -187,7 +181,7 @@ impl Accelerations {
     }
 
     /// `SetHoldDown`.
-    pub fn set_hold_down(&mut self, hd: bool) {
+    pub(crate) fn set_hold_down(&mut self, hd: bool) {
         if hd {
             let i = &self.input;
             self.uvwidot = i
@@ -269,7 +263,7 @@ impl Accelerations {
 
     /// `GetWeight(idx)`.
     #[must_use]
-    pub fn weight(&self, idx: Axis) -> f64 {
+    pub(crate) fn weight(&self, idx: Axis) -> f64 {
         self.input.mass * (self.input.tec2b * self.input.grav_accel)[idx]
     }
 }
@@ -300,7 +294,7 @@ fn friction_matrix(i: &Inputs, n: usize, a: &mut Vec<f64>) {
 }
 
 /// `FGAccelerations::bind`.
-pub fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
+pub(crate) fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
     for (name, i) in [("p", E_P), ("q", E_Q), ("r", E_R)] {
         b.getter(&format!("accelerations/{name}dot-rad_sec2"), move |m| {
             m.accelerations.pqrdot[i]

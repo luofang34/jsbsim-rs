@@ -21,7 +21,7 @@ impl InitialCondition {
     /// `SetClimbRateFpsIC`: the vertical airspeed becomes `hdot`, the
     /// horizontal airspeed scales to keep its magnitude. Refused (and
     /// logged) when `hdot` exceeds the airspeed.
-    pub fn set_climb_rate_fps(&mut self, hdot: f64) {
+    pub(crate) fn set_climb_rate_fps(&mut self, hdot: f64) {
         if hdot.abs() > self.vt {
             tracing::error!("The climb rate cannot be higher than the true speed.");
             return;
@@ -41,28 +41,28 @@ impl InitialCondition {
     }
 
     /// `SetClimbRateFpmIC`.
-    pub fn set_climb_rate_fpm(&mut self, roc: f64) {
+    pub(crate) fn set_climb_rate_fpm(&mut self, roc: f64) {
         self.set_climb_rate_fps(roc / 60.0);
     }
 
     /// `SetFlightPathAngleRadIC`.
-    pub fn set_flight_path_angle_rad(&mut self, gamma: f64) {
+    pub(crate) fn set_flight_path_angle_rad(&mut self, gamma: f64) {
         self.set_climb_rate_fps(self.vt * libm::sin(gamma));
     }
 
     /// `SetFlightPathAngleDegIC`.
-    pub fn set_flight_path_angle_deg(&mut self, gamma: f64) {
+    pub(crate) fn set_flight_path_angle_deg(&mut self, gamma: f64) {
         self.set_climb_rate_fps(self.vt * libm::sin(gamma * DEGTORAD));
     }
 
     /// `SetAlphaRadIC`.
-    pub fn set_alpha_rad(&mut self, alpha: f64) {
+    pub(crate) fn set_alpha_rad(&mut self, alpha: f64) {
         let vt_ned = self.vt_ned();
         self.calc_theta_beta(alpha, vt_ned);
     }
 
     /// `SetAlphaDegIC`.
-    pub fn set_alpha_deg(&mut self, alpha: f64) {
+    pub(crate) fn set_alpha_deg(&mut self, alpha: f64) {
         self.set_alpha_rad(alpha * DEGTORAD);
     }
 
@@ -118,7 +118,7 @@ impl InitialCondition {
 
     /// `SetBetaRadIC`: keeps the airspeed vector and alpha, so psi and
     /// theta change (psi especially with cross wind).
-    pub fn set_beta_rad(&mut self, bta: f64) {
+    pub(crate) fn set_beta_rad(&mut self, bta: f64) {
         let vt_ned = self.vt_ned();
         let mut orient = self.orientation.euler();
         self.beta = bta;
@@ -159,14 +159,14 @@ impl InitialCondition {
     }
 
     /// `SetBetaDegIC`.
-    pub fn set_beta_deg(&mut self, beta: f64) {
+    pub(crate) fn set_beta_deg(&mut self, beta: f64) {
         self.set_beta_rad(beta * DEGTORAD);
     }
 
     /// `SetEulerAngleRadIC(idx, angle)` (`E_PHI`, `E_THT` or `E_PSI`). The
     /// body velocity is kept unless the local or ground velocity was set
     /// last, in which case those are kept.
-    pub fn set_euler_angle_rad(&mut self, idx: Axis, angle: f64) {
+    pub(crate) fn set_euler_angle_rad(&mut self, idx: Axis, angle: f64) {
         let mut vt_ned = self.vt_ned();
         let wind_ned = vt_ned - self.uvw_ned;
         let uvw_body = self.orientation.t() * self.uvw_ned;
@@ -182,7 +182,7 @@ impl InitialCondition {
     }
 
     /// `SetPhiRadIC`, `SetThetaRadIC`, `SetPsiRadIC` in degrees.
-    pub fn set_euler_angle_deg(&mut self, idx: Axis, angle: f64) {
+    pub(crate) fn set_euler_angle_deg(&mut self, idx: Axis, angle: f64) {
         self.set_euler_angle_rad(idx, angle * DEGTORAD);
     }
 }

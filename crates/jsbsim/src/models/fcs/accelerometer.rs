@@ -16,7 +16,7 @@ use crate::xml::Element;
 
 /// `FGAccelerometer`.
 #[derive(Debug, Clone)]
-pub struct Accelerometer {
+pub(crate) struct Accelerometer {
     /// The degradation.
     pub signal: Signal,
     /// Axis and frame.

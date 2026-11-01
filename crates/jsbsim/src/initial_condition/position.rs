@@ -57,7 +57,7 @@ impl InitialCondition {
     /// `SetAltitudeAGLFtIC`. With a geocentric latitude the geodetic
     /// latitude and altitude are iterated so that the geocentric latitude
     /// is kept.
-    pub fn set_altitude_agl_ft(&mut self, env: Environment<'_>, agl: f64) {
+    pub(crate) fn set_altitude_agl_ft(&mut self, env: Environment<'_>, agl: f64) {
         let held = self.held_speed(env);
         match self.last_latitude_set {
             LatitudeSet::Geodetic => env.inertial.set_altitude_agl(&mut self.position, agl),
@@ -98,7 +98,7 @@ impl InitialCondition {
     /// The speed set last is restored at the atmosphere of the geodetic
     /// altitude, which is what JSBSim does, not at the altitude above sea
     /// level.
-    pub fn set_altitude_asl_ft(&mut self, env: Environment<'_>, alt: f64) {
+    pub(crate) fn set_altitude_asl_ft(&mut self, env: Environment<'_>, alt: f64) {
         let held = self.held_speed(env);
         match self.last_latitude_set {
             LatitudeSet::Geodetic => {
@@ -119,7 +119,7 @@ impl InitialCondition {
     }
 
     /// `SetTerrainElevationFtIC`: a height above ground set last is kept.
-    pub fn set_terrain_elevation_ft(
+    pub(crate) fn set_terrain_elevation_ft(
         &mut self,
         atmosphere: &crate::models::atmosphere::Atmosphere,
         inertial: &mut Inertial,
@@ -137,7 +137,7 @@ impl InitialCondition {
     }
 
     /// `SetGeodLatitudeRadIC`: the altitude kind set last is kept.
-    pub fn set_geod_latitude_rad(&mut self, env: Environment<'_>, geod_latitude: f64) {
+    pub(crate) fn set_geod_latitude_rad(&mut self, env: Environment<'_>, geod_latitude: f64) {
         let lon = self.position.longitude();
         self.last_latitude_set = LatitudeSet::Geodetic;
         match self.last_altitude_set {
@@ -155,12 +155,12 @@ impl InitialCondition {
     }
 
     /// `SetGeodLatitudeDegIC`.
-    pub fn set_geod_latitude_deg(&mut self, env: Environment<'_>, glat: f64) {
+    pub(crate) fn set_geod_latitude_deg(&mut self, env: Environment<'_>, glat: f64) {
         self.set_geod_latitude_rad(env, glat * DEGTORAD);
     }
 
     /// `SetLatitudeRadIC`: geocentric; the altitude kind set last is kept.
-    pub fn set_latitude_rad(&mut self, env: Environment<'_>, lat: f64) {
+    pub(crate) fn set_latitude_rad(&mut self, env: Environment<'_>, lat: f64) {
         self.last_latitude_set = LatitudeSet::Geocentric;
         match self.last_altitude_set {
             AltitudeSet::Agl => {
@@ -177,12 +177,12 @@ impl InitialCondition {
     }
 
     /// `SetLatitudeDegIC`.
-    pub fn set_latitude_deg(&mut self, env: Environment<'_>, lat: f64) {
+    pub(crate) fn set_latitude_deg(&mut self, env: Environment<'_>, lat: f64) {
         self.set_latitude_rad(env, lat * DEGTORAD);
     }
 
     /// `SetLongitudeRadIC`: a height above ground set last is kept.
-    pub fn set_longitude_rad(&mut self, env: Environment<'_>, lon: f64) {
+    pub(crate) fn set_longitude_rad(&mut self, env: Environment<'_>, lon: f64) {
         match self.last_altitude_set {
             AltitudeSet::Agl => {
                 let altitude = self.altitude_agl_ft(env);
@@ -194,61 +194,61 @@ impl InitialCondition {
     }
 
     /// `SetLongitudeDegIC`.
-    pub fn set_longitude_deg(&mut self, env: Environment<'_>, lon: f64) {
+    pub(crate) fn set_longitude_deg(&mut self, env: Environment<'_>, lon: f64) {
         self.set_longitude_rad(env, lon * DEGTORAD);
     }
 
     /// `GetAltitudeASLFtIC`: radius above the sea level radius.
     #[must_use]
-    pub fn altitude_asl_ft(&self) -> f64 {
+    pub(crate) fn altitude_asl_ft(&self) -> f64 {
         self.position.radius() - self.position.sea_level_radius()
     }
 
     /// `GetAltitudeAGLFtIC`.
     #[must_use]
-    pub fn altitude_agl_ft(&self, env: Environment<'_>) -> f64 {
+    pub(crate) fn altitude_agl_ft(&self, env: Environment<'_>) -> f64 {
         env.inertial.altitude_agl(&self.position)
     }
 
     /// `GetTerrainElevationFtIC`: geodetic altitude of the terrain below.
     #[must_use]
-    pub fn terrain_elevation_ft(&self, env: Environment<'_>) -> f64 {
+    pub(crate) fn terrain_elevation_ft(&self, env: Environment<'_>) -> f64 {
         env.inertial.contact(&self.position).point.geod_altitude()
     }
 
     /// `GetLatitudeRadIC`: geocentric.
     #[must_use]
-    pub fn latitude_rad(&self) -> f64 {
+    pub(crate) fn latitude_rad(&self) -> f64 {
         self.position.latitude()
     }
 
     /// `GetLatitudeDegIC`.
     #[must_use]
-    pub fn latitude_deg(&self) -> f64 {
+    pub(crate) fn latitude_deg(&self) -> f64 {
         self.position.latitude_deg()
     }
 
     /// `GetGeodLatitudeRadIC`.
     #[must_use]
-    pub fn geod_latitude_rad(&self) -> f64 {
+    pub(crate) fn geod_latitude_rad(&self) -> f64 {
         self.position.geod_latitude_rad()
     }
 
     /// `GetGeodLatitudeDegIC`.
     #[must_use]
-    pub fn geod_latitude_deg(&self) -> f64 {
+    pub(crate) fn geod_latitude_deg(&self) -> f64 {
         self.position.geod_latitude_deg()
     }
 
     /// `GetLongitudeRadIC`.
     #[must_use]
-    pub fn longitude_rad(&self) -> f64 {
+    pub(crate) fn longitude_rad(&self) -> f64 {
         self.position.longitude()
     }
 
     /// `GetLongitudeDegIC`.
     #[must_use]
-    pub fn longitude_deg(&self) -> f64 {
+    pub(crate) fn longitude_deg(&self) -> f64 {
         self.position.longitude_deg()
     }
 }

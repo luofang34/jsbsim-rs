@@ -20,7 +20,7 @@ const DEG: f64 = 0.017453293;
 
 /// `FGAngles`.
 #[derive(Debug, Clone)]
-pub struct Angles {
+pub(crate) struct Angles {
     /// The `<target_angle>` node; `None` when it did not exist at load.
     pub target: Option<NodeId>,
     /// The `<source_angle>` node; `None` when it did not exist at load.

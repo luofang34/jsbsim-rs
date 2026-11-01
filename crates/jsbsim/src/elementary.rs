@@ -27,13 +27,14 @@ mod tests;
 
 /// Whether these functions forward to the `libm` crate, under the
 /// `__platform-libm` feature.
+#[cfg_attr(not(feature = "__oracle"), allow(dead_code, unreachable_pub))]
 pub const FORWARDS_TO_LIBM: bool = cfg!(feature = "__platform-libm");
 
 /// e^x, within 0.511 ulp.
 #[cfg(not(feature = "__platform-libm"))]
 #[inline]
 #[must_use]
-pub fn exp(x: f64) -> f64 {
+pub(crate) fn exp(x: f64) -> f64 {
     exp::exp(x)
 }
 
@@ -43,7 +44,7 @@ pub fn exp(x: f64) -> f64 {
 #[allow(clippy::disallowed_methods)]
 #[inline]
 #[must_use]
-pub fn exp(x: f64) -> f64 {
+pub(crate) fn exp(x: f64) -> f64 {
     libm::exp(x)
 }
 
@@ -51,7 +52,7 @@ pub fn exp(x: f64) -> f64 {
 #[cfg(not(feature = "__platform-libm"))]
 #[inline]
 #[must_use]
-pub fn pow(x: f64, y: f64) -> f64 {
+pub(crate) fn pow(x: f64, y: f64) -> f64 {
     pow::pow(x, y)
 }
 
@@ -61,7 +62,7 @@ pub fn pow(x: f64, y: f64) -> f64 {
 #[allow(clippy::disallowed_methods)]
 #[inline]
 #[must_use]
-pub fn pow(x: f64, y: f64) -> f64 {
+pub(crate) fn pow(x: f64, y: f64) -> f64 {
     libm::pow(x, y)
 }
 

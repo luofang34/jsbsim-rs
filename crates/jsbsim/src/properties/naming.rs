@@ -9,11 +9,12 @@
 
 use super::{NodeId, PathError, PropertyTree};
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl PropertyTree {
     /// `getDisplayName`: the name, followed by `[index]` unless `simplify`
     /// is set and the index is 0.
     #[must_use]
-    pub fn display_name(&self, id: NodeId, simplify: bool) -> String {
+    pub(crate) fn display_name(&self, id: NodeId, simplify: bool) -> String {
         let index = self.index(id);
         if index != 0 || !simplify {
             format!("{}[{index}]", self.name(id))
@@ -52,6 +53,7 @@ impl PropertyTree {
     /// `GetRelativeName`: the fully qualified name with the prefix `path`
     /// removed when present.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn relative_name(&self, id: NodeId, path: &str) -> String {
         let name = self.fully_qualified_name(id);
         match name.strip_prefix(path) {
@@ -62,6 +64,7 @@ impl PropertyTree {
 
     /// Aliases `id` to the node at `path` relative to `id`, creating it
     /// (`alias(const char*)`).
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn alias_path(&mut self, id: NodeId, path: &str) -> Result<bool, PathError> {
         let target = self.get_or_create(id, path)?;
         Ok(self.alias(id, target))
@@ -71,6 +74,7 @@ impl PropertyTree {
 /// `FGPropertyManager::mkPropertyName`: spaces become `-`, and upper case
 /// becomes lower case when `lowercase` is set.
 #[must_use]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub fn mk_property_name(name: &str, lowercase: bool) -> String {
     let bytes: Vec<u8> = name
         .bytes()

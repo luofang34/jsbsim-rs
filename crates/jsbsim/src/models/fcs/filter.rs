@@ -15,7 +15,7 @@ use crate::xml::Element;
 
 /// Which filter (`FilterType`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum FilterType {
+pub(crate) enum FilterType {
     /// `C1 / (s + C1)`.
     Lag,
     /// `(C1 s + C2) / (C3 s + C4)`.
@@ -39,7 +39,7 @@ impl FilterType {
 
 /// The difference-equation coefficients `ca`... `ce`.
 #[derive(Debug, Clone, Copy, Default, PartialEq)]
-pub struct Coefficients {
+pub(crate) struct Coefficients {
     /// See the module.
     pub ca: f64,
     /// See the module.
@@ -55,7 +55,7 @@ pub struct Coefficients {
 /// `CalculateDynamicFilters` for coefficient values `c` (`c[0]` is `C1`)
 /// and step `dt`, in JSBSim's operation order.
 #[must_use]
-pub fn calculate(kind: FilterType, c: &[f64; 6], dt: f64) -> Coefficients {
+pub(crate) fn calculate(kind: FilterType, c: &[f64; 6], dt: f64) -> Coefficients {
     let [c1, c2, c3, c4, c5, c6] = *c;
     let mut k = Coefficients::default();
     match kind {
@@ -89,7 +89,7 @@ pub fn calculate(kind: FilterType, c: &[f64; 6], dt: f64) -> Coefficients {
 
 /// `FGFilter`.
 #[derive(Debug, Clone)]
-pub struct Filter {
+pub(crate) struct Filter {
     /// Which filter.
     pub kind: FilterType,
     /// `<c1>`... `<c6>`, where given.
@@ -114,7 +114,7 @@ pub struct Filter {
 
 /// What one run reads: nothing while initializing, else the input and,
 /// for a dynamic filter, the coefficient values.
-pub type Sample = Option<(f64, Option<[f64; 6]>)>;
+pub(crate) type Sample = Option<(f64, Option<[f64; 6]>)>;
 
 impl Filter {
     /// The values of the coefficients the filter uses, 0 for the others.

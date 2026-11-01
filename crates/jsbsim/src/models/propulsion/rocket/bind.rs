@@ -41,7 +41,7 @@ const PROPERTIES: [(&str, Get, Option<Set>); 6] = [
 ];
 
 /// `FGRocket::bindmodel` for engine `n`.
-pub fn bind(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
+pub(crate) fn bind(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
     for (suffix, get, set) in PROPERTIES {
         let path = format!("propulsion/engine[{n}]/{suffix}");
         let get = move |m: &Models| rocket(m, n).map_or(0.0, get);

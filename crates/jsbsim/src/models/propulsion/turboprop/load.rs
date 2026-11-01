@@ -163,7 +163,7 @@ fn read_config(el: &Element, tables: Tables, vc: PowerVc) -> Result<TurboPropCon
 }
 
 /// `FGTurboProp`'s constructor on `<turboprop_engine>` `el`.
-pub fn load(el: &Element, ctx: &mut dyn EngineHost) -> Result<TurboProp, Error> {
+pub(crate) fn load(el: &Element, ctx: &mut dyn EngineHost) -> Result<TurboProp, Error> {
     let el = &renamed(el);
     ctx.load_base(el, EngineType::Turboprop)?;
     let function = power_vc_function(ctx)?;

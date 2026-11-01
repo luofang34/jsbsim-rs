@@ -37,7 +37,7 @@ const HSR_TO_TBO: Matrix33 = Matrix33::new(0.0, 0.0, -1.0, 0.0, 1.0, 0.0, 1.0, 0
 
 /// `FGRotor::eCtrlMapping`: which controls the rotor ties.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ControlMap {
+pub(crate) enum ControlMap {
     /// `eMainCtrl`: collective, lateral and longitudinal cyclic.
     Main,
     /// `eTailCtrl`: the collective as the anti-torque control.
@@ -48,7 +48,7 @@ pub enum ControlMap {
 
 /// The parameters `Configure` reads or estimates, and what it derives.
 #[derive(Debug, Clone, PartialEq)]
-pub struct RotorConfig {
+pub(crate) struct RotorConfig {
     /// Step the inflow lag and the height filter were made for, s.
     pub dt: f64,
     /// ft.
@@ -103,7 +103,7 @@ pub struct RotorConfig {
 
 /// What `InitDynamics` resets, with the density last read.
 #[derive(Debug, Clone, Default, PartialEq)]
-pub struct RotorState {
+pub(crate) struct RotorState {
     /// Density, slug/ft^3.
     pub rho: f64,
     /// Rotor speed, rpm.
@@ -150,7 +150,7 @@ pub struct RotorState {
 
 impl RotorState {
     /// `InitDynamics`, which leaves the density.
-    pub fn init_dynamics(&mut self) {
+    pub(crate) fn init_dynamics(&mut self) {
         *self = Self {
             rho: self.rho,
             lambda: -0.001,
@@ -162,7 +162,7 @@ impl RotorState {
 
 /// The controls the rotor's properties set.
 #[derive(Debug, Clone, PartialEq)]
-pub struct RotorControls {
+pub(crate) struct RotorControls {
     /// Which controls are tied.
     pub map: ControlMap,
     /// Collective pitch (anti-torque for a tail rotor), rad.
@@ -177,7 +177,7 @@ pub struct RotorControls {
 
 /// A speed dictated from outside (`ExternalRPM`).
 #[derive(Debug, Clone, PartialEq)]
-pub struct ExternalRpm {
+pub(crate) struct ExternalRpm {
     /// The engine whose rotor sets the speed, or -1 for the
     /// `x-rpm-dict` property.
     pub definition: i32,
@@ -189,7 +189,7 @@ pub struct ExternalRpm {
 
 /// What sets the rotor's speed.
 #[derive(Debug, Clone, PartialEq)]
-pub enum RpmDrive {
+pub(crate) enum RpmDrive {
     /// The engine, through the transmission.
     Transmission(Transmission),
     /// A property.
@@ -198,25 +198,25 @@ pub enum RpmDrive {
 
 /// `FGRotor`'s members beyond `FGThruster`'s.
 #[derive(Debug, Clone)]
-pub struct Rotor {
+pub(crate) struct Rotor {
     /// Parameters.
-    pub config: RotorConfig,
+    pub(crate) config: RotorConfig,
     /// Dynamic state.
     pub state: RotorState,
     /// Controls.
-    pub controls: RotorControls,
+    pub(crate) controls: RotorControls,
     /// What sets the speed.
     pub drive: RpmDrive,
     /// Body to thruster axes, updated every calculation.
     pub inv_transform: Matrix33,
     /// Smooths the height above ground for the ground effect at 1 rad/s.
-    pub damp_hagl: LagFilter,
+    pub(crate) damp_hagl: LagFilter,
 }
 
 /// What a rotor's calculation reads: where its hub is and the external
 /// speed.
 #[derive(Debug)]
-pub struct RotorSample {
+pub(crate) struct RotorSample {
     /// The acting location relative to the CG, body frame, ft.
     pub hub: ColumnVector3,
     /// The value of the external speed's property.
@@ -343,10 +343,6 @@ impl ThrusterFamily for Rotor {
 
     fn set_rpm(&mut self, rpm: f64) {
         self.state.rpm = rpm;
-    }
-
-    fn set_engine_rpm(&mut self, _base: &ThrusterBase, rpm: f64) {
-        self.state.engine_rpm = rpm;
     }
 }
 

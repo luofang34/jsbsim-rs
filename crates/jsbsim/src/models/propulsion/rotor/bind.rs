@@ -85,7 +85,7 @@ fn read_write(
 /// controls its map names, and the node an external speed is read from
 /// (`x-rpm-dict`, made if missing, or the source engine's `rotor-rpm`,
 /// which must exist already).
-pub fn bind(this: &mut Rotor, ctx: &mut LoadContext<'_>, n: usize) -> Result<(), Error> {
+pub(crate) fn bind(this: &mut Rotor, ctx: &mut LoadContext<'_>, n: usize) -> Result<(), Error> {
     let b = &mut ctx.binder;
     for (name, get) in STATE {
         b.getter(&format!("propulsion/engine[{n}]/{name}"), move |m| {

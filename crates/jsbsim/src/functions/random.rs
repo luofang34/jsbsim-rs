@@ -18,7 +18,7 @@ use crate::xml::{Element, atof_locale_c};
 
 /// The draw of one `<random>` or `<urandom>`.
 #[derive(Debug, Clone)]
-pub struct RandomDraw {
+pub(crate) struct RandomDraw {
     /// A normal deviate (`<random>`), else a uniform one (`<urandom>`).
     gaussian: bool,
     /// `stddev`, or `0.5 * (upper - lower)`.

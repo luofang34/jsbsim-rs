@@ -11,7 +11,7 @@
 //! gives it a generator of its own.
 
 mod bind;
-pub mod orientation;
+pub(crate) mod orientation;
 #[cfg(test)]
 mod tests;
 
@@ -24,7 +24,7 @@ use crate::xml::Element;
 
 /// `<noise>`: `noise_variance`, `NoiseType` and `DistributionType`.
 #[derive(Debug, Clone, Copy, Default, PartialEq)]
-pub struct Noise {
+pub(crate) struct Noise {
     /// The `<noise>` value; 0 draws nothing.
     pub variance: f64,
     /// `eAbsolute`: the deviate scaled by the variance is added; otherwise
@@ -37,7 +37,7 @@ pub struct Noise {
 
 /// `FGSensor`'s members.
 #[derive(Debug, Clone, Default)]
-pub struct Signal {
+pub(crate) struct Signal {
     /// `<quantization>` `<min>`.
     pub min: f64,
     /// `<quantization>` `<max>`.
@@ -97,7 +97,7 @@ fn bits(el: &Element, value: f64) -> Result<i32, Error> {
 impl Signal {
     /// `FGSensor(fcs, element)` after the base constructor, `bind`
     /// included.
-    pub fn load(
+    pub(crate) fn load(
         el: &Element,
         base: &mut Base,
         ctx: &mut LoadContext<'_>,
@@ -140,7 +140,7 @@ impl Signal {
     }
 
     /// `ProcessSensorSignal`, from `base.input`.
-    pub fn process(&mut self, base: &mut Base, tick: &Tick) {
+    pub(crate) fn process(&mut self, base: &mut Base, tick: &Tick) {
         if self.fail_stuck {
             return;
         }
@@ -195,7 +195,7 @@ impl Signal {
     }
 
     /// `SetNoiseRandomSeed`: a new generator of the sensor's own.
-    pub fn set_random_seed(&mut self, seed: i32) {
+    pub(crate) fn set_random_seed(&mut self, seed: i32) {
         self.random_seed = Some(seed);
         self.generator = Some(RandomNumberGenerator::new(seed as u32));
     }
@@ -215,7 +215,7 @@ impl Signal {
     }
 
     /// `FGSensor::ResetPastStates`.
-    pub fn reset(&mut self, base: &mut Base) {
+    pub(crate) fn reset(&mut self, base: &mut Base) {
         base.reset_past_states();
         self.previous_output = 0.0;
         self.previous_input = 0.0;
@@ -267,7 +267,7 @@ pub(super) fn needs_models(base: &Base) -> Error {
 
 /// `FGSensor`.
 #[derive(Debug, Clone)]
-pub struct Sensor {
+pub(crate) struct Sensor {
     /// The degradation.
     pub signal: Signal,
 }

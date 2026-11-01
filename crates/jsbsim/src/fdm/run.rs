@@ -18,7 +18,7 @@ use crate::units::FPSTOKTS;
 
 impl Models {
     /// `FGFDMExec::SetHoldDown`.
-    pub fn set_hold_down(&mut self, hd: bool) {
+    pub(crate) fn set_hold_down(&mut self, hd: bool) {
         self.exec.hold_down = hd;
         self.accelerations.set_hold_down(hd);
         if hd {

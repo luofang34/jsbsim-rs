@@ -99,7 +99,7 @@ const MEMBERS: [(&str, Kind, Get, Set); 12] = [
 ];
 
 /// The ties of `bindmodel` for engine `n`.
-pub fn bind(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
+pub(crate) fn bind(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
     let prefix = format!("propulsion/engine[{n}]");
     for (name, kind, get, set) in MEMBERS {
         b.property(

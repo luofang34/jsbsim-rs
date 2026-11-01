@@ -226,7 +226,7 @@ fn integrators(b: &mut Binder<'_>) -> Result<(), Error> {
 }
 
 /// `FGPropagate::bind`.
-pub fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
+pub(crate) fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
     velocities(b)?;
     position(b)?;
     position_geodetic(b)?;

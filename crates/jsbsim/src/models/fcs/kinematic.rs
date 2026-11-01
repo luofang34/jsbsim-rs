@@ -17,7 +17,7 @@ use crate::xml::Element;
 
 /// `FGKinemat`.
 #[derive(Debug, Clone)]
-pub struct Kinemat {
+pub(crate) struct Kinemat {
     /// Detent positions, in `<setting>` order (at least two).
     pub detents: Vec<f64>,
     /// The time to reach each detent from the previous one; 0 or less is
@@ -29,7 +29,7 @@ pub struct Kinemat {
 
 /// What one run reads: the input, then the first output node.
 #[derive(Debug, Clone, Copy)]
-pub struct Sample {
+pub(crate) struct Sample {
     input: f64,
     output: f64,
 }

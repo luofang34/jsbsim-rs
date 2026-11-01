@@ -146,7 +146,7 @@ const BOOST_LOSS: [(&str, Kind, Get, Set); 2] = [
 
 /// The ties of `FGPiston`'s constructor for engine `n`; the supercharger
 /// loss's only when it has a loss factor.
-pub fn bind(b: &mut Binder<'_>, n: usize, boost_loss: bool) -> Result<(), Error> {
+pub(crate) fn bind(b: &mut Binder<'_>, n: usize, boost_loss: bool) -> Result<(), Error> {
     for (name, kind, get, set) in MEMBERS {
         member(b, n, name, kind, get, set)?;
     }

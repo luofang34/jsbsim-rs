@@ -57,7 +57,7 @@ fn ballonet(m: &Models, i: usize, k: usize) -> Option<&Ballonet> {
 }
 
 /// The ties of gas cell `i`.
-pub fn bind_cell(b: &mut Binder<'_>, i: usize) -> Result<(), Error> {
+pub(crate) fn bind_cell(b: &mut Binder<'_>, i: usize) -> Result<(), Error> {
     let base = indexed_name("buoyant_forces/gas-cell", i);
     for (suffix, get, set) in CELL {
         let path = format!("{base}/{suffix}");
@@ -75,7 +75,7 @@ pub fn bind_cell(b: &mut Binder<'_>, i: usize) -> Result<(), Error> {
 }
 
 /// The ties of ballonet `k` of gas cell `i`.
-pub fn bind_ballonet(b: &mut Binder<'_>, i: usize, k: usize) -> Result<(), Error> {
+pub(crate) fn bind_ballonet(b: &mut Binder<'_>, i: usize, k: usize) -> Result<(), Error> {
     let base = indexed_name("buoyant_forces/gas-cell", i);
     let base = indexed_name(&format!("{base}/ballonet"), k);
     for (suffix, get, set) in BALLONET {
@@ -95,7 +95,7 @@ pub fn bind_ballonet(b: &mut Binder<'_>, i: usize, k: usize) -> Result<(), Error
 }
 
 /// `FGBuoyantForces::bind`.
-pub fn bind_totals(b: &mut Binder<'_>) -> Result<(), Error> {
+pub(crate) fn bind_totals(b: &mut Binder<'_>) -> Result<(), Error> {
     for (name, axis) in [("l", E_L), ("m", E_M), ("n", E_N)] {
         b.getter(&format!("moments/{name}-buoyancy-lbsft"), move |m| {
             m.buoyant_forces.moments[axis]

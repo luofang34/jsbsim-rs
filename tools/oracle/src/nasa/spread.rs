@@ -35,7 +35,7 @@ impl SpreadRatio {
 
 /// `r` to two significant figures.
 #[must_use]
-pub fn two_figures(r: f64) -> String {
+pub(crate) fn two_figures(r: f64) -> String {
     if !r.is_finite() || r == 0.0 {
         return format!("{r}");
     }

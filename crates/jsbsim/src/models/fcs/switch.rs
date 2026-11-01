@@ -14,7 +14,7 @@ use crate::xml::Element;
 
 /// One `<test>`, or the `<default>` when it has no condition.
 #[derive(Debug, Clone)]
-pub struct Test {
+pub(crate) struct Test {
     /// The condition; `None` for the default.
     pub condition: Option<Condition>,
     /// `value`: a number or a property.
@@ -23,7 +23,7 @@ pub struct Test {
 
 /// `FGSwitch`.
 #[derive(Debug, Clone)]
-pub struct Switch {
+pub(crate) struct Switch {
     /// The default first, if any, then the tests in order.
     pub tests: Vec<Test>,
     /// Whether the first run, which checks every test, has happened.

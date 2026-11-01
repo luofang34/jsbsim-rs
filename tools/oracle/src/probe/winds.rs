@@ -125,7 +125,7 @@ fn run_op(fdm: &mut Fdm, words: &[&str]) -> String {
 }
 
 /// Executes the operations in `input`, one per line.
-pub fn run(input: &str) -> String {
+pub(crate) fn run(input: &str) -> String {
     let mut fdm = match Fdm::new() {
         Ok(fdm) => fdm,
         Err(e) => return format!("error {e}\n"),

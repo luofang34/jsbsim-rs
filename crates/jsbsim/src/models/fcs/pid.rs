@@ -16,7 +16,7 @@ use crate::xml::Element;
 
 /// The integration scheme of the `ki` term (`eIntegrateType`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Integration {
+pub(crate) enum Integration {
     /// No `<ki>`: nothing is integrated.
     None,
     /// `rect`: rectangular (Euler).
@@ -31,7 +31,7 @@ pub enum Integration {
 
 /// `FGPID`.
 #[derive(Debug, Clone)]
-pub struct Pid {
+pub(crate) struct Pid {
     /// `<kp>`, 0 by default.
     pub kp: Parameter,
     /// `<ki>` (an integrator's `<c1>`), 0 by default.
@@ -56,7 +56,7 @@ pub struct Pid {
 
 /// What one run reads.
 #[derive(Debug, Clone, Copy)]
-pub struct Sample {
+pub(crate) struct Sample {
     input: f64,
     pvdot: Option<f64>,
     trigger: f64,

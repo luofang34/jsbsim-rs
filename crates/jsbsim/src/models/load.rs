@@ -14,7 +14,7 @@ use crate::properties::{NodeMap, PropertyTree};
 
 /// What a model's `Load` may touch besides the model itself: the tree
 /// (through the binder), the functions and the options.
-pub struct LoadContext<'a> {
+pub(crate) struct LoadContext<'a> {
     /// Functions and tables.
     pub functions: &'a mut FunctionSet,
     /// Tied-property bindings and the property tree.
@@ -28,7 +28,7 @@ pub struct LoadContext<'a> {
 
 impl LoadContext<'_> {
     /// The property tree.
-    pub fn tree(&mut self) -> &mut PropertyTree {
+    pub(crate) fn tree(&mut self) -> &mut PropertyTree {
         self.binder.tree
     }
 }
@@ -36,7 +36,7 @@ impl LoadContext<'_> {
 /// `FGModelFunctions` plus `FGPropertyReader`: a model's `<property>`
 /// declarations and its pre- and post-functions.
 #[derive(Debug, Clone, Default)]
-pub struct ModelFunctions {
+pub(crate) struct ModelFunctions {
     /// Functions run (and cached) before the model.
     pub pre: Vec<FnId>,
     /// Functions run (and cached) after the model.

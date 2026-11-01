@@ -23,9 +23,11 @@ mod value;
 #[cfg(test)]
 mod tests;
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub use naming::mk_property_name;
-pub use node_map::NodeMap;
+pub(crate) use node_map::NodeMap;
 pub use path::PathError;
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub use value::Value;
 
 use path::{Component, parse_path};
@@ -47,14 +49,17 @@ impl NodeId {
 
 /// SimGear node attribute bits.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Attribute(u8);
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl Attribute {
     /// Value may be read.
     pub const READ: Self = Self(1);
     /// Value may be written.
     pub const WRITE: Self = Self(2);
     /// Saved by archives.
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub const ARCHIVE: Self = Self(4);
     /// Node was removed.
     pub const REMOVED: Self = Self(8);
@@ -63,19 +68,15 @@ impl Attribute {
     /// Writes are logged.
     pub const TRACE_WRITE: Self = Self(32);
     /// Saved by user archives.
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub const USERARCHIVE: Self = Self(64);
     /// Preserved across resets.
     pub const PRESERVE: Self = Self(128);
-
-    /// The raw bit.
-    #[must_use]
-    pub fn bits(self) -> u8 {
-        self.0
-    }
 }
 
 /// Type of the value a node holds (`simgear::props::Type`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(not(feature = "__oracle"), allow(dead_code, unreachable_pub))]
 pub enum ValueType {
     /// No value yet.
     None,
@@ -111,11 +112,10 @@ struct Node {
 /// Arena of property nodes rooted at an unnamed node.
 ///
 /// Relative paths start at the manager root ([`root`](Self::root)), which
-/// is the true root unless the tree was made [`for_instance`]; a leading
+/// is the true root unless the tree was made `for_instance`; a leading
 /// `/` always starts at the true root, as SimGear's `getNode` does.
-///
-/// [`for_instance`]: Self::for_instance
 #[derive(Debug, Clone)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct PropertyTree {
     nodes: Vec<Node>,
     /// `FGPropertyManager`'s root node.
@@ -131,6 +131,7 @@ impl Default for PropertyTree {
     }
 }
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl PropertyTree {
     /// Creates a tree holding only the root.
     #[must_use]
@@ -146,7 +147,7 @@ impl PropertyTree {
     /// makes its instance (`Root->getNode("fdm/jsbsim", IdFDM, true)`):
     /// absolute paths then reach nodes outside the instance.
     #[must_use]
-    pub fn for_instance(index: i32) -> Self {
+    pub(crate) fn for_instance(index: i32) -> Self {
         let mut tree = Self::new();
         let fdm = tree.add_child(NodeId(0), "fdm".to_owned(), 0);
         tree.base = tree.add_child(fdm, "jsbsim".to_owned(), index);
@@ -156,7 +157,7 @@ impl PropertyTree {
     /// The lookup generation: while it is unchanged, a path that resolved
     /// to no node still resolves to none, so a cached miss stays valid.
     #[must_use]
-    pub fn generation(&self) -> u32 {
+    pub(crate) fn generation(&self) -> u32 {
         self.generation
     }
 
@@ -276,7 +277,7 @@ impl PropertyTree {
 
     /// Child of `parent` named `name` with `index` (`getChild`).
     #[must_use]
-    pub fn child(&self, parent: NodeId, name: &str, index: i32) -> Option<NodeId> {
+    pub(crate) fn child(&self, parent: NodeId, name: &str, index: i32) -> Option<NodeId> {
         self.node(parent).children.iter().copied().find(|&c| {
             let node = self.node(c);
             node.index == index && node.name == name
@@ -285,25 +286,26 @@ impl PropertyTree {
 
     /// Children of `parent` in creation order.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn children(&self, parent: NodeId) -> &[NodeId] {
         &self.node(parent).children
     }
 
     /// Parent of `id`, `None` for the root.
     #[must_use]
-    pub fn parent(&self, id: NodeId) -> Option<NodeId> {
+    pub(crate) fn parent(&self, id: NodeId) -> Option<NodeId> {
         self.node(id).parent
     }
 
     /// Name of `id` without index.
     #[must_use]
-    pub fn name(&self, id: NodeId) -> &str {
+    pub(crate) fn name(&self, id: NodeId) -> &str {
         &self.node(id).name
     }
 
     /// Index of `id` among siblings of the same name.
     #[must_use]
-    pub fn index(&self, id: NodeId) -> i32 {
+    pub(crate) fn index(&self, id: NodeId) -> i32 {
         self.node(id).index
     }
 
@@ -319,14 +321,8 @@ impl PropertyTree {
         self.set_attributes(id, if on { bits | attr.0 } else { bits & !attr.0 });
     }
 
-    /// All attribute bits of `id`.
-    #[must_use]
-    pub fn attributes(&self, id: NodeId) -> u8 {
-        self.node(id).attributes
-    }
-
     /// Replaces all attribute bits of `id`.
-    pub fn set_attributes(&mut self, id: NodeId, bits: u8) {
+    pub(crate) fn set_attributes(&mut self, id: NodeId, bits: u8) {
         let Some(node) = self.node_mut(id) else {
             return;
         };

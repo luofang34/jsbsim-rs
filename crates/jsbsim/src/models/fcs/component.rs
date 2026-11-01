@@ -16,7 +16,7 @@ use crate::xml::Element;
 
 /// `<clipto>` limits.
 #[derive(Debug, Clone)]
-pub struct Clip {
+pub(crate) struct Clip {
     /// Lower bound.
     pub min: Parameter,
     /// Upper bound.
@@ -26,11 +26,11 @@ pub struct Clip {
 }
 
 /// The clip limits read for one run: `(min, max)`.
-pub type Limits = (f64, f64);
+pub(crate) type Limits = (f64, f64);
 
 /// What a family's `step` may read besides its own state and sample.
 #[derive(Debug, Clone, Copy)]
-pub struct Tick<'a> {
+pub(crate) struct Tick<'a> {
     /// The clip limits read this run, when the component clips.
     pub clip: Option<Limits>,
     /// `GetTrimStatus`.
@@ -42,7 +42,7 @@ pub struct Tick<'a> {
 
 /// `FGFCSComponent`'s members.
 #[derive(Debug, Clone)]
-pub struct Base {
+pub(crate) struct Base {
     /// `name` attribute.
     pub name: String,
     /// `<input>` operands, in document order.
@@ -65,7 +65,7 @@ pub struct Base {
 }
 
 /// Logs `message` at `el`, or fails with it in strict mode.
-pub fn lenient(el: &Element, ctx: &LoadContext<'_>, message: &str) -> Result<(), Error> {
+pub(crate) fn lenient(el: &Element, ctx: &LoadContext<'_>, message: &str) -> Result<(), Error> {
     if ctx.options.strict {
         return Err(model_error(el, message));
     }
@@ -74,7 +74,7 @@ pub fn lenient(el: &Element, ctx: &LoadContext<'_>, message: &str) -> Result<(),
 }
 
 /// A load error at `el`.
-pub fn model_error(el: &Element, message: impl std::fmt::Display) -> Error {
+pub(crate) fn model_error(el: &Element, message: impl std::fmt::Display) -> Error {
     Error::Model {
         message: format!("{}: {message}", el.location()),
     }
@@ -82,7 +82,7 @@ pub fn model_error(el: &Element, message: impl std::fmt::Display) -> Error {
 
 /// `FGParameterValue(el, pm)`: exactly one non-empty data line, a number
 /// or a property.
-pub fn parameter_value(el: &Element, ctx: &mut LoadContext<'_>) -> Result<Parameter, Error> {
+pub(crate) fn parameter_value(el: &Element, ctx: &mut LoadContext<'_>) -> Result<Parameter, Error> {
     let value = el.data_line(0);
     let parameter = Parameter::number_or_property(value, ctx.tree(), el.location())?;
     if el.data_lines().len() != 1 || value.is_empty() {
@@ -112,7 +112,7 @@ fn output_node(path: &str, ctx: &mut LoadContext<'_>) -> Result<NodeId, Error> {
 /// The component's own property path (`bind`): the name itself when it
 /// holds a `/`, else `fcs/` and the name made a property name.
 #[must_use]
-pub fn own_property(name: &str) -> String {
+pub(crate) fn own_property(name: &str) -> String {
     if name.contains('/') {
         name.to_owned()
     } else {
@@ -122,7 +122,7 @@ pub fn own_property(name: &str) -> String {
 
 impl Base {
     /// `FGFCSComponent(fcs, el)`, with `dt` the channel's step.
-    pub fn load(el: &Element, ctx: &mut LoadContext<'_>, dt: f64) -> Result<Self, Error> {
+    pub(crate) fn load(el: &Element, ctx: &mut LoadContext<'_>, dt: f64) -> Result<Self, Error> {
         for init in el.find_elements("init") {
             // Parsed and kept by JSBSim, but no component reads them.
             PropertyValue::new(init.data_line(0), ctx.tree(), init.location())?;
@@ -157,14 +157,14 @@ impl Base {
     }
 
     /// `bind`: the component's own property joins the outputs.
-    pub fn bind(&mut self, ctx: &mut LoadContext<'_>) -> Result<(), Error> {
+    pub(crate) fn bind(&mut self, ctx: &mut LoadContext<'_>) -> Result<(), Error> {
         let node = output_node(&own_property(&self.name), ctx)?;
         self.outputs.push(node);
         Ok(())
     }
 
     /// `CheckInputNodes(min, max, el)`.
-    pub fn check_input_nodes(
+    pub(crate) fn check_input_nodes(
         &self,
         min: usize,
         max: usize,
@@ -194,7 +194,7 @@ impl Base {
     }
 
     /// `InputNodes[i]->getDoubleValue()`.
-    pub fn read_input(&self, i: usize, ev: &mut ModelEvaluator<'_>) -> Result<f64, Error> {
+    pub(crate) fn read_input(&self, i: usize, ev: &mut ModelEvaluator<'_>) -> Result<f64, Error> {
         match self.inputs.get(i) {
             Some(input) => ev.property(input),
             None => Ok(0.0),
@@ -202,7 +202,7 @@ impl Base {
     }
 
     /// The clip limits, read as `Clip` reads them.
-    pub fn clip_limits(&self, ev: &mut ModelEvaluator<'_>) -> Result<Option<Limits>, Error> {
+    pub(crate) fn clip_limits(&self, ev: &mut ModelEvaluator<'_>) -> Result<Option<Limits>, Error> {
         match &self.clip {
             Some(clip) => Ok(Some((ev.parameter(&clip.min)?, ev.parameter(&clip.max)?))),
             None => Ok(None),
@@ -210,7 +210,7 @@ impl Base {
     }
 
     /// `Clip`.
-    pub fn clip(&mut self, tick: &Tick) {
+    pub(crate) fn clip(&mut self, tick: &Tick) {
         let (Some(clip), Some((vmin, vmax))) = (&self.clip, tick.clip) else {
             return;
         };
@@ -234,7 +234,7 @@ impl Base {
     }
 
     /// `Delay`: while trimming the whole history takes the output.
-    pub fn delay(&mut self, tick: &Tick) {
+    pub(crate) fn delay(&mut self, tick: &Tick) {
         if tick.trim_status {
             self.delay.fill(self.output);
             return;
@@ -254,7 +254,7 @@ impl Base {
     }
 
     /// `FGFCSComponent::ResetPastStates`.
-    pub fn reset_past_states(&mut self) {
+    pub(crate) fn reset_past_states(&mut self) {
         self.index = 0;
         self.delay.fill(0.0);
     }

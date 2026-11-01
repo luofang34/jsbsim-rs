@@ -39,12 +39,16 @@ mod tests;
 
 use std::collections::BTreeMap;
 
-pub use condition::Condition;
+pub(crate) use condition::Condition;
 pub use error::FunctionError;
-pub use evaluator::{Evaluator, GetterSource, NoGetters};
-pub use ops::Op;
-pub use parameter::{Parameter, PropertyValue};
-pub use table::{Table, TableKind};
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
+pub use evaluator::Evaluator;
+pub(crate) use evaluator::{GetterSource, NoGetters};
+pub(crate) use ops::Op;
+pub(crate) use parameter::{Parameter, PropertyValue};
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
+pub use table::Table;
+pub(crate) use table::TableKind;
 
 use crate::LoadOptions;
 use crate::properties::{Attribute, NodeId, NodeMap, PropertyTree, Value, mk_property_name};
@@ -52,10 +56,12 @@ use crate::xml::{SourceLocation, atof_locale_c};
 
 /// Index of a function in a [`FunctionSet`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct FnId(usize);
 
 /// Index of a table in a [`FunctionSet`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct TableId(usize);
 
 /// What a bound property reads.
@@ -67,7 +73,7 @@ enum Bound {
 
 /// One operation with its operands.
 #[derive(Debug, Clone)]
-pub struct Function {
+pub(crate) struct Function {
     op: Op,
     params: Vec<Parameter>,
     node: Option<NodeId>,
@@ -91,31 +97,20 @@ struct FunctionSource {
 impl Function {
     /// The `name` attribute (after `#` substitution).
     #[must_use]
-    pub fn name(&self) -> &str {
+    pub(crate) fn name(&self) -> &str {
         &self.source.name
-    }
-
-    /// The operation.
-    #[must_use]
-    pub fn op(&self) -> Op {
-        self.op
-    }
-
-    /// Output property, if bound.
-    #[must_use]
-    pub fn node(&self) -> Option<NodeId> {
-        self.node
     }
 
     /// The value cached by [`FunctionSet::cache_value`], if any.
     #[must_use]
-    pub fn cached(&self) -> Option<f64> {
+    pub(crate) fn cached(&self) -> Option<f64> {
         self.cached
     }
 }
 
 /// All functions, tables and templates of a simulation.
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct FunctionSet {
     functions: Vec<Function>,
     tables: Vec<Table>,
@@ -128,6 +123,7 @@ pub struct FunctionSet {
     exec_rng: crate::random::SharedGenerator,
 }
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl FunctionSet {
     /// An empty set with default (JSBSim-compatible) options.
     #[must_use]
@@ -137,7 +133,7 @@ impl FunctionSet {
 
     /// An empty set loading with `options`.
     #[must_use]
-    pub fn with_options(options: LoadOptions) -> Self {
+    pub(crate) fn with_options(options: LoadOptions) -> Self {
         Self {
             options,
             ..Self::default()
@@ -147,7 +143,7 @@ impl FunctionSet {
     /// Makes `<random>` and `<urandom>` without a `seed` draw from the
     /// executive's generator `rng`, as `FGFDMExec::GetRandomGenerator`
     /// shares it.
-    pub fn set_exec_generator(&mut self, rng: crate::random::SharedGenerator) {
+    pub(crate) fn set_exec_generator(&mut self, rng: crate::random::SharedGenerator) {
         self.exec_rng = rng;
     }
 
@@ -170,7 +166,7 @@ impl FunctionSet {
     }
 
     /// The function `id`; an error only for an id another set created.
-    pub fn function(&self, id: FnId) -> Result<&Function, FunctionError> {
+    pub(crate) fn function(&self, id: FnId) -> Result<&Function, FunctionError> {
         match self.functions.get(id.0) {
             Some(function) => Ok(function),
             None => Err(unknown_id("function", id.0)),
@@ -194,12 +190,13 @@ impl FunctionSet {
 
     /// The template registered as `name` (`GetTemplateFunc`).
     #[must_use]
-    pub fn template(&self, name: &str) -> Option<FnId> {
+    pub(crate) fn template(&self, name: &str) -> Option<FnId> {
         self.templates.get(name).copied()
     }
 
     /// `cacheValue(cache)`: with `cache`, evaluates `id` now and returns
     /// that value until called again; without, evaluates on every read.
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn cache_value(
         &mut self,
         id: FnId,
@@ -210,7 +207,7 @@ impl FunctionSet {
     }
 
     /// [`cache_value`](Self::cache_value) reading model getters.
-    pub fn cache_value_with(
+    pub(crate) fn cache_value_with(
         &mut self,
         id: FnId,
         cache: bool,
@@ -285,14 +282,14 @@ fn unknown_id(what: &'static str, id: usize) -> FunctionError {
 
 /// `is_number`: whether `text` passes `atof_locale_c`.
 #[must_use]
-pub fn is_number(text: &str) -> bool {
+pub(crate) fn is_number(text: &str) -> bool {
     atof_locale_c(text).is_ok()
 }
 
 /// JSBSim's `replace(text, "#", prefix)` when `prefix` is a number: the
 /// first `#` only. Other prefixes leave `text` unchanged.
 #[must_use]
-pub fn substitute_hash(text: &str, prefix: &str) -> String {
+pub(crate) fn substitute_hash(text: &str, prefix: &str) -> String {
     if is_number(prefix) {
         text.replacen('#', prefix, 1)
     } else {

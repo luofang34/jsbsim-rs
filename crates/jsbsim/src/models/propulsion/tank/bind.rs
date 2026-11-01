@@ -68,7 +68,7 @@ fn tank(m: &Models, n: usize) -> Option<&Tank> {
 }
 
 /// `FGTank::bind` for tank `n`.
-pub fn bind(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
+pub(crate) fn bind(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
     for (suffix, kind, get, set) in PROPERTIES {
         let path = format!("propulsion/tank[{n}]/{suffix}");
         let get = move |m: &Models| tank(m, n).map_or(0.0, get);

@@ -7,6 +7,9 @@
 //! Unit conversion factors and physical constants, computed with the same
 //! expressions in the same order as JSBSim so every factor is bit-identical.
 
+// The public items are the ones oracle_support::units re-exports by glob.
+#![cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
+
 use std::collections::BTreeMap;
 use std::f64::consts::PI;
 
@@ -42,6 +45,7 @@ pub const SLUGTOLB: f64 = 32.174049;
 /// `lbtoslug`.
 pub const LBTOSLUG: f64 = 1.0 / SLUGTOLB;
 /// `kgtolb`.
+#[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
 pub const KGTOLB: f64 = 2.20462;
 /// `kgtoslug`.
 pub const KGTOSLUG: f64 = 0.06852168;
@@ -84,18 +88,21 @@ pub fn fahrenheit_to_celsius(fahrenheit: f64) -> f64 {
 
 /// `CelsiusToFahrenheit`.
 #[must_use]
+#[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
 pub fn celsius_to_fahrenheit(celsius: f64) -> f64 {
     celsius * 1.8 + 32.0
 }
 
 /// `CelsiusToKelvin`.
 #[must_use]
+#[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
 pub fn celsius_to_kelvin(celsius: f64) -> f64 {
     celsius + 273.15
 }
 
 /// `KelvinToCelsius`.
 #[must_use]
+#[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
 pub fn kelvin_to_celsius(kelvin: f64) -> f64 {
     kelvin - 273.15
 }
@@ -108,14 +115,14 @@ pub fn feet_to_meters(measure: f64) -> f64 {
 
 /// `EqualToRoundoff(double, double)`.
 #[must_use]
-pub fn equal_to_roundoff(a: f64, b: f64) -> bool {
+pub(crate) fn equal_to_roundoff(a: f64, b: f64) -> bool {
     let eps = 2.0 * f64::EPSILON;
     (a - b).abs() <= eps * a.abs().max(b.abs())
 }
 
 /// `Constrain(min, value, max)`.
 #[must_use]
-pub fn constrain(min: f64, value: f64, max: f64) -> f64 {
+pub(crate) fn constrain(min: f64, value: f64, max: f64) -> f64 {
     if value < min {
         min
     } else if value > max {
@@ -127,14 +134,14 @@ pub fn constrain(min: f64, value: f64, max: f64) -> f64 {
 
 /// `sign`: 1 for non-negative numbers, -1 otherwise.
 #[must_use]
-pub fn sign(num: f64) -> f64 {
+pub(crate) fn sign(num: f64) -> f64 {
     if num >= 0.0 { 1.0 } else { -1.0 }
 }
 
 /// The `convert[from][to]` table of `FGXMLElement`: `value_in_from *
 /// factor == value_in_to`.
 #[derive(Debug, Clone)]
-pub struct UnitTable {
+pub(crate) struct UnitTable {
     factors: BTreeMap<(&'static str, &'static str), f64>,
 }
 
@@ -147,7 +154,7 @@ impl Default for UnitTable {
 impl UnitTable {
     /// Builds the table.
     #[must_use]
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         let mut t = Builder(BTreeMap::new());
         t.dimensioned();
         t.identities();
@@ -156,19 +163,14 @@ impl UnitTable {
 
     /// Factor from `from` to `to`, if JSBSim defines one.
     #[must_use]
-    pub fn factor(&self, from: &str, to: &str) -> Option<f64> {
+    pub(crate) fn factor(&self, from: &str, to: &str) -> Option<f64> {
         self.factors.get(&(from, to)).copied()
     }
 
     /// Whether `unit` appears as a source unit.
     #[must_use]
-    pub fn knows(&self, unit: &str) -> bool {
+    pub(crate) fn knows(&self, unit: &str) -> bool {
         self.factors.keys().any(|(from, _)| *from == unit)
-    }
-
-    /// Every `(from, to, factor)`, sorted by unit names.
-    pub fn entries(&self) -> impl Iterator<Item = (&'static str, &'static str, f64)> + '_ {
-        self.factors.iter().map(|(&(from, to), &f)| (from, to, f))
     }
 }
 

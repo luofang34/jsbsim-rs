@@ -26,13 +26,14 @@ const SPECIES_MMOL: [f64; 8] = [
 
 /// `FGMSIS`'s own state: the date and the solar and magnetic activity.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Msis {
     /// `day_of_year`.
     pub day_of_year: f64,
     /// `seconds_in_day`, UTC.
     pub seconds_in_day: f64,
     /// `flags`: every switch on.
-    pub flags: Flags,
+    pub(crate) flags: Flags,
     /// `input.f107A`.
     pub f107a: f64,
     /// `input.f107`.
@@ -66,7 +67,7 @@ pub(super) struct Computed {
 impl Atmosphere {
     /// `FGMSIS(fdmex)`: a fresh standard atmosphere run by NRLMSISE-00.
     #[must_use]
-    pub fn msis() -> Self {
+    pub(crate) fn msis() -> Self {
         Self {
             model: AtmosphereModel::Msis,
             ..Self::default()
@@ -74,7 +75,7 @@ impl Atmosphere {
     }
 
     /// `FGMSIS::Load`: the `<day>` of the year and `<utc>` seconds.
-    pub fn load_msis(&mut self, el: &Element) -> Result<(), Error> {
+    pub(crate) fn load_msis(&mut self, el: &Element) -> Result<(), Error> {
         if el.find_element("day").is_some() {
             self.msis.day_of_year = el.find_element_value_as_number("day")?;
         }

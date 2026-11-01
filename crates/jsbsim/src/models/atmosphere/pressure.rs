@@ -28,6 +28,7 @@ fn layer_pressure(pb: f64, tmb: f64, lmb: f64, delta_h: f64) -> f64 {
     }
 }
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl Atmosphere {
     /// The layer of geopotential altitude `geo_pot_alt`: its index and base
     /// altitude.
@@ -68,6 +69,7 @@ impl Atmosphere {
     /// `GetStdPressure(altitude)`, psf. Like JSBSim it uses the current
     /// (graded) lapse rates with the standard breakpoints.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn get_std_pressure(&self, altitude: f64) -> f64 {
         let geo_pot_alt = Self::geopotential_altitude(altitude);
         let (b, base_alt) = self.layer_of(geo_pot_alt);
@@ -80,6 +82,7 @@ impl Atmosphere {
 
     /// `GetStdDensity(altitude)`, slug/ft^3.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn get_std_density(&self, altitude: f64) -> f64 {
         self.get_std_pressure(altitude) / (RDRY * self.get_std_temperature(altitude))
     }
@@ -98,6 +101,7 @@ impl Atmosphere {
     }
 
     /// `ResetSLPressure`.
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn reset_sl_pressure(&mut self) {
         self.sl_pressure = self.profile.std_sl_pressure;
         self.calculate_sl_density();
@@ -106,7 +110,7 @@ impl Atmosphere {
 
     /// `CalculatePressureBreakpoints`: pressure at each layer base given
     /// `sl_press` and the current bias and gradient.
-    pub fn calculate_pressure_breakpoints(&mut self, sl_press: f64) {
+    pub(crate) fn calculate_pressure_breakpoints(&mut self, sl_press: f64) {
         let p = &mut self.profile;
         let table = &p.temperature_table;
         // Each breakpoint is the pressure at the top of the layer below.
@@ -127,7 +131,7 @@ impl Atmosphere {
     }
 
     /// `CalculateStdDensityBreakpoints`.
-    pub fn calculate_std_density_breakpoints(&mut self) {
+    pub(crate) fn calculate_std_density_breakpoints(&mut self) {
         let p = &mut self.profile;
         p.std_density_breakpoints.clear();
         for (i, &pb) in p.std_pressure_breakpoints.iter().enumerate() {
@@ -139,7 +143,7 @@ impl Atmosphere {
     /// `CalculateDensityAltitude`: the standard-day altitude (ft) with
     /// `density`. `_geometric_alt` is unused, as in JSBSim.
     #[must_use]
-    pub fn calculate_density_altitude(&self, density: f64, _geometric_alt: f64) -> f64 {
+    pub(crate) fn calculate_density_altitude(&self, density: f64, _geometric_alt: f64) -> f64 {
         let p = &self.profile;
         let mut b = 0;
         while b < p.std_density_breakpoints.len() - 2 {
@@ -169,7 +173,7 @@ impl Atmosphere {
     /// `CalculatePressureAltitude`: the standard-day altitude (ft) with
     /// `pressure`. `_geometric_alt` is unused, as in JSBSim.
     #[must_use]
-    pub fn calculate_pressure_altitude(&self, pressure: f64, _geometric_alt: f64) -> f64 {
+    pub(crate) fn calculate_pressure_altitude(&self, pressure: f64, _geometric_alt: f64) -> f64 {
         let p = &self.profile;
         let mut b = 0;
         while b < p.std_pressure_breakpoints.len() - 2 {

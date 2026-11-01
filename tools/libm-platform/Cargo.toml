@@ -16,6 +16,7 @@ publish = false
 [lints.rust]
 unsafe_code = "deny"
 missing_docs = "deny"
+unreachable_pub = "deny"
 
 [lints.clippy]
 unwrap_used = "forbid"

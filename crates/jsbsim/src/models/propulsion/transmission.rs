@@ -21,9 +21,9 @@ const RPM_TO_OMEGA: f64 = 0.10471975511965978;
 
 /// `FGTransmission`.
 #[derive(Debug, Clone, PartialEq)]
-pub struct Transmission {
+pub(crate) struct Transmission {
     /// Smooths the free-wheel unit's engagement.
-    pub free_wheel_lag: LagFilter,
+    pub(crate) free_wheel_lag: LagFilter,
     /// 0 when the free-wheel unit has released, 1 when locked.
     pub free_wheel_transmission: f64,
     /// Moment of inertia of the rotor, slug·ft^2.
@@ -47,7 +47,7 @@ pub struct Transmission {
 impl Transmission {
     /// `FGTransmission(exec, num, dt)` up to `BindModel`.
     #[must_use]
-    pub fn new(site: &ThrusterSite<'_>) -> Self {
+    pub(crate) fn new(site: &ThrusterSite<'_>) -> Self {
         Self {
             free_wheel_lag: LagFilter::new(200.0, site.dt),
             free_wheel_transmission: 1.0,
@@ -63,21 +63,21 @@ impl Transmission {
     }
 
     /// `InitDynamics`.
-    pub fn init_dynamics(&mut self) {
+    pub(crate) fn init_dynamics(&mut self) {
         self.free_wheel_transmission = 1.0;
         self.engine_rpm = 0.0;
         self.thruster_rpm = 0.0;
     }
 
     /// `ResetToIC`.
-    pub fn reset_to_ic(&mut self) {
+    pub(crate) fn reset_to_ic(&mut self) {
         self.init_dynamics();
         self.free_wheel_lag.reset();
     }
 
     /// `Calculate(EnginePower, ThrusterTorque, dt)`: the engine and rotor
     /// speeds after `dt` of `engine_power` against `thruster_torque`.
-    pub fn calculate(&mut self, engine_power: f64, mut thruster_torque: f64, dt: f64) {
+    pub(crate) fn calculate(&mut self, engine_power: f64, mut thruster_torque: f64, dt: f64) {
         let engine_omega = self.engine_rpm * RPM_TO_OMEGA;
         let safe_engine_omega = if engine_omega < 1e-1 {
             1e-1
@@ -162,7 +162,7 @@ fn transmission_mut(m: &mut Models, n: usize) -> Option<&mut Transmission> {
 }
 
 /// `FGTransmission::BindModel` for the rotor of engine `n`.
-pub fn bind(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
+pub(crate) fn bind(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
     let base = format!("propulsion/engine[{n}]");
     b.property(
         &format!("{base}/brake-ctrl-norm"),

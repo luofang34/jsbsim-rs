@@ -18,7 +18,7 @@ use super::winds::Winds;
 
 /// Requests from setters that need the whole executive.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ExecRequest {
+pub(crate) enum ExecRequest {
     /// `simulation/reset` with its mode bits, unnamed ones included.
     Reset(ResetMask),
     /// `simulation/do_simple_trim` with its mode, which may be out of
@@ -32,6 +32,7 @@ pub enum ExecRequest {
 
 /// Executive state that models and getters read.
 #[derive(Debug, Clone)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct ExecState {
     /// Simulation time, s.
     pub sim_time: f64,
@@ -91,7 +92,7 @@ impl Default for ExecState {
 impl ExecState {
     /// `IntegrationSuspended`.
     #[must_use]
-    pub fn integration_suspended(&self) -> bool {
+    pub(crate) fn integration_suspended(&self) -> bool {
         self.dt == 0.0
     }
 }
@@ -99,6 +100,7 @@ impl ExecState {
 /// Every model, plus the executive state, in one place so getters can
 /// read any of them as JSBSim's getters do.
 #[derive(Debug, Default)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Models {
     /// Executive state.
     pub exec: ExecState,

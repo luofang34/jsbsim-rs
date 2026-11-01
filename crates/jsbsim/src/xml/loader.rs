@@ -16,6 +16,7 @@ use crate::{Error, Resolver};
 /// Which model resolves a `file` attribute; each searches its own
 /// directories, in JSBSim's order.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub enum IncludeKind {
     /// Any model: the aircraft directory only.
     Model,
@@ -30,6 +31,7 @@ pub enum IncludeKind {
 }
 
 /// Loads XML documents and resolves includes relative to one aircraft.
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct DocumentLoader<'r> {
     resolver: &'r dyn Resolver,
     aircraft_dir: String,
@@ -38,6 +40,7 @@ pub struct DocumentLoader<'r> {
     cache: BTreeMap<String, Element>,
 }
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl<'r> DocumentLoader<'r> {
     /// A loader for the aircraft in `aircraft_dir` (e.g. `aircraft/c172x`),
     /// with JSBSim's default `systems` and `engine` directories.
@@ -53,14 +56,14 @@ impl<'r> DocumentLoader<'r> {
 
     /// The loader with `dir` as the systems directory (`SetSystemsPath`).
     #[must_use]
-    pub fn with_systems_dir(mut self, dir: impl Into<String>) -> Self {
+    pub(crate) fn with_systems_dir(mut self, dir: impl Into<String>) -> Self {
         self.systems_dir = dir.into();
         self
     }
 
     /// The loader with `dir` as the engine directory (`SetEnginePath`).
     #[must_use]
-    pub fn with_engine_dir(mut self, dir: impl Into<String>) -> Self {
+    pub(crate) fn with_engine_dir(mut self, dir: impl Into<String>) -> Self {
         self.engine_dir = dir.into();
         self
     }
@@ -120,7 +123,11 @@ impl<'r> DocumentLoader<'r> {
     /// `FGOutput::FindFullPathName`: `file` in `include_dir` when there is
     /// one and it is there, else in the aircraft directory.
     #[must_use]
-    pub fn find_output_include(&self, include_dir: Option<&str>, file: &str) -> Option<String> {
+    pub(crate) fn find_output_include(
+        &self,
+        include_dir: Option<&str>,
+        file: &str,
+    ) -> Option<String> {
         include_dir
             .and_then(|dir| self.check_path_name(dir, file))
             .or_else(|| self.check_path_name(&self.aircraft_dir, file))

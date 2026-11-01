@@ -62,7 +62,7 @@ fn property(
 }
 
 /// The ties of `FGPropeller`'s constructor for engine `n`.
-pub fn bind(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
+pub(crate) fn bind(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
     let double = Kind::Double;
     getter(b, n, "engine-rpm", |t, p| p.rpm * t.gear_ratio)?;
     property(b, n, "advance-ratio", double, |_, p| p.j, |_, p, v| p.j = v)?;

@@ -13,7 +13,7 @@ use crate::initial_condition::InitialCondition;
 
 /// The bracket and counters `FGTrim` keeps between its solver calls.
 #[derive(Debug, Clone, PartialEq)]
-pub struct Solver {
+pub(crate) struct Solver {
     /// `Nsub`: axis runs of the current axis in this cycle.
     pub nsub: u32,
     /// `max_sub_iterations`.
@@ -64,7 +64,7 @@ impl Solver {
     /// `solve`: regula falsi on the bracket, relaxing the end that stays,
     /// until the axis is in tolerance, the step is below the axis' solver
     /// epsilon or the sub-iterations run out. True unless they ran out.
-    pub fn solve(
+    pub(crate) fn solve(
         &mut self,
         axis: &mut TrimAxis,
         fdm: &mut Fdm,
@@ -110,7 +110,7 @@ impl Solver {
     /// the step from 2.5% of the control maximum, until the state changes
     /// sign across it; the bracket is then narrowed to the half that holds
     /// the root. False when the sub-iterations run out first.
-    pub fn find_interval(
+    pub(crate) fn find_interval(
         &mut self,
         axis: &mut TrimAxis,
         fdm: &mut Fdm,
@@ -176,7 +176,7 @@ impl Solver {
     /// changes by more than the tolerance and changes sign between an end
     /// and the current control, that half becomes the bracket. The axis is
     /// then run at its current control again.
-    pub fn check_limits(
+    pub(crate) fn check_limits(
         &mut self,
         axis: &mut TrimAxis,
         fdm: &mut Fdm,

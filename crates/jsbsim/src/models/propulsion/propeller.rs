@@ -26,7 +26,7 @@ use crate::xml::Element;
 
 /// The propeller's tables.
 #[derive(Debug, Clone)]
-pub struct PropellerTables {
+pub(crate) struct PropellerTables {
     /// `C_THRUST`: thrust coefficient by advance ratio (and blade angle).
     pub c_thrust: Table,
     /// `C_POWER`: power coefficient by advance ratio (and blade angle).
@@ -43,7 +43,7 @@ pub struct PropellerTables {
 
 /// `FGPropeller`'s members beyond `FGThruster`'s.
 #[derive(Debug, Clone)]
-pub struct Propeller {
+pub(crate) struct Propeller {
     /// Blades.
     pub num_blades: i32,
     /// Advance ratio.
@@ -86,7 +86,7 @@ pub struct Propeller {
     /// Engine torque on the airframe, shaft axes, lbs·ft.
     pub torque: ColumnVector3,
     /// Coefficient tables.
-    pub tables: Box<PropellerTables>,
+    pub(crate) tables: Box<PropellerTables>,
     /// Thrust coefficient scale.
     pub ct_factor: f64,
     /// Power coefficient scale.
@@ -105,7 +105,7 @@ pub struct Propeller {
 
 impl Propeller {
     /// `InitDynamics`.
-    pub fn init_dynamics(&mut self) {
+    pub(crate) fn init_dynamics(&mut self) {
         self.rpm = 0.0;
         self.pitch = self.min_pitch;
         self.vinduced = 0.0;
@@ -113,14 +113,14 @@ impl Propeller {
 
     /// `IsVPitch`.
     #[must_use]
-    pub fn is_vpitch(&self) -> bool {
+    pub(crate) fn is_vpitch(&self) -> bool {
         self.max_pitch != self.min_pitch
     }
 
     /// `GetPowerRequired`: the power the propeller absorbs at its speed,
     /// ft·lbs/s, after the governor (or the feathering or reversing) has
     /// moved the blades.
-    pub fn power_required(&mut self, base: &mut ThrusterBase) -> f64 {
+    pub(crate) fn power_required(&mut self, base: &mut ThrusterBase) -> f64 {
         let dt = base.input.total_delta_t;
         let mut c_preq = if self.is_vpitch() {
             if self.constant_speed != 0 {
@@ -317,10 +317,6 @@ impl ThrusterFamily for Propeller {
 
     fn set_rpm(&mut self, rpm: f64) {
         self.rpm = rpm;
-    }
-
-    fn set_engine_rpm(&mut self, base: &ThrusterBase, rpm: f64) {
-        self.rpm = rpm / base.gear_ratio;
     }
 
     fn set_advance(&mut self, advance: f64) {

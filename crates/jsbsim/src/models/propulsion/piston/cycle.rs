@@ -23,7 +23,7 @@ fn entry<const N: usize>(v: &[f64; N], i: i32) -> f64 {
 /// `GetStdPressure100K`: FGStandardAtmosphere's polynomial for the
 /// pressure at `altitude` ft (limited to 100000 ft), psf.
 #[must_use]
-pub fn std_pressure_100k(altitude: f64) -> f64 {
+pub(crate) fn std_pressure_100k(altitude: f64) -> f64 {
     const COEF: [f64; 5] = [
         2116.217,
         -7.648932746E-2,

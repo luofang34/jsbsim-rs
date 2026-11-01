@@ -197,7 +197,7 @@ fn run_op(o: &mut Out, op: &str, args: &[f64]) {
 }
 
 /// Executes the operations in `input`, one per line.
-pub fn run(input: &str) -> String {
+pub(crate) fn run(input: &str) -> String {
     let mut out = String::new();
     for line in input.lines() {
         if line.is_empty() || line.starts_with('#') {

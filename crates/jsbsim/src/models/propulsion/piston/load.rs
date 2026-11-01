@@ -342,7 +342,7 @@ fn finish_boost(b: &mut Boost) {
 }
 
 /// `FGPiston`'s constructor on `<piston_engine>` `el`.
-pub fn load(el: &Element, ctx: &mut dyn EngineHost) -> Result<Piston, Error> {
+pub(crate) fn load(el: &Element, ctx: &mut dyn EngineHost) -> Result<Piston, Error> {
     ctx.load_base(el, EngineType::Piston)?;
     let (mut config, mut tuning) = read_config(el, ctx)?;
     let max_throttle = number(el, "maxthrottle")?;

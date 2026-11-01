@@ -144,7 +144,7 @@ fn sense_and_p_factor(thruster_el: &Element) -> Result<(f64, f64), Error> {
 
 /// `FGPropeller`'s constructor past `FGThruster`'s, on `<propeller>` `el`
 /// inside `<thruster>` `thruster_el`.
-pub fn load(
+pub(crate) fn load(
     el: &Element,
     thruster_el: &Element,
     base: &mut ThrusterBase,

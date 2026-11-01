@@ -22,7 +22,7 @@ use crate::xml::Element;
 
 /// What `Load` reports.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub struct LoadOutcome {
+pub(crate) struct LoadOutcome {
     /// `Load`'s return value: false when the file is inconsistent (a
     /// latitude out of range, a missing position, an unknown frame, a
     /// version below 1); the problem has been logged.
@@ -53,7 +53,7 @@ fn trim_mode(value: &str) -> Option<TrimMode> {
 impl InitialCondition {
     /// `Load(document)`: applies the `<initialize>` document on top of the
     /// current state, which is not reset first.
-    pub fn load(
+    pub(crate) fn load(
         &mut self,
         document: &Element,
         atmosphere: &Atmosphere,

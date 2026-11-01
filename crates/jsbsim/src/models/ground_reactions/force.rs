@@ -11,6 +11,7 @@ use crate::models::accelerations::LagrangeMultiplier;
 
 /// `FGLGear::FrictionType`: which of a contact's friction constraints.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub enum FrictionType {
     /// `ftRoll`: along the rolling direction.
     Roll,
@@ -23,7 +24,7 @@ pub enum FrictionType {
 /// `LMultiplier[3]`: the friction constraints, whose values carry from
 /// frame to frame as the solver's starting point.
 #[derive(Debug, Clone, Copy, Default)]
-pub struct Multipliers {
+pub(crate) struct Multipliers {
     /// `LMultiplier[ftRoll]`.
     pub roll: LagrangeMultiplier,
     /// `LMultiplier[ftSide]`.
@@ -35,7 +36,7 @@ pub struct Multipliers {
 impl Multipliers {
     /// `LMultiplier[kind]`.
     #[must_use]
-    pub fn get(&self, kind: FrictionType) -> &LagrangeMultiplier {
+    pub(crate) fn get(&self, kind: FrictionType) -> &LagrangeMultiplier {
         match kind {
             FrictionType::Roll => &self.roll,
             FrictionType::Side => &self.side,
@@ -44,7 +45,7 @@ impl Multipliers {
     }
 
     /// `LMultiplier[kind]`, mutably.
-    pub fn get_mut(&mut self, kind: FrictionType) -> &mut LagrangeMultiplier {
+    pub(crate) fn get_mut(&mut self, kind: FrictionType) -> &mut LagrangeMultiplier {
         match kind {
             FrictionType::Roll => &mut self.roll,
             FrictionType::Side => &mut self.side,
@@ -55,7 +56,7 @@ impl Multipliers {
 
 /// The force members of `FGLGear` and of its `FGForce` base.
 #[derive(Debug, Clone, Copy)]
-pub struct ContactForce {
+pub(crate) struct ContactForce {
     /// `mT`: ground frame (roll, side, normal columns) to body.
     pub t_ground: Matrix33,
     /// `vGroundNormal`, body frame.
@@ -96,7 +97,7 @@ impl Default for ContactForce {
 
 /// The takeoff and landing report members of `FGLGear`.
 #[derive(Debug, Clone, Copy)]
-pub struct Reporting {
+pub(crate) struct Reporting {
     /// `ReportEnable`.
     pub enabled: bool,
     /// `FirstContact`.
@@ -144,7 +145,7 @@ impl Default for Reporting {
 
 impl Reporting {
     /// The part of `ResetToIC` that reporting owns.
-    pub fn reset_to_ic(&mut self) {
+    pub(crate) fn reset_to_ic(&mut self) {
         self.first_contact = false;
         self.started_ground_run = false;
         self.landing_distance = 0.0;

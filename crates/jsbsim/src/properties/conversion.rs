@@ -141,6 +141,7 @@ impl Written for f64 {
 }
 
 /// Text written into a typed node, parsed as `setStringValue` does.
+#[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
 pub(super) fn parse_into(current: &Value, text: &str) -> Value {
     match current {
         Value::Bool(_) => Value::Bool(text == "true" || atoi(text) != 0),

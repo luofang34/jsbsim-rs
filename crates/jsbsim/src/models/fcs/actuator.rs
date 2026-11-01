@@ -20,7 +20,7 @@ use crate::xml::Element;
 
 /// `FGActuator`.
 #[derive(Debug, Clone)]
-pub struct Actuator {
+pub(crate) struct Actuator {
     /// `<bias>`, a number.
     pub bias: f64,
     /// The increasing rate limit, if any.
@@ -67,7 +67,7 @@ pub struct Actuator {
 
 /// What one run reads.
 #[derive(Debug, Clone, Copy)]
-pub struct Sample {
+pub(crate) struct Sample {
     input: f64,
     lag: Option<f64>,
     rate_limit_incr: Option<f64>,

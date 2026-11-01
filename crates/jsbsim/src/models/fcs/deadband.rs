@@ -14,7 +14,7 @@ use crate::xml::Element;
 
 /// `FGDeadBand`.
 #[derive(Debug, Clone)]
-pub struct DeadBand {
+pub(crate) struct DeadBand {
     /// `<width>`, 0 by default.
     pub width: Parameter,
     /// `<gain>`, a number, 1 by default.

@@ -23,6 +23,7 @@ const HP_TO_WATTS: f64 = 745.7;
 
 /// `FGElectric`'s members beyond `FGEngine`'s.
 #[derive(Debug, Clone)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Electric {
     /// Engine number, for its inputs.
     pub number: usize,

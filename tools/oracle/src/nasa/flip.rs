@@ -17,7 +17,7 @@ use crate::Series;
 /// lies from the threshold between inside and outside the simulators'
 /// interval, printed precision included.
 #[must_use]
-pub fn threshold_distance(
+pub(crate) fn threshold_distance(
     column: &Column,
     simulators: &[Simulator],
     key: i64,
@@ -30,7 +30,7 @@ pub fn threshold_distance(
 
 /// One accepted flip.
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Flip {
+pub(crate) struct Flip {
     /// Time key of the sample.
     pub key: i64,
     /// C++'s distance to the threshold, in the property's unit.
@@ -55,7 +55,7 @@ fn at(series: &Series, index: usize, key: i64) -> Option<f64> {
 /// relative to the property's largest C++ magnitude or 1); `None` when
 /// any is not.
 #[must_use]
-pub fn accepted_flips(
+pub(crate) fn accepted_flips(
     column: &Column,
     simulators: &[Simulator],
     (cpp, rust): (&Series, &Series),

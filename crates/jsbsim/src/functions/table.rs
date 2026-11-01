@@ -18,7 +18,7 @@ use super::PropertyValue;
 
 /// Shape of a table.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum TableKind {
+pub(crate) enum TableKind {
     /// One key.
     OneD,
     /// Row and column keys.
@@ -29,6 +29,7 @@ pub enum TableKind {
 
 /// `FGTable`.
 #[derive(Debug, Clone)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Table {
     kind: TableKind,
     n_rows: usize,
@@ -47,11 +48,12 @@ pub struct Table {
     keys: Box<[Cell<f64>]>,
 }
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl Table {
     /// `FGTable(NRows)` filled with `<<`: a 1D table of `(key, value)` rows
     /// built in code rather than loaded.
     #[must_use]
-    pub fn one_d(rows: &[(f64, f64)]) -> Self {
+    pub(crate) fn one_d(rows: &[(f64, f64)]) -> Self {
         let mut data = vec![f64::NAN, f64::NAN];
         for &(key, value) in rows {
             data.push(key);
@@ -75,7 +77,7 @@ impl Table {
     /// row's key and values, built in code rather than loaded. A row with
     /// fewer values than columns is padded with NaN.
     #[must_use]
-    pub fn two_d(col_keys: &[f64], rows: &[(f64, &[f64])]) -> Self {
+    pub(crate) fn two_d(col_keys: &[f64], rows: &[(f64, &[f64])]) -> Self {
         let n_cols = col_keys.len();
         let mut data = Vec::with_capacity((rows.len() + 1) * (n_cols + 1));
         data.push(f64::NAN);
@@ -100,37 +102,37 @@ impl Table {
 
     /// `GetNumRows()`.
     #[must_use]
-    pub fn num_rows(&self) -> usize {
+    pub(crate) fn num_rows(&self) -> usize {
         self.n_rows
     }
 
     /// Shape.
     #[must_use]
-    pub fn kind(&self) -> TableKind {
+    pub(crate) fn kind(&self) -> TableKind {
         self.kind
     }
 
     /// Number of keys.
     #[must_use]
-    pub fn dimensions(&self) -> usize {
+    pub(crate) fn dimensions(&self) -> usize {
         self.n_dims
     }
 
     /// Whether the owner supplies the keys (`type="internal"`).
     #[must_use]
-    pub fn is_internal(&self) -> bool {
+    pub(crate) fn is_internal(&self) -> bool {
         self.internal
     }
 
     /// Property name of a named, non-internal table.
     #[must_use]
-    pub fn name(&self) -> &str {
+    pub(crate) fn name(&self) -> &str {
         &self.name
     }
 
     /// Lookup properties, by axis (row, column, table, ...).
     #[must_use]
-    pub fn lookup_properties(&self) -> &[Option<PropertyValue>] {
+    pub(crate) fn lookup_properties(&self) -> &[Option<PropertyValue>] {
         &self.lookup
     }
 
@@ -148,6 +150,7 @@ impl Table {
     /// `GetValue(keys)`: interpolates at `keys`, ordered row, column,
     /// table, ...; returns `None` when fewer keys than dimensions are given.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn value(&self, keys: &[f64]) -> Option<f64> {
         if keys.len() < self.n_dims {
             return None;
@@ -184,7 +187,7 @@ impl Table {
     /// `GetValue(key)` of a 1D table. NaN where JSBSim would read past its
     /// data: a NaN key, which no breakpoint bounds, in a one-row table.
     #[must_use]
-    pub fn value_1d(&self, key: f64) -> f64 {
+    pub(crate) fn value_1d(&self, key: f64) -> f64 {
         let rows = self.rows_1d();
         let (Some(&[k1, v1]), Some(&[kn, vn])) = (rows.first(), rows.last()) else {
             return f64::NAN;
@@ -210,7 +213,7 @@ impl Table {
 
     /// `GetValue(rowKey, colKey)` of a 2D table.
     #[must_use]
-    pub fn value_2d(&self, row_key: f64, col_key: f64) -> f64 {
+    pub(crate) fn value_2d(&self, row_key: f64, col_key: f64) -> f64 {
         if self.n_cols == 1 {
             return self.value_1d(row_key);
         }
@@ -282,7 +285,7 @@ impl Table {
 
     /// `GetMinValue()` of a 1D table.
     #[must_use]
-    pub fn min_value(&self) -> f64 {
+    pub(crate) fn min_value(&self) -> f64 {
         self.rows_1d()
             .iter()
             .fold(f64::INFINITY, |m, &[_, v]| m.min(v))

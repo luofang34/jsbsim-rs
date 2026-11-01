@@ -35,7 +35,7 @@ use lower_coefficients::{PAVGM, PDM, PMA};
 /// cross terms only (2). Switch 9 set to -1 takes the magnetic activity
 /// from [`Input::ap_a`] (3-hour history) instead of [`Input::ap`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct Flags {
+pub(crate) struct Flags {
     /// `switches`.
     pub switches: [i32; 24],
 }
@@ -49,7 +49,7 @@ impl Default for Flags {
 
 /// `struct nrlmsise_input`.
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Input {
+pub(crate) struct Input {
     /// `year`: ignored by the model.
     pub year: i32,
     /// `doy`: day of year.
@@ -77,7 +77,7 @@ pub struct Input {
 
 /// `struct nrlmsise_output`.
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Output {
+pub(crate) struct Output {
     /// Number densities of He, O, N2, O2, Ar, then total mass density
     /// (without anomalous oxygen), then H, N and anomalous O.
     pub d: [f64; 9],
@@ -88,7 +88,7 @@ pub struct Output {
 /// Inputs `gtd7` cannot evaluate.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, thiserror::Error)]
 #[non_exhaustive]
-pub enum Error {
+pub(crate) enum Error {
     /// Switch 9 asks for the 3-hour ap history, which C dereferences
     /// through a pointer that this input leaves null.
     #[error("NRLMSISE-00 switch 9 is -1 but the input has no ap_a history")]
@@ -127,7 +127,7 @@ const ZN3: [f64; 5] = [32.5, 20.0, 15.0, 10.0, 0.0];
 ///
 /// [`Error::MissingApHistory`] when switch 9 is -1 and `input.ap_a` is
 /// `None`.
-pub fn gtd7(input: &Input, flags: &Flags) -> Result<Output, Error> {
+pub(crate) fn gtd7(input: &Input, flags: &Flags) -> Result<Output, Error> {
     if flags.switches[9] == -1 && input.ap_a.is_none() {
         return Err(Error::MissingApHistory);
     }

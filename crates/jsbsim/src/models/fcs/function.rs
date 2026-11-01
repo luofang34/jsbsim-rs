@@ -13,7 +13,7 @@ use crate::xml::Element;
 
 /// `FGFCSFunction`.
 #[derive(Debug, Clone)]
-pub struct FcsFunction {
+pub(crate) struct FcsFunction {
     /// The function.
     pub function: FnId,
 }

@@ -96,7 +96,7 @@ pub(super) struct Context {
 impl Context {
     /// A context for switches `sw`, `swc` and gravity `grav`, everything
     /// else zero as the C statics start.
-    pub fn new(sw: [f64; 24], swc: [f64; 24], grav: Gravity) -> Self {
+    pub(crate) fn new(sw: [f64; 24], swc: [f64; 24], grav: Gravity) -> Self {
         Self {
             sw,
             swc,

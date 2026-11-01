@@ -15,7 +15,7 @@ use crate::xml::Element;
 
 /// `FGGyro`.
 #[derive(Debug, Clone)]
-pub struct Gyro {
+pub(crate) struct Gyro {
     /// The degradation.
     pub signal: Signal,
     /// Axis and frame.

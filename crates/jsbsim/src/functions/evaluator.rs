@@ -34,12 +34,14 @@ type Eval = Result<f64, Failed>;
 
 /// Values of nodes tied to model getters, which JSBSim evaluates on every
 /// read of the node.
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub trait GetterSource {
     /// The getter's value if `node` is tied to one.
     fn get(&self, node: NodeId) -> Option<f64>;
 }
 
 /// A source with no getters, for function sets used on their own.
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct NoGetters;
 
 impl GetterSource for NoGetters {
@@ -53,6 +55,7 @@ impl GetterSource for NoGetters {
 /// properties' getters from `G`. The source is a type parameter rather
 /// than a trait object, so that a getter read on the frame's hot path is
 /// a direct, inlinable call.
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Evaluator<'a, G = NoGetters> {
     set: &'a FunctionSet,
     tree: &'a mut PropertyTree,
@@ -63,6 +66,7 @@ pub struct Evaluator<'a, G = NoGetters> {
     failure: Option<Error>,
 }
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl<'a> Evaluator<'a> {
     /// An evaluator over `set` and `tree`, without model getters.
     pub fn new(set: &'a FunctionSet, tree: &'a mut PropertyTree) -> Self {
@@ -70,9 +74,14 @@ impl<'a> Evaluator<'a> {
     }
 }
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl<'a, G: GetterSource> Evaluator<'a, G> {
     /// An evaluator that also reads model getters from `getters`.
-    pub fn with_getters(set: &'a FunctionSet, tree: &'a mut PropertyTree, getters: G) -> Self {
+    pub(crate) fn with_getters(
+        set: &'a FunctionSet,
+        tree: &'a mut PropertyTree,
+        getters: G,
+    ) -> Self {
         Self {
             set,
             tree,
@@ -84,7 +93,7 @@ impl<'a, G: GetterSource> Evaluator<'a, G> {
     }
 
     /// The tree being read.
-    pub fn tree(&mut self) -> &mut PropertyTree {
+    pub(crate) fn tree(&mut self) -> &mut PropertyTree {
         self.tree
     }
 
@@ -99,14 +108,14 @@ impl<'a, G: GetterSource> Evaluator<'a, G> {
 
     /// `FGPropertyValue::GetValue()`: the node's value times the sign.
     #[inline]
-    pub fn property(&mut self, value: &PropertyValue) -> Result<f64, Error> {
+    pub(crate) fn property(&mut self, value: &PropertyValue) -> Result<f64, Error> {
         let value = self.eval_property(value);
         self.finish(value)
     }
 
     /// The value of one operand.
     #[inline]
-    pub fn parameter(&mut self, parameter: &Parameter) -> Result<f64, Error> {
+    pub(crate) fn parameter(&mut self, parameter: &Parameter) -> Result<f64, Error> {
         let value = self.eval_parameter(parameter);
         self.finish(value)
     }
@@ -122,7 +131,7 @@ impl<'a, G: GetterSource> Evaluator<'a, G> {
     /// The keys are read in axis order (row, column, table, ...) before
     /// the table interpolates.
     #[inline]
-    pub fn table(&mut self, id: TableId) -> Result<f64, Error> {
+    pub(crate) fn table(&mut self, id: TableId) -> Result<f64, Error> {
         let value = self.eval_table(id);
         self.finish(value)
     }

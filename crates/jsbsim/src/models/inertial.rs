@@ -11,7 +11,9 @@ mod ground;
 #[cfg(test)]
 mod tests;
 
-pub use ground::{Contact, DefaultGroundCallback, GroundCallback};
+pub use ground::{Contact, GroundCallback};
+
+pub(crate) use ground::DefaultGroundCallback;
 
 use super::base::ModelBase;
 use crate::Error;
@@ -19,18 +21,19 @@ use crate::math::{ColumnVector3, E_X, E_Y, E_Z, Location};
 use crate::xml::Element;
 
 /// `simulation/gravity-model` for spherical gravity, GM/r^2 to the centre.
-pub const GRAVITY_STANDARD: i32 = 0;
+pub(crate) const GRAVITY_STANDARD: i32 = 0;
 /// `simulation/gravity-model` for WGS84 gravity with the J2 term.
-pub const GRAVITY_WGS84: i32 = 1;
+pub(crate) const GRAVITY_WGS84: i32 = 1;
 
 /// `gAccelReference`: standard gravity in ft/s^2.
-pub const STANDARD_GRAVITY: f64 = 9.80665 / crate::units::FTTOM;
+pub(crate) const STANDARD_GRAVITY: f64 = 9.80665 / crate::units::FTTOM;
 
 /// `FGInertial`.
 #[derive(Debug)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Inertial {
     /// Scheduling.
-    pub base: ModelBase,
+    pub(crate) base: ModelBase,
     /// Planet name.
     pub name: String,
     /// Semi-major axis, ft.
@@ -77,6 +80,7 @@ impl Default for Inertial {
     }
 }
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl Inertial {
     /// `Load(<planet>)`: overrides of the planet constants.
     pub fn load(&mut self, el: &Element) -> Result<(), Error> {
@@ -107,7 +111,7 @@ impl Inertial {
     }
 
     /// `Run`: gravity at the current position.
-    pub fn run(&mut self, holding: bool) {
+    pub(crate) fn run(&mut self, holding: bool) {
         if self.base.skip() || holding {
             return;
         }
@@ -123,13 +127,13 @@ impl Inertial {
 
     /// `GetGAccel(r)`.
     #[must_use]
-    pub fn g_accel(&self, r: f64) -> f64 {
+    pub(crate) fn g_accel(&self, r: f64) -> f64 {
         self.gm / (r * r)
     }
 
     /// `GetGravityJ2(position)`.
     #[must_use]
-    pub fn gravity_j2(&self, position: &Location) -> ColumnVector3 {
+    pub(crate) fn gravity_j2(&self, position: &Location) -> ColumnVector3 {
         let r = position.radius();
         let sin_lat = libm::sin(position.latitude());
         let adivr = self.a / r;
@@ -147,49 +151,44 @@ impl Inertial {
     /// `GetContactPoint(location, ...)`: the ground callback's terrain
     /// under `location` at the time it was last given.
     #[must_use]
-    pub fn contact(&self, location: &Location) -> Contact {
+    pub(crate) fn contact(&self, location: &Location) -> Contact {
         self.ground.get().ag_level(self.time, location)
     }
 
     /// `SetTerrainElevation(h)`, which only the default callback heeds.
-    pub fn set_terrain_elevation(&mut self, elevation: f64) {
+    pub(crate) fn set_terrain_elevation(&mut self, elevation: f64) {
         self.ground.get_mut().set_terrain_elevation(elevation);
     }
 
     /// `SetTime(t)`: the simulation time the callback is queried with.
-    pub fn set_time(&mut self, time: f64) {
+    pub(crate) fn set_time(&mut self, time: f64) {
         self.time = time;
-    }
-
-    /// The simulation time the callback is queried with, s.
-    #[must_use]
-    pub fn time(&self) -> f64 {
-        self.time
     }
 
     /// `SetGroundCallback(gc)`: `callback` replaces the current one. Like
     /// a newly made `FGGroundCallback`, it is queried at time 0 until the
     /// executive next sets the time.
-    pub fn set_ground_callback(&mut self, callback: Box<dyn GroundCallback>) {
+    pub(crate) fn set_ground_callback(&mut self, callback: Box<dyn GroundCallback>) {
         self.ground = ground::Slot::Custom(callback);
         self.time = 0.0;
     }
 
     /// Whether a callback replaced the default flat terrain.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn has_custom_ground_callback(&self) -> bool {
         matches!(self.ground, ground::Slot::Custom(_))
     }
 
     /// `GetAltitudeAGL(location)`.
     #[must_use]
-    pub fn altitude_agl(&self, location: &Location) -> f64 {
+    pub(crate) fn altitude_agl(&self, location: &Location) -> f64 {
         self.contact(location).agl
     }
 
     /// `SetAltitudeAGL(location, h)`: moves `location` to `h` above the
     /// terrain along its geodetic vertical.
-    pub fn set_altitude_agl(&self, location: &mut Location, altitude_agl: f64) {
+    pub(crate) fn set_altitude_agl(&self, location: &mut Location, altitude_agl: f64) {
         let ground = self.contact(location).point.geod_altitude();
         location.cache_derived();
         let longitude = location.longitude();
@@ -198,7 +197,7 @@ impl Inertial {
     }
 
     /// `SetGravityType`.
-    pub fn set_gravity_type(&mut self, gt: i32) {
+    pub(crate) fn set_gravity_type(&mut self, gt: i32) {
         if gt == GRAVITY_STANDARD && self.a != self.b {
             tracing::warn!("Standard gravity model has been set for a non-spherical planet");
         }
@@ -230,7 +229,7 @@ fn check_ellipsoid(a: f64, b: f64) -> Result<(), Error> {
 }
 
 /// `FGInertial::bind`.
-pub fn bind(b: &mut crate::models::Binder<'_>) -> Result<(), Error> {
+pub(crate) fn bind(b: &mut crate::models::Binder<'_>) -> Result<(), Error> {
     b.getter("inertial/sea-level-radius_ft", |m| {
         m.inertial.position.sea_level_radius()
     })?;

@@ -16,14 +16,14 @@ use crate::functions::{Evaluator, GetterSource};
 use crate::properties::{NodeId, NodeMap, PropertyTree, Value};
 
 /// A getter: the property's value given the models.
-pub type Getter = Box<dyn Fn(&Models) -> f64 + Send>;
+pub(crate) type Getter = Box<dyn Fn(&Models) -> f64 + Send>;
 /// A setter: applies a written value to the models.
-pub type Setter = Box<dyn Fn(&mut Models, f64) + Send>;
+pub(crate) type Setter = Box<dyn Fn(&mut Models, f64) + Send>;
 
 /// C type of a tied value, which decides how writes and string reads
 /// convert.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Kind {
+pub(crate) enum Kind {
     /// `double`.
     Double,
     /// `bool`: writes store `value != 0`.
@@ -34,7 +34,7 @@ pub enum Kind {
 
 /// Getters and setters of tied properties.
 #[derive(Default)]
-pub struct Bindings {
+pub(crate) struct Bindings {
     getters: NodeMap<Getter>,
     setters: NodeMap<(Kind, Setter)>,
 }
@@ -53,13 +53,13 @@ impl Bindings {
 
     /// Whether `node` has a getter.
     #[must_use]
-    pub fn is_bound(&self, node: NodeId) -> bool {
+    pub(crate) fn is_bound(&self, node: NodeId) -> bool {
         self.getters.contains(node)
     }
 }
 
 /// Registers ties while models are constructed (`bind()` in JSBSim).
-pub struct Binder<'a> {
+pub(crate) struct Binder<'a> {
     pub(crate) tree: &'a mut PropertyTree,
     pub(crate) bindings: &'a mut Bindings,
 }
@@ -90,7 +90,7 @@ impl Binder<'_> {
     }
 
     /// A read-only `double` property.
-    pub fn getter(
+    pub(crate) fn getter(
         &mut self,
         path: &str,
         get: impl Fn(&Models) -> f64 + Send + 'static,
@@ -99,7 +99,7 @@ impl Binder<'_> {
     }
 
     /// A read-write property of type `kind`.
-    pub fn property(
+    pub(crate) fn property(
         &mut self,
         path: &str,
         kind: Kind,
@@ -110,7 +110,7 @@ impl Binder<'_> {
     }
 
     /// A write-only property (a tie without getter, which clears READ).
-    pub fn setter_only(
+    pub(crate) fn setter_only(
         &mut self,
         path: &str,
         kind: Kind,
@@ -123,7 +123,7 @@ impl Binder<'_> {
     }
 
     /// A read-only property of type `kind` (e.g. an `int` counter).
-    pub fn typed_getter(
+    pub(crate) fn typed_getter(
         &mut self,
         path: &str,
         kind: Kind,
@@ -135,14 +135,14 @@ impl Binder<'_> {
 
 /// [`GetterSource`] over the models and their bindings.
 #[derive(Clone, Copy)]
-pub struct ModelGetters<'a> {
+pub(crate) struct ModelGetters<'a> {
     pub(crate) bindings: &'a Bindings,
     pub(crate) models: &'a Models,
 }
 
 /// The evaluator models run with: it reads tied properties through their
 /// getters.
-pub type ModelEvaluator<'a> = Evaluator<'a, ModelGetters<'a>>;
+pub(crate) type ModelEvaluator<'a> = Evaluator<'a, ModelGetters<'a>>;
 
 impl GetterSource for ModelGetters<'_> {
     #[inline]
@@ -154,7 +154,7 @@ impl GetterSource for ModelGetters<'_> {
 /// How a written `f64` lands in a tied value of `kind`, as SimGear's
 /// `setDoubleValue` converts it.
 #[must_use]
-pub fn convert_write(kind: Kind, value: f64) -> f64 {
+pub(crate) fn convert_write(kind: Kind, value: f64) -> f64 {
     match kind {
         Kind::Double => value,
         Kind::Bool => f64::from(u8::from(value != 0.0)),

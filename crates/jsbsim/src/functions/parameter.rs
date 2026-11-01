@@ -16,7 +16,7 @@ use crate::xml::{SourceLocation, atof_locale_c};
 /// A property operand, bound to its node now or at first read
 /// (`FGPropertyValue`). A leading `-` negates the value.
 #[derive(Debug, Clone)]
-pub struct PropertyValue {
+pub(crate) struct PropertyValue {
     /// Bound at first read when the property did not exist at load, as
     /// `FGPropertyValue::GetNode` does: a property created after load
     /// still binds, and a missing one fails at that first evaluation, not
@@ -38,7 +38,7 @@ struct Source {
 
 impl PropertyValue {
     /// Binds to `name` if it already exists; otherwise binds at first read.
-    pub fn new(name: &str, tree: &PropertyTree, at: SourceLocation) -> Result<Self, Error> {
+    pub(crate) fn new(name: &str, tree: &PropertyTree, at: SourceLocation) -> Result<Self, Error> {
         let (name, sign) = match name.strip_prefix('-') {
             Some(rest) => (rest, -1.0),
             None => (name, 1.0),
@@ -60,25 +60,19 @@ impl PropertyValue {
 
     /// Property path without sign.
     #[must_use]
-    pub fn name(&self) -> &str {
+    pub(crate) fn name(&self) -> &str {
         &self.source.name
     }
 
     /// -1 for a negated operand, 1 otherwise.
     #[must_use]
-    pub fn sign(&self) -> f64 {
+    pub(crate) fn sign(&self) -> f64 {
         self.sign
-    }
-
-    /// Whether the node is still unknown (`IsLateBound`).
-    #[must_use]
-    pub fn is_late_bound(&self) -> bool {
-        self.node.get().is_none()
     }
 
     /// The node, binding it now if needed (`GetNode`).
     #[inline]
-    pub fn node(&self, tree: &PropertyTree) -> Result<NodeId, Error> {
+    pub(crate) fn node(&self, tree: &PropertyTree) -> Result<NodeId, Error> {
         match self.node.get() {
             Some(node) => Ok(node),
             None => self.bind_late(tree),
@@ -101,7 +95,7 @@ impl PropertyValue {
 
     /// `IsConstant`: bound to a node that is neither tied nor writable.
     #[must_use]
-    pub fn is_constant(&self, tree: &PropertyTree) -> bool {
+    pub(crate) fn is_constant(&self, tree: &PropertyTree) -> bool {
         self.node
             .get()
             .is_some_and(|n| !tree.is_tied(n) && !tree.attribute(n, Attribute::WRITE))
@@ -110,7 +104,7 @@ impl PropertyValue {
 
 /// One operand.
 #[derive(Debug, Clone)]
-pub enum Parameter {
+pub(crate) enum Parameter {
     /// A constant (`FGRealValue`).
     Real(f64),
     /// A property (`FGPropertyValue`).
@@ -133,7 +127,7 @@ pub enum Parameter {
 impl Parameter {
     /// `FGParameterValue(value)`: a number if `text` is one, else a
     /// property.
-    pub fn number_or_property(
+    pub(crate) fn number_or_property(
         text: &str,
         tree: &PropertyTree,
         at: SourceLocation,

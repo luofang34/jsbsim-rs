@@ -13,13 +13,13 @@ use super::{
 use crate::units::KGTOSLUG;
 
 /// `Mmars`: mean molecular weight of the Martian atmosphere, slug/mol.
-pub const MMARS: f64 = 43.49 * KGTOSLUG / 1000.0;
+pub(crate) const MMARS: f64 = 43.49 * KGTOSLUG / 1000.0;
 
 impl Atmosphere {
     /// `FGMars(fdmex)`: `FGAtmosphere`'s initial state with the Martian
     /// gas constant.
     #[must_use]
-    pub fn mars() -> Self {
+    pub(crate) fn mars() -> Self {
         let standard = Self::default();
         Self {
             model: AtmosphereModel::Mars,

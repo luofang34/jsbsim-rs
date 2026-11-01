@@ -20,6 +20,7 @@ use crate::xml::Element;
 
 /// The test rocket.
 #[derive(Debug, Clone)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct TestEngine {
     /// Calculations run.
     pub calculations: u32,
@@ -95,7 +96,7 @@ impl EngineFamily for TestEngine {
 
 /// The test thruster.
 #[derive(Debug, Clone)]
-pub struct TestThruster;
+pub(crate) struct TestThruster;
 
 impl ThrusterFamily for TestThruster {
     type Sample = ();

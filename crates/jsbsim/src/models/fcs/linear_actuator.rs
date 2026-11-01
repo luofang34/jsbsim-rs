@@ -20,7 +20,7 @@ use crate::xml::Element;
 
 /// `FGLinearActuator`.
 #[derive(Debug, Clone)]
-pub struct LinearActuator {
+pub(crate) struct LinearActuator {
     /// `<set>`: the input is followed while set.
     pub set_param: Option<Parameter>,
     /// The last `set` read (or the constant one), true by default.
@@ -68,7 +68,7 @@ pub struct LinearActuator {
 
 /// What one run reads: each only when JSBSim's `Run` reads it.
 #[derive(Debug, Clone, Copy)]
-pub struct Sample {
+pub(crate) struct Sample {
     set: Option<f64>,
     reset: Option<f64>,
     input: Option<f64>,

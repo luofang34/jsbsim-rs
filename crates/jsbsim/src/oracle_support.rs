@@ -9,6 +9,12 @@
 //! crate-internal module's name, exactly the items the oracle uses;
 //! [`FdmInternals`] adds the executive's internal entry points, and the
 //! feature also makes the `Fdm::models` field public.
+//!
+//! What the oracle reaches this way has to be `pub`, so a build without the
+//! feature finds it unreachable, and perhaps unused. Each such item, or the
+//! `impl` that holds it, allows those lints for that build alone with
+//! `cfg_attr(not(feature = "__oracle"), allow(..))`; everything else is
+//! `pub(crate)` or narrower.
 
 use crate::{Error, Fdm, Resolver};
 
@@ -146,8 +152,8 @@ pub mod random {
     pub use crate::random::{RandomNumberGenerator, SharedGenerator};
 }
 
-/// Unit conversion constants and functions, all of them, as the units
-/// probe checks each against `FGJSBBase`.
+/// The unit conversion constants and functions the units probe checks
+/// against `FGJSBBase`.
 pub mod units {
     pub use crate::units::*;
 }

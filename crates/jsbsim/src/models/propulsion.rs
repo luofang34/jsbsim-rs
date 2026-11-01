@@ -11,32 +11,32 @@
 //! [`Error::Unsupported`](crate::Error::Unsupported).
 
 mod bind;
-pub mod brushless;
-pub mod electric;
-pub mod engine;
-pub mod families;
-pub mod force;
+pub(crate) mod brushless;
+pub(crate) mod electric;
+pub(crate) mod engine;
+pub(crate) mod families;
+pub(crate) mod force;
 mod fuel;
-pub mod lag_filter;
-pub mod nozzle;
-pub mod piston;
-pub mod propeller;
-pub mod rocket;
-pub mod rotor;
-pub mod tank;
+pub(crate) mod lag_filter;
+pub(crate) mod nozzle;
+pub(crate) mod piston;
+pub(crate) mod propeller;
+pub(crate) mod rocket;
+pub(crate) mod rotor;
+pub(crate) mod tank;
 #[cfg(test)]
 mod test_engine;
 #[cfg(test)]
 mod tests;
-pub mod thruster;
-pub mod transmission;
-pub mod turbine;
-pub mod turboprop;
+pub(crate) mod thruster;
+pub(crate) mod transmission;
+pub(crate) mod turbine;
+pub(crate) mod turboprop;
 
-pub use bind::{bind, bind_engine};
-pub use engine::{Engine, EngineType};
-pub use tank::{Tank, TankType};
-pub use thruster::ThrusterBase;
+pub(crate) use bind::{bind, bind_engine};
+pub(crate) use engine::{Engine, EngineType};
+pub(crate) use tank::{Tank, TankType};
+pub(crate) use thruster::ThrusterBase;
 
 use super::base::ModelBase;
 use super::mass_balance::MassBalance;
@@ -45,7 +45,7 @@ use crate::units::LBTOSLUG;
 
 /// `FGEngine::Inputs`, which the executive loads before each run.
 #[derive(Debug, Clone, Default)]
-pub struct Inputs {
+pub(crate) struct Inputs {
     /// Static pressure, psf.
     pub pressure: f64,
     /// Pressure over sea-level pressure.
@@ -98,11 +98,12 @@ pub struct Inputs {
 
 /// `FGPropulsion`.
 #[derive(Debug, Clone)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Propulsion {
     /// Scheduling.
-    pub base: ModelBase,
+    pub(crate) base: ModelBase,
     /// Inputs.
-    pub input: Inputs,
+    pub(crate) input: Inputs,
     /// Engines in load order.
     pub engines: Vec<Engine>,
     /// Tanks in load order.
@@ -157,6 +158,7 @@ impl Default for Propulsion {
     }
 }
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl Propulsion {
     /// `InitModel`.
     pub fn init_model(&mut self) {
@@ -184,7 +186,7 @@ impl Propulsion {
 
     /// The tanks' part of `Run`, after the engines: each tank's flow and
     /// temperature, the totals, then refuelling and dumping.
-    pub fn run_tanks(&mut self) {
+    pub(crate) fn run_tanks(&mut self) {
         let (dt, tat_c) = (self.input.total_delta_t, self.input.tat_c);
         self.total_fuel_quantity = 0.0;
         self.total_oxidizer_quantity = 0.0;
@@ -268,7 +270,7 @@ impl Propulsion {
 
     /// `GetPropulsionTankReport`: a line per tank of its contents (lb),
     /// CG (in) and local inertias (slug·ft^2).
-    pub fn tank_report(&mut self, mass_balance: &MassBalance) -> String {
+    pub(crate) fn tank_report(&mut self, mass_balance: &MassBalance) -> String {
         self.calculate_tank_inertias(mass_balance);
         let mut out = String::new();
         for (i, t) in self.tanks.iter().enumerate() {

@@ -44,7 +44,7 @@ const ENGINE_MAX: u32 = MODULUS - 1;
 /// (`seed(false_type, true_type, s)`): a seed that is a multiple of the
 /// modulus would stall the engine at 0, so it becomes 1.
 #[must_use]
-pub fn engine_state(seed: u32) -> u32 {
+pub(crate) fn engine_state(seed: u32) -> u32 {
     match seed % MODULUS {
         0 => 1,
         s => s,
@@ -56,7 +56,7 @@ pub fn engine_state(seed: u32) -> u32 {
 /// Schrage's algorithm, which computes `48271 x mod (2^31 - 1)` without
 /// overflowing 32 bits.
 #[must_use]
-pub fn engine_next(x: u32) -> u32 {
+pub(crate) fn engine_next(x: u32) -> u32 {
     const Q: u32 = MODULUS / MULTIPLIER;
     const R: u32 = MODULUS % MULTIPLIER;
     let t0 = MULTIPLIER.wrapping_mul(x % Q);
@@ -68,6 +68,7 @@ pub fn engine_next(x: u32) -> u32 {
 /// `RandomNumberGenerator`: the engine's state and the normal
 /// distribution's cached second deviate.
 #[derive(Debug)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct RandomNumberGenerator {
     /// The engine's `__x_`.
     state: AtomicU32,
@@ -96,6 +97,7 @@ impl Clone for RandomNumberGenerator {
     }
 }
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl RandomNumberGenerator {
     /// `RandomNumberGenerator(unsigned int seed)`.
     #[must_use]
@@ -116,7 +118,7 @@ impl RandomNumberGenerator {
     }
 
     /// One engine output, in `[1, 2^31 - 2]`.
-    pub fn next_u32(&self) -> u32 {
+    pub(crate) fn next_u32(&self) -> u32 {
         let x = engine_next(self.state.load(Ordering::Relaxed));
         self.state.store(x, Ordering::Relaxed);
         x
@@ -127,7 +129,7 @@ impl RandomNumberGenerator {
     /// combined low part first into `sp / rp^2` with `rp = 2^31 - 2`. The
     /// division may round up to exactly 1, which libc++ does not correct.
     #[must_use]
-    pub fn canonical(&self) -> f64 {
+    pub(crate) fn canonical(&self) -> f64 {
         let rp = f64::from(ENGINE_MAX - ENGINE_MIN) + 1.0;
         let mut sp = f64::from(self.next_u32() - ENGINE_MIN);
         let base = rp;
@@ -137,7 +139,7 @@ impl RandomNumberGenerator {
 
     /// `uniform_real_distribution<double>(a, b)`: `(b - a) * canonical + a`.
     #[must_use]
-    pub fn uniform_in(&self, a: f64, b: f64) -> f64 {
+    pub(crate) fn uniform_in(&self, a: f64, b: f64) -> f64 {
         (b - a) * self.canonical() + a
     }
 
@@ -226,4 +228,5 @@ fn standard(up: f64) -> f64 {
 
 /// The executive's generator, shared as JSBSim shares it through
 /// `std::shared_ptr`.
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub type SharedGenerator = Arc<RandomNumberGenerator>;

@@ -28,7 +28,7 @@ mod wind;
 #[cfg(test)]
 mod tests;
 
-pub use bind::bind;
+pub(crate) use bind::bind;
 
 use crate::math::{Axis, ColumnVector3, E_U, E_V, E_W, Location, Matrix33, Quaternion};
 use crate::models::atmosphere::Atmosphere;
@@ -38,7 +38,7 @@ use crate::units::{FPSTOKTS, RADTODEG};
 /// What the initial conditions give the models: the `FGInitialCondition`
 /// getters that `FGFDMExec::Initialize` hands to `SetInitialState`.
 #[derive(Debug, Clone, Default)]
-pub struct InitialState {
+pub(crate) struct InitialState {
     /// Position.
     pub position: Location,
     /// Earth position angle, rad.
@@ -55,6 +55,7 @@ pub struct InitialState {
 
 /// Which speed was set last (`speedset`); altitude changes keep it.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub enum SpeedSet {
     /// True airspeed (`setvt`).
     #[default]
@@ -75,7 +76,7 @@ pub enum SpeedSet {
 
 /// Which altitude was set last (`altitudeset`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub enum AltitudeSet {
+pub(crate) enum AltitudeSet {
     /// Above sea level (`setasl`).
     #[default]
     Asl,
@@ -85,7 +86,7 @@ pub enum AltitudeSet {
 
 /// Which latitude was set last (`latitudeset`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub enum LatitudeSet {
+pub(crate) enum LatitudeSet {
     /// Geocentric (`setgeoc`).
     #[default]
     Geocentric,
@@ -96,7 +97,7 @@ pub enum LatitudeSet {
 /// The models the initial conditions read: the atmosphere for airspeed
 /// conversions and the planet for its shape and terrain.
 #[derive(Debug, Clone, Copy)]
-pub struct Environment<'a> {
+pub(crate) struct Environment<'a> {
     /// `FGAtmosphere`.
     pub atmosphere: &'a Atmosphere,
     /// `FGInertial`, with the ground callback.
@@ -105,6 +106,7 @@ pub struct Environment<'a> {
 
 /// `FGInitialCondition`.
 #[derive(Debug, Clone)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct InitialCondition {
     /// Ground velocity, local NED frame, ft/s.
     uvw_ned: ColumnVector3,
@@ -134,7 +136,7 @@ pub struct InitialCondition {
 impl<'a> Environment<'a> {
     /// The atmosphere and planet the initial conditions read.
     #[must_use]
-    pub fn new(atmosphere: &'a Atmosphere, inertial: &'a Inertial) -> Self {
+    pub(crate) fn new(atmosphere: &'a Atmosphere, inertial: &'a Inertial) -> Self {
         Self {
             atmosphere,
             inertial,
@@ -184,11 +186,13 @@ fn wind_to_body(calpha: f64, salpha: f64, cbeta: f64, sbeta: f64) -> Matrix33 {
     )
 }
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl InitialCondition {
     /// `FGInitialCondition(fdmex)`: the initial state on the planet of
     /// `inertial`.
     #[must_use]
-    pub fn new(inertial: &Inertial) -> Self {
+    #[cfg(test)]
+    pub(crate) fn new(inertial: &Inertial) -> Self {
         let mut ic = Self::default();
         ic.initialize_ic(inertial);
         ic
@@ -196,7 +200,7 @@ impl InitialCondition {
 
     /// `IsEngineRunning(n)`: whether `<running>` starts engine `n`.
     #[must_use]
-    pub fn is_engine_running(&self, n: usize) -> bool {
+    pub(crate) fn is_engine_running(&self, n: usize) -> bool {
         u32::try_from(n)
             .ok()
             .and_then(|n| 1u32.checked_shl(n))
@@ -211,7 +215,7 @@ impl InitialCondition {
 
     /// `InitializeIC`: at rest on the equator at sea level, level and
     /// heading north, with the ellipsoid of `inertial`.
-    pub fn initialize_ic(&mut self, inertial: &Inertial) {
+    pub(crate) fn initialize_ic(&mut self, inertial: &Inertial) {
         *self = Self::default();
         self.position.set_ellipse(inertial.a, inertial.b);
         self.position.set_position_geodetic(0.0, 0.0, 0.0);
@@ -222,7 +226,8 @@ impl InitialCondition {
     /// geocentric position with altitude above ground, then the flight
     /// path angle.
     #[allow(clippy::too_many_arguments)]
-    pub fn reset_ic(
+    #[cfg(test)]
+    pub(crate) fn reset_ic(
         &mut self,
         env: Environment<'_>,
         uvw: ColumnVector3,
@@ -292,7 +297,7 @@ impl InitialCondition {
 
     /// What `FGFDMExec::Initialize` hands the models.
     #[must_use]
-    pub fn initial_state(&self) -> InitialState {
+    pub(crate) fn initial_state(&self) -> InitialState {
         InitialState {
             position: self.position,
             epa: self.epa,
@@ -317,133 +322,135 @@ impl InitialCondition {
 
     /// `GetEarthPositionAngleIC`, rad.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn earth_position_angle(&self) -> f64 {
         self.epa
     }
 
     /// `GetSpeedSet`.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn speed_set(&self) -> SpeedSet {
         self.last_speed_set
     }
 
     /// `GetTargetNlfIC`.
     #[must_use]
-    pub fn target_nlf(&self) -> f64 {
+    pub(crate) fn target_nlf(&self) -> f64 {
         self.target_nlf
     }
 
     /// `SetTargetNlfIC`.
-    pub fn set_target_nlf(&mut self, nlf: f64) {
+    pub(crate) fn set_target_nlf(&mut self, nlf: f64) {
         self.target_nlf = nlf;
     }
 
     /// `GetVtrueFpsIC`.
     #[must_use]
-    pub fn vtrue_fps(&self) -> f64 {
+    pub(crate) fn vtrue_fps(&self) -> f64 {
         self.vt
     }
 
     /// `GetVtrueKtsIC`.
     #[must_use]
-    pub fn vtrue_kts(&self) -> f64 {
+    pub(crate) fn vtrue_kts(&self) -> f64 {
         self.vt * FPSTOKTS
     }
 
     /// `GetVgroundFpsIC`: horizontal ground speed.
     #[must_use]
-    pub fn vground_fps(&self) -> f64 {
+    pub(crate) fn vground_fps(&self) -> f64 {
         self.uvw_ned.magnitude2(E_U, E_V)
     }
 
     /// `GetVgroundKtsIC`.
     #[must_use]
-    pub fn vground_kts(&self) -> f64 {
+    pub(crate) fn vground_kts(&self) -> f64 {
         self.vground_fps() * FPSTOKTS
     }
 
     /// `GetUVWFpsIC`: ground velocity in the body frame.
     #[must_use]
-    pub fn uvw_fps(&self) -> ColumnVector3 {
+    pub(crate) fn uvw_fps(&self) -> ColumnVector3 {
         self.orientation.t() * self.uvw_ned
     }
 
     /// `GetUBodyFpsIC`, `GetVBodyFpsIC`, `GetWBodyFpsIC` by axis.
     #[must_use]
-    pub fn body_vel_fps(&self, idx: Axis) -> f64 {
+    pub(crate) fn body_vel_fps(&self, idx: Axis) -> f64 {
         self.uvw_fps()[idx]
     }
 
     /// `GetVNorthFpsIC`, `GetVEastFpsIC`, `GetVDownFpsIC` by axis.
     #[must_use]
-    pub fn ned_vel_fps(&self, idx: Axis) -> f64 {
+    pub(crate) fn ned_vel_fps(&self, idx: Axis) -> f64 {
         self.uvw_ned[idx]
     }
 
     /// `GetPQRRadpsIC`.
     #[must_use]
-    pub fn pqr_radps(&self) -> ColumnVector3 {
+    pub(crate) fn pqr_radps(&self) -> ColumnVector3 {
         self.pqr_body
     }
 
     /// `SetPRadpsIC`, `SetQRadpsIC`, `SetRRadpsIC` by axis (`E_P`, `E_Q`,
     /// `E_R`).
-    pub fn set_pqr_radps(&mut self, idx: Axis, rate: f64) {
+    pub(crate) fn set_pqr_radps(&mut self, idx: Axis, rate: f64) {
         self.pqr_body[idx] = rate;
     }
 
     /// `GetAlphaRadIC`.
     #[must_use]
-    pub fn alpha_rad(&self) -> f64 {
+    pub(crate) fn alpha_rad(&self) -> f64 {
         self.alpha
     }
 
     /// `GetAlphaDegIC`.
     #[must_use]
-    pub fn alpha_deg(&self) -> f64 {
+    pub(crate) fn alpha_deg(&self) -> f64 {
         self.alpha * RADTODEG
     }
 
     /// `GetBetaRadIC`.
     #[must_use]
-    pub fn beta_rad(&self) -> f64 {
+    pub(crate) fn beta_rad(&self) -> f64 {
         self.beta
     }
 
     /// `GetBetaDegIC`.
     #[must_use]
-    pub fn beta_deg(&self) -> f64 {
+    pub(crate) fn beta_deg(&self) -> f64 {
         self.beta * RADTODEG
     }
 
     /// `GetPhiRadIC`, `GetThetaRadIC`, `GetPsiRadIC` by angle (`E_PHI`,
     /// `E_THT`, `E_PSI`).
     #[must_use]
-    pub fn euler_rad(&self, idx: Axis) -> f64 {
+    pub(crate) fn euler_rad(&self, idx: Axis) -> f64 {
         self.orientation.euler()[idx]
     }
 
     /// `GetPhiDegIC`, `GetThetaDegIC`, `GetPsiDegIC` by angle.
     #[must_use]
-    pub fn euler_deg(&self, idx: Axis) -> f64 {
+    pub(crate) fn euler_deg(&self, idx: Axis) -> f64 {
         self.orientation.euler_deg()[idx]
     }
 
     /// `GetClimbRateFpsIC`: the upward component of the true airspeed.
     #[must_use]
-    pub fn climb_rate_fps(&self) -> f64 {
+    pub(crate) fn climb_rate_fps(&self) -> f64 {
         -self.vt_ned()[E_W]
     }
 
     /// `GetClimbRateFpmIC`.
     #[must_use]
-    pub fn climb_rate_fpm(&self) -> f64 {
+    pub(crate) fn climb_rate_fpm(&self) -> f64 {
         self.climb_rate_fps() * 60.0
     }
 
     /// `GetFlightPathAngleRadIC`; 0 at zero airspeed.
     #[must_use]
-    pub fn flight_path_angle_rad(&self) -> f64 {
+    pub(crate) fn flight_path_angle_rad(&self) -> f64 {
         if self.vt == 0.0 {
             0.0
         } else {
@@ -453,7 +460,7 @@ impl InitialCondition {
 
     /// `GetFlightPathAngleDegIC`.
     #[must_use]
-    pub fn flight_path_angle_deg(&self) -> f64 {
+    pub(crate) fn flight_path_angle_deg(&self) -> f64 {
         self.flight_path_angle_rad() * RADTODEG
     }
 }

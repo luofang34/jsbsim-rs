@@ -10,39 +10,39 @@
 //! [`Error::Unsupported`](crate::Error::Unsupported) under
 //! [`LoadOptions::strict`](crate::LoadOptions::strict).
 
-pub mod accelerometer;
-pub mod actuator;
-pub mod angles;
+pub(crate) mod accelerometer;
+pub(crate) mod actuator;
+pub(crate) mod angles;
 mod bind;
-pub mod component;
-pub mod deadband;
-pub mod distributor;
-pub mod families;
-pub mod filter;
-pub mod function;
-pub mod gain;
-pub mod gyro;
-pub mod kinematic;
-pub mod linear_actuator;
+pub(crate) mod component;
+pub(crate) mod deadband;
+pub(crate) mod distributor;
+pub(crate) mod families;
+pub(crate) mod filter;
+pub(crate) mod function;
+pub(crate) mod gain;
+pub(crate) mod gyro;
+pub(crate) mod kinematic;
+pub(crate) mod linear_actuator;
 mod load;
-pub mod magnetometer;
-pub mod pid;
-pub mod sensor;
-pub mod summer;
-pub mod switch;
+pub(crate) mod magnetometer;
+pub(crate) mod pid;
+pub(crate) mod sensor;
+pub(crate) mod summer;
+pub(crate) mod switch;
 #[cfg(test)]
 mod tests;
-pub mod throttle;
-pub mod waypoint;
+pub(crate) mod throttle;
+pub(crate) mod waypoint;
 
-pub use bind::bind;
-pub use families::{Component, ComponentAt, Kind};
+pub(crate) use bind::bind;
+pub(crate) use families::{Component, ComponentAt, Kind};
 
 use super::base::ModelBase;
 use crate::properties::NodeId;
 /// Surface position forms (`OutputForm`): radians, degrees, normalised,
 /// and the magnitude in radians.
-pub const NFORMS: usize = 4;
+pub(crate) const NFORMS: usize = 4;
 const OF_RAD: usize = 0;
 const OF_DEG: usize = 1;
 const OF_NORM: usize = 2;
@@ -50,11 +50,12 @@ const OF_MAG: usize = 3;
 
 /// A surface position in every form (`SetDaLPos` and friends).
 #[derive(Debug, Clone, Copy, Default)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Surface(pub [f64; NFORMS]);
 
 impl Surface {
     /// `SetD*Pos(form, pos)`.
-    pub fn set(&mut self, form: usize, pos: f64) {
+    pub(crate) fn set(&mut self, form: usize, pos: f64) {
         let p = &mut self.0;
         match form {
             OF_RAD => {
@@ -74,8 +75,10 @@ impl Surface {
 
 /// A channel of components (`FGFCSChannel`).
 #[derive(Debug, Clone)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Channel {
     /// Channel name.
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub name: String,
     /// Runs every `exec_rate` frames.
     pub exec_rate: i32,
@@ -84,7 +87,7 @@ pub struct Channel {
     /// Property that switches the channel on and off.
     pub on_off: Option<NodeId>,
     /// Components in execution order.
-    pub components: Vec<Component>,
+    pub(crate) components: Vec<Component>,
 }
 
 impl Channel {
@@ -101,7 +104,7 @@ impl Channel {
 
     /// `Execute`'s scheduling: whether the components run this frame. The
     /// caller has already checked the on/off property.
-    pub fn due(&mut self, dt: f64, trim_status: bool) -> bool {
+    pub(crate) fn due(&mut self, dt: f64, trim_status: bool) -> bool {
         if dt != 0.0 {
             if self.frames_since_run >= self.exec_rate {
                 self.frames_since_run = 0;
@@ -113,7 +116,7 @@ impl Channel {
 
     /// `Reset`: every component's past states, and the frame count so the
     /// components run on the next frame.
-    pub fn reset(&mut self) {
+    pub(crate) fn reset(&mut self) {
         for component in &mut self.components {
             component.reset();
         }
@@ -123,9 +126,10 @@ impl Channel {
 
 /// `FGFCS`.
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Fcs {
     /// Scheduling.
-    pub base: ModelBase,
+    pub(crate) base: ModelBase,
     /// Aileron, elevator, rudder, flap, speedbrake, spoiler commands.
     pub da_cmd: f64,
     /// See `da_cmd`.
@@ -146,13 +150,13 @@ pub struct Fcs {
     pub rtrim_cmd: f64,
     /// Surfaces: left and right aileron, elevator, rudder, flap,
     /// speedbrake, spoiler.
-    pub dal: Surface,
+    pub(crate) dal: Surface,
     /// See `dal`.
-    pub dar: Surface,
+    pub(crate) dar: Surface,
     /// See `dal`.
     pub de: Surface,
     /// See `dal`.
-    pub dr: Surface,
+    pub(crate) dr: Surface,
     /// See `dal`.
     pub df: Surface,
     /// See `dal`.
@@ -176,13 +180,13 @@ pub struct Fcs {
     pub channels: Vec<Channel>,
     /// Throttle, mixture, advance and feather commands and positions, one
     /// of each per engine.
-    pub throttles: throttle::Throttles,
+    pub(crate) throttles: throttle::Throttles,
 }
 
 impl Fcs {
     /// `FGFCS()`: gear down.
     #[must_use]
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         Self {
             gear_cmd: 1.0,
             gear_pos: 1.0,
@@ -192,7 +196,7 @@ impl Fcs {
     }
 
     /// `InitModel`.
-    pub fn init_model(&mut self) {
+    pub(crate) fn init_model(&mut self) {
         self.base.init();
         self.da_cmd = 0.0;
         self.de_cmd = 0.0;
@@ -224,13 +228,13 @@ impl Fcs {
 
     /// `GetDt`: the executive step `exec_dt` times this model's rate.
     #[must_use]
-    pub fn dt(&self, exec_dt: f64) -> f64 {
+    pub(crate) fn dt(&self, exec_dt: f64) -> f64 {
         exec_dt * f64::from(self.base.rate)
     }
 
     /// `GetChannelDeltaT`.
     #[must_use]
-    pub fn channel_delta_t(&self, exec_dt: f64) -> f64 {
+    pub(crate) fn channel_delta_t(&self, exec_dt: f64) -> f64 {
         self.dt(exec_dt) * f64::from(self.channel_rate)
     }
 }

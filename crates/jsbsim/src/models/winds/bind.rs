@@ -11,7 +11,7 @@ use crate::models::{Binder, Kind};
 const NED: [(&str, Axis); 3] = [("north", E_NORTH), ("east", E_EAST), ("down", E_DOWN)];
 
 /// `FGWinds::bind`.
-pub fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
+pub(crate) fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
     bind_wind(b)?;
     bind_cosine_gust(b)?;
     b.setter_only(

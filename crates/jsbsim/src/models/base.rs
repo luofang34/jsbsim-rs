@@ -6,6 +6,7 @@
 
 /// `FGModel`'s scheduling state.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct ModelBase {
     /// Runs once every `rate` frames.
     pub rate: u32,
@@ -26,12 +27,12 @@ impl Default for ModelBase {
 
 impl ModelBase {
     /// `FGModel::InitModel`.
-    pub fn init(&mut self) {
+    pub(crate) fn init(&mut self) {
         self.exe_ctr = 1;
     }
 
     /// `FGModel::Run`: true when the model must skip this frame.
-    pub fn skip(&mut self) -> bool {
+    pub(crate) fn skip(&mut self) -> bool {
         if self.rate == 1 {
             return !self.enabled;
         }

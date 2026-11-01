@@ -10,7 +10,7 @@ use crate::properties::{NodeId, NodeMap};
 
 /// `FG_VALUE`, `FG_DELTA`, `FG_BOOL`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum SetType {
+pub(crate) enum SetType {
     /// Set to the value.
     Value,
     /// Add the value to the current one.
@@ -21,7 +21,7 @@ pub enum SetType {
 
 /// `FG_STEP`, `FG_RAMP`, `FG_EXP`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum SetAction {
+pub(crate) enum SetAction {
     /// Immediately.
     Step,
     /// Linearly over `tc` seconds.
@@ -32,7 +32,7 @@ pub enum SetAction {
 
 /// One `<set>` of an event.
 #[derive(Debug, Clone)]
-pub struct Set {
+pub(crate) struct Set {
     /// Property path.
     pub name: String,
     /// The node, once it exists.
@@ -59,7 +59,7 @@ pub struct Set {
 
 /// An `<event>`.
 #[derive(Debug, Clone)]
-pub struct Event {
+pub(crate) struct Event {
     /// Name.
     pub name: String,
     /// Re-arms when the condition turns false.
@@ -89,7 +89,7 @@ pub struct Event {
 
 impl Event {
     /// `event::reset`; sets keep their transiting flag, as in JSBSim.
-    pub fn reset(&mut self) {
+    pub(crate) fn reset(&mut self) {
         self.triggered = false;
         self.notified = false;
         self.start_time = 0.0;
@@ -98,7 +98,7 @@ impl Event {
 
 /// `FGScript`.
 #[derive(Debug, Clone, Default)]
-pub struct Script {
+pub(crate) struct Script {
     /// `runscript` name.
     pub name: String,
     /// Start time, s.

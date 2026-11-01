@@ -13,7 +13,7 @@ use crate::xml::Element;
 
 /// `FGSensorOrientation`.
 #[derive(Debug, Clone, Copy)]
-pub struct Orientation {
+pub(crate) struct Orientation {
     /// `mT`: body frame to sensor frame.
     pub transform: Matrix33,
     /// The measured axis.
@@ -23,7 +23,7 @@ pub struct Orientation {
 impl Orientation {
     /// `FGSensorOrientation(element)`: `<orientation>` (roll, pitch, yaw)
     /// and `<axis>`, X when missing or unknown.
-    pub fn load(el: &Element, ctx: &LoadContext<'_>) -> Result<Self, Error> {
+    pub(crate) fn load(el: &Element, ctx: &LoadContext<'_>) -> Result<Self, Error> {
         let orient = match el.find_element("orientation") {
             Some(o) => o.find_element_triplet_convert_to("RAD")?,
             None => ColumnVector3::zero(),
@@ -49,7 +49,7 @@ impl Orientation {
 
     /// The component along the axis of `v` in the body frame.
     #[must_use]
-    pub fn measure(&self, v: ColumnVector3) -> f64 {
+    pub(crate) fn measure(&self, v: ColumnVector3) -> f64 {
         (self.transform * v)[self.axis]
     }
 }

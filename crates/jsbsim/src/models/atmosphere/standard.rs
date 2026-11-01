@@ -6,17 +6,17 @@
 //! The 1976 standard temperature profile, and the bias and graded delta
 //! that shift it.
 
-use super::{
-    Atmosphere, AtmosphereModel, Overrides, RENG0, SH_RATIO, StandardProfile, TemperatureUnit,
-};
+#[cfg(test)]
+use super::Overrides;
+use super::{Atmosphere, AtmosphereModel, RENG0, SH_RATIO, StandardProfile, TemperatureUnit};
 use crate::c_numeric::format_g;
 use crate::functions::Table;
 use crate::units::{FTTOM, kelvin_to_rankine};
 
 /// `EarthRadius`: the ISA's radius for geopotential altitude, ft.
-pub const EARTH_RADIUS: f64 = 6356766.0 / FTTOM;
+pub(crate) const EARTH_RADIUS: f64 = 6356766.0 / FTTOM;
 /// `Rdry`: gas constant of dry air.
-pub const RDRY: f64 = RENG0;
+pub(crate) const RDRY: f64 = RENG0;
 
 /// `StdAtmosTemperatureTable`: °R by geopotential altitude (ft). The last
 /// row is the first layer of the high-altitude regime (91 km geometric).
@@ -69,6 +69,7 @@ impl StandardProfile {
     }
 }
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl Atmosphere {
     /// The body of the `FGStandardAtmosphere` constructor.
     pub(super) fn construct_profile(&mut self) {
@@ -93,13 +94,13 @@ impl Atmosphere {
 
     /// `GeopotentialAltitude`.
     #[must_use]
-    pub fn geopotential_altitude(geometalt: f64) -> f64 {
+    pub(crate) fn geopotential_altitude(geometalt: f64) -> f64 {
         (geometalt * EARTH_RADIUS) / (EARTH_RADIUS + geometalt)
     }
 
     /// `GeometricAltitude`.
     #[must_use]
-    pub fn geometric_altitude(geopotalt: f64) -> f64 {
+    pub(crate) fn geometric_altitude(geopotalt: f64) -> f64 {
         (geopotalt * EARTH_RADIUS) / (EARTH_RADIUS - geopotalt)
     }
 
@@ -135,6 +136,7 @@ impl Atmosphere {
     /// `GetStdTemperature(altitude)`, °R. Below sea level it extrapolates
     /// with the current (graded) first lapse rate, as JSBSim does.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn get_std_temperature(&self, altitude: f64) -> f64 {
         let p = &self.profile;
         let geo_pot_alt = Self::geopotential_altitude(altitude);
@@ -148,12 +150,14 @@ impl Atmosphere {
 
     /// `GetStdTemperatureSL`.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn get_std_temperature_sl(&self) -> f64 {
         self.profile.std_sl_temperature
     }
 
     /// `GetStdTemperatureRatio(h)`.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn get_std_temperature_ratio(&self, h: f64) -> f64 {
         self.get_std_temperature(h) / self.profile.std_sl_temperature
     }
@@ -182,12 +186,14 @@ impl Atmosphere {
     }
 
     /// `SetTemperatureSL`: biases the profile so sea level is at `t`.
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn set_temperature_sl(&mut self, t: f64, unit: TemperatureUnit) {
         self.set_temperature(t, 0.0, unit);
     }
 
     /// `SetTemperature`: biases the profile so altitude `h` (ft ASL) is at
     /// `t`.
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn set_temperature(&mut self, t: f64, h: f64, unit: TemperatureUnit) {
         if self.model != AtmosphereModel::Standard {
             return;
@@ -260,6 +266,7 @@ impl Atmosphere {
     }
 
     /// `ResetSLTemperature`.
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn reset_sl_temperature(&mut self) {
         self.profile.temperature_bias = 0.0;
         self.profile.temperature_delta_gradient = 0.0;
@@ -271,7 +278,7 @@ impl Atmosphere {
 
     /// `CalculateLapseRates`: per-layer lapse rates of the table, less the
     /// graded delta.
-    pub fn calculate_lapse_rates(&mut self) {
+    pub(crate) fn calculate_lapse_rates(&mut self) {
         let p = &mut self.profile;
         let table = &p.temperature_table;
         p.lapse_rates.clear();
@@ -286,12 +293,12 @@ impl Atmosphere {
     }
 
     /// `CalculateSLDensity`.
-    pub fn calculate_sl_density(&mut self) {
+    pub(crate) fn calculate_sl_density(&mut self) {
         self.sl_density = self.sl_pressure / (self.reng * self.sl_temperature);
     }
 
     /// `CalculateSLSoundSpeedAndDensity`.
-    pub fn calculate_sl_sound_speed_and_density(&mut self) {
+    pub(crate) fn calculate_sl_sound_speed_and_density(&mut self) {
         self.sl_soundspeed = (SH_RATIO * self.reng * self.sl_temperature).sqrt();
         self.calculate_sl_density();
     }
@@ -299,7 +306,8 @@ impl Atmosphere {
     /// `PrintStandardAtmosphereTable`: the profile every 1000 ft, as text.
     /// Like JSBSim it leaves the atmosphere recalculated at
     /// `input.altitude_asl` by running the model again (`Run(false)`).
-    pub fn print_standard_atmosphere_table(&mut self, overrides: &Overrides) -> String {
+    #[cfg(test)]
+    pub(crate) fn print_standard_atmosphere_table(&mut self, overrides: &Overrides) -> String {
         let mut out = String::from(
             "Altitude (ft)   Temp (F)   Pressure (psf)   Density (sl/ft3)\n\
              -------------   --------   --------------   ----------------\n",

@@ -17,6 +17,7 @@ use crate::properties::{Attribute, NodeId, PropertyTree};
 
 /// The override nodes found so far.
 #[derive(Debug, Clone, Copy, Default)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct OverrideNodes {
     /// `atmosphere/override/temperature`.
     pub temperature: Option<NodeId>,
@@ -31,7 +32,7 @@ pub struct OverrideNodes {
 impl OverrideNodes {
     /// Looks up the nodes still missing, unless no node has been created
     /// since the last lookup.
-    pub fn resolve(&mut self, tree: &PropertyTree) {
+    pub(crate) fn resolve(&mut self, tree: &PropertyTree) {
         let generation = tree.generation();
         if self.looked_up_at == Some(generation) {
             return;

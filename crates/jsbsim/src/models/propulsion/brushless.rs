@@ -31,6 +31,7 @@ const WATT_PER_RPM_TO_FTPOUND: f64 = 60.0 / (2.0 * PI * NM_TO_FTPOUND);
 
 /// `FGBrushLessDCMotor`'s members beyond `FGEngine`'s.
 #[derive(Debug, Clone)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct BrushLessDcMotor {
     /// Engine number, for its inputs.
     pub number: usize,

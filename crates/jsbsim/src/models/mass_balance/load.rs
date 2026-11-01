@@ -42,7 +42,7 @@ impl MassBalance {
     /// loader has merged any `file=` include into it; its `<function>` and
     /// `<property>` children are the loader's. Point mass properties are
     /// tied through `b` as each point mass is added.
-    pub fn load(&mut self, el: &Element, b: &mut Binder<'_>) -> Result<(), Error> {
+    pub(crate) fn load(&mut self, el: &Element, b: &mut Binder<'_>) -> Result<(), Error> {
         self.set_aircraft_base_inertias(read_inertia_matrix(el)?);
         if el.find_element("emptywt").is_some() {
             self.empty_weight = el.find_element_value_as_number_convert_to("emptywt", "LBS")?;
@@ -68,7 +68,7 @@ impl MassBalance {
     }
 
     /// `AddPointMass`.
-    pub fn add_point_mass(&mut self, el: &Element, b: &mut Binder<'_>) -> Result<(), Error> {
+    pub(crate) fn add_point_mass(&mut self, el: &Element, b: &mut Binder<'_>) -> Result<(), Error> {
         let Some(loc_element) = el.find_element("location") else {
             tracing::error!(
                 "{}: Pointmass {} has no location.",

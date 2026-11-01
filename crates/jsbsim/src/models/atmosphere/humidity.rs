@@ -25,6 +25,7 @@ const MWATER: f64 = 18.016 * KGTOSLUG / 1000.0;
 /// `Rwater`: gas constant of water vapor.
 const RWATER: f64 = RSTAR / MWATER;
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl Atmosphere {
     /// Partial pressure of the vapor in the current air, psf.
     fn vapor_pressure_psf(&self) -> f64 {
@@ -34,14 +35,14 @@ impl Atmosphere {
     /// `CalculateVaporPressure`: saturation pressure at `temperature` (°R),
     /// psf.
     #[must_use]
-    pub fn calculate_vapor_pressure(temperature: f64) -> f64 {
+    pub(crate) fn calculate_vapor_pressure(temperature: f64) -> f64 {
         let temperature_deg_c = rankine_to_celsius(temperature);
         A * crate::elementary::exp(B * temperature_deg_c / (C + temperature_deg_c))
     }
 
     /// `ValidateVaporMassFraction`: caps the vapor at saturation and at the
     /// recorded maximum for geometric altitude `h`, then updates `reng`.
-    pub fn validate_vapor_mass_fraction(&mut self, h: f64) {
+    pub(crate) fn validate_vapor_mass_fraction(&mut self, h: f64) {
         if self.saturated_vapor_pressure < self.pressure {
             let vapor_pressure = self.vapor_pressure_psf();
             if vapor_pressure > self.saturated_vapor_pressure {
@@ -128,7 +129,7 @@ impl Atmosphere {
 
     /// `GetRelativeHumidity`, percent.
     #[must_use]
-    pub fn get_relative_humidity(&self) -> f64 {
+    pub(crate) fn get_relative_humidity(&self) -> f64 {
         let vapor_pressure = self.vapor_pressure_psf();
         100.0 * vapor_pressure / self.saturated_vapor_pressure
     }
@@ -153,7 +154,7 @@ impl Atmosphere {
 
     /// `GetVaporMassFractionPPM`.
     #[must_use]
-    pub fn get_vapor_mass_fraction_ppm(&self) -> f64 {
+    pub(crate) fn get_vapor_mass_fraction_ppm(&self) -> f64 {
         self.vapor_mass_fraction * 1E6
     }
 

@@ -28,7 +28,7 @@ fn refused(el: &Element, message: String) -> Error {
 impl Tank {
     /// `FGTank(exec, el, tank_number)` up to `bind`, which the caller does
     /// once the tank is in place.
-    pub fn load(el: &Element, number: usize) -> Result<Self, Error> {
+    pub(crate) fn load(el: &Element, number: usize) -> Result<Self, Error> {
         let mut tank = Self::read(el, number)?;
         tank.set_priority(tank.priority);
         tank.check_capacity(el)?;

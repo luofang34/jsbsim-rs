@@ -10,7 +10,6 @@ use super::order::Model;
 use crate::Error;
 use crate::math::ColumnVector3;
 use crate::models::Models;
-use crate::models::external_reactions::Transforms;
 use crate::models::fcs::throttle;
 use crate::models::propulsion::{self, Tank, TankType, families, tank};
 use crate::xml::{DocumentLoader, Element, IncludeKind};
@@ -134,16 +133,11 @@ impl Fdm {
     /// `vForces += engine->GetBodyForces(); vMoments += engine->GetMoments()`.
     pub(super) fn sum_engine_forces(&mut self, i: usize) {
         let m = &mut self.models;
-        let t = Transforms {
-            tw2b: m.auxiliary.tw2b,
-            tl2b: m.propagate.frames.tl2b,
-            ti2b: m.propagate.frames.ti2b,
-        };
         let Some(engine) = m.propulsion.engines.get_mut(i) else {
             return;
         };
         let force = &mut engine.thruster.base.force;
-        let body = force.body_forces(&t, &m.mass_balance);
+        let body = force.body_forces(&m.mass_balance);
         let moment = force.moment;
         m.propulsion.forces += body;
         m.propulsion.moments += moment;

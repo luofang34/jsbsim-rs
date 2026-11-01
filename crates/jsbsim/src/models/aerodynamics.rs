@@ -7,7 +7,7 @@
 
 mod bind;
 
-pub use bind::bind;
+pub(crate) use bind::bind;
 
 use super::base::ModelBase;
 use crate::Error;
@@ -18,6 +18,7 @@ use crate::xml::Element;
 
 /// `eAxisType`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub enum AxisType {
     /// Not determined yet.
     #[default]
@@ -34,7 +35,7 @@ pub enum AxisType {
 
 /// Inputs loaded by the executive.
 #[derive(Debug, Clone, Copy, Default)]
-pub struct Inputs {
+pub(crate) struct Inputs {
     /// Angle of attack, rad.
     pub alpha: f64,
     /// Sideslip, rad.
@@ -61,7 +62,7 @@ pub struct Inputs {
 
 /// Function values of one frame, in evaluation order.
 #[derive(Debug, Clone, Default)]
-pub struct Values {
+pub(crate) struct Values {
     /// Sum per force axis of the functions about the reference point.
     pub native: ColumnVector3,
     /// Sum per force axis of the functions applied at the CG.
@@ -74,13 +75,14 @@ pub struct Values {
 
 /// `FGAerodynamics`.
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Aerodynamics {
     /// Scheduling.
-    pub base: ModelBase,
+    pub(crate) base: ModelBase,
     /// Inputs of the current frame.
-    pub input: Inputs,
+    pub(crate) input: Inputs,
     /// Axis system of the force functions.
-    pub force_axis: AxisType,
+    pub(crate) force_axis: AxisType,
     /// Axis system of the moment functions.
     pub moment_axis: AxisType,
     /// Functions per axis (`DRAG SIDE LIFT ROLL PITCH YAW`).
@@ -90,12 +92,12 @@ pub struct Aerodynamics {
     /// `aero_ref_pt_shift_x`.
     pub rp_shift: Option<FnId>,
     /// State.
-    pub state: State,
+    pub(crate) state: State,
 }
 
 /// Values the model computes and publishes.
 #[derive(Debug, Clone, Copy, Default)]
-pub struct State {
+pub(crate) struct State {
     /// `alphaclmin0` / `alphaclmax0` from the file.
     pub alpha_cl_min0: f64,
     /// See `alpha_cl_min0`.
@@ -181,7 +183,7 @@ fn process_frame(
 
 impl Aerodynamics {
     /// `InitModel`.
-    pub fn init_model(&mut self) {
+    pub(crate) fn init_model(&mut self) {
         self.base.init();
         let s = &mut self.state;
         s.impending_stall = 0.0;
@@ -258,7 +260,11 @@ impl Aerodynamics {
     }
 
     /// `Load(<aerodynamics>)`, after the executive's `Upload`.
-    pub fn load(&mut self, document: &Element, ctx: &mut LoadContext<'_>) -> Result<(), Error> {
+    pub(crate) fn load(
+        &mut self,
+        document: &Element,
+        ctx: &mut LoadContext<'_>,
+    ) -> Result<(), Error> {
         self.determine_axis_system(document)?;
         let limits = |name: &str| -> Result<Option<(f64, f64)>, Error> {
             let Some(el) = document.find_element(name) else {
@@ -314,7 +320,7 @@ impl Aerodynamics {
     }
 
     /// The part of `Run` before the functions are evaluated.
-    pub fn begin_frame(&mut self) {
+    pub(crate) fn begin_frame(&mut self) {
         let i = &self.input;
         let s = &mut self.state;
         if i.qbar > 1.0 {
@@ -324,7 +330,7 @@ impl Aerodynamics {
     }
 
     /// The part of `Run` after the pre-functions, up to the evaluation.
-    pub fn prepare(&mut self) {
+    pub(crate) fn prepare(&mut self) {
         let i = &self.input;
         let s = &mut self.state;
         let twovel = 2.0 * i.vt;
@@ -382,7 +388,7 @@ impl Aerodynamics {
     }
 
     /// The rest of `Run`, from the function values.
-    pub fn finish(&mut self, values: &Values) -> Result<(), Error> {
+    pub(crate) fn finish(&mut self, values: &Values) -> Result<(), Error> {
         let forces = self.to_body(self.force_axis, values.native)?;
         let forces_at_cg = self.to_body(self.force_axis, values.native_at_cg)?;
         if let Some(shift) = values.rp_shift {

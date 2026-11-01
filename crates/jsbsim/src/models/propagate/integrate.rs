@@ -11,7 +11,7 @@ use crate::math::{ColumnVector3, E_P, E_Q, E_R, Quaternion, dot_product};
 /// `eIntegrateType`. `eNone` (0) has no variant: a kind without one
 /// leaves the integrand frozen.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Integrator {
+pub(crate) enum Integrator {
     /// Rectangular Euler.
     RectEuler = 1,
     /// Trapezoidal.

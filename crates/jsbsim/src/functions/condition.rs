@@ -13,7 +13,7 @@ use crate::xml::Element;
 
 /// A comparison operator.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Comparison {
+pub(crate) enum Comparison {
     /// `==`, `EQ`, `eq`
     Eq,
     /// `!=`, `NE`, `ne`
@@ -44,7 +44,7 @@ impl Comparison {
 
 /// `FGCondition`.
 #[derive(Debug, Clone)]
-pub enum Condition {
+pub(crate) enum Condition {
     /// Sub-conditions combined with AND (`all`) or OR.
     Group {
         /// AND when true, OR when false.
@@ -66,7 +66,7 @@ pub enum Condition {
 impl Condition {
     /// `FGCondition(element, pm)`: each data line is a test, each child
     /// element (which must have this element's name) a nested group.
-    pub fn load(el: &Element, tree: &PropertyTree) -> Result<Self, Error> {
+    pub(crate) fn load(el: &Element, tree: &PropertyTree) -> Result<Self, Error> {
         let fail = |message: String| -> Error {
             FunctionError::Condition {
                 at: el.location(),
@@ -100,7 +100,7 @@ impl Condition {
 
     /// `FGCondition(test, pm, el)`: `property op value`, split at single
     /// spaces as JSBSim's `split(test, ' ')` does.
-    pub fn load_test(test: &str, el: &Element, tree: &PropertyTree) -> Result<Self, Error> {
+    pub(crate) fn load_test(test: &str, el: &Element, tree: &PropertyTree) -> Result<Self, Error> {
         let trim = |s: &str| {
             s.trim_matches(|c: char| c.is_ascii() && is_c_space(c as u8))
                 .to_owned()
@@ -139,7 +139,10 @@ impl Condition {
 
     /// `Evaluate()`: every sub-condition is evaluated, without
     /// short-circuit, as in JSBSim.
-    pub fn evaluate<G: GetterSource>(&self, ev: &mut Evaluator<'_, G>) -> Result<bool, Error> {
+    pub(crate) fn evaluate<G: GetterSource>(
+        &self,
+        ev: &mut Evaluator<'_, G>,
+    ) -> Result<bool, Error> {
         match self {
             Self::Group { all, conditions } => {
                 let mut pass = *all;

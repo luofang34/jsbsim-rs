@@ -23,7 +23,7 @@ const M_HELIUM: f64 = 0.00027409;
 
 /// `GasType`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum GasType {
+pub(crate) enum GasType {
     /// `ttUNKNOWN`: behaves as air.
     Unknown,
     /// `ttHYDROGEN`.
@@ -46,7 +46,7 @@ impl GasType {
 
     /// `M_gas`, slug/mol.
     #[must_use]
-    pub fn molar_mass(self) -> f64 {
+    pub(crate) fn molar_mass(self) -> f64 {
         match self {
             Self::Hydrogen => M_HYDROGEN,
             Self::Helium => M_HELIUM,
@@ -56,7 +56,7 @@ impl GasType {
 
     /// `Cv_gas`.
     #[must_use]
-    pub fn cv(self) -> f64 {
+    pub(crate) fn cv(self) -> f64 {
         match self {
             Self::Helium => 3.0 / 2.0,
             Self::Hydrogen | Self::Air | Self::Unknown => 5.0 / 2.0,
@@ -66,11 +66,12 @@ impl GasType {
 
 /// `FGGasCell`.
 #[derive(Debug, Clone)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct GasCell {
     /// The gas.
-    pub gas: GasType,
+    pub(crate) gas: GasType,
     /// Location, shape and envelope.
-    pub envelope: Envelope,
+    pub(crate) envelope: Envelope,
     /// `Temperature`, °R.
     pub temperature: f64,
     /// `Pressure`, psf.
@@ -103,7 +104,7 @@ pub struct GasCell {
 
 /// What `Calculate` keeps from before the ballonets update.
 #[derive(Debug, Clone, Copy)]
-pub struct Started {
+pub(crate) struct Started {
     old_temperature: f64,
     old_pressure: f64,
 }
@@ -111,7 +112,7 @@ pub struct Started {
 impl GasCell {
     /// `FGGasCell(exec, el, num, in)` up to its ties: the state starts
     /// from the inputs as they stand when the cell is loaded.
-    pub fn load(el: &Element, input: &Inputs) -> Result<Self, Error> {
+    pub(crate) fn load(el: &Element, input: &Inputs) -> Result<Self, Error> {
         let gas = GasType::parse(el.attribute("type"));
         let envelope = Envelope::load(el, "gas cell")?;
         let temperature = input.temperature;
@@ -138,7 +139,11 @@ impl GasCell {
     }
 
     /// The `<heat>` functions, read after the ties.
-    pub fn load_heat(&mut self, el: &Element, ctx: &mut LoadContext<'_>) -> Result<(), Error> {
+    pub(crate) fn load_heat(
+        &mut self,
+        el: &Element,
+        ctx: &mut LoadContext<'_>,
+    ) -> Result<(), Error> {
         if let Some(heat) = el.find_element("heat") {
             for f in heat.find_elements("function") {
                 self.heat
@@ -151,7 +156,7 @@ impl GasCell {
     /// `Calculate` up to the ballonets' update: temperature from the heat
     /// flow `du` (`None` without heat functions), pressure, and manual
     /// valving.
-    pub fn start(&mut self, du: Option<f64>, input: &Inputs, dt: f64) -> Started {
+    pub(crate) fn start(&mut self, du: Option<f64>, input: &Inputs, dt: f64) -> Started {
         let started = Started {
             old_temperature: self.temperature,
             old_pressure: self.pressure,
@@ -207,7 +212,7 @@ impl GasCell {
     /// `Calculate` after the ballonets' update: safety valving, volume,
     /// buoyancy, mass, inertia and the moment of the mass; then
     /// `GetBodyForces` with the local-to-body transform `tl2b`.
-    pub fn finish(
+    pub(crate) fn finish(
         &mut self,
         started: Started,
         input: &Inputs,

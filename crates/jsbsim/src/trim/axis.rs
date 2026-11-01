@@ -13,7 +13,7 @@ use crate::math::{E_P, E_PHI, E_PSI, E_Q, E_R, E_THT, E_U, E_V, E_W};
 use crate::units::{DEGTORAD, RADTODEG};
 
 /// `DEFAULT_TOLERANCE`.
-pub const DEFAULT_TOLERANCE: f64 = 0.001;
+pub(crate) const DEFAULT_TOLERANCE: f64 = 0.001;
 
 /// What an axis brings to its target (`State`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -136,7 +136,7 @@ impl Control {
 
 /// `FGTrimAxis`.
 #[derive(Debug, Clone, PartialEq)]
-pub struct TrimAxis {
+pub(crate) struct TrimAxis {
     state: State,
     control: Control,
     state_target: f64,
@@ -158,7 +158,7 @@ impl TrimAxis {
     /// `FGTrimAxis(fdmex, ic, state, control)`: the tolerance of `state`
     /// and the range of `control`, some of which start from `ic`.
     #[must_use]
-    pub fn new(fdm: &Fdm, ic: &InitialCondition, state: State, control: Control) -> Self {
+    pub(crate) fn new(fdm: &Fdm, ic: &InitialCondition, state: State, control: Control) -> Self {
         let mut axis = Self {
             state,
             control,
@@ -297,7 +297,7 @@ impl TrimAxis {
 
     /// `Run`: applies the control, then initializes from `ic` and runs a
     /// frame until the state settles (at most 100 times).
-    pub fn run(&mut self, fdm: &mut Fdm, ic: &mut InitialCondition) -> Result<(), Error> {
+    pub(crate) fn run(&mut self, fdm: &mut Fdm, ic: &mut InitialCondition) -> Result<(), Error> {
         self.apply_control(fdm, ic)?;
         let mut i = 0i32;
         let mut stable = false;
@@ -318,106 +318,95 @@ impl TrimAxis {
     }
 
     /// `GetState`: the state read now, less its target.
-    pub fn state(&mut self, fdm: &Fdm) -> f64 {
+    pub(crate) fn state(&mut self, fdm: &Fdm) -> f64 {
         self.read_state(fdm);
         self.state_value
     }
 
     /// `InTolerance`.
-    pub fn in_tolerance(&mut self, fdm: &Fdm) -> bool {
+    pub(crate) fn in_tolerance(&mut self, fdm: &Fdm) -> bool {
         self.read_state(fdm);
         self.state_value.abs() <= self.tolerance
     }
 
     /// `SetControl`.
-    pub fn set_control(&mut self, value: f64) {
+    pub(crate) fn set_control(&mut self, value: f64) {
         self.control_value = value;
     }
 
     /// `GetControl`.
     #[must_use]
-    pub fn control(&self) -> f64 {
+    pub(crate) fn control(&self) -> f64 {
         self.control_value
     }
 
     /// `GetStateType`.
     #[must_use]
-    pub fn state_type(&self) -> State {
+    pub(crate) fn state_type(&self) -> State {
         self.state
     }
 
     /// `GetControlType`.
     #[must_use]
-    pub fn control_type(&self) -> Control {
+    pub(crate) fn control_type(&self) -> Control {
         self.control
     }
 
     /// `GetControlMin`.
     #[must_use]
-    pub fn control_min(&self) -> f64 {
+    pub(crate) fn control_min(&self) -> f64 {
         self.control_min
     }
 
     /// `GetControlMax`.
     #[must_use]
-    pub fn control_max(&self) -> f64 {
+    pub(crate) fn control_max(&self) -> f64 {
         self.control_max
     }
 
     /// `SetControlToMin`.
-    pub fn set_control_to_min(&mut self) {
+    pub(crate) fn set_control_to_min(&mut self) {
         self.control_value = self.control_min;
     }
 
     /// `SetControlToMax`.
-    pub fn set_control_to_max(&mut self) {
+    pub(crate) fn set_control_to_max(&mut self) {
         self.control_value = self.control_max;
     }
 
     /// `SetControlLimits`.
-    pub fn set_control_limits(&mut self, min: f64, max: f64) {
+    pub(crate) fn set_control_limits(&mut self, min: f64, max: f64) {
         self.control_min = min;
         self.control_max = max;
     }
 
     /// `GetTolerance`.
     #[must_use]
-    pub fn tolerance(&self) -> f64 {
+    pub(crate) fn tolerance(&self) -> f64 {
         self.tolerance
-    }
-
-    /// `SetTolerance`.
-    pub fn set_tolerance(&mut self, tolerance: f64) {
-        self.tolerance = tolerance;
     }
 
     /// `GetSolverEps`.
     #[must_use]
-    pub fn solver_eps(&self) -> f64 {
+    pub(crate) fn solver_eps(&self) -> f64 {
         self.solver_eps
-    }
-
-    /// `GetIterationLimit`, which the trim does not use.
-    #[must_use]
-    pub fn iteration_limit(&self) -> i32 {
-        self.max_iterations
     }
 
     /// `GetStability`: frames the last run took to settle.
     #[must_use]
-    pub fn stability(&self) -> i32 {
+    pub(crate) fn stability(&self) -> i32 {
         self.its_to_stable_value
     }
 
     /// `GetRunCount`: frames of every run.
     #[must_use]
-    pub fn run_count(&self) -> i32 {
+    pub(crate) fn run_count(&self) -> i32 {
         self.total_stability_iterations
     }
 
     /// `GetAvgStability`.
     #[must_use]
-    pub fn avg_stability(&self) -> f64 {
+    pub(crate) fn avg_stability(&self) -> f64 {
         if self.total_iterations > 0 {
             return f64::from(self.total_stability_iterations) / f64::from(self.total_iterations);
         }
@@ -425,19 +414,20 @@ impl TrimAxis {
     }
 
     /// `SetStateTarget`.
-    pub fn set_state_target(&mut self, target: f64) {
+    pub(crate) fn set_state_target(&mut self, target: f64) {
         self.state_target = target;
     }
 
     /// `GetStateTarget`.
     #[must_use]
-    pub fn state_target(&self) -> f64 {
+    pub(crate) fn state_target(&self) -> f64 {
         self.state_target
     }
 
     /// The factors `AxisReport` shows the control and state in.
     #[must_use]
-    pub fn converts(&self) -> (f64, f64) {
+    #[cfg(test)]
+    pub(crate) fn converts(&self) -> (f64, f64) {
         (self.control_convert, self.state_convert)
     }
 }

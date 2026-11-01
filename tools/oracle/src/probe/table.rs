@@ -24,7 +24,7 @@ fn load(prefix: &str, path: &str, context: &ProbeContext) -> Result<Option<Table
 }
 
 /// Executes the operations in `input`, one per line.
-pub fn run(input: &str, context: &ProbeContext) -> String {
+pub(crate) fn run(input: &str, context: &ProbeContext) -> String {
     let mut table: Option<Table> = None;
     let mut out = String::new();
     for line in input.lines() {

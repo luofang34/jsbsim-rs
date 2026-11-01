@@ -14,10 +14,11 @@
 //! ported.
 
 mod bind;
+mod constants;
 mod humidity;
 pub(crate) mod mars;
 mod msis;
-pub mod nrlmsise;
+pub(crate) mod nrlmsise;
 mod override_nodes;
 mod pressure;
 mod snapshot;
@@ -25,39 +26,20 @@ mod standard;
 #[cfg(test)]
 mod tests;
 
-pub use bind::{STANDARD_PROPERTIES, bind};
-pub use msis::Msis;
-pub use override_nodes::OverrideNodes;
+pub(crate) use bind::{STANDARD_PROPERTIES, bind};
+pub(crate) use constants::*;
+pub(crate) use msis::Msis;
+pub(crate) use override_nodes::OverrideNodes;
 
 use super::base::ModelBase;
 use crate::c_numeric::format_g;
 use crate::functions::Table;
-use crate::units::{FTTOM, KGTOSLUG, kelvin_to_rankine};
-
-/// `StdDaySLtemperature`, °R.
-pub const STD_DAY_SL_TEMPERATURE: f64 = 518.67;
-/// `StdDaySLpressure`, psf.
-pub const STD_DAY_SL_PRESSURE: f64 = 2116.228;
-/// `SHRatio`: ratio of specific heats of air.
-pub const SH_RATIO: f64 = 1.4;
-/// `Rstar`: universal gas constant, ft·lbf/R/mol.
-pub const RSTAR: f64 = 8.31432 * KGTOSLUG / kelvin_to_rankine(FTTOM * FTTOM);
-/// `Mair`: mean molecular weight of air, slug/mol.
-pub const MAIR: f64 = 28.9645 * KGTOSLUG / 1000.0;
-/// `g0`: the ISA's sea-level gravity, ft/s^2, whatever gravity model runs.
-pub const G0: f64 = 9.80665 / FTTOM;
-/// `Reng0`: specific gas constant of dry air, ft·lbf/slug/R.
-pub const RENG0: f64 = RSTAR / MAIR;
-/// `StdDaySLdensity`, slug/ft^3.
-pub const STD_DAY_SL_DENSITY: f64 = STD_DAY_SL_PRESSURE / (RENG0 * STD_DAY_SL_TEMPERATURE);
-/// `SutherlandConstant`, °R.
-pub(crate) const SUTHERLAND_CONSTANT: f64 = 198.72;
-/// `Beta`, slug/(s·ft·R^0.5).
-pub(crate) const BETA: f64 = 2.269690E-08;
+use crate::units::kelvin_to_rankine;
 
 /// `eTemperature`. JSBSim's `eNoTempUnit` only exists to make the
 /// conversions throw, so it has no counterpart.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(not(feature = "__oracle"), allow(dead_code, unreachable_pub))]
 pub enum TemperatureUnit {
     /// `eFahrenheit`.
     Fahrenheit,
@@ -71,6 +53,7 @@ pub enum TemperatureUnit {
 
 /// `ePressure`, without the throwing `eNoPressUnit`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(not(feature = "__oracle"), allow(dead_code, unreachable_pub))]
 pub enum PressureUnit {
     /// `ePSF`.
     Psf,
@@ -84,6 +67,7 @@ pub enum PressureUnit {
 
 /// Inputs loaded by the executive.
 #[derive(Debug, Clone, Copy, Default)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Inputs {
     /// Altitude above sea level, ft.
     pub altitude_asl: f64,
@@ -97,7 +81,7 @@ pub struct Inputs {
 /// properties that exist when `Calculate` runs; each replaces the modeled
 /// value.
 #[derive(Debug, Clone, Copy, Default)]
-pub struct Overrides {
+pub(crate) struct Overrides {
     /// Temperature, °R.
     pub temperature: Option<f64>,
     /// Pressure, psf.
@@ -109,7 +93,7 @@ pub struct Overrides {
 /// The temperature profile and the pressure and density breakpoints
 /// derived from it.
 #[derive(Debug, Clone)]
-pub struct StandardProfile {
+pub(crate) struct StandardProfile {
     /// `StdSLtemperature`, °R.
     pub std_sl_temperature: f64,
     /// `StdSLdensity`, slug/ft^3.
@@ -144,6 +128,7 @@ pub struct StandardProfile {
 /// constructs, or the one a planet's `<atmosphere model="...">` replaces it
 /// with.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub enum AtmosphereModel {
     /// `FGStandardAtmosphere`.
     #[default]
@@ -154,18 +139,21 @@ pub enum AtmosphereModel {
     Msis,
 }
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl AtmosphereModel {
     /// Every model, each once.
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub const ALL: [Self; 3] = [Self::Standard, Self::Mars, Self::Msis];
 }
 
 /// The atmosphere.
 #[derive(Debug, Clone)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Atmosphere {
     /// The model whose overrides of `FGAtmosphere`'s virtual methods apply.
     pub model: AtmosphereModel,
     /// Scheduling.
-    pub base: ModelBase,
+    pub(crate) base: ModelBase,
     /// Inputs of the current frame.
     pub input: Inputs,
     /// `SLtemperature`, °R.
@@ -201,7 +189,7 @@ pub struct Atmosphere {
     /// `SaturatedVaporPressure`, psf.
     pub saturated_vapor_pressure: f64,
     /// The standard temperature profile and its offsets.
-    pub profile: StandardProfile,
+    pub(crate) profile: StandardProfile,
     /// The `atmosphere/override/*` nodes found so far.
     pub override_nodes: OverrideNodes,
     /// What `simulation/models/FGAtmosphere/enabled` holds once a planet
@@ -248,10 +236,11 @@ impl Default for Atmosphere {
     }
 }
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl Atmosphere {
     /// `FGStandardAtmosphere::InitModel`. Unlike other models it does not
     /// chain to `FGModel::InitModel`, so the rate counter is left alone.
-    pub fn init_model(&mut self, overrides: &Overrides) {
+    pub(crate) fn init_model(&mut self, overrides: &Overrides) {
         if self.model == AtmosphereModel::Mars {
             self.mars_init_model();
             return;
@@ -279,7 +268,7 @@ impl Atmosphere {
 
     /// `Calculate`: the atmosphere at `altitude` (ft ASL), then, for the
     /// standard atmosphere, the humidity limits there.
-    pub fn calculate(&mut self, altitude: f64, overrides: &Overrides) {
+    pub(crate) fn calculate(&mut self, altitude: f64, overrides: &Overrides) {
         match self.model {
             AtmosphereModel::Mars => return self.mars_calculate(altitude),
             AtmosphereModel::Msis => return self.msis_calculate(altitude),
@@ -316,7 +305,7 @@ impl Atmosphere {
 
     /// `ValidatePressure`: caps `p` at the interstellar pressure, 1e-15 Pa.
     #[must_use]
-    pub fn validate_pressure(p: f64, msg: &str, quiet: bool) -> f64 {
+    pub(crate) fn validate_pressure(p: f64, msg: &str, quiet: bool) -> f64 {
         let min_pressure = Self::convert_to_psf(1E-15, PressureUnit::Pascals);
         if p < min_pressure {
             if !quiet {
@@ -334,7 +323,7 @@ impl Atmosphere {
     /// `ValidateTemperature`: caps `t` at 1 K, the coldest natural place
     /// known.
     #[must_use]
-    pub fn validate_temperature(t: f64, msg: &str, quiet: bool) -> f64 {
+    pub(crate) fn validate_temperature(t: f64, msg: &str, quiet: bool) -> f64 {
         const MIN_UNIVERSE_TEMPERATURE: f64 = kelvin_to_rankine(1.0);
         if t < MIN_UNIVERSE_TEMPERATURE {
             if !quiet {
@@ -351,7 +340,7 @@ impl Atmosphere {
 
     /// `ConvertToRankine`.
     #[must_use]
-    pub fn convert_to_rankine(t: f64, unit: TemperatureUnit) -> f64 {
+    pub(crate) fn convert_to_rankine(t: f64, unit: TemperatureUnit) -> f64 {
         match unit {
             TemperatureUnit::Fahrenheit => t + 459.67,
             TemperatureUnit::Celsius => (t + 273.15) * 1.8,
@@ -362,7 +351,7 @@ impl Atmosphere {
 
     /// `ConvertFromRankine`.
     #[must_use]
-    pub fn convert_from_rankine(t: f64, unit: TemperatureUnit) -> f64 {
+    pub(crate) fn convert_from_rankine(t: f64, unit: TemperatureUnit) -> f64 {
         match unit {
             TemperatureUnit::Fahrenheit => t - 459.67,
             TemperatureUnit::Celsius => t / 1.8 - 273.15,
@@ -373,7 +362,7 @@ impl Atmosphere {
 
     /// `ConvertToPSF`.
     #[must_use]
-    pub fn convert_to_psf(p: f64, unit: PressureUnit) -> f64 {
+    pub(crate) fn convert_to_psf(p: f64, unit: PressureUnit) -> f64 {
         match unit {
             PressureUnit::Psf => p,
             PressureUnit::Millibars => p * 2.08854342,
@@ -384,7 +373,7 @@ impl Atmosphere {
 
     /// `ConvertFromPSF`.
     #[must_use]
-    pub fn convert_from_psf(p: f64, unit: PressureUnit) -> f64 {
+    pub(crate) fn convert_from_psf(p: f64, unit: PressureUnit) -> f64 {
         match unit {
             PressureUnit::Psf => p,
             PressureUnit::Millibars => p / 2.08854342,
@@ -401,12 +390,13 @@ impl Atmosphere {
 
     /// `GetTemperatureRatio()`: current over sea-level temperature.
     #[must_use]
-    pub fn get_temperature_ratio(&self) -> f64 {
+    pub(crate) fn get_temperature_ratio(&self) -> f64 {
         self.temperature / self.sl_temperature
     }
 
     /// `GetTemperatureRatio(h)`: modeled temperature at `h` over sea level.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn get_temperature_ratio_at(&self, h: f64) -> f64 {
         self.get_temperature(h) / self.sl_temperature
     }
@@ -419,7 +409,7 @@ impl Atmosphere {
 
     /// `GetPressureRatio`.
     #[must_use]
-    pub fn get_pressure_ratio(&self) -> f64 {
+    pub(crate) fn get_pressure_ratio(&self) -> f64 {
         self.pressure / self.sl_pressure
     }
 
@@ -436,13 +426,13 @@ impl Atmosphere {
 
     /// `GetDensitySL`.
     #[must_use]
-    pub fn get_density_sl(&self) -> f64 {
+    pub(crate) fn get_density_sl(&self) -> f64 {
         self.sl_density
     }
 
     /// `GetDensityRatio`.
     #[must_use]
-    pub fn get_density_ratio(&self) -> f64 {
+    pub(crate) fn get_density_ratio(&self) -> f64 {
         self.density / self.sl_density
     }
 
@@ -459,37 +449,39 @@ impl Atmosphere {
 
     /// `GetSoundSpeedSL`.
     #[must_use]
-    pub fn get_sound_speed_sl(&self) -> f64 {
+    pub(crate) fn get_sound_speed_sl(&self) -> f64 {
         self.sl_soundspeed
     }
 
     /// `GetSoundSpeedRatio`.
     #[must_use]
-    pub fn get_sound_speed_ratio(&self) -> f64 {
+    pub(crate) fn get_sound_speed_ratio(&self) -> f64 {
         self.sound_speed / self.sl_soundspeed
     }
 
     /// `GetAbsoluteViscosity`.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn get_absolute_viscosity(&self) -> f64 {
         self.viscosity
     }
 
     /// `GetKinematicViscosity`.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn get_kinematic_viscosity(&self) -> f64 {
         self.kinematic_viscosity
     }
 
     /// `GetDensityAltitude`, ft.
     #[must_use]
-    pub fn get_density_altitude(&self) -> f64 {
+    pub(crate) fn get_density_altitude(&self) -> f64 {
         self.density_altitude
     }
 
     /// `GetPressureAltitude`, ft.
     #[must_use]
-    pub fn get_pressure_altitude(&self) -> f64 {
+    pub(crate) fn get_pressure_altitude(&self) -> f64 {
         self.pressure_altitude
     }
 }

@@ -5,14 +5,14 @@
 //! Buoyancy of lighter-than-air vehicles: the gas cells' lift, and their
 //! gas's mass, moment and inertia for `FGMassBalance`.
 
-pub mod ballonet;
+pub(crate) mod ballonet;
 mod bind;
-pub mod gas_cell;
-pub mod shape;
+pub(crate) mod gas_cell;
+pub(crate) mod shape;
 #[cfg(test)]
 mod tests;
 
-pub use gas_cell::GasCell;
+pub(crate) use gas_cell::GasCell;
 
 use super::base::ModelBase;
 use crate::Error;
@@ -21,14 +21,14 @@ use crate::models::LoadContext;
 use crate::xml::Element;
 
 /// `FGGasCell::R` (and `FGBallonet::R`), lbs·ft/(mol·°R).
-pub const GAS_R: f64 = 3.4071;
+pub(crate) const GAS_R: f64 = 3.4071;
 /// `FGGasCell::M_air` (and `FGBallonet::M_air`), slug/mol.
-pub const M_AIR: f64 = 0.0019186;
+pub(crate) const M_AIR: f64 = 0.0019186;
 
 /// `FGGasCell::Inputs`, which the executive loads from the atmosphere and
 /// the gravity.
 #[derive(Debug, Clone, Copy, Default)]
-pub struct Inputs {
+pub(crate) struct Inputs {
     /// Ambient pressure, psf.
     pub pressure: f64,
     /// Ambient temperature, °R.
@@ -41,11 +41,12 @@ pub struct Inputs {
 
 /// `FGBuoyantForces`.
 #[derive(Debug, Clone)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct BuoyantForces {
     /// Scheduling.
-    pub base: ModelBase,
+    pub(crate) base: ModelBase,
     /// Inputs of the current frame, shared by every cell.
-    pub input: Inputs,
+    pub(crate) input: Inputs,
     /// The gas cells.
     pub cells: Vec<GasCell>,
     /// `vTotalForces`, body frame, lbs.
@@ -74,7 +75,7 @@ impl Default for BuoyantForces {
 
 impl BuoyantForces {
     /// `InitModel`: the totals are cleared; the cells keep their state.
-    pub fn init_model(&mut self) {
+    pub(crate) fn init_model(&mut self) {
         self.base.init();
         self.forces = ColumnVector3::zero();
         self.moments = ColumnVector3::zero();
@@ -82,7 +83,7 @@ impl BuoyantForces {
 
     /// The `<gas_cell>` elements of `Load`, each tied and given its
     /// functions as it is constructed, ballonets after their cell.
-    pub fn load(&mut self, el: &Element, ctx: &mut LoadContext<'_>) -> Result<(), Error> {
+    pub(crate) fn load(&mut self, el: &Element, ctx: &mut LoadContext<'_>) -> Result<(), Error> {
         for cell_el in el.find_elements("gas_cell") {
             self.none_defined = false;
             let index = self.cells.len();
@@ -111,7 +112,7 @@ impl BuoyantForces {
     }
 
     /// `bind`, which `Load` calls once the cells are loaded, if any are.
-    pub fn bind(&self, b: &mut crate::models::Binder<'_>) -> Result<(), Error> {
+    pub(crate) fn bind(&self, b: &mut crate::models::Binder<'_>) -> Result<(), Error> {
         if self.none_defined {
             return Ok(());
         }
@@ -120,7 +121,7 @@ impl BuoyantForces {
 
     /// `GetGasMass`, slugs.
     #[must_use]
-    pub fn gas_mass(&self) -> f64 {
+    pub(crate) fn gas_mass(&self) -> f64 {
         let mut gw = 0.0;
         for c in &self.cells {
             gw += c.mass;
@@ -130,7 +131,7 @@ impl BuoyantForces {
 
     /// `GetGasMassMoment`, structural frame, lbs·in.
     #[must_use]
-    pub fn gas_mass_moment(&self) -> ColumnVector3 {
+    pub(crate) fn gas_mass_moment(&self) -> ColumnVector3 {
         let mut arm = ColumnVector3::zero();
         for c in &self.cells {
             arm += c.mass_moment;
@@ -139,7 +140,7 @@ impl BuoyantForces {
     }
 
     /// `GetGasMassInertia`, body frame, slug·ft^2.
-    pub fn gas_mass_inertia(&mut self) -> Matrix33 {
+    pub(crate) fn gas_mass_inertia(&mut self) -> Matrix33 {
         if self.cells.is_empty() {
             return self.gas_cell_j;
         }

@@ -49,12 +49,13 @@
 
 mod thrusters;
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub, unused_imports))]
+pub use thrusters::REGISTERED_THRUSTERS;
 #[cfg(test)]
 pub(crate) use thrusters::TEST_THRUSTER_ELEMENTS;
 pub(crate) use thrusters::load_thruster;
-pub use thrusters::{
-    REGISTERED_THRUSTERS, ThrusterFamily, ThrusterKind, ThrusterSample, ThrusterSite,
-    thruster_registered,
+pub(crate) use thrusters::{
+    ThrusterFamily, ThrusterKind, ThrusterSample, ThrusterSite, thruster_registered,
 };
 
 use super::Inputs;
@@ -66,7 +67,7 @@ use crate::models::{Env, LoadContext, ModelEvaluator, Models};
 use crate::xml::Element;
 
 /// The engine elements JSBSim's `FGPropulsion::Load` looks for, in order.
-pub const ENGINE_ELEMENTS: [&str; 6] = [
+pub(crate) const ENGINE_ELEMENTS: [&str; 6] = [
     "piston_engine",
     "turbine_engine",
     "turboprop_engine",
@@ -77,11 +78,11 @@ pub const ENGINE_ELEMENTS: [&str; 6] = [
 
 /// The thruster elements JSBSim's `FGEngine::LoadThruster` looks for, in
 /// order.
-pub const THRUSTER_ELEMENTS: [&str; 4] = ["propeller", "nozzle", "rotor", "direct"];
+pub(crate) const THRUSTER_ELEMENTS: [&str; 4] = ["propeller", "nozzle", "rotor", "direct"];
 
 /// What an engine type's `InitRunning` leaves to the executive.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum InitRunning {
+pub(crate) enum InitRunning {
     /// Nothing: the engine is running.
     Done,
     /// A `Calculate` of the engine, then [`EngineFamily::init_running_done`]:
@@ -138,7 +139,7 @@ pub(crate) trait EngineHost {
 }
 
 /// One engine type (a subclass of `FGEngine`).
-pub trait EngineFamily: Sized {
+pub(crate) trait EngineFamily: Sized {
     /// Its `FGEngine::EngineType`.
     const TYPE: EngineType;
     /// What one `Calculate` reads from the property tree.
@@ -218,11 +219,13 @@ macro_rules! engines {
         // variants would only add an indirection.
         #[allow(clippy::large_enum_variant)]
         #[derive(Debug, Clone)]
+        #[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
         pub enum EngineKind {
             $($(#[$cfg])* #[doc = concat!("`<", $element, ">`.")] $variant($ty),)*
         }
 
         /// The elements engine types register, in registration order.
+        #[cfg_attr(not(feature = "__oracle"), allow(dead_code, unreachable_pub))]
         pub const REGISTERED_ENGINES: &[&str] = &[$($(#[$cfg])* $element,)*];
 
         impl crate::snapshot::Visit for EngineKind {
@@ -245,6 +248,7 @@ macro_rules! engines {
         impl EngineKind {
             /// The element its type registers.
             #[must_use]
+            #[cfg_attr(not(feature = "__oracle"), allow(dead_code, unreachable_pub))]
             pub fn element(&self) -> &'static str {
                 match *self {
                     $($(#[$cfg])* Self::$variant(_) => $element,)*
@@ -253,7 +257,7 @@ macro_rules! engines {
 
             /// Its `FGEngine::EngineType`.
             #[must_use]
-            pub fn engine_type(&self) -> EngineType {
+            pub(crate) fn engine_type(&self) -> EngineType {
                 match *self {
                     $($(#[$cfg])* Self::$variant(_) => <$ty as EngineFamily>::TYPE,)*
                 }
@@ -262,28 +266,28 @@ macro_rules! engines {
             /// Whether `Calculate` does nothing while integration is
             /// suspended.
             #[must_use]
-            pub fn idle_while_suspended(&self) -> bool {
+            pub(crate) fn idle_while_suspended(&self) -> bool {
                 match *self {
                     $($(#[$cfg])* Self::$variant(_) => <$ty as EngineFamily>::IDLE_WHILE_SUSPENDED,)*
                 }
             }
 
             /// `CalcFuelNeed`.
-            pub fn calc_fuel_need(&mut self, base: &mut EngineBase, input: &Inputs) -> f64 {
+            pub(crate) fn calc_fuel_need(&mut self, base: &mut EngineBase, input: &Inputs) -> f64 {
                 match *self {
                     $($(#[$cfg])* Self::$variant(ref mut f) => f.calc_fuel_need(base, input),)*
                 }
             }
 
             /// `CalcOxidizerNeed`.
-            pub fn calc_oxidizer_need(&mut self, base: &mut EngineBase, input: &Inputs) -> f64 {
+            pub(crate) fn calc_oxidizer_need(&mut self, base: &mut EngineBase, input: &Inputs) -> f64 {
                 match *self {
                     $($(#[$cfg])* Self::$variant(ref mut f) => f.calc_oxidizer_need(base, input),)*
                 }
             }
 
             /// `InitRunning`.
-            pub fn init_running(
+            pub(crate) fn init_running(
                 &mut self,
                 base: &mut EngineBase,
                 thruster: &mut Thruster,
@@ -295,21 +299,21 @@ macro_rules! engines {
             }
 
             /// The rest of `InitRunning` after its `Calculate`.
-            pub fn init_running_done(&mut self) {
+            pub(crate) fn init_running_done(&mut self) {
                 match *self {
                     $($(#[$cfg])* Self::$variant(ref mut f) => f.init_running_done(),)*
                 }
             }
 
             /// `ResetToIC`.
-            pub fn reset_to_ic(&mut self, base: &mut EngineBase, thruster: &mut Thruster, input: &Inputs) {
+            pub(crate) fn reset_to_ic(&mut self, base: &mut EngineBase, thruster: &mut Thruster, input: &Inputs) {
                 match *self {
                     $($(#[$cfg])* Self::$variant(ref mut f) => f.reset_to_ic(base, thruster, input),)*
                 }
             }
 
             /// `SetMagnetos`.
-            pub fn set_magnetos(&mut self, setting: i32) {
+            pub(crate) fn set_magnetos(&mut self, setting: i32) {
                 match *self {
                     $($(#[$cfg])* Self::$variant(ref mut f) => f.set_magnetos(setting),)*
                 }
@@ -317,14 +321,14 @@ macro_rules! engines {
 
             /// The cutoff, for a type that has one.
             #[must_use]
-            pub fn cutoff(&self) -> Option<bool> {
+            pub(crate) fn cutoff(&self) -> Option<bool> {
                 match *self {
                     $($(#[$cfg])* Self::$variant(ref f) => f.cutoff(),)*
                 }
             }
 
             /// `SetCutoff`.
-            pub fn set_cutoff(&mut self, cutoff: bool) {
+            pub(crate) fn set_cutoff(&mut self, cutoff: bool) {
                 match *self {
                     $($(#[$cfg])* Self::$variant(ref mut f) => f.set_cutoff(cutoff),)*
                 }

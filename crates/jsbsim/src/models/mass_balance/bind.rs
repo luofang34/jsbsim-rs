@@ -12,7 +12,7 @@ use crate::models::{Binder, Kind};
 
 /// `FGMassBalance::bind`. `inertia/ixz-slugs_ft2` is JSBSim's `GetIxz`,
 /// which, unlike `GetIxy` and `GetIyz`, does not negate the tensor entry.
-pub fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
+pub(crate) fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
     b.getter("inertia/mass-slugs", |m| m.mass_balance.mass)?;
     b.getter("inertia/weight-lbs", |m| m.mass_balance.weight)?;
     b.getter("inertia/empty-weight-lbs", |m| m.mass_balance.empty_weight)?;
@@ -74,7 +74,7 @@ pub(super) fn bind_point_mass(b: &mut Binder<'_>, num: usize) -> Result<(), Erro
 impl MassBalance {
     /// `GetMassPropertiesReport`: the base vehicle, each point mass, the
     /// propulsion's `tank_report` and the total (lb, in, slug·ft^2).
-    pub fn mass_properties_report(&self, tank_report: &str) {
+    pub(crate) fn mass_properties_report(&self, tank_report: &str) {
         let row = |label: &str, w: f64, l: [f64; 3], j: &crate::math::Matrix33| {
             format!(
                 "{label:<34}{w:>12.1}{:>8.1}{:>8.1}{:>8.1}{:>12.1}{:>12.1}{:>12.1}{:>12.1}{:>12.1}{:>12.1}",

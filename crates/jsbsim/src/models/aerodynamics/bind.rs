@@ -19,7 +19,7 @@ fn stability_forces(m: &Models) -> ColumnVector3 {
 }
 
 /// `FGAerodynamics::bind`.
-pub fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
+pub(crate) fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
     for (name, i) in [("x", E_X), ("y", E_Y), ("z", E_Z)] {
         b.getter(&format!("forces/fb{name}-aero-lbs"), move |m| {
             m.aerodynamics.state.forces[i]

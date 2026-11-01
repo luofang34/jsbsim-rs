@@ -302,7 +302,7 @@ fn load_failure(e: jsbsim::Error) -> String {
 }
 
 /// Runs the probe input.
-pub fn run(input: &str, context: &ProbeContext) -> String {
+pub(crate) fn run(input: &str, context: &ProbeContext) -> String {
     let mut probe = Probe {
         input_dir: context.input_dir.clone(),
         ..Probe::default()

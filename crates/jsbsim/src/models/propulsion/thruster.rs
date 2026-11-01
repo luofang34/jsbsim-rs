@@ -22,7 +22,7 @@ use crate::xml::Element;
 /// `FGThruster::Inputs`, which the engine copies from its own before it
 /// calculates the thrust (`LoadThrusterInputs`).
 #[derive(Debug, Clone, Default, PartialEq)]
-pub struct ThrusterInputs {
+pub(crate) struct ThrusterInputs {
     /// Time step times the propulsion rate, s.
     pub total_delta_t: f64,
     /// Height above ground, ft.
@@ -49,7 +49,7 @@ pub struct ThrusterInputs {
 
 impl ThrusterInputs {
     /// `FGEngine::LoadThrusterInputs`.
-    pub fn load(&mut self, input: &Inputs) {
+    pub(crate) fn load(&mut self, input: &Inputs) {
         self.total_delta_t = input.total_delta_t;
         self.h_agl = input.h_agl;
         self.pqri = input.pqri;
@@ -66,7 +66,7 @@ impl ThrusterInputs {
 
 /// `FGThruster`'s members, and the `FGForce` it is.
 #[derive(Debug, Clone, Default, PartialEq)]
-pub struct ThrusterBase {
+pub(crate) struct ThrusterBase {
     /// The force, its location and orientation.
     pub force: Force,
     /// `name` attribute of the thruster type's element.
@@ -93,7 +93,7 @@ impl ThrusterBase {
     /// `propulsion/engine[n]/` ties, then either a fixed `<pointing>` or
     /// the `<orient>` angles with their ties (and, for `<direct>`, the
     /// reverser's), then `ResetToIC`.
-    pub fn load(
+    pub(crate) fn load(
         &mut self,
         thruster_el: &Element,
         el: &Element,
@@ -134,7 +134,7 @@ impl ThrusterBase {
     }
 
     /// `FGThruster::ResetToIC`.
-    pub fn reset_to_ic(&mut self) {
+    pub(crate) fn reset_to_ic(&mut self) {
         self.reverser_angle = 0.0;
         self.thrust = 0.0;
         self.force.acting_location = self.force.location;
@@ -143,17 +143,18 @@ impl ThrusterBase {
 
 /// A thruster: what every thruster has, and its type's own state.
 #[derive(Debug, Clone)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Thruster {
     /// What every thruster has.
-    pub base: ThrusterBase,
+    pub(crate) base: ThrusterBase,
     /// The thruster type and its state.
-    pub kind: ThrusterKind,
+    pub(crate) kind: ThrusterKind,
 }
 
 /// `<direct>`: `FGThruster` itself, whose thrust is the power it is
 /// given, scaled by the reverser.
 #[derive(Debug, Clone)]
-pub struct Direct;
+pub(crate) struct Direct;
 
 impl ThrusterFamily for Direct {
     type Sample = ();

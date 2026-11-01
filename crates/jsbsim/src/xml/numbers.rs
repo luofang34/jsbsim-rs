@@ -8,7 +8,7 @@ use crate::c_numeric::{is_c_space, strtod_prefix};
 
 /// `atof_locale_c`: accepts only `\s*[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?\s*`
 /// and rejects overflow; the error is JSBSim's message.
-pub fn atof_locale_c(input: &str) -> Result<f64, String> {
+pub(crate) fn atof_locale_c(input: &str) -> Result<f64, String> {
     let bytes = input.as_bytes();
     if bytes.iter().all(|&b| is_c_space(b)) {
         return Err("Expecting a numeric attribute value, but only got spaces".to_owned());

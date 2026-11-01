@@ -26,7 +26,7 @@ struct Variable {
 /// library of the JSBSim run it is compared with, so that a difference is
 /// the translation's and not the last digit of a sine.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Maths {
+pub(crate) enum Maths {
     /// The platform's, as C++ JSBSim calls.
     Platform,
     /// The `libm` crate's, as the port calls.
@@ -58,7 +58,7 @@ impl Maths {
 
 /// The variables of one DAVE-ML model.
 #[derive(Debug, Clone)]
-pub struct Model {
+pub(crate) struct Model {
     name: String,
     variables: BTreeMap<String, Variable>,
     maths: Maths,
@@ -84,7 +84,7 @@ fn optional_number(source: &str, e: &Element, key: &str) -> Result<Option<f64>, 
 
 impl Model {
     /// Reads the variableDefs of the DAVEfunc `root`; `name` labels errors.
-    pub fn from_element(name: &str, root: &Element) -> Result<Self, OracleError> {
+    pub(crate) fn from_element(name: &str, root: &Element) -> Result<Self, OracleError> {
         let mut variables = BTreeMap::new();
         for v in root.find_elements("variableDef") {
             let calculation = v
@@ -111,27 +111,27 @@ impl Model {
 
     /// The model evaluated with `maths`.
     #[must_use]
-    pub fn with_maths(mut self, maths: Maths) -> Self {
+    pub(crate) fn with_maths(mut self, maths: Maths) -> Self {
         self.maths = maths;
         self
     }
 
     /// Whether the model defines `id`.
     #[must_use]
-    pub fn has(&self, id: &str) -> bool {
+    pub(crate) fn has(&self, id: &str) -> bool {
         self.variables.contains_key(id)
     }
 
     /// Whether `id` takes a given value: no calculation.
     #[must_use]
-    pub fn is_settable(&self, id: &str) -> bool {
+    pub(crate) fn is_settable(&self, id: &str) -> bool {
         self.variables
             .get(id)
             .is_some_and(|v| v.calculation.is_none())
     }
 
     /// Every variable, with `given` overriding inputs and initial values.
-    pub fn evaluate(
+    pub(crate) fn evaluate(
         &self,
         given: &BTreeMap<String, f64>,
     ) -> Result<BTreeMap<String, f64>, OracleError> {
@@ -268,7 +268,7 @@ impl Model {
 
 /// One checkData staticShot.
 #[derive(Debug, Clone, Default, PartialEq)]
-pub struct Shot {
+pub(crate) struct Shot {
     /// The shot's name.
     pub name: String,
     /// checkInputs by signal name.
@@ -286,7 +286,7 @@ fn signals<'a>(shot: &'a Element, group: &str) -> impl Iterator<Item = &'a Eleme
 }
 
 /// The staticShots of the DAVEfunc `root`; `name` labels errors.
-pub fn shots(name: &str, root: &Element) -> Result<Vec<Shot>, OracleError> {
+pub(crate) fn shots(name: &str, root: &Element) -> Result<Vec<Shot>, OracleError> {
     let Some(check) = root.find_element("checkData") else {
         return Ok(Vec::new());
     };

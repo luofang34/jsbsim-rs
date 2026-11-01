@@ -172,7 +172,7 @@ fn lookups(
 }
 
 /// `FGTurbine`'s constructor on `<turbine_engine>` `el`.
-pub fn load(el: &Element, ctx: &mut dyn EngineHost) -> Result<Turbine, Error> {
+pub(crate) fn load(el: &Element, ctx: &mut dyn EngineHost) -> Result<Turbine, Error> {
     let el = &renamed(el);
     ctx.load_base(el, EngineType::Turbine)?;
     let config = read_config(el)?;

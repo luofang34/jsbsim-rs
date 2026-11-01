@@ -13,6 +13,7 @@ use crate::math::{E_P, E_PHI, E_PSI, E_Q, E_R, E_THT, E_X, E_Y, E_Z};
 
 /// One state or input (`FGStateSpace::Component`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub enum Component {
     /// True airspeed, ft/s.
     Vt,
@@ -50,9 +51,11 @@ pub enum Component {
     DrCmd,
 }
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl Component {
     /// `getName`.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn name(self) -> &'static str {
         match self {
             Self::Vt => "Vt",
@@ -99,7 +102,7 @@ impl Component {
 
     /// `get`.
     #[must_use]
-    pub fn get(self, fdm: &Fdm) -> f64 {
+    pub(crate) fn get(self, fdm: &Fdm) -> f64 {
         let m = &fdm.models;
         let p = &m.propagate;
         let euler = || p.state.q_attitude_local.euler();
@@ -137,7 +140,7 @@ impl Component {
     /// `set`: a state goes to the initial conditions, a command to the
     /// FCS (followed by `FCS->Run(true)`, which only steps its rate
     /// counter), a propeller speed to the propeller.
-    pub fn set(self, fdm: &mut Fdm, val: f64) {
+    pub(crate) fn set(self, fdm: &mut Fdm, val: f64) {
         let m = &mut fdm.models;
         let ic = &mut m.ic;
         let env = Environment {
@@ -201,7 +204,7 @@ impl Component {
     /// current rates, or `None` for the components that take JSBSim's
     /// default, a frame run through the simulation.
     #[must_use]
-    pub fn analytic_deriv(self, fdm: &Fdm) -> Option<f64> {
+    pub(crate) fn analytic_deriv(self, fdm: &Fdm) -> Option<f64> {
         let m = &fdm.models;
         let p = &m.propagate;
         let (aux, acc) = (&m.auxiliary, &m.accelerations);

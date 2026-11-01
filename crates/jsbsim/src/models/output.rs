@@ -26,17 +26,18 @@ mod tests;
 
 /// `FGOutput`.
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Output {
     /// Scheduling of the output model itself.
-    pub base: ModelBase,
+    pub(crate) base: ModelBase,
     /// The output types, by index `n` of `simulation/output[n]`.
-    pub types: Vec<OutputType>,
+    pub(crate) types: Vec<OutputType>,
 }
 
 /// The state of an `FGOutputType` its properties expose, and its
 /// functions.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
-pub struct OutputType {
+pub(crate) struct OutputType {
     /// `FGModel`'s scheduling: `rate` is the frames between prints and
     /// `enabled` is tied to `simulation/output[n]/enabled`.
     pub base: ModelBase,
@@ -49,7 +50,7 @@ pub struct OutputType {
 impl OutputType {
     /// `SetRateHz(rtHz)` at time step `dt`: clamps to [0, 1000] Hz; a
     /// positive rate enables the output, zero disables it.
-    pub fn set_rate_hz(&mut self, rt_hz: f64, dt: f64) {
+    pub(crate) fn set_rate_hz(&mut self, rt_hz: f64, dt: f64) {
         // NaN stays NaN, as in C++, and so disables.
         let rt_hz = rt_hz.clamp(0.0, 1000.0);
         if rt_hz > 0.0 {
@@ -66,7 +67,7 @@ impl OutputType {
     /// `GetRateHz()` at time step `dt`: the rate the frame count gives
     /// back, not the one last written.
     #[must_use]
-    pub fn rate_hz(&self, dt: f64) -> f64 {
+    pub(crate) fn rate_hz(&self, dt: f64) -> f64 {
         1.0 / (f64::from(self.base.rate) * dt)
     }
 }
@@ -80,7 +81,7 @@ impl Output {
     /// socket: makes output type `n` (the next index), ties its properties
     /// (`SetIdx`) and sets its rate from the `rate` attribute (`Load`).
     /// Types JSBSim has no output type for fail the load, as in JSBSim.
-    pub fn load(&mut self, el: &Element, b: &mut Binder<'_>, dt: f64) -> Result<(), Error> {
+    pub(crate) fn load(&mut self, el: &Element, b: &mut Binder<'_>, dt: f64) -> Result<(), Error> {
         let kind = el.attribute("type").to_ascii_uppercase();
         if !matches!(kind.as_str(), "CSV" | "TABULAR" | "SOCKET" | "FLIGHTGEAR") {
             if kind != "TERMINAL" && kind != "NONE" {
@@ -140,7 +141,7 @@ impl Output {
     }
 
     /// `FGOutput::InitModel`: the model's and every type's frame counter.
-    pub fn init_model(&mut self) {
+    pub(crate) fn init_model(&mut self) {
         self.base.init();
         for t in &mut self.types {
             t.base.init();
@@ -149,7 +150,7 @@ impl Output {
 
     /// `FGOutput::Run` before its types run: false when no type runs this
     /// frame.
-    pub fn runs(&mut self, holding: bool, trim_status: bool) -> bool {
+    pub(crate) fn runs(&mut self, holding: bool, trim_status: bool) -> bool {
         !(trim_status || self.base.skip() || holding)
     }
 }

@@ -29,7 +29,7 @@ use crate::units::{HPTOFTLBSSEC, PSFTOINHG, PSFTOPA, kelvin_to_fahrenheit, ranki
 use crate::xml::Element;
 
 /// Supercharger speeds an engine may have (`FG_MAX_BOOST_SPEEDS`).
-pub const MAX_BOOST_SPEEDS: usize = 3;
+pub(crate) const MAX_BOOST_SPEEDS: usize = 3;
 
 /// Gas constant for air, J/kg/K.
 const R_AIR: f64 = 287.3;
@@ -44,7 +44,7 @@ const STANDARD_PRESSURE: f64 = 101320.73;
 
 /// What the engine file sets once.
 #[derive(Debug, Clone)]
-pub struct PistonConfig {
+pub(crate) struct PistonConfig {
     /// Strokes per power stroke.
     pub cycles: f64,
     /// rpm.
@@ -109,7 +109,7 @@ pub struct PistonConfig {
 
 /// What the engine file sets that properties may change.
 #[derive(Debug, Clone)]
-pub struct PistonTuning {
+pub(crate) struct PistonTuning {
     /// Power lost to friction, hp.
     pub static_friction_hp: f64,
     /// Indicated specific fuel consumption, lbs/hp/h.
@@ -128,7 +128,7 @@ pub struct PistonTuning {
 
 /// The supercharger (`Boost*`, `Rated*`, `Takeoff*` members).
 #[derive(Debug, Clone)]
-pub struct Boost {
+pub(crate) struct Boost {
     /// Speeds fitted; 0 for none.
     pub speeds: i32,
     /// Current speed, from 0.
@@ -175,6 +175,7 @@ pub struct Boost {
 
 /// The state one `Calculate` updates.
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct PistonState {
     /// Ambient pressure, Pa.
     pub p_amb: f64,
@@ -236,15 +237,16 @@ pub struct PistonState {
 
 /// `FGPiston`'s members beyond `FGEngine`'s.
 #[derive(Debug, Clone)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Piston {
     /// Engine number, for its inputs.
     pub number: usize,
     /// Set once.
-    pub config: Box<PistonConfig>,
+    pub(crate) config: Box<PistonConfig>,
     /// Set once, changeable through properties.
-    pub tuning: PistonTuning,
+    pub(crate) tuning: PistonTuning,
     /// The supercharger.
-    pub boost: Boost,
+    pub(crate) boost: Boost,
     /// Updated each step.
     pub state: PistonState,
 }
@@ -258,7 +260,7 @@ impl Piston {
     /// `FGPiston::ResetToIC` but for `FGEngine`'s: the manifold pressure
     /// at the ambient pressure, the temperatures at the ambient
     /// temperature, the engine and its thruster stopped.
-    pub fn reset_state(&mut self, thruster: &mut Thruster, input: &Inputs) {
+    pub(crate) fn reset_state(&mut self, thruster: &mut Thruster, input: &Inputs) {
         let s = &mut self.state;
         s.manifold_pressure_inhg = input.pressure * PSFTOINHG;
         s.map = input.pressure * PSFTOPA;
@@ -276,7 +278,7 @@ impl Piston {
 
     /// `getAFR`.
     #[must_use]
-    pub fn afr(&self) -> f64 {
+    pub(crate) fn afr(&self) -> f64 {
         let s = &self.state;
         if s.m_dot_fuel > 0.0 {
             s.m_dot_air / s.m_dot_fuel
@@ -287,19 +289,19 @@ impl Piston {
 
     /// `getExhaustGasTemp_degF`.
     #[must_use]
-    pub fn exhaust_gas_temp_degf(&self) -> f64 {
+    pub(crate) fn exhaust_gas_temp_degf(&self) -> f64 {
         kelvin_to_fahrenheit(self.state.exhaust_gas_temp_k)
     }
 
     /// `getCylinderHeadTemp_degF`.
     #[must_use]
-    pub fn cylinder_head_temp_degf(&self) -> f64 {
+    pub(crate) fn cylinder_head_temp_degf(&self) -> f64 {
         kelvin_to_fahrenheit(self.state.cylinder_head_temp_k)
     }
 
     /// `getOilTemp_degF`.
     #[must_use]
-    pub fn oil_temp_degf(&self) -> f64 {
+    pub(crate) fn oil_temp_degf(&self) -> f64 {
         kelvin_to_fahrenheit(self.state.oil_temp_k)
     }
 }

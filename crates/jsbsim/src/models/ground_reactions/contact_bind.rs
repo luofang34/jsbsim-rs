@@ -21,7 +21,7 @@ const D: Kind = Kind::Double;
 
 /// `CreateIndexedPropertyName(property, index)`.
 #[must_use]
-pub fn indexed_name(property: &str, index: usize) -> String {
+pub(crate) fn indexed_name(property: &str, index: usize) -> String {
     format!("{property}[{index}]")
 }
 
@@ -195,7 +195,7 @@ fn tie_all(b: &mut Binder<'_>, n: usize, base: &str, entries: &[Entry]) -> Resul
 
 /// `FGLGear::bind` for `c`, the contact that will sit at index
 /// `c.number`.
-pub fn bind(b: &mut Binder<'_>, c: &Contact) -> Result<(), Error> {
+pub(crate) fn bind(b: &mut Binder<'_>, c: &Contact) -> Result<(), Error> {
     let n = c.number;
     let base = match c.kind {
         ContactType::Bogey => indexed_name("gear/unit", n),

@@ -48,6 +48,7 @@ pub struct TrimReport {
     pub axes: Vec<AxisReport>,
 }
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl Trim {
     /// `Report` and `TrimStats`, with each state read now.
     pub fn report(&mut self, fdm: &Fdm) -> TrimReport {

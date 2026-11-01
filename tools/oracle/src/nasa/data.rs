@@ -116,7 +116,7 @@ pub struct Simulator {
 
 /// Time key of `t` seconds.
 #[must_use]
-pub fn time_key(t: f64) -> i64 {
+pub(crate) fn time_key(t: f64) -> i64 {
     (t * 1000.0).round() as i64
 }
 
@@ -179,7 +179,7 @@ impl Simulator {
 }
 
 /// Every `*.csv` under `dir`, skipping macOS resource forks, sorted.
-pub fn csv_files_blocking(dir: &Path) -> Result<Vec<PathBuf>, OracleError> {
+pub(crate) fn csv_files_blocking(dir: &Path) -> Result<Vec<PathBuf>, OracleError> {
     let mut found = Vec::new();
     let mut pending = vec![dir.to_path_buf()];
     while let Some(d) = pending.pop() {
@@ -202,7 +202,7 @@ pub fn csv_files_blocking(dir: &Path) -> Result<Vec<PathBuf>, OracleError> {
 }
 
 /// Reads every simulator recording under `dir`.
-pub fn read_simulators_blocking(dir: &Path) -> Result<Vec<Simulator>, OracleError> {
+pub(crate) fn read_simulators_blocking(dir: &Path) -> Result<Vec<Simulator>, OracleError> {
     csv_files_blocking(dir)?
         .iter()
         .map(|path| {

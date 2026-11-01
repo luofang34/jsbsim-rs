@@ -8,6 +8,7 @@ use crate::math::{ColumnVector3, Location, Matrix33};
 
 /// The atmosphere at the vehicle.
 #[derive(Debug, Clone, Copy, Default)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Air {
     /// Static pressure, psf.
     pub pressure: f64,
@@ -24,6 +25,7 @@ pub struct Air {
 /// Values the executive sets once: `LoadPlanetConstants` and
 /// `LoadModelConstants`.
 #[derive(Debug, Clone, Copy, Default)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Constants {
     /// Standard-day sea-level speed of sound, ft/s.
     pub std_day_sl_soundspeed: f64,
@@ -37,6 +39,7 @@ pub struct Constants {
 
 /// `FGAuxiliary::Inputs`.
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Inputs {
     /// The atmosphere.
     pub air: Air,

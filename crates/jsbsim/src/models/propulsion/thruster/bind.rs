@@ -22,7 +22,7 @@ fn base_mut(m: &mut Models, n: usize) -> Option<&mut ThrusterBase> {
 }
 
 /// The reference (`<location>`) and acting positions, in.
-pub fn bind_location(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
+pub(crate) fn bind_location(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
     let axes: [(&str, Axis); 3] = [("x", E_X), ("y", E_Y), ("z", E_Z)];
     for (name, i) in axes {
         b.getter(
@@ -46,7 +46,7 @@ pub fn bind_location(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
 }
 
 /// The pitch and yaw of the orientation, rad.
-pub fn bind_orientation(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
+pub(crate) fn bind_orientation(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
     b.property(
         &format!("propulsion/engine[{n}]/pitch-angle-rad"),
         Kind::Double,
@@ -71,7 +71,7 @@ pub fn bind_orientation(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
 }
 
 /// The reverser angle of a direct thruster, rad.
-pub fn bind_reverser(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
+pub(crate) fn bind_reverser(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
     b.property(
         &format!("propulsion/engine[{n}]/reverser-angle-rad"),
         Kind::Double,

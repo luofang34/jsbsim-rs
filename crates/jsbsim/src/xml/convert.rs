@@ -21,6 +21,7 @@ fn table() -> &'static UnitTable {
     TABLE.get_or_init(UnitTable::new)
 }
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl Element {
     /// The factor from `supplied` to `target`, checked as JSBSim checks it;
     /// `None` when no unit is supplied.
@@ -64,7 +65,7 @@ impl Element {
     }
 
     /// `FindElementValueAsNumberConvertFromTo(name, supplied, target)`.
-    pub fn find_element_value_as_number_convert_from_to(
+    pub(crate) fn find_element_value_as_number_convert_from_to(
         &self,
         name: &str,
         supplied: &str,
@@ -79,7 +80,10 @@ impl Element {
     /// `FindElementTripletConvertTo(target)`: children `x`/`roll`,
     /// `y`/`pitch` and `z`/`yaw`, converted from this element's `unit`;
     /// a missing child reads as 0.
-    pub fn find_element_triplet_convert_to(&self, target: &str) -> Result<ColumnVector3, XmlError> {
+    pub(crate) fn find_element_triplet_convert_to(
+        &self,
+        target: &str,
+    ) -> Result<ColumnVector3, XmlError> {
         let supplied = self.attribute("unit");
         let factor = self.conversion(supplied, target)?;
         let mut triplet = ColumnVector3::zero();

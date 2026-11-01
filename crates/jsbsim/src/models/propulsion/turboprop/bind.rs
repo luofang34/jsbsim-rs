@@ -74,7 +74,7 @@ const MEMBERS: [(&str, Kind, Get, Set); 7] = [
 ];
 
 /// The ties of `bindmodel` for engine `n`.
-pub fn bind(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
+pub(crate) fn bind(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
     for (name, kind, get, set) in MEMBERS {
         b.property(
             &format!("propulsion/engine[{n}]/{name}"),

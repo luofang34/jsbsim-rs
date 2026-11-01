@@ -221,6 +221,7 @@ impl Fdm {
 
     /// The property tree.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub(crate) fn tree(&self) -> &PropertyTree {
         &self.env.tree
     }

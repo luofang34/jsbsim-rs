@@ -12,8 +12,8 @@ mod point_mass;
 #[cfg(test)]
 mod tests;
 
-pub use bind::bind;
-pub use point_mass::{PointMass, Shape};
+pub(crate) use bind::bind;
+pub(crate) use point_mass::{PointMass, Shape};
 
 use super::base::ModelBase;
 use super::propagate::Propagate;
@@ -22,7 +22,7 @@ use crate::units::{INCHTOFT, LBTOSLUG, SLUGTOLB};
 
 /// What other models give the mass balance (`FGMassBalance::Inputs`).
 #[derive(Debug, Clone, Copy, Default)]
-pub struct Inputs {
+pub(crate) struct Inputs {
     /// Lifting gas mass, slugs.
     pub gas_mass: f64,
     /// Tank contents, lbs.
@@ -41,11 +41,12 @@ pub struct Inputs {
 
 /// Mass properties.
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct MassBalance {
     /// Scheduling.
-    pub base: ModelBase,
+    pub(crate) base: ModelBase,
     /// Inputs, loaded by the executive before each run.
-    pub input: Inputs,
+    pub(crate) input: Inputs,
     /// Mass, slugs.
     pub mass: f64,
     /// Weight, lbs.
@@ -67,6 +68,7 @@ pub struct MassBalance {
     point_masses: Vec<PointMass>,
 }
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl MassBalance {
     /// `InitModel`.
     pub fn init_model(&mut self) {
@@ -78,6 +80,7 @@ impl MassBalance {
 
     /// `Run`. A CG shift while held down or on the ground moves the
     /// vehicle so that the structural frame stays put relative to it.
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn run(&mut self, holding: bool, hold_down: bool, propagate: &mut Propagate) {
         if self.base.skip() || holding {
             return;
@@ -87,7 +90,7 @@ impl MassBalance {
 
     /// `Run` once scheduling has let it through, between the pre- and
     /// post-functions the executive caches.
-    pub fn run_frame(&mut self, hold_down: bool, propagate: &mut Propagate) {
+    pub(crate) fn run_frame(&mut self, hold_down: bool, propagate: &mut Propagate) {
         self.update_weight();
         self.xyz_cg = (self.empty_weight * self.base_xyz_cg
             + self.point_mass_moment()
@@ -128,73 +131,42 @@ impl MassBalance {
         self.mass = LBTOSLUG * self.weight;
     }
 
-    /// `GetMass`, slugs.
-    #[must_use]
-    pub fn mass(&self) -> f64 {
-        self.mass
-    }
-
-    /// `GetWeight`, lbs.
-    #[must_use]
-    pub fn weight(&self) -> f64 {
-        self.weight
-    }
-
-    /// `GetEmptyWeight`, lbs.
-    #[must_use]
-    pub fn empty_weight(&self) -> f64 {
-        self.empty_weight
-    }
-
-    /// `GetXYZcg`: the CG in the structural frame, in.
-    #[must_use]
-    pub fn xyz_cg(&self) -> ColumnVector3 {
-        self.xyz_cg
-    }
-
     /// `GetDeltaXYZcg`: the CG shift of the last run, in.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn delta_xyz_cg(&self) -> ColumnVector3 {
         self.delta_xyz_cg
     }
 
     /// `GetJ`: the inertia tensor, body frame.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn j(&self) -> Matrix33 {
         self.j
     }
 
     /// `GetJinv`.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn jinv(&self) -> Matrix33 {
         self.jinv
     }
 
     /// The point masses, in load order (their property index).
     #[must_use]
-    pub fn point_masses(&self) -> &[PointMass] {
+    #[cfg(test)]
+    pub(crate) fn point_masses(&self) -> &[PointMass] {
         &self.point_masses
     }
 
-    /// `SetEmptyWeight`.
-    pub fn set_empty_weight(&mut self, weight: f64) {
-        self.empty_weight = weight;
-    }
-
-    /// `SetBaseCG`.
-    pub fn set_base_cg(&mut self, cg: ColumnVector3) {
-        self.base_xyz_cg = cg;
-        self.xyz_cg = cg;
-    }
-
     /// `SetAircraftBaseInertias`.
-    pub fn set_aircraft_base_inertias(&mut self, base_j: Matrix33) {
+    pub(crate) fn set_aircraft_base_inertias(&mut self, base_j: Matrix33) {
         self.base_j = base_j;
     }
 
     /// `GetTotalPointMassWeight`, lbs.
     #[must_use]
-    pub fn total_point_mass_weight(&self) -> f64 {
+    pub(crate) fn total_point_mass_weight(&self) -> f64 {
         let mut total = 0.0;
         for pm in &self.point_masses {
             total += pm.weight;
@@ -204,7 +176,7 @@ impl MassBalance {
 
     /// `GetPointMassMoment`, lbs·in, structural frame.
     #[must_use]
-    pub fn point_mass_moment(&self) -> ColumnVector3 {
+    pub(crate) fn point_mass_moment(&self) -> ColumnVector3 {
         let mut moment = ColumnVector3::zero();
         for pm in &self.point_masses {
             moment += pm.weight * pm.location;
@@ -230,7 +202,7 @@ impl MassBalance {
     /// `GetPointmassInertia`: the parallel-axis inertia of `mass_sl`
     /// slugs at `r` (structural frame, in) about the CG, body frame.
     #[must_use]
-    pub fn pointmass_inertia(&self, mass_sl: f64, r: ColumnVector3) -> Matrix33 {
+    pub(crate) fn pointmass_inertia(&self, mass_sl: f64, r: ColumnVector3) -> Matrix33 {
         let v = self.structural_to_body(r);
         let sv = mass_sl * v;
         let xx = sv[E_X] * v[E_X];
@@ -245,7 +217,7 @@ impl MassBalance {
     /// `StructuralToBody`: structural (in, x aft) to body (ft, x forward)
     /// relative to the CG.
     #[must_use]
-    pub fn structural_to_body(&self, r: ColumnVector3) -> ColumnVector3 {
+    pub(crate) fn structural_to_body(&self, r: ColumnVector3) -> ColumnVector3 {
         let x = &self.xyz_cg;
         let k = INCHTOFT;
         ColumnVector3::new(

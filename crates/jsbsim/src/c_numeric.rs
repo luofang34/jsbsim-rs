@@ -8,7 +8,7 @@ mod tests;
 
 /// Whether `b` is a space in the "C" locale (`isspace`).
 #[must_use]
-pub fn is_c_space(b: u8) -> bool {
+pub(crate) fn is_c_space(b: u8) -> bool {
     matches!(b, b' ' | b'\t' | b'\n' | 0x0b | 0x0c | b'\r')
 }
 
@@ -19,7 +19,7 @@ fn skip_spaces(s: &[u8]) -> usize {
 /// `strtod(s, &end)`: the parsed value and the number of bytes consumed,
 /// which is 0 when no conversion could be performed.
 #[must_use]
-pub fn strtod_prefix(s: &str) -> (f64, usize) {
+pub(crate) fn strtod_prefix(s: &str) -> (f64, usize) {
     let bytes = s.as_bytes();
     let start = skip_spaces(bytes);
     let mut i = start;
@@ -76,7 +76,7 @@ fn tail(s: &[u8], i: usize) -> &[u8] {
 
 /// `strtod(s, 0)` / `atof(s)`.
 #[must_use]
-pub fn strtod(s: &str) -> f64 {
+pub(crate) fn strtod(s: &str) -> f64 {
     strtod_prefix(s).0
 }
 
@@ -181,7 +181,7 @@ fn ldexp(x: f64, e: i32) -> f64 {
 
 /// `strtol(s, 0, base)` for base 0 (C prefixes) or 10, saturating like C.
 #[must_use]
-pub fn strtol(s: &str, base: u32) -> i64 {
+pub(crate) fn strtol(s: &str, base: u32) -> i64 {
     let bytes = s.as_bytes();
     let mut i = skip_spaces(bytes);
     let negative = match bytes.get(i) {
@@ -234,6 +234,7 @@ pub fn strtol(s: &str, base: u32) -> i64 {
 
 /// `atoi(s)`, which C libraries implement as `(int)strtol(s, 0, 10)`.
 #[must_use]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub fn atoi(s: &str) -> i32 {
     strtol(s, 10) as i32
 }
@@ -250,13 +251,14 @@ fn special(v: f64) -> Option<String> {
 
 /// `printf("%f", v)`.
 #[must_use]
-pub fn format_f(v: f64) -> String {
+pub(crate) fn format_f(v: f64) -> String {
     special(v).unwrap_or_else(|| format!("{v:.6}"))
 }
 
 /// `printf("%.<precision>g", v)`, which is also what an `ostream` with
 /// `setprecision(precision)` and default float formatting prints.
 #[must_use]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub fn format_g(v: f64, precision: usize) -> String {
     if let Some(text) = special(v) {
         return text;

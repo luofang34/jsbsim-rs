@@ -14,7 +14,7 @@ use crate::xml::Element;
 
 /// Radii and widths of an extruded ellipsoid, ft.
 #[derive(Debug, Clone, Copy, Default, PartialEq)]
-pub struct Shape {
+pub(crate) struct Shape {
     /// `Xradius`.
     pub x_radius: f64,
     /// `Yradius`.
@@ -31,11 +31,11 @@ pub struct Shape {
 
 /// What the XML gives besides the shape.
 #[derive(Debug, Clone, Copy, Default, PartialEq)]
-pub struct Envelope {
+pub(crate) struct Envelope {
     /// Location, structural frame, in.
     pub xyz: ColumnVector3,
     /// The shape.
-    pub shape: Shape,
+    pub(crate) shape: Shape,
     /// `MaxVolume`, ft^3.
     pub max_volume: f64,
     /// `MaxOverpressure`, psf.
@@ -91,7 +91,7 @@ impl Shape {
     /// shape, about its centre; zero (a point mass) for shapes without a
     /// formula.
     #[must_use]
-    pub fn inertia(&self, mass: f64) -> (f64, f64, f64) {
+    pub(crate) fn inertia(&self, mass: f64) -> (f64, f64, f64) {
         let (xr, yr, zr, xw) = (self.x_radius, self.y_radius, self.z_radius, self.x_width);
         if self.is_ellipsoid() {
             (
@@ -118,7 +118,7 @@ fn optional_ft(el: &Element, name: &str) -> Result<f64, Error> {
 impl Envelope {
     /// The location, shape and envelope of a `<gas_cell>` or `<ballonet>`
     /// (`what` names it in errors).
-    pub fn load(el: &Element, what: &str) -> Result<Self, Error> {
+    pub(crate) fn load(el: &Element, what: &str) -> Result<Self, Error> {
         let Some(location) = el.find_element("location") else {
             return Err(Error::Model {
                 message: format!(
@@ -179,7 +179,7 @@ impl Envelope {
     /// `pressure`: the fullness volume clipped to what the overpressure
     /// allows, or the whole volume at ambient pressure.
     #[must_use]
-    pub fn initial_contents(&self, r: f64, temperature: f64, pressure: f64) -> (f64, f64) {
+    pub(crate) fn initial_contents(&self, r: f64, temperature: f64, pressure: f64) -> (f64, f64) {
         if self.volume != 0.0 {
             let contents = pressure * self.volume / (r * temperature);
             let ideal_pressure = contents * r * temperature / self.max_volume;
@@ -199,13 +199,13 @@ impl Envelope {
 
 /// `std::max(a, b)`: `b` only when `a < b`, so a NaN `a` is kept.
 #[must_use]
-pub fn c_max(a: f64, b: f64) -> f64 {
+pub(crate) fn c_max(a: f64, b: f64) -> f64 {
     if a < b { b } else { a }
 }
 
 /// `std::min(a, b)`: `b` only when `b < a`.
 #[must_use]
-pub fn c_min(a: f64, b: f64) -> f64 {
+pub(crate) fn c_min(a: f64, b: f64) -> f64 {
     if b < a { b } else { a }
 }
 

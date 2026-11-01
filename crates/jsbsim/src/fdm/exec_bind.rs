@@ -15,7 +15,7 @@ fn flag(b: bool) -> f64 {
 
 /// Ties `simulation/models/<name>/enabled` to the model base `get` and
 /// `set` select.
-pub fn bind_enable(
+pub(crate) fn bind_enable(
     b: &mut Binder<'_>,
     name: &str,
     get: fn(&Models) -> &ModelBase,
@@ -33,7 +33,7 @@ pub fn bind_enable(
 /// `simulation/models/FGAtmosphere/enabled`, which keeps reading and
 /// writing the replaced model's flag after a planet replaces the
 /// atmosphere.
-pub fn bind_atmosphere_enable(b: &mut Binder<'_>) -> Result<(), Error> {
+pub(crate) fn bind_atmosphere_enable(b: &mut Binder<'_>) -> Result<(), Error> {
     b.property(
         "simulation/models/FGAtmosphere/enabled",
         Kind::Bool,
@@ -53,7 +53,7 @@ pub fn bind_atmosphere_enable(b: &mut Binder<'_>) -> Result<(), Error> {
 }
 
 /// The executive's own properties, bound after the models.
-pub fn bind_exec(b: &mut Binder<'_>) -> Result<(), Error> {
+pub(crate) fn bind_exec(b: &mut Binder<'_>) -> Result<(), Error> {
     b.setter_only("simulation/do_simple_trim", Kind::Int, |m, v| {
         m.exec.requests.push(ExecRequest::Trim(v as i32));
     })?;

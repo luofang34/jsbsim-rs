@@ -25,6 +25,7 @@ enum Body {
     Template,
 }
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl FunctionSet {
     /// `FGFunction(fdmex, el, prefix)`: a `<function>` element with its
     /// single operand, bound to its `name` and copied to `copyto`.

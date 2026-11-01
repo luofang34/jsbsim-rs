@@ -26,7 +26,12 @@ const RATE_HZ: f64 = 10.0;
 /// Largest |`property`| in `series` after `after` s, scaled by `scale`,
 /// with its time; `None` when nothing is sampled then.
 #[must_use]
-pub fn max_after(series: &Series, property: &str, after: f64, scale: f64) -> Option<(f64, f64)> {
+pub(crate) fn max_after(
+    series: &Series,
+    property: &str,
+    after: f64,
+    scale: f64,
+) -> Option<(f64, f64)> {
     let column = series.columns.iter().position(|c| c == property)?;
     series
         .rows
@@ -60,7 +65,7 @@ fn judge(who: &str, series: &Series) -> bool {
 }
 
 /// Runs [`CASE`] in C++ and Rust; returns how many runs show a limit cycle.
-pub fn check_blocking(paths: &Paths) -> Result<usize, OracleError> {
+pub(crate) fn check_blocking(paths: &Paths) -> Result<usize, OracleError> {
     let manifest = NasaManifest::read_blocking(&paths.repo_root)?;
     let case = manifest
         .case

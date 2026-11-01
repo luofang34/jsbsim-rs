@@ -34,6 +34,7 @@ pub(super) const RAYLEIGH_COEFF: f64 = f64::from_bits(0x3fec_337c_4b7c_389c);
 /// Rayleigh's pitot formula behind a normal shock above it. A negative
 /// Mach number gives the static pressure.
 #[must_use]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub fn pitot_total_pressure(mach: f64, pressure: f64) -> f64 {
     let a = (SH_RATIO - 1.0) / 2.0;
     let b = SH_RATIO / (SH_RATIO - 1.0);
@@ -56,6 +57,7 @@ pub fn pitot_total_pressure(mach: f64, pressure: f64) -> f64 {
 /// `MachFromImpactPressure(qc, pressure)`: equation 4.12, refined above
 /// Mach 1 by ten iterations of equation 4.17.
 #[must_use]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub fn mach_from_impact_pressure(qc: f64, pressure: f64) -> f64 {
     let a = 2.0 / (SH_RATIO - 1.0);
     let b = (SH_RATIO - 1.0) / SH_RATIO;
@@ -77,7 +79,7 @@ pub fn mach_from_impact_pressure(qc: f64, pressure: f64) -> f64 {
 /// static pressure `pressure`, psf, for the standard-day sea-level speed
 /// of sound `std_day_sl_soundspeed`, ft/s.
 #[must_use]
-pub fn vcalibrated_from_mach(mach: f64, pressure: f64, std_day_sl_soundspeed: f64) -> f64 {
+pub(crate) fn vcalibrated_from_mach(mach: f64, pressure: f64, std_day_sl_soundspeed: f64) -> f64 {
     vcalibrated_from_total_pressure(
         pitot_total_pressure(mach, pressure),
         pressure,
@@ -101,21 +103,24 @@ pub(super) fn vcalibrated_from_total_pressure(
 /// pressure `pressure`, psf, for calibrated airspeed `vcas`, ft/s, and the
 /// standard-day sea-level speed of sound `std_day_sl_soundspeed`, ft/s.
 #[must_use]
-pub fn mach_from_vcalibrated(vcas: f64, pressure: f64, std_day_sl_soundspeed: f64) -> f64 {
+pub(crate) fn mach_from_vcalibrated(vcas: f64, pressure: f64, std_day_sl_soundspeed: f64) -> f64 {
     let qc = pitot_total_pressure(vcas / std_day_sl_soundspeed, STD_DAY_SL_PRESSURE)
         - STD_DAY_SL_PRESSURE;
     mach_from_impact_pressure(qc, pressure)
 }
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl Auxiliary {
     /// [`vcalibrated_from_mach`] with this model's speed of sound.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn vcalibrated_from_mach(&self, mach: f64, pressure: f64) -> f64 {
         vcalibrated_from_mach(mach, pressure, self.input.constants.std_day_sl_soundspeed)
     }
 
     /// [`mach_from_vcalibrated`] with this model's speed of sound.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn mach_from_vcalibrated(&self, vcas: f64, pressure: f64) -> f64 {
         mach_from_vcalibrated(vcas, pressure, self.input.constants.std_day_sl_soundspeed)
     }

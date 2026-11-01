@@ -15,17 +15,18 @@ mod state_space;
 #[cfg(test)]
 mod tests;
 
-pub use component::Component;
+pub(crate) use component::Component;
 
 use crate::Error;
 use crate::fdm::Fdm;
 use crate::models::propulsion::families::ThrusterKind;
 
 /// A row-major matrix, as JSBSim's `std::vector<std::vector<double>>`.
-pub type Matrix = Vec<Vec<f64>>;
+pub(crate) type Matrix = Vec<Vec<f64>>;
 
 /// What `FGLinearization` computes.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct Linearization {
     /// The aircraft's name.
     pub aircraft_name: String,
@@ -51,39 +52,46 @@ pub struct Linearization {
     pub d: Matrix,
 }
 
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl Linearization {
     /// `x_names`.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn x_names(&self) -> Vec<&'static str> {
         self.x.iter().map(|c| c.name()).collect()
     }
 
     /// `u_names`.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn u_names(&self) -> Vec<&'static str> {
         self.u.iter().map(|c| c.name()).collect()
     }
 
     /// `y_names`.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn y_names(&self) -> Vec<&'static str> {
         self.y.iter().map(|c| c.name()).collect()
     }
 
     /// `x_units`.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn x_units(&self) -> Vec<&'static str> {
         self.x.iter().map(|c| c.unit()).collect()
     }
 
     /// `u_units`.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn u_units(&self) -> Vec<&'static str> {
         self.u.iter().map(|c| c.unit()).collect()
     }
 
     /// `y_units`.
     #[must_use]
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
     pub fn y_units(&self) -> Vec<&'static str> {
         self.y.iter().map(|c| c.unit()).collect()
     }

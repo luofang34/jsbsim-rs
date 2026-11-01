@@ -30,7 +30,7 @@ use crate::xml::Element;
 
 /// `FGTurboProp::phaseType`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Phase {
+pub(crate) enum Phase {
     /// `tpOff`.
     Off,
     /// `tpRun`.
@@ -46,7 +46,7 @@ pub enum Phase {
 /// The `EnginePowerVC` correction: the engine's pre-function, or (the
 /// deprecated form) a table bound to `propulsion/engine[n]/EnginePowerVC`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum PowerVc {
+pub(crate) enum PowerVc {
     /// `<function name="EnginePowerVC">`.
     Function(FnId),
     /// `<table name="EnginePowerVC">`.
@@ -55,7 +55,7 @@ pub enum PowerVc {
 
 /// What the engine file sets once.
 #[derive(Debug, Clone)]
-pub struct TurboPropConfig {
+pub(crate) struct TurboPropConfig {
     /// N1 at idle, %.
     pub idle_n1: f64,
     /// N1 at full throttle, %.
@@ -92,9 +92,9 @@ pub struct TurboPropConfig {
 
 /// The state one `Calculate` updates.
 #[derive(Debug, Clone)]
-pub struct TurboPropState {
+pub(crate) struct TurboPropState {
     /// Operating phase.
-    pub phase: Phase,
+    pub(crate) phase: Phase,
     /// %.
     pub n1: f64,
     /// Engine power, hp.
@@ -133,18 +133,19 @@ pub struct TurboPropState {
 
 /// `FGTurboProp`'s members beyond `FGEngine`'s.
 #[derive(Debug, Clone)]
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct TurboProp {
     /// Engine number, for its inputs.
     pub number: usize,
     /// Set once.
-    pub config: Box<TurboPropConfig>,
+    pub(crate) config: Box<TurboPropConfig>,
     /// Updated each step.
-    pub state: TurboPropState,
+    pub(crate) state: TurboPropState,
 }
 
 /// What one `Calculate` reads: `EnginePowerVC`, then the thruster's reads.
 #[derive(Debug)]
-pub struct TurboPropSample {
+pub(crate) struct TurboPropSample {
     /// `EnginePowerVC->GetValue()`.
     pub power_vc: f64,
     /// The thruster's reads.
@@ -152,12 +153,12 @@ pub struct TurboPropSample {
 }
 
 /// `FGTurboProp::Seek`, which is `FGTurbine::Seek`.
-pub use super::turbine::seek;
+pub(crate) use super::turbine::seek;
 
 /// `FGTurboProp::ExpSeek`: `v` moved toward `target` by a first-order lag
 /// with time constant `accel_tau` or `decel_tau` over `dt`.
 #[must_use]
-pub fn exp_seek(dt: f64, v: f64, target: f64, accel_tau: f64, decel_tau: f64) -> f64 {
+pub(crate) fn exp_seek(dt: f64, v: f64, target: f64, accel_tau: f64, decel_tau: f64) -> f64 {
     if v > target {
         (v - target) * crate::elementary::exp(-dt / decel_tau) + target
     } else if v < target {
@@ -173,12 +174,6 @@ fn at(v: &[f64], i: usize) -> f64 {
 }
 
 impl TurboProp {
-    /// `getOilTemp_degF`.
-    #[must_use]
-    pub fn oil_temp_degf(&self) -> f64 {
-        crate::units::kelvin_to_fahrenheit(self.state.oil_temp_degk)
-    }
-
     /// The propeller's controls, and the throttle through the beta range
     /// when reversed.
     fn set_propeller(&mut self, thruster: &mut Thruster, input: &Inputs) {

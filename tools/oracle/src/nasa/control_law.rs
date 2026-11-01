@@ -19,7 +19,7 @@ use crate::upstream::Paths;
 use crate::{OracleError, Series};
 
 /// The check-cases run, one per kind of manoeuvre and guidance.
-pub const CASES: [&str; 4] = ["Atmos_13p1", "Atmos_13p3", "Atmos_15", "Atmos_16"];
+pub(crate) const CASES: [&str; 4] = ["Atmos_13p1", "Atmos_13p3", "Atmos_15", "Atmos_16"];
 
 /// The F-16 scripts' frame rate (dt = 0.0025 s), so that every frame is
 /// sampled.
@@ -141,7 +141,7 @@ fn properties() -> Vec<&'static str> {
 
 /// Largest difference of one variable over a run.
 #[derive(Debug, Clone, Copy, Default, PartialEq)]
-pub struct Worst {
+pub(crate) struct Worst {
     /// |DAVE-ML - JSBSim|.
     pub diff: f64,
     /// Relative to the value, or to 1 when smaller.
@@ -187,7 +187,7 @@ fn note(worst: &mut BTreeMap<&'static str, Worst>, id: &'static str, a: f64, b: 
 /// which the lateral LQR would carry to 1e-10 of the aileron. That value
 /// is checked instead against the platform's pow of the run's own
 /// ownshipN_ft and ownshipE_ft, which are compared as usual.
-pub fn compare_series(
+pub(crate) fn compare_series(
     (control, gnc): (&Model, &Model),
     series: &Series,
     port_power: bool,
@@ -256,7 +256,7 @@ fn report(label: &str, worst: &BTreeMap<&'static str, Worst>) -> usize {
 
 /// Runs [`CASES`] at every frame in C++ and Rust and compares the control
 /// law; returns how many (case, run, variable) comparisons failed.
-pub fn check_blocking(paths: &Paths) -> Result<usize, OracleError> {
+pub(crate) fn check_blocking(paths: &Paths) -> Result<usize, OracleError> {
     let models = package::unpack_blocking(paths)?;
     let control = Model::from_element(
         "F16_control.dml",

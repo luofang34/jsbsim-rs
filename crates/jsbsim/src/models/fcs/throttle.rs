@@ -11,7 +11,7 @@ use crate::models::{Binder, Kind, Models};
 
 /// The engine commands and positions, indexed by engine.
 #[derive(Debug, Clone, Default, PartialEq)]
-pub struct Throttles {
+pub(crate) struct Throttles {
     /// `ThrottleCmd`.
     pub throttle_cmd: Vec<f64>,
     /// `ThrottlePos`.
@@ -58,7 +58,7 @@ fn set_pos<T: Copy>(pos: &mut [T], cmd: &[T], n: i32, setting: T) {
 
 impl Throttles {
     /// `AddThrottle` but for its ties: one more engine, at zero.
-    pub fn add(&mut self) -> usize {
+    pub(crate) fn add(&mut self) -> usize {
         self.throttle_cmd.push(0.0);
         self.throttle_pos.push(0.0);
         self.mixture_cmd.push(0.0);
@@ -72,7 +72,7 @@ impl Throttles {
 
     /// `InitModel`'s part: positions and the throttle and mixture commands
     /// to zero; the advance and feather commands keep their values.
-    pub fn init(&mut self) {
+    pub(crate) fn init(&mut self) {
         for v in [
             &mut self.throttle_pos,
             &mut self.mixture_pos,
@@ -86,7 +86,7 @@ impl Throttles {
     }
 
     /// `Run`'s default control law: each position follows its command.
-    pub fn follow_commands(&mut self) {
+    pub(crate) fn follow_commands(&mut self) {
         follow(&mut self.throttle_pos, &self.throttle_cmd);
         follow(&mut self.mixture_pos, &self.mixture_cmd);
         follow(&mut self.prop_advance, &self.prop_advance_cmd);
@@ -94,46 +94,46 @@ impl Throttles {
     }
 
     /// `SetThrottleCmd`.
-    pub fn set_throttle_cmd(&mut self, n: i32, setting: f64) {
+    pub(crate) fn set_throttle_cmd(&mut self, n: i32, setting: f64) {
         if self.exists(n, "throttle command") {
             set_all(&mut self.throttle_cmd, n, setting);
         }
     }
 
     /// `SetThrottlePos`.
-    pub fn set_throttle_pos(&mut self, n: i32, setting: f64) {
+    pub(crate) fn set_throttle_pos(&mut self, n: i32, setting: f64) {
         if self.exists(n, "throttle position setting") {
             set_all(&mut self.throttle_pos, n, setting);
         }
     }
 
     /// `SetMixtureCmd`.
-    pub fn set_mixture_cmd(&mut self, n: i32, setting: f64) {
+    pub(crate) fn set_mixture_cmd(&mut self, n: i32, setting: f64) {
         set_all(&mut self.mixture_cmd, n, setting);
     }
 
     /// `SetMixturePos`.
-    pub fn set_mixture_pos(&mut self, n: i32, setting: f64) {
+    pub(crate) fn set_mixture_pos(&mut self, n: i32, setting: f64) {
         set_pos(&mut self.mixture_pos, &self.mixture_cmd, n, setting);
     }
 
     /// `SetPropAdvanceCmd`.
-    pub fn set_prop_advance_cmd(&mut self, n: i32, setting: f64) {
+    pub(crate) fn set_prop_advance_cmd(&mut self, n: i32, setting: f64) {
         set_all(&mut self.prop_advance_cmd, n, setting);
     }
 
     /// `SetPropAdvance`.
-    pub fn set_prop_advance(&mut self, n: i32, setting: f64) {
+    pub(crate) fn set_prop_advance(&mut self, n: i32, setting: f64) {
         set_pos(&mut self.prop_advance, &self.prop_advance_cmd, n, setting);
     }
 
     /// `SetFeatherCmd`.
-    pub fn set_feather_cmd(&mut self, n: i32, setting: bool) {
+    pub(crate) fn set_feather_cmd(&mut self, n: i32, setting: bool) {
         set_all(&mut self.prop_feather_cmd, n, setting);
     }
 
     /// `SetPropFeather`.
-    pub fn set_prop_feather(&mut self, n: i32, setting: bool) {
+    pub(crate) fn set_prop_feather(&mut self, n: i32, setting: bool) {
         set_pos(&mut self.prop_feather, &self.prop_feather_cmd, n, setting);
     }
 
@@ -161,7 +161,7 @@ type Set = fn(&mut Throttles, i32, f64);
 
 /// `bindThrottle(num)`: the engine's commands and positions, in JSBSim's
 /// order.
-pub fn bind_throttle(b: &mut Binder<'_>, num: usize) -> Result<(), Error> {
+pub(crate) fn bind_throttle(b: &mut Binder<'_>, num: usize) -> Result<(), Error> {
     let doubles: [(&str, Get, Set); 6] = [
         (
             "throttle-cmd-norm",

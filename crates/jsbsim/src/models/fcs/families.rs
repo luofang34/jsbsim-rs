@@ -35,7 +35,7 @@ use crate::xml::Element;
 
 /// Where a component sits: channel index and index in the channel.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct ComponentAt {
+pub(crate) struct ComponentAt {
     /// Channel, in load order across every FCS document.
     pub channel: usize,
     /// Component, in channel order.
@@ -43,7 +43,7 @@ pub struct ComponentAt {
 }
 
 /// One component family (a subclass of `FGFCSComponent`).
-pub trait Family: Sized {
+pub(crate) trait Family: Sized {
     /// What one run reads from the property tree.
     type Sample;
 
@@ -83,7 +83,7 @@ pub trait Family: Sized {
 
 /// A loaded component.
 #[derive(Debug, Clone)]
-pub struct Component {
+pub(crate) struct Component {
     /// What every component has.
     pub base: Base,
     /// The family and its state.
@@ -92,7 +92,7 @@ pub struct Component {
 
 impl Component {
     /// `ResetPastStates`.
-    pub fn reset(&mut self) {
+    pub(crate) fn reset(&mut self) {
         self.kind.reset(&mut self.base);
     }
 }
@@ -102,7 +102,7 @@ fn component(fcs: &Fcs, at: ComponentAt) -> Option<&Component> {
 }
 
 /// The component at `at`, for a tied setter that reaches its state.
-pub fn component_mut(fcs: &mut Fcs, at: ComponentAt) -> Option<&mut Component> {
+pub(crate) fn component_mut(fcs: &mut Fcs, at: ComponentAt) -> Option<&mut Component> {
     fcs.channels
         .get_mut(at.channel)?
         .components
@@ -113,7 +113,7 @@ macro_rules! families {
     ($($(#[$doc:meta])* $variant:ident($ty:ty) = $($element:literal)|+;)+) => {
         /// A component's family, with the family's own state.
         #[derive(Debug, Clone)]
-        pub enum Kind {
+        pub(crate) enum Kind {
             $($(#[$doc])* $variant($ty),)+
         }
 
@@ -142,12 +142,12 @@ macro_rules! families {
         /// Whether a family registers element `name`.
         #[cfg(test)]
         #[must_use]
-        pub fn registers(name: &str) -> bool {
+        pub(crate) fn registers(name: &str) -> bool {
             matches!(name, $($($element)|+)|+)
         }
 
         /// The family registered for `el`'s name, loaded.
-        pub fn load(
+        pub(crate) fn load(
             el: &Element,
             base: &mut Base,
             ctx: &mut LoadContext<'_>,
