@@ -445,3 +445,52 @@ fn trim_results_convert_only_the_controls_axis_report_converts() {
         assert_eq!(axis.converts().0, convert, "{control:?}");
     }
 }
+
+/// A `tAll` axis reads no state, as `FGTrimAxis::getState` breaks out of its
+/// switch: the control stays at the middle of its range, unsolved, after the
+/// axis' start and `checkLimits`' three runs of two frames each.
+#[test]
+fn a_state_all_axis_counts_as_trimmed_and_solves_nothing() {
+    let mut fdm = tripod();
+    fdm.set_property("ic/h-sl-ft", 1000.0).unwrap();
+    fdm.set_property("ic/vt-fps", 200.0).unwrap();
+    fdm.run_ic().unwrap();
+    fdm.do_trim_custom(&[
+        (State::All, Control::Alpha),
+        (State::All, Control::Throttle),
+    ])
+    .unwrap();
+    let report = fdm.last_trim().unwrap();
+    assert!(report.success);
+    assert_eq!(report.total_iterations, 1);
+    let [axis] = report.axes.as_slice() else {
+        panic!(
+            "a repeated state keeps its first control: {:?}",
+            report.axes
+        );
+    };
+    assert_eq!((axis.state, axis.control), (State::All, Control::Alpha));
+    assert_eq!(axis.control_value, 7.5 * DEGTORAD);
+    assert_eq!(axis.state_value, 0.0);
+    assert_eq!(axis.tolerance, DEFAULT_TOLERANCE);
+    assert_eq!((axis.sub_iterations, axis.successful), (0.0, 1.0));
+    assert_eq!((axis.stability, axis.run_count), (2, 8));
+    let alpha = fdm.get_property("aero/alpha-deg").unwrap();
+    assert!((alpha - 7.5).abs() < 1e-9, "{alpha}");
+}
+
+/// A `tAll` axis beside a real one neither blocks nor trims it.
+#[test]
+fn a_state_all_axis_leaves_the_other_axes_to_trim() {
+    let mut fdm = lifting_tripod();
+    fdm.do_trim_custom(&[
+        (State::All, Control::Elevator),
+        (State::Wdot, Control::Alpha),
+    ])
+    .unwrap();
+    let report = fdm.last_trim().unwrap();
+    assert!(report.success);
+    let wdot = &report.axes[1];
+    assert!(wdot.state_value.abs() <= wdot.tolerance, "{wdot:?}");
+    assert_eq!(report.axes[0].state_value, 0.0);
+}

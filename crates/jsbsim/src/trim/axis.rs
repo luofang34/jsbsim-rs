@@ -18,7 +18,11 @@ pub const DEFAULT_TOLERANCE: f64 = 0.001;
 /// What an axis brings to its target (`State`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum State {
-    /// `tAll`: no state; selects every axis for debugging.
+    /// `tAll`: JSBSim's debug-axis selector, which `FGTrim::DebugState` takes
+    /// to mean every axis, and not a physical state to trim. An axis given
+    /// it, which [`Fdm::do_trim_custom`] allows as `FGTrim::AddState` does,
+    /// reads no state, so it always counts as trimmed and its control is
+    /// left at the middle of its range rather than solved.
     All,
     /// `tUdot`.
     Udot,

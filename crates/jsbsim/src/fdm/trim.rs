@@ -30,6 +30,10 @@ impl Fdm {
     /// each. A state given twice keeps its first control, as `AddState`
     /// refuses the second. Otherwise as [`do_trim`](Self::do_trim).
     ///
+    /// [`State::All`] is JSBSim's debug-axis selector (`tAll`), not a
+    /// physical state to trim: its axis always counts as trimmed, leaving
+    /// its control at the middle of the control's range.
+    ///
     /// # Errors
     ///
     /// Those of [`do_trim`](Self::do_trim).
