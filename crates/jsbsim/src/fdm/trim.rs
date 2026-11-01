@@ -10,17 +10,18 @@ use crate::Error;
 use crate::trim::{Control, State, Trim, TrimMode, TrimReport};
 
 impl Fdm {
-    /// `DoTrim(mode)`: trims in `mode` and sets `simulation/trim-completed`.
-    /// A trim that does not converge is [`Error::TrimFailed`], as JSBSim
-    /// throws `TrimFailureException`; the failed trim has put the controls
-    /// back.
+    /// `DoTrim(mode)`: trims in `mode`, sets `simulation/trim-completed`
+    /// and returns the trim's report, which [`last_trim`](Self::last_trim)
+    /// keeps. A trim that does not converge is [`Error::TrimFailed`], as
+    /// JSBSim throws `TrimFailureException`; the failed trim has put the
+    /// controls back, and `last_trim` holds its report.
     ///
     /// # Errors
     ///
     /// [`Error::TrimFailed`] when the trim does not converge, and
     /// [`Error::Function`] when a function the trimmed frames evaluate
     /// fails.
-    pub fn do_trim(&mut self, mode: TrimMode) -> Result<(), Error> {
+    pub fn do_trim(&mut self, mode: TrimMode) -> Result<&TrimReport, Error> {
         let trim = Trim::new(self, mode);
         self.run_trim(trim)
     }
@@ -37,7 +38,7 @@ impl Fdm {
     /// # Errors
     ///
     /// Those of [`do_trim`](Self::do_trim).
-    pub fn do_trim_custom(&mut self, axes: &[(State, Control)]) -> Result<(), Error> {
+    pub fn do_trim_custom(&mut self, axes: &[(State, Control)]) -> Result<&TrimReport, Error> {
         let mut trim = Trim::new(self, TrimMode::Custom);
         for &(state, control) in axes {
             trim.add_state(self, state, control);
@@ -46,21 +47,21 @@ impl Fdm {
     }
 
     /// Runs `trim` and records its report, as `DoTrim` does.
-    fn run_trim(&mut self, mut trim: Trim) -> Result<(), Error> {
+    fn run_trim(&mut self, mut trim: Trim) -> Result<&TrimReport, Error> {
         let success = trim.do_trim(self)?;
         let report = trim.report(self);
         if self.models.exec.debug_level > 0 {
             report.log();
         }
-        self.last_trim = Some(report);
         self.trims_run = self.trims_run.wrapping_add(1);
         if !success {
+            self.last_trim = Some(report);
             return Err(Error::TrimFailed {
                 message: "Trim Failed".to_owned(),
             });
         }
         self.models.exec.trim_completed = 1;
-        Ok(())
+        Ok(self.last_trim.insert(report))
     }
 
     /// `DoTrim(mode)` with the `int` that `simulation/do_simple_trim`
@@ -72,7 +73,7 @@ impl Fdm {
                 message: "Illegal trimming mode!".to_owned(),
             });
         };
-        self.do_trim(mode)
+        self.do_trim(mode).map(drop)
     }
 
     /// What the last trim the executive ran reported, as JSBSim's

@@ -101,12 +101,20 @@ fn every_typed_mode_trims_as_simulation_do_simple_trim_does() {
     for v in 0..=6 {
         let mode = TrimMode::from_i32(v).unwrap();
         let mut typed = started(mode);
-        let typed_result = typed.do_trim(mode);
+        let typed_result = typed.do_trim(mode).cloned();
+        if let Ok(report) = &typed_result {
+            // The returned report is the one last_trim keeps (Debug, as NaN
+            // states fail ==).
+            assert_eq!(
+                format!("{report:?}"),
+                format!("{:?}", typed.last_trim().unwrap())
+            );
+        }
         let mut raw = started(mode);
         let raw_result = raw
             .set_property("simulation/do_simple_trim", f64::from(v))
             .map(drop);
-        assert_eq!(typed_result, raw_result, "{mode:?}");
+        assert_eq!(typed_result.map(drop), raw_result, "{mode:?}");
         // Debug text, as aero-less modes leave NaN states that `==` rejects.
         assert_eq!(
             format!("{:?}", typed.last_trim()),

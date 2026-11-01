@@ -1010,8 +1010,8 @@ impl jsbsim::Fdm
 pub fn jsbsim::Fdm::do_linearization(&mut self) -> core::result::Result<&jsbsim::linearization::Linearization, jsbsim::error::Error>
 pub fn jsbsim::Fdm::last_linearization(&self) -> core::option::Option<&jsbsim::linearization::Linearization>
 impl jsbsim::Fdm
-pub fn jsbsim::Fdm::do_trim(&mut self, jsbsim::trim::TrimMode) -> core::result::Result<(), jsbsim::error::Error>
-pub fn jsbsim::Fdm::do_trim_custom(&mut self, &[(jsbsim::trim::State, jsbsim::trim::Control)]) -> core::result::Result<(), jsbsim::error::Error>
+pub fn jsbsim::Fdm::do_trim(&mut self, jsbsim::trim::TrimMode) -> core::result::Result<&jsbsim::trim::TrimReport, jsbsim::error::Error>
+pub fn jsbsim::Fdm::do_trim_custom(&mut self, &[(jsbsim::trim::State, jsbsim::trim::Control)]) -> core::result::Result<&jsbsim::trim::TrimReport, jsbsim::error::Error>
 pub fn jsbsim::Fdm::last_trim(&self) -> core::option::Option<&jsbsim::trim::TrimReport>
 pub fn jsbsim::Fdm::trim_requested(&self) -> jsbsim::trim::TrimMode
 pub fn jsbsim::Fdm::trims_run(&self) -> u32
