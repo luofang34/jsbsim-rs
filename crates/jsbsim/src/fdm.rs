@@ -257,14 +257,24 @@ impl Fdm {
     ///
     /// # Errors
     ///
-    /// [`Error::ForeignNode`] when `node` came from another `Fdm`, and
-    /// [`Error::Function`] when the function bound to `node` fails to
+    /// [`Error::StaleNode`] when this `Fdm` holds no node of `node`'s path
+    /// at its slot, and [`Error::Function`] when the function bound to `node` fails to
     /// evaluate.
     pub fn read_node(&mut self, node: NodeId) -> Result<f64, Error> {
-        let Some(slot) = self.env.tree.slot_of(node) else {
-            return Err(Error::ForeignNode);
-        };
+        let slot = self.slot_of(node)?;
         self.read_slot(slot)
+    }
+
+    /// The slot `node` names, or why it names none.
+    fn slot_of(&self, node: NodeId) -> Result<SlotId, Error> {
+        let tree = &self.env.tree;
+        tree.slot_of(node).ok_or_else(|| {
+            let slot = node.slot_index();
+            Error::StaleNode {
+                slot,
+                found: tree.path_at(slot),
+            }
+        })
     }
 
     fn read_slot(&mut self, slot: SlotId) -> Result<f64, Error> {
@@ -289,7 +299,8 @@ impl Fdm {
     ///
     /// # Errors
     ///
-    /// [`Error::ForeignNode`] when `node` came from another `Fdm`; errors
+    /// [`Error::StaleNode`] when this `Fdm` holds no node of `node`'s path
+    /// at its slot; errors
     /// of the request the write starts: a trim
     /// (`simulation/do_simple_trim`, [`Error::TrimFailed`] when it does
     /// not converge), a reset or initial-condition run
@@ -297,9 +308,7 @@ impl Fdm {
     /// linearization; and [`Error::Function`] when a function the request
     /// evaluates fails.
     pub fn write_node(&mut self, node: NodeId, value: f64) -> Result<bool, Error> {
-        let Some(slot) = self.env.tree.slot_of(node) else {
-            return Err(Error::ForeignNode);
-        };
+        let slot = self.slot_of(node)?;
         self.write_slot(slot, value)
     }
 

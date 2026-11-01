@@ -34,7 +34,7 @@ pub use path::PathError;
 #[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub use value::Value;
 
-use id::TreeId;
+use id::NodeKey;
 use path::{Component, parse_path};
 
 /// SimGear node attribute bits.
@@ -97,6 +97,8 @@ struct Node {
     /// READ and WRITE as they were when the node was tied; `Some` while
     /// tied.
     tied: Option<(bool, bool)>,
+    /// What a [`NodeId`] of this node checks.
+    key: NodeKey,
 }
 
 /// Arena of property nodes rooted at an unnamed node.
@@ -104,11 +106,9 @@ struct Node {
 /// Relative paths start at the manager root ([`root`](Self::root)), which
 /// is the true root unless the tree was made `for_instance`; a leading
 /// `/` always starts at the true root, as SimGear's `getNode` does.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 #[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct PropertyTree {
-    /// What sets this tree's [`NodeId`]s apart from any other's.
-    id: TreeId,
     nodes: Vec<Node>,
     /// `FGPropertyManager`'s root node.
     base: SlotId,
@@ -123,26 +123,13 @@ impl Default for PropertyTree {
     }
 }
 
-impl Clone for PropertyTree {
-    /// A copy is a tree of its own: [`NodeId`]s of this one do not reach it.
-    fn clone(&self) -> Self {
-        Self {
-            id: TreeId::mint(),
-            nodes: self.nodes.clone(),
-            base: self.base,
-            generation: self.generation,
-        }
-    }
-}
-
 #[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl PropertyTree {
     /// Creates a tree holding only the root.
     #[must_use]
     pub fn new() -> Self {
         Self {
-            id: TreeId::mint(),
-            nodes: vec![Node::new(String::new(), 0, None)],
+            nodes: vec![Node::new(String::new(), 0, None, NodeKey::ROOT)],
             base: SlotId(0),
             generation: 0,
         }
@@ -275,7 +262,8 @@ impl PropertyTree {
         if let Some(parent) = self.node_mut(parent) {
             parent.children.push(id);
         }
-        self.nodes.push(Node::new(name, index, Some(parent)));
+        let key = self.node(parent).key.child(&name, index);
+        self.nodes.push(Node::new(name, index, Some(parent), key));
         self.generation = self.generation.wrapping_add(1);
         id
     }
@@ -357,10 +345,11 @@ static DETACHED: Node = Node {
     value: Value::None,
     attributes: Attribute::REMOVED.0,
     tied: None,
+    key: NodeKey::ROOT,
 };
 
 impl Node {
-    fn new(name: String, index: i32, parent: Option<SlotId>) -> Self {
+    fn new(name: String, index: i32, parent: Option<SlotId>, key: NodeKey) -> Self {
         Self {
             name,
             index,
@@ -369,6 +358,7 @@ impl Node {
             value: Value::None,
             attributes: Attribute::READ.0 | Attribute::WRITE.0,
             tied: None,
+            key,
         }
     }
 }

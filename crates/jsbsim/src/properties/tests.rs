@@ -326,28 +326,42 @@ fn a_path_error_is_reported_once() {
     assert!(std::error::Error::source(&err).is_none());
 }
 
+/// A handle names the node of its path at its slot, in any tree that holds
+/// it there.
 #[test]
-fn a_node_id_names_its_slot_in_its_own_tree_only() {
+fn a_node_id_names_the_node_of_its_path_at_its_slot() {
     let (tree, slot) = tree_with("a/b");
-    let (other, other_slot) = tree_with("a/b");
-    assert_eq!(slot, other_slot, "the same paths take the same slots");
+    let (same, same_slot) = tree_with("a/b");
+    let (other, other_slot) = tree_with("a/c");
+    assert_eq!(slot, other_slot, "both paths take the same slot");
+    assert_eq!(slot, same_slot);
     assert_eq!(tree.slot_of(tree.node_id(slot)), Some(slot));
+    assert_eq!(same.slot_of(tree.node_id(slot)), Some(slot));
     assert_eq!(other.slot_of(tree.node_id(slot)), None);
-    assert_ne!(tree.node_id(slot), other.node_id(slot));
+    assert_eq!(tree.clone().slot_of(tree.node_id(slot)), Some(slot));
+    let (deeper, _) = tree_with("a/b/c");
+    assert_eq!(deeper.slot_of(other.node_id(slot)), None);
+    let (short, _) = tree_with("a");
+    assert_eq!(short.slot_of(tree.node_id(slot)), None, "past the end");
+    assert_eq!(short.path_at(slot.0), None);
+    assert_eq!(other.path_at(slot.0).as_deref(), Some("/a/c"));
 }
 
+/// The key tells apart names and indices that a plain concatenation would
+/// run together, and is the same on every target.
 #[test]
-fn a_copy_of_a_tree_is_a_tree_of_its_own() {
-    let (tree, slot) = tree_with("a/b");
-    let copy = tree.clone();
-    assert_eq!(copy.get("a/b").unwrap(), Some(slot));
-    assert_eq!(copy.slot_of(tree.node_id(slot)), None);
-    assert_eq!(tree.slot_of(copy.node_id(slot)), None);
-    assert_eq!(copy.slot_of(copy.node_id(slot)), Some(slot));
-}
-
-#[test]
-fn the_tree_id_counter_skips_zero() {
-    assert_eq!(id::TreeId::after(1), 2);
-    assert_eq!(id::TreeId::after(u32::MAX), 1);
+fn node_keys_tell_names_and_indices_apart() {
+    let root = id::NodeKey::ROOT;
+    assert_ne!(root.child("ab", 0), root.child("a", 0).child("b", 0));
+    assert_ne!(root.child("a", 1), root.child("a", 0));
+    assert_ne!(
+        root.child("a", 0).child("b", 0),
+        root.child("b", 0).child("a", 0)
+    );
+    assert_eq!(root.child("a", 0), root.child("a", 0));
+    let (tree, slot) = tree_with("fcs/engine[2]/throttle");
+    assert_eq!(
+        tree.node_id(slot),
+        tree_with("fcs/engine[2]/throttle").0.node_id(slot)
+    );
 }

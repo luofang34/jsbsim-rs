@@ -80,9 +80,20 @@ pub enum Error {
     #[error("invalid property path: {0}")]
     PropertyPath(PathError),
     /// A [`NodeId`](crate::NodeId) passed to [`Fdm::read_node`](crate::Fdm::read_node)
-    /// or [`Fdm::write_node`](crate::Fdm::write_node) belongs to another `Fdm`.
-    #[error("property node belongs to another Fdm")]
-    ForeignNode,
+    /// or [`Fdm::write_node`](crate::Fdm::write_node) names a node this
+    /// `Fdm` does not hold at its slot: one of another `Fdm` with a
+    /// different property there, or one a snapshot restore removed.
+    #[error("no property node at slot {slot} matches the handle; the slot {}", match found {
+        Some(path) => format!("holds {path}"),
+        None => "is empty".to_owned(),
+    })]
+    StaleNode {
+        /// The handle's slot in the property arena.
+        slot: u32,
+        /// The fully qualified path of the node this `Fdm` holds at that
+        /// slot, if any.
+        found: Option<String>,
+    },
     /// The resolver found something at the path but could not read it,
     /// such as a directory or a file without read permission.
     #[error("cannot read {path}: {kind}")]
@@ -132,7 +143,7 @@ impl Error {
             | Self::Geographic { .. }
             | Self::Snapshot(_)
             | Self::PropertyPath(_)
-            | Self::ForeignNode
+            | Self::StaleNode { .. }
             | Self::ResourceUnreadable { .. } => None,
         }
     }

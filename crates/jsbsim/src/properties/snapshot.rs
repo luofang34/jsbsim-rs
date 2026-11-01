@@ -10,7 +10,7 @@
 
 use sha2::{Digest, Sha256};
 
-use super::{Node, PropertyTree, SlotId, Value};
+use super::{Node, NodeKey, PropertyTree, SlotId, Value};
 use crate::snapshot::{Checker, Reader, SnapshotError, Visit, Visitor, Writer, count_u32};
 
 impl SlotId {
@@ -246,7 +246,7 @@ impl PropertyTree {
             .iter_mut()
             .take(kept.min(n))
             .try_for_each(|node| node.visit(c))?;
-        let mut fresh = Node::new(String::new(), 0, None);
+        let mut fresh = Node::new(String::new(), 0, None, NodeKey::ROOT);
         (kept.min(n)..n).try_for_each(|_| fresh.visit(c))
     }
 }

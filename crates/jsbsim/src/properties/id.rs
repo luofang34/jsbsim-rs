@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 //! Handles to property nodes. Inside the crate a node is a [`SlotId`], an
 //! index into its tree's arena. Across the public API it is a [`NodeId`],
-//! the slot stamped with the [`TreeId`] of the tree it came from, because a
-//! bare index would read whichever node happens to sit at that index in
-//! another tree.
-
-use std::num::NonZeroU32;
-use std::sync::atomic::{AtomicU32, Ordering};
+//! the slot together with the [`NodeKey`] of the node there, because a bare
+//! index would read whichever node happens to sit at that index: in another
+//! tree, or in the same tree after a snapshot restore replaced its runtime
+//! nodes.
 
 use super::PropertyTree;
 
@@ -27,28 +25,28 @@ impl SlotId {
     }
 }
 
-/// Which [`PropertyTree`] a [`NodeId`] came from. It tells live trees apart
-/// and means nothing else, so it stays out of fingerprints and snapshots,
-/// which must match across runs.
+/// A node's name, index and ancestors, hashed (FNV-1a, 64 bits) so that a
+/// [`NodeId`] can check it still names the node it was made for. The same
+/// path gives the same key in every tree and on every target.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub(super) struct TreeId(NonZeroU32);
+pub(super) struct NodeKey(u64);
 
-static NEXT_TREE_ID: AtomicU32 = AtomicU32::new(1);
+impl NodeKey {
+    /// The key of the root, which has no name.
+    pub(super) const ROOT: Self = Self(0xcbf2_9ce4_8422_2325);
 
-impl TreeId {
-    /// The counter's value after `id`, which skips 0 as it wraps.
-    pub(super) fn after(id: u32) -> u32 {
-        match id.wrapping_add(1) {
-            0 => 1,
-            next => next,
-        }
-    }
-
-    /// An id no other tree has, until the counter wraps after 2^32 trees.
-    pub(super) fn mint() -> Self {
-        let id = NEXT_TREE_ID.update(Ordering::Relaxed, Ordering::Relaxed, Self::after);
-        // The counter never holds 0.
-        Self(NonZeroU32::new(id).unwrap_or(NonZeroU32::MIN))
+    /// The key of child `name[index]` of the node keyed `self`.
+    pub(super) fn child(self, name: &str, index: i32) -> Self {
+        const PRIME: u64 = 0x0000_0100_0000_01b3;
+        // 0xff never occurs in UTF-8, so it ends the name unambiguously.
+        let bytes = self
+            .0
+            .to_le_bytes()
+            .into_iter()
+            .chain(name.bytes())
+            .chain([0xff])
+            .chain(index.to_le_bytes());
+        Self(bytes.fold(Self::ROOT.0, |h, b| (h ^ u64::from(b)).wrapping_mul(PRIME)))
     }
 }
 
@@ -56,11 +54,16 @@ impl TreeId {
 /// [`Fdm::node`](crate::Fdm::node).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct NodeId {
-    tree: TreeId,
     slot: SlotId,
+    key: NodeKey,
 }
 
-const _: () = assert!(size_of::<Option<NodeId>>() == 8);
+impl NodeId {
+    /// Index of the node in its tree's arena, for error reports.
+    pub(crate) fn slot_index(self) -> u32 {
+        self.slot.0
+    }
+}
 
 #[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl PropertyTree {
@@ -68,14 +71,22 @@ impl PropertyTree {
     #[must_use]
     pub fn node_id(&self, slot: SlotId) -> NodeId {
         NodeId {
-            tree: self.id,
             slot,
+            key: self.node(slot).key,
         }
     }
 
-    /// The slot `id` names, `None` when `id` came from another tree.
+    /// The slot `id` names, `None` unless that slot holds the node `id` was
+    /// made for: a node of the same path, in this tree or another.
     #[must_use]
     pub fn slot_of(&self, id: NodeId) -> Option<SlotId> {
-        (id.tree == self.id).then_some(id.slot)
+        let node = self.nodes.get(id.slot.index())?;
+        (node.key == id.key).then_some(id.slot)
+    }
+
+    /// The path of the node at arena index `slot`, `None` past the end.
+    pub(crate) fn path_at(&self, slot: u32) -> Option<String> {
+        let slot = SlotId(slot);
+        (slot.index() < self.nodes.len()).then(|| self.path(slot, true))
     }
 }

@@ -145,8 +145,10 @@ impl Fdm {
     /// Restores the state `snapshot` saved. The snapshot must be of this
     /// model loaded the same way: [`SnapshotError::FingerprintMismatch`]
     /// otherwise. Property nodes created after the snapshot are dropped,
-    /// so their ids become invalid; nodes it holds that the executive
-    /// lacks are made. The ground callback stays as installed.
+    /// and [`read_node`](Self::read_node) and
+    /// [`write_node`](Self::write_node) refuse their ids with
+    /// [`Error::StaleNode`]; nodes it holds that the executive lacks are
+    /// made. The ground callback stays as installed.
     ///
     /// The whole snapshot is decoded and checked before anything is
     /// written, so every error, a corrupted or truncated body included,

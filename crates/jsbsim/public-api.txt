@@ -1,7 +1,6 @@
 pub mod jsbsim
 pub mod jsbsim::error
 #[non_exhaustive] pub enum jsbsim::error::Error
-pub jsbsim::error::Error::ForeignNode
 pub jsbsim::error::Error::Function(jsbsim::error::FunctionError)
 pub jsbsim::error::Error::Geographic
 pub jsbsim::error::Error::Geographic::message: alloc::string::String
@@ -15,6 +14,9 @@ pub jsbsim::error::Error::ResourceUnreadable
 pub jsbsim::error::Error::ResourceUnreadable::kind: core::io::error::ErrorKind
 pub jsbsim::error::Error::ResourceUnreadable::path: alloc::string::String
 pub jsbsim::error::Error::Snapshot(jsbsim::snapshot::SnapshotError)
+pub jsbsim::error::Error::StaleNode
+pub jsbsim::error::Error::StaleNode::found: core::option::Option<alloc::string::String>
+pub jsbsim::error::Error::StaleNode::slot: u32
 pub jsbsim::error::Error::TrimFailed
 pub jsbsim::error::Error::TrimFailed::message: alloc::string::String
 pub jsbsim::error::Error::UnknownInputType
@@ -898,7 +900,6 @@ impl core::marker::UnsafeUnpin for jsbsim::trim::TrimReport
 impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::trim::TrimReport
 impl core::panic::unwind_safe::UnwindSafe for jsbsim::trim::TrimReport
 #[non_exhaustive] pub enum jsbsim::Error
-pub jsbsim::Error::ForeignNode
 pub jsbsim::Error::Function(jsbsim::error::FunctionError)
 pub jsbsim::Error::Geographic
 pub jsbsim::Error::Geographic::message: alloc::string::String
@@ -912,6 +913,9 @@ pub jsbsim::Error::ResourceUnreadable
 pub jsbsim::Error::ResourceUnreadable::kind: core::io::error::ErrorKind
 pub jsbsim::Error::ResourceUnreadable::path: alloc::string::String
 pub jsbsim::Error::Snapshot(jsbsim::snapshot::SnapshotError)
+pub jsbsim::Error::StaleNode
+pub jsbsim::Error::StaleNode::found: core::option::Option<alloc::string::String>
+pub jsbsim::Error::StaleNode::slot: u32
 pub jsbsim::Error::TrimFailed
 pub jsbsim::Error::TrimFailed::message: alloc::string::String
 pub jsbsim::Error::UnknownInputType
