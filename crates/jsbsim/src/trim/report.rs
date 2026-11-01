@@ -32,8 +32,6 @@ pub struct AxisReport {
     pub run_count: i32,
     /// `GetAvgStability`.
     pub avg_stability: f64,
-    /// `control_convert`: the factor `AxisReport` shows `control_value` in.
-    control_convert: f64,
 }
 
 /// What `FGTrim::Report` and `TrimStats` show.
@@ -68,7 +66,6 @@ impl Trim {
                 stability: a.stability(),
                 run_count: a.run_count(),
                 avg_stability: a.avg_stability(),
-                control_convert: a.converts().0,
             })
             .collect();
         TrimReport {
@@ -89,7 +86,6 @@ impl TrimReport {
             log_line(
                 a.control,
                 a.control_value,
-                a.control_convert,
                 a.state,
                 a.state_value,
                 a.tolerance,
@@ -104,7 +100,6 @@ pub(super) fn log_axis(axis: &mut TrimAxis, fdm: &Fdm) {
     log_line(
         axis.control_type(),
         axis.control(),
-        axis.converts().0,
         axis.state_type(),
         state_value,
         axis.tolerance(),
@@ -112,18 +107,11 @@ pub(super) fn log_axis(axis: &mut TrimAxis, fdm: &Fdm) {
 }
 
 /// The line of `AxisReport`. `state_value` already has the target added.
-fn log_line(
-    control: Control,
-    control_value: f64,
-    control_convert: f64,
-    state: State,
-    state_value: f64,
-    tolerance: f64,
-) {
+fn log_line(control: Control, control_value: f64, state: State, state_value: f64, tolerance: f64) {
     tracing::info!(
         "  {:<20}: {:<6.2} {:<5}: {:<9.2e} Tolerance: {:<3.0e}  {}",
         control.name(),
-        control_value * control_convert,
+        control_value * control.convert(),
         state.name(),
         state_value,
         tolerance,

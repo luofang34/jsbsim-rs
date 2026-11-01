@@ -114,6 +114,24 @@ impl Control {
             Self::Heading => "Heading",
         }
     }
+
+    /// `control_convert`: the factor `AxisReport` shows this control in.
+    /// Pitch and heading are angles too, yet JSBSim leaves them in radians.
+    pub(super) fn convert(self) -> f64 {
+        match self {
+            Self::Beta | Self::Alpha | Self::Phi | Self::Gamma => RADTODEG,
+            Self::Throttle
+            | Self::Elevator
+            | Self::Aileron
+            | Self::Rudder
+            | Self::AltAgl
+            | Self::Theta
+            | Self::PitchTrim
+            | Self::RollTrim
+            | Self::YawTrim
+            | Self::Heading => 1.0,
+        }
+    }
 }
 
 /// `FGTrimAxis`.
@@ -175,6 +193,7 @@ impl TrimAxis {
     /// The control range part of the constructor.
     fn set_ranges(&mut self, fdm: &Fdm, ic: &InitialCondition) {
         let m = &fdm.models;
+        self.control_convert = self.control.convert();
         match self.control {
             Control::Throttle => {
                 (self.control_min, self.control_max) = (0.0, 1.0);
@@ -183,7 +202,6 @@ impl TrimAxis {
             Control::Beta => {
                 self.control_min = -30.0 * DEGTORAD;
                 self.control_max = 30.0 * DEGTORAD;
-                self.control_convert = RADTODEG;
             }
             Control::Alpha => {
                 let a = &m.aerodynamics.state;
@@ -193,7 +211,6 @@ impl TrimAxis {
                     self.control_min = -5.0 * DEGTORAD;
                 }
                 self.control_value = (self.control_min + self.control_max) / 2.0;
-                self.control_convert = RADTODEG;
                 self.solver_eps = self.tolerance / 100.0;
             }
             Control::PitchTrim
@@ -223,13 +240,11 @@ impl TrimAxis {
                 self.control_min = phi - 30.0 * DEGTORAD;
                 self.control_max = phi + 30.0 * DEGTORAD;
                 self.state_convert = RADTODEG;
-                self.control_convert = RADTODEG;
             }
             Control::Gamma => {
                 self.solver_eps = self.tolerance / 100.0;
                 self.control_min = -80.0 * DEGTORAD;
                 self.control_max = 80.0 * DEGTORAD;
-                self.control_convert = RADTODEG;
             }
             Control::Heading => {
                 let psi = ic.euler_rad(E_PSI);
