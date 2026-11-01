@@ -463,17 +463,33 @@ impl core::marker::Copy for jsbsim::math::Quaternion
 impl core::ops::arith::Add for &jsbsim::math::Quaternion
 pub type &jsbsim::math::Quaternion::Output = jsbsim::math::Quaternion
 pub fn &jsbsim::math::Quaternion::add(self, Self) -> jsbsim::math::Quaternion
+impl core::ops::arith::Add for jsbsim::math::Quaternion
+pub type jsbsim::math::Quaternion::Output = jsbsim::math::Quaternion
+pub fn jsbsim::math::Quaternion::add(self, Self) -> Self
+impl core::ops::arith::AddAssign for jsbsim::math::Quaternion
+pub fn jsbsim::math::Quaternion::add_assign(&mut self, Self)
 impl core::ops::arith::AddAssign<&jsbsim::math::Quaternion> for jsbsim::math::Quaternion
 pub fn jsbsim::math::Quaternion::add_assign(&mut self, &Self)
 impl core::ops::arith::Mul for &jsbsim::math::Quaternion
 pub type &jsbsim::math::Quaternion::Output = jsbsim::math::Quaternion
 pub fn &jsbsim::math::Quaternion::mul(self, Self) -> jsbsim::math::Quaternion
+impl core::ops::arith::Mul for jsbsim::math::Quaternion
+pub type jsbsim::math::Quaternion::Output = jsbsim::math::Quaternion
+pub fn jsbsim::math::Quaternion::mul(self, Self) -> Self
 impl core::ops::arith::Mul<&jsbsim::math::Quaternion> for f64
 pub type f64::Output = jsbsim::math::Quaternion
 pub fn f64::mul(self, &jsbsim::math::Quaternion) -> jsbsim::math::Quaternion
 impl core::ops::arith::Mul<f64> for &jsbsim::math::Quaternion
 pub type &jsbsim::math::Quaternion::Output = jsbsim::math::Quaternion
 pub fn &jsbsim::math::Quaternion::mul(self, f64) -> jsbsim::math::Quaternion
+impl core::ops::arith::Mul<f64> for jsbsim::math::Quaternion
+pub type jsbsim::math::Quaternion::Output = jsbsim::math::Quaternion
+pub fn jsbsim::math::Quaternion::mul(self, f64) -> Self
+impl core::ops::arith::Mul<jsbsim::math::Quaternion> for f64
+pub type f64::Output = jsbsim::math::Quaternion
+pub fn f64::mul(self, jsbsim::math::Quaternion) -> jsbsim::math::Quaternion
+impl core::ops::arith::MulAssign for jsbsim::math::Quaternion
+pub fn jsbsim::math::Quaternion::mul_assign(&mut self, Self)
 impl core::ops::arith::MulAssign<&jsbsim::math::Quaternion> for jsbsim::math::Quaternion
 pub fn jsbsim::math::Quaternion::mul_assign(&mut self, &Self)
 impl core::ops::arith::MulAssign<f64> for jsbsim::math::Quaternion
@@ -481,6 +497,11 @@ pub fn jsbsim::math::Quaternion::mul_assign(&mut self, f64)
 impl core::ops::arith::Sub for &jsbsim::math::Quaternion
 pub type &jsbsim::math::Quaternion::Output = jsbsim::math::Quaternion
 pub fn &jsbsim::math::Quaternion::sub(self, Self) -> jsbsim::math::Quaternion
+impl core::ops::arith::Sub for jsbsim::math::Quaternion
+pub type jsbsim::math::Quaternion::Output = jsbsim::math::Quaternion
+pub fn jsbsim::math::Quaternion::sub(self, Self) -> Self
+impl core::ops::arith::SubAssign for jsbsim::math::Quaternion
+pub fn jsbsim::math::Quaternion::sub_assign(&mut self, Self)
 impl core::ops::arith::SubAssign<&jsbsim::math::Quaternion> for jsbsim::math::Quaternion
 pub fn jsbsim::math::Quaternion::sub_assign(&mut self, &Self)
 impl core::marker::Freeze for jsbsim::math::Quaternion

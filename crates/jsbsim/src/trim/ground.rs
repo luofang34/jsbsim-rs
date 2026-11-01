@@ -146,7 +146,7 @@ impl Trim {
 
         let r = calc_rotation(&contacts, rotation_axis, contact0);
         let q1 = Quaternion::from_angle_axis(r.angle_min, rotation_axis);
-        let mut q = &(self.fgic.orientation() * &q0) * &q1;
+        let mut q = *self.fgic.orientation() * q0 * q1;
         q.cache_derived();
         let euler = q.euler();
         self.fgic.set_euler_angle_rad(E_PHI, euler[E_PHI]);

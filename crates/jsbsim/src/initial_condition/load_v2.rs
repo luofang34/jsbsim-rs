@@ -148,7 +148,7 @@ impl InitialCondition {
                 let tec2i = ti2ec.transposed();
                 let mut local2i = Quaternion::from_matrix(&(tec2i * self.position.tl2ec()));
                 local2i.normalize();
-                self.orientation = &local2i * &i2body;
+                self.orientation = local2i * i2body;
             }
             "ecef" => {
                 // Q_b/l = Q_e/l * Q_b/e
@@ -156,7 +156,7 @@ impl InitialCondition {
                 ec2body.normalize();
                 let mut local2ec = Quaternion::from_matrix(&self.position.tl2ec());
                 local2ec.normalize();
-                self.orientation = &local2ec * &ec2body;
+                self.orientation = local2ec * ec2body;
             }
             "local" => self.orientation = Quaternion::from_euler_vector(orient),
             _ => {

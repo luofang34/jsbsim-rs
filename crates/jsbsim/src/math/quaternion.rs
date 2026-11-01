@@ -355,6 +355,62 @@ impl MulAssign<f64> for Quaternion {
     }
 }
 
+// `Quaternion` is `Copy`, so its operators take values as well as
+// references; these run the impls on references above.
+impl Add for Quaternion {
+    type Output = Self;
+    fn add(self, q: Self) -> Self {
+        Add::add(&self, &q)
+    }
+}
+
+impl Sub for Quaternion {
+    type Output = Self;
+    fn sub(self, q: Self) -> Self {
+        Sub::sub(&self, &q)
+    }
+}
+
+impl AddAssign for Quaternion {
+    fn add_assign(&mut self, q: Self) {
+        *self += &q;
+    }
+}
+
+impl SubAssign for Quaternion {
+    fn sub_assign(&mut self, q: Self) {
+        *self -= &q;
+    }
+}
+
+impl Mul for Quaternion {
+    type Output = Self;
+    /// Hamilton product.
+    fn mul(self, q: Self) -> Self {
+        Mul::mul(&self, &q)
+    }
+}
+
+impl MulAssign for Quaternion {
+    fn mul_assign(&mut self, q: Self) {
+        *self *= &q;
+    }
+}
+
+impl Mul<f64> for Quaternion {
+    type Output = Self;
+    fn mul(self, scalar: f64) -> Self {
+        Mul::mul(&self, scalar)
+    }
+}
+
+impl Mul<Quaternion> for f64 {
+    type Output = Quaternion;
+    fn mul(self, q: Quaternion) -> Quaternion {
+        Mul::mul(&q, self)
+    }
+}
+
 /// The components; the derived matrices and angles are dropped on
 /// restore and recomputed from them when next read.
 impl crate::snapshot::Visit for Quaternion {

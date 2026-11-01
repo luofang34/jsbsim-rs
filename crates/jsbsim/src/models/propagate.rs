@@ -231,7 +231,7 @@ impl Propagate {
         self.update_location_matrices();
         self.state.q_attitude_local = orientation;
         self.state.q_attitude_local.cache_derived();
-        self.state.q_attitude_eci = &self.frames.ti2l.quaternion() * &self.state.q_attitude_local;
+        self.state.q_attitude_eci = self.frames.ti2l.quaternion() * self.state.q_attitude_local;
         self.update_body_matrices();
         self.state.uvw = uvw;
         self.vel = self.frames.tb2l * self.state.uvw;

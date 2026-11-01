@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
+use std::ops::{Add, Mul, Sub};
+
 use super::*;
 
 const WGS84_A: f64 = 20_925_646.325_46;
@@ -259,4 +261,50 @@ fn libm_sincos_is_sin_and_cos_bit_for_bit() {
         check((unit - 0.5) * 20.0);
         check((unit - 0.5) * 2.0e6);
     }
+}
+
+#[test]
+fn quaternion_operators_take_values_and_references_alike() {
+    let a = Quaternion::from_components(1.0, 2.0, 3.0, 4.0);
+    let b = Quaternion::from_components(0.5, -1.5, 2.5, -3.5);
+    assert_eq!((a + b).to_array(), [1.5, 0.5, 5.5, 0.5]);
+    assert_eq!((a - b).to_array(), [0.5, 3.5, 0.5, 7.5]);
+    assert_eq!((a * b).to_array(), [10.0, -21.0, 5.0, 8.0]);
+    assert_eq!((a * 2.0).to_array(), [2.0, 4.0, 6.0, 8.0]);
+    assert_eq!((2.0 * a).to_array(), [2.0, 4.0, 6.0, 8.0]);
+
+    assert_eq!(Add::add(&a, &b), a + b);
+    assert_eq!(Sub::sub(&a, &b), a - b);
+    assert_eq!(Mul::mul(&a, &b), a * b);
+    assert_eq!(Mul::mul(&a, 2.0), a * 2.0);
+    assert_eq!(Mul::mul(2.0, &a), 2.0 * a);
+
+    let mut c = a;
+    c += b;
+    assert_eq!(c, a + b);
+    c -= b;
+    assert_eq!(c, a);
+    c *= b;
+    assert_eq!(c, a * b);
+    let mut d = a;
+    d += &b;
+    d -= &b;
+    d *= &b;
+    assert_eq!(d, c);
+}
+
+#[test]
+fn quaternion_assignment_by_value_drops_the_cached_angles() {
+    let bank = Quaternion::from_components(0.0, 0.25_f64.tan(), 0.0, 0.0);
+    let turn = Quaternion::from_axis_index(E_X, 0.25);
+    let mut q = Quaternion::default();
+    q.cache_derived();
+    q += bank;
+    assert!(close(q.euler()[E_PHI], 0.5, 1e-12), "{:?}", q.euler());
+    q.cache_derived();
+    q -= bank;
+    assert!(close(q.euler()[E_PHI], 0.0, 1e-12), "{:?}", q.euler());
+    q.cache_derived();
+    q *= turn;
+    assert!(close(q.euler()[E_PHI], 0.25, 1e-12), "{:?}", q.euler());
 }

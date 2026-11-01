@@ -336,7 +336,7 @@ impl<G: GetterSource> Evaluator<'_, G> {
         let qa = Quaternion::from_axis_index(E_Y, -alpha);
         let qb = Quaternion::from_axis_index(E_Z, beta);
         let qc = Quaternion::from_axis_index(E_X, -gamma);
-        let mut t = (&(&qa * &qb) * &qc).t();
+        let mut t = (qa * qb * qc).t();
         if f.op == Op::RotationWfToBf {
             t.transpose();
         }

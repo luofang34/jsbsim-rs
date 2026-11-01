@@ -111,40 +111,38 @@ impl Propagate {
         let k = self.integrator_rotational_position;
         let step = |q: Quaternion| -> Quaternion { q };
         let increment = if k == Integrator::RectEuler as i32 {
-            Some(dt * &d[0])
+            Some(dt * d[0])
         } else if k == Integrator::Trapezoidal as i32 {
-            Some(0.5 * dt * &(&d[0] + &d[1]))
+            Some(0.5 * dt * (d[0] + d[1]))
         } else if k == Integrator::AdamsBashforth2 as i32 {
-            Some(dt * &(&(1.5 * &d[0]) - &(0.5 * &d[1])))
+            Some(dt * (1.5 * d[0] - 0.5 * d[1]))
         } else if k == Integrator::AdamsBashforth3 as i32 {
-            let sum = &(&(23.0 * &d[0]) - &(16.0 * &d[1])) + &(5.0 * &d[2]);
-            Some((1.0 / 12.0) * dt * &sum)
+            let sum = 23.0 * d[0] - 16.0 * d[1] + 5.0 * d[2];
+            Some((1.0 / 12.0) * dt * sum)
         } else if k == Integrator::AdamsBashforth4 as i32 {
-            let sum = &(&(&(55.0 * &d[0]) - &(59.0 * &d[1])) + &(37.0 * &d[2])) - &(9.0 * &d[3]);
-            Some((1.0 / 24.0) * dt * &sum)
+            let sum = 55.0 * d[0] - 59.0 * d[1] + 37.0 * d[2] - 9.0 * d[3];
+            Some((1.0 / 24.0) * dt * sum)
         } else if k == Integrator::AdamsBashforth5 as i32 {
-            let sum = &(&(&(&((1901. / 720.) * &d[0]) - &((1387. / 360.) * &d[1]))
-                + &((109. / 30.) * &d[2]))
-                - &((637. / 360.) * &d[3]))
-                + &((251. / 720.) * &d[4]);
-            Some(dt * &sum)
+            let sum = (1901. / 720.) * d[0] - (1387. / 360.) * d[1] + (109. / 30.) * d[2]
+                - (637. / 360.) * d[3]
+                + (251. / 720.) * d[4];
+            Some(dt * sum)
         } else {
             None
         };
         if let Some(inc) = increment {
             s.q_attitude_eci += &step(inc);
         } else if k == Integrator::Buss1 as i32 {
-            s.q_attitude_eci = &s.q_attitude_eci * &Quaternion::exp(0.5 * dt * s.pqri);
+            s.q_attitude_eci *= Quaternion::exp(0.5 * dt * s.pqri);
             return;
         } else if k == Integrator::Buss2 as i32 {
             let wi = s.pqri;
             let wdoti = self.input.pqridot;
             let omega = wi + 0.5 * dt * wdoti + (dt * dt / 12. * wdoti).cross(wi);
-            s.q_attitude_eci = &s.q_attitude_eci * &Quaternion::exp(0.5 * dt * omega);
+            s.q_attitude_eci *= Quaternion::exp(0.5 * dt * omega);
             return;
         } else if k == Integrator::LocalLinearization as i32 {
-            s.q_attitude_eci =
-                &s.q_attitude_eci * &local_linearization(s.pqri, self.input.pqridot, dt);
+            s.q_attitude_eci *= local_linearization(s.pqri, self.input.pqridot, dt);
         }
         s.q_attitude_eci.normalize();
     }
