@@ -27,6 +27,13 @@ fn construction_binds_model_and_exec_properties() {
 }
 
 #[test]
+fn a_valid_path_without_a_node_reads_zero_and_node_tells_it_apart() {
+    let mut fdm = Fdm::new().unwrap();
+    assert_eq!(fdm.get_property("no/such/node"), Ok(0.0));
+    assert_eq!(fdm.node("no/such/node"), Ok(None));
+}
+
+#[test]
 fn getters_are_live_and_read_only_nodes_reject_writes() {
     let mut fdm = Fdm::new().unwrap();
     assert!(fdm.set_property("metrics/Sw-sqft", 174.0).unwrap());

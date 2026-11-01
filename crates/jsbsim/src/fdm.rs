@@ -159,6 +159,13 @@ pub struct Models {
 }
 
 /// The executive.
+///
+/// `Fdm` is `Send` but not `Sync`: function operands and table lookups
+/// keep their state in [`Cell`](std::cell::Cell)s, and a
+/// [`GroundCallback`](crate::GroundCallback) need only be `Send`. It moves
+/// between threads, and only one thread may reach it at a time; to store
+/// it in a `Sync` container, wrap it in a `Mutex<Fdm>` or an
+/// exclusive-access wrapper such as Bevy's `SyncCell<Fdm>`.
 pub struct Fdm {
     env: env::Env,
     /// The models.
@@ -350,7 +357,8 @@ impl Fdm {
     }
 
     /// Reads `path` as JSBSim's `GetPropertyValue` does: tied nodes call
-    /// their getter, function outputs evaluate.
+    /// their getter, function outputs evaluate. A valid path with no node
+    /// reads `Ok(0.0)`; [`Fdm::node`] tells whether a node exists.
     ///
     /// # Errors
     ///
