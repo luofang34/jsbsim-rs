@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 use crate::Error;
 use crate::Fdm;
-use crate::math::{E_X, E_Y, E_Z};
+use crate::math::Axis;
 use crate::models::propulsion::tests::load;
 
 #[cfg(test)]
@@ -50,7 +50,7 @@ fn the_location_and_orientation_load_with_their_properties() {
         .unwrap();
     let force = &fdm.models.propulsion.engines[0].thruster.base.force;
     assert_eq!(
-        (force.location[E_X], force.acting_location[E_X]),
+        (force.location[Axis::X], force.acting_location[Axis::X]),
         (12.0, 6.0)
     );
 }
@@ -79,8 +79,8 @@ fn a_direct_thruster_pushes_along_its_orientation_scaled_by_the_reverser() {
     .unwrap();
     fdm.run().unwrap();
     let body = fdm.models.propulsion.forces;
-    assert!(body[E_X].abs() < 1e-9 && (body[E_Y] - thrust).abs() < 1e-9);
-    assert_eq!(body[E_Z], 0.0);
+    assert!(body[Axis::X].abs() < 1e-9 && (body[Axis::Y] - thrust).abs() < 1e-9);
+    assert_eq!(body[Axis::Z], 0.0);
 }
 
 #[test]
@@ -97,7 +97,10 @@ fn a_fixed_pointing_has_no_angle_or_reverser_properties() {
     }
     running(&mut fdm);
     let body = fdm.models.propulsion.forces;
-    assert_eq!((body[E_X], body[E_Y], body[E_Z]), (0.0, 0.0, 1000.0));
+    assert_eq!(
+        (body[Axis::X], body[Axis::Y], body[Axis::Z]),
+        (0.0, 0.0, 1000.0)
+    );
 }
 
 #[test]

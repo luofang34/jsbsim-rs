@@ -12,7 +12,7 @@ use std::f64::consts::PI;
 
 use super::{Eval, Evaluator, GetterSource};
 use crate::functions::{Function, FunctionError, Op, Parameter};
-use crate::math::{Axis, ColumnVector3, E_X, E_Y, E_Z, Quaternion};
+use crate::math::{Axis, ColumnVector3, Quaternion};
 use crate::units::{DEGTORAD, RADTODEG};
 use crate::xml::SourceLocation;
 
@@ -333,9 +333,9 @@ impl<G: GetterSource> Evaluator<'_, G> {
             let at = f.source.at.clone();
             return Err(self.fail(FunctionError::Index { at, message }));
         };
-        let qa = Quaternion::from_axis_index(E_Y, -alpha);
-        let qb = Quaternion::from_axis_index(E_Z, beta);
-        let qc = Quaternion::from_axis_index(E_X, -gamma);
+        let qa = Quaternion::from_axis_index(Axis::Y, -alpha);
+        let qb = Quaternion::from_axis_index(Axis::Z, beta);
+        let qc = Quaternion::from_axis_index(Axis::X, -gamma);
         let mut t = (qa * qb * qc).t();
         if f.op == Op::RotationWfToBf {
             t.transpose();
@@ -345,25 +345,29 @@ impl<G: GetterSource> Evaluator<'_, G> {
 }
 
 fn local_alpha_beta(op: Op, wind: ColumnVector3) -> f64 {
-    let near_pole = ((wind[E_Y]).abs() - 1.0).abs() < 1e-9;
+    let near_pole = ((wind[Axis::Y]).abs() - 1.0).abs() < 1e-9;
     if op == Op::RotationAlphaLocal {
         return if near_pole {
             0.0
         } else {
-            libm::atan2(wind[E_Z], wind[E_X]) * RADTODEG
+            libm::atan2(wind[Axis::Z], wind[Axis::X]) * RADTODEG
         };
     }
     if near_pole {
-        return if wind[E_Y] > 0.0 { 0.5 * PI } else { -0.5 * PI };
+        return if wind[Axis::Y] > 0.0 {
+            0.5 * PI
+        } else {
+            -0.5 * PI
+        };
     }
-    let alpha_local = libm::atan2(wind[E_Z], wind[E_X]);
+    let alpha_local = libm::atan2(wind[Axis::Z], wind[Axis::X]);
     let (sina, cosa) = libm::sincos(alpha_local);
     let cosb = if cosa.abs() > sina.abs() {
-        wind[E_X] / cosa
+        wind[Axis::X] / cosa
     } else {
-        wind[E_Z] / sina
+        wind[Axis::Z] / sina
     };
-    libm::atan2(wind[E_Y], cosb) * RADTODEG
+    libm::atan2(wind[Axis::Y], cosb) * RADTODEG
 }
 
 fn local_gamma(t: &crate::math::Matrix33, alpha: f64, beta: f64, gamma: f64) -> f64 {
@@ -377,21 +381,21 @@ fn local_gamma(t: &crate::math::Matrix33, alpha: f64, beta: f64, gamma: f64) -> 
             cos_beta * cos_gamma,
             -sin_alpha * sin_beta * cos_gamma + sin_gamma * cos_alpha,
         );
-    let (cosacosb, sinb, sinacosb) = (x[E_X], x[E_Y], x[E_Z]);
+    let (cosacosb, sinb, sinacosb) = (x[Axis::X], x[Axis::Y], x[Axis::Z]);
     let (sinc, cosc);
     if sinb.abs() < 1e-9 {
-        cosc = y[E_Y];
+        cosc = y[Axis::Y];
         sinc = if cosacosb.abs() > sinacosb.abs() {
-            y[E_Z] / cosacosb
+            y[Axis::Z] / cosacosb
         } else {
-            -y[E_X] / sinacosb
+            -y[Axis::X] / sinacosb
         };
     } else if (sinb.abs() - 1.0).abs() < 1e-9 {
-        sinc = y[E_Z];
-        cosc = -y[E_X];
+        sinc = y[Axis::Z];
+        cosc = -y[Axis::X];
     } else {
-        sinc = cosacosb * y[E_Z] - sinacosb * y[E_X];
-        cosc = (-sinacosb * y[E_Z] - cosacosb * y[E_X]) / sinb;
+        sinc = cosacosb * y[Axis::Z] - sinacosb * y[Axis::X];
+        cosc = (-sinacosb * y[Axis::Z] - cosacosb * y[Axis::X]) / sinb;
     }
     libm::atan2(sinc, cosc) * RADTODEG
 }

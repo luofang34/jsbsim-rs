@@ -10,7 +10,7 @@
 use super::Trim;
 use crate::Error;
 use crate::fdm::Fdm;
-use crate::math::{ColumnVector3, E_PHI, E_PSI, E_THT, Quaternion, dot_product};
+use crate::math::{ColumnVector3, E_PHI, E_PSI, E_THT, Quaternion};
 use crate::models::ground_reactions::ContactType;
 
 /// `ContactPoints`: a contact in the body frame and the terrain normal
@@ -51,17 +51,17 @@ fn calc_rotation(contacts: &[ContactPoint], u: ColumnVector3, gm0: ColumnVector3
         }
         let v = t.cross(u);
         let mm0 = gm0 - c.location;
-        let d0 = dot_product(mm0, u);
-        let sqr_radius = dot_product(mm0, mm0) - d0 * d0;
-        let dist_plane = d0 * dot_product(u, c.normal) / length;
+        let d0 = mm0.dot(u);
+        let sqr_radius = mm0.dot(mm0) - d0 * d0;
+        let dist_plane = d0 * u.dot(c.normal) / length;
         let mag = sqr_radius - dist_plane * dist_plane;
         if mag < 0.0 {
             tracing::warn!("FGTrim::calcRotation DistPlane^2 larger than sqrRadius");
         }
         let alpha = mag.max(0.0).sqrt();
         let cp = alpha * t + dist_plane * v;
-        let cosine = -dot_product(mm0, cp) / sqr_radius;
-        let sine = dot_product(mm0.cross(u), cp) / sqr_radius;
+        let cosine = -mm0.dot(cp) / sqr_radius;
+        let sine = mm0.cross(u).dot(cp) / sqr_radius;
         let mut angle = libm::atan2(sine, cosine);
         if angle < 0.0 {
             angle += 2.0 * PI;
@@ -139,7 +139,7 @@ impl Trim {
         }
         let contact1 = contacts.remove(r.contact_ref.unwrap_or(0)).location;
         let mut rotation_axis = contact1 - contact0;
-        if dot_product(rotation_axis, moment) < 0.0 {
+        if rotation_axis.dot(moment) < 0.0 {
             rotation_axis = contact0 - contact1;
         }
         rotation_axis.normalize();

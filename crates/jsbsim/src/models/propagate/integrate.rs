@@ -6,7 +6,7 @@
 //! order.
 
 use super::Propagate;
-use crate::math::{ColumnVector3, E_P, E_Q, E_R, Quaternion, dot_product};
+use crate::math::{ColumnVector3, E_P, E_Q, E_R, Quaternion};
 
 /// `eIntegrateType`. `eNone` (0) has no variant: a kind without one
 /// leaves the integrand frozen.
@@ -151,7 +151,7 @@ impl Propagate {
 fn local_linearization(pqri: ColumnVector3, pqridot: ColumnVector3, dt: f64) -> Quaternion {
     let wi = 0.5 * pqri;
     let wdoti = 0.5 * pqridot;
-    let omegak2 = dot_product(pqri, pqri);
+    let omegak2 = pqri.dot(pqri);
     let omegak = if omegak2 > 1E-6 { omegak2.sqrt() } else { 1E-6 };
     let rhok = 0.5 * dt * omegak;
     let (sin_rhok, c1) = libm::sincos(rhok);
@@ -159,10 +159,5 @@ fn local_linearization(pqri: ColumnVector3, pqridot: ColumnVector3, dt: f64) -> 
     let c3 = 4.0 * (1.0 - c1) / (omegak * omegak);
     let c4 = 4.0 * (dt - c2) / (omegak * omegak);
     let omega = c2 * wi + c3 * wdoti + (c4 * wi).cross(wdoti);
-    Quaternion::from_components(
-        c1 - c4 * dot_product(wi, wdoti),
-        omega[E_P],
-        omega[E_Q],
-        omega[E_R],
-    )
+    Quaternion::from_components(c1 - c4 * wi.dot(wdoti), omega[E_P], omega[E_Q], omega[E_R])
 }

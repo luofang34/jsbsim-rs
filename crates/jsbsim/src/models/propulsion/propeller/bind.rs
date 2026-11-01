@@ -7,7 +7,7 @@
 
 use super::Propeller;
 use crate::Error;
-use crate::math::E_X;
+use crate::math::Axis;
 use crate::models::propulsion::families::ThrusterKind;
 use crate::models::propulsion::thruster::ThrusterBase;
 use crate::models::{Binder, Kind, Models};
@@ -101,7 +101,7 @@ pub(crate) fn bind(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
         |t, _| t.power_required,
         |t, _, v| t.power_required = v,
     )?;
-    getter(b, n, "propeller-torque-ftlb", |_, p| p.torque[E_X])?;
+    getter(b, n, "propeller-torque-ftlb", |_, p| p.torque[Axis::X])?;
     property(
         b,
         n,

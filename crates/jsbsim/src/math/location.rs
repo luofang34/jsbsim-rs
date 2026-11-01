@@ -7,10 +7,11 @@
 //! transformations, plus geodesic distance and heading on the ellipse
 //! (GeographicLib's inverse problem, as JSBSim uses it).
 
+mod ops;
 mod snapshot;
 
 use super::geodesic::Geodesic;
-use super::{Axis, ColumnVector3, E_X, E_Y, E_Z, Matrix33};
+use super::{Axis, ColumnVector3, Matrix33};
 use crate::units::{DEGTORAD, RADTODEG, sign};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -135,7 +136,7 @@ impl Location {
 
     /// `SetLongitude`.
     pub fn set_longitude(&mut self, longitude: f64) {
-        let mut rtmp = self.ec_loc.magnitude2(E_X, E_Y);
+        let mut rtmp = self.ec_loc.magnitude_on(Axis::X, Axis::Y);
         if 0.0 == self.ec_loc.magnitude() {
             rtmp = 1.0;
         }
@@ -143,8 +144,8 @@ impl Location {
             return;
         }
         let (sin_lon, cos_lon) = libm::sincos(longitude);
-        self.ec_loc[E_X] = rtmp * cos_lon;
-        self.ec_loc[E_Y] = rtmp * sin_lon;
+        self.ec_loc[Axis::X] = rtmp * cos_lon;
+        self.ec_loc[Axis::Y] = rtmp * sin_lon;
         self.invalidate();
     }
 
@@ -152,20 +153,20 @@ impl Location {
     pub fn set_latitude(&mut self, latitude: f64) {
         let mut r = self.ec_loc.magnitude();
         if r == 0.0 {
-            self.ec_loc[E_X] = 1.0;
+            self.ec_loc[Axis::X] = 1.0;
             r = 1.0;
         }
-        let rtmp = self.ec_loc.magnitude2(E_X, E_Y);
+        let rtmp = self.ec_loc.magnitude_on(Axis::X, Axis::Y);
         let (sin_lat, cos_lat) = libm::sincos(latitude);
         if rtmp != 0.0 {
             let fac = r / rtmp * cos_lat;
-            self.ec_loc[E_X] *= fac;
-            self.ec_loc[E_Y] *= fac;
+            self.ec_loc[Axis::X] *= fac;
+            self.ec_loc[Axis::Y] *= fac;
         } else {
-            self.ec_loc[E_X] = r * cos_lat;
-            self.ec_loc[E_Y] = 0.0;
+            self.ec_loc[Axis::X] = r * cos_lat;
+            self.ec_loc[Axis::Y] = 0.0;
         }
-        self.ec_loc[E_Z] = r * sin_lat;
+        self.ec_loc[Axis::Z] = r * sin_lat;
         self.invalidate();
     }
 
@@ -173,7 +174,7 @@ impl Location {
     pub fn set_radius(&mut self, radius: f64) {
         let rold = self.ec_loc.magnitude();
         if rold == 0.0 {
-            self.ec_loc[E_X] = radius;
+            self.ec_loc[Axis::X] = radius;
         } else {
             self.ec_loc *= radius / rold;
         }
@@ -202,9 +203,9 @@ impl Location {
         let (slat, clat) = libm::sincos(lat);
         let (slon, clon) = libm::sincos(lon);
         let rn = e.a / (1.0 - e.e2 * slat * slat).sqrt();
-        self.ec_loc[E_X] = (rn + height) * clat * clon;
-        self.ec_loc[E_Y] = (rn + height) * clat * slon;
-        self.ec_loc[E_Z] = ((1.0 - e.e2) * rn + height) * slat;
+        self.ec_loc[Axis::X] = (rn + height) * clat * clon;
+        self.ec_loc[Axis::Y] = (rn + height) * clat * slon;
+        self.ec_loc[Axis::Z] = ((1.0 - e.e2) * rn + height) * slat;
         self.invalidate();
     }
 
@@ -327,47 +328,6 @@ impl Location {
         result
     }
 
-    /// `operator+`.
-    #[must_use]
-    pub fn add(&self, l: &Self) -> Self {
-        self.with_ellipse_of(self.ec_loc + l.ec_loc)
-    }
-
-    /// `operator-`.
-    #[must_use]
-    pub fn sub(&self, l: &Self) -> Self {
-        self.with_ellipse_of(self.ec_loc - l.ec_loc)
-    }
-
-    /// `operator*(scalar)`.
-    #[must_use]
-    pub fn scale(&self, scalar: f64) -> Self {
-        self.with_ellipse_of(scalar * self.ec_loc)
-    }
-
-    /// `operator+=`.
-    pub fn add_assign(&mut self, l: &Self) {
-        self.ec_loc += l.ec_loc;
-        self.invalidate();
-    }
-
-    /// `operator-=`.
-    pub fn sub_assign(&mut self, l: &Self) {
-        self.ec_loc -= l.ec_loc;
-        self.invalidate();
-    }
-
-    /// `operator*=`.
-    pub fn scale_assign(&mut self, scalar: f64) {
-        self.ec_loc *= scalar;
-        self.invalidate();
-    }
-
-    /// `operator/=`: scaling by `1/scalar`.
-    pub fn div_assign(&mut self, scalar: f64) {
-        self.scale_assign(1.0 / scalar);
-    }
-
     /// The geodesic on this location's ellipse. JSBSim asserts that an
     /// ellipse is set; without one its defaults (`a = ec = 1`) describe
     /// the unit sphere, which is used here too.
@@ -406,11 +366,15 @@ impl Location {
 
 fn compute_derived(ec: ColumnVector3, ellipse: Option<Ellipse>) -> Derived {
     let radius = ec.magnitude();
-    let rxy = ec.magnitude2(E_X, E_Y);
+    let rxy = ec.magnitude_on(Axis::X, Axis::Y);
     let (sin_lon, cos_lon, lon) = if rxy == 0.0 {
         (0.0, 1.0, 0.0)
     } else {
-        (ec[E_Y] / rxy, ec[E_X] / rxy, libm::atan2(ec[E_Y], ec[E_X]))
+        (
+            ec[Axis::Y] / rxy,
+            ec[Axis::X] / rxy,
+            libm::atan2(ec[Axis::Y], ec[Axis::X]),
+        )
     };
     let (mut geod_lat, mut geod_alt) = (0.0, 0.0);
     let (lat, sin_lat, cos_lat);
@@ -420,12 +384,12 @@ fn compute_derived(ec: ColumnVector3, ellipse: Option<Ellipse>) -> Derived {
             geod_alt = -e.a;
         }
     } else {
-        lat = libm::atan2(ec[E_Z], rxy);
+        lat = libm::atan2(ec[Axis::Z], rxy);
         if let Some(e) = ellipse {
-            let g = geodetic(ec[E_Z], rxy, &e);
+            let g = geodetic(ec[Axis::Z], rxy, &e);
             (geod_lat, geod_alt, sin_lat, cos_lat) = (g.lat, g.alt, g.sin_lat, g.cos_lat);
         } else {
-            (sin_lat, cos_lat) = (ec[E_Z] / radius, rxy / radius);
+            (sin_lat, cos_lat) = (ec[Axis::Z] / radius, rxy / radius);
         }
     }
     let tec2l = Matrix33::new(

@@ -3,7 +3,7 @@
 use std::sync::{Arc, Mutex};
 
 use super::{Contact, DefaultGroundCallback, GroundCallback, Inertial};
-use crate::math::{ColumnVector3, E_X, E_Y, E_Z, Location};
+use crate::math::{Axis, ColumnVector3, Location};
 
 /// What a [`Recording`] was given.
 #[derive(Debug, Default)]
@@ -20,7 +20,7 @@ impl GroundCallback for Recording {
     fn ag_level(&self, time: f64, location: &Location) -> Contact {
         self.0.lock().unwrap().times.push(time);
         Contact {
-            agl: location.entry(E_X) - 100.0,
+            agl: location.entry(Axis::X) - 100.0,
             point: Location::from_ecef(ColumnVector3::new(100.0, 0.0, 0.0)),
             normal: ColumnVector3::new(1.0, 0.0, 0.0),
             velocity: ColumnVector3::new(0.0, 2.0, 0.0),
@@ -46,12 +46,12 @@ fn bits(c: &Contact) -> Vec<u64> {
     let p = c.point.ecef();
     [
         c.agl,
-        p[E_X],
-        p[E_Y],
-        p[E_Z],
-        c.normal[E_X],
-        c.normal[E_Y],
-        c.normal[E_Z],
+        p[Axis::X],
+        p[Axis::Y],
+        p[Axis::Z],
+        c.normal[Axis::X],
+        c.normal[Axis::Y],
+        c.normal[Axis::Z],
         c.velocity.magnitude(),
         c.angular_velocity.magnitude(),
         c.point.geod_altitude(),

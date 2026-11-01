@@ -4,7 +4,7 @@
 //
 //! A point mass: weight, location and the inertia of its own shape.
 
-use crate::math::{Axis, ColumnVector3, E_X, E_Y, E_Z, Matrix33};
+use crate::math::{Axis, ColumnVector3, Matrix33};
 use crate::units::SLUGTOLB;
 
 /// `PointMass::esShape`. A cylinder and a ball are solid, a tube and a
@@ -62,24 +62,24 @@ impl PointMass {
         let m = &mut self.inertia;
         match self.shape {
             Shape::Tube => {
-                m[(E_X, E_X)] = (w / SLUGTOLB) * r * r;
-                m[(E_Y, E_Y)] = (w / (SLUGTOLB * 12.0)) * (6.0 * r * r + l * l);
-                m[(E_Z, E_Z)] = m[(E_Y, E_Y)];
+                m[(Axis::X, Axis::X)] = (w / SLUGTOLB) * r * r;
+                m[(Axis::Y, Axis::Y)] = (w / (SLUGTOLB * 12.0)) * (6.0 * r * r + l * l);
+                m[(Axis::Z, Axis::Z)] = m[(Axis::Y, Axis::Y)];
             }
             Shape::Cylinder => {
-                m[(E_X, E_X)] = (w / (SLUGTOLB * 2.0)) * r * r;
-                m[(E_Y, E_Y)] = (w / (SLUGTOLB * 12.0)) * (3.0 * r * r + l * l);
-                m[(E_Z, E_Z)] = m[(E_Y, E_Y)];
+                m[(Axis::X, Axis::X)] = (w / (SLUGTOLB * 2.0)) * r * r;
+                m[(Axis::Y, Axis::Y)] = (w / (SLUGTOLB * 12.0)) * (3.0 * r * r + l * l);
+                m[(Axis::Z, Axis::Z)] = m[(Axis::Y, Axis::Y)];
             }
             Shape::Sphere => {
-                m[(E_X, E_X)] = (w / (SLUGTOLB * 3.0)) * r * r * 2.0;
-                m[(E_Y, E_Y)] = m[(E_X, E_X)];
-                m[(E_Z, E_Z)] = m[(E_X, E_X)];
+                m[(Axis::X, Axis::X)] = (w / (SLUGTOLB * 3.0)) * r * r * 2.0;
+                m[(Axis::Y, Axis::Y)] = m[(Axis::X, Axis::X)];
+                m[(Axis::Z, Axis::Z)] = m[(Axis::X, Axis::X)];
             }
             Shape::Ball => {
-                m[(E_X, E_X)] = (w / (SLUGTOLB * 5.0)) * r * r * 2.0;
-                m[(E_Y, E_Y)] = m[(E_X, E_X)];
-                m[(E_Z, E_Z)] = m[(E_X, E_X)];
+                m[(Axis::X, Axis::X)] = (w / (SLUGTOLB * 5.0)) * r * r * 2.0;
+                m[(Axis::Y, Axis::Y)] = m[(Axis::X, Axis::X)];
+                m[(Axis::Z, Axis::Z)] = m[(Axis::X, Axis::X)];
             }
             Shape::Unspecified => {}
         }

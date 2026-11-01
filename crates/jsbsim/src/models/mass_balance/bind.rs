@@ -7,7 +7,7 @@
 
 use super::MassBalance;
 use crate::Error;
-use crate::math::{E_X, E_Y, E_Z};
+use crate::math::Axis;
 use crate::models::{Binder, Kind};
 
 /// `FGMassBalance::bind`. `inertia/ixz-slugs_ft2` is JSBSim's `GetIxz`,
@@ -16,17 +16,29 @@ pub(crate) fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
     b.getter("inertia/mass-slugs", |m| m.mass_balance.mass)?;
     b.getter("inertia/weight-lbs", |m| m.mass_balance.weight)?;
     b.getter("inertia/empty-weight-lbs", |m| m.mass_balance.empty_weight)?;
-    for (name, i) in [("x", E_X), ("y", E_Y), ("z", E_Z)] {
+    for (name, i) in [("x", Axis::X), ("y", Axis::Y), ("z", Axis::Z)] {
         b.getter(&format!("inertia/cg-{name}-in"), move |m| {
             m.mass_balance.xyz_cg[i]
         })?;
     }
-    b.getter("inertia/ixx-slugs_ft2", |m| m.mass_balance.j[(E_X, E_X)])?;
-    b.getter("inertia/iyy-slugs_ft2", |m| m.mass_balance.j[(E_Y, E_Y)])?;
-    b.getter("inertia/izz-slugs_ft2", |m| m.mass_balance.j[(E_Z, E_Z)])?;
-    b.getter("inertia/ixy-slugs_ft2", |m| -m.mass_balance.j[(E_X, E_Y)])?;
-    b.getter("inertia/ixz-slugs_ft2", |m| m.mass_balance.j[(E_X, E_Z)])?;
-    b.getter("inertia/iyz-slugs_ft2", |m| -m.mass_balance.j[(E_Y, E_Z)])?;
+    b.getter("inertia/ixx-slugs_ft2", |m| {
+        m.mass_balance.j[(Axis::X, Axis::X)]
+    })?;
+    b.getter("inertia/iyy-slugs_ft2", |m| {
+        m.mass_balance.j[(Axis::Y, Axis::Y)]
+    })?;
+    b.getter("inertia/izz-slugs_ft2", |m| {
+        m.mass_balance.j[(Axis::Z, Axis::Z)]
+    })?;
+    b.getter("inertia/ixy-slugs_ft2", |m| {
+        -m.mass_balance.j[(Axis::X, Axis::Y)]
+    })?;
+    b.getter("inertia/ixz-slugs_ft2", |m| {
+        m.mass_balance.j[(Axis::X, Axis::Z)]
+    })?;
+    b.getter("inertia/iyz-slugs_ft2", |m| {
+        -m.mass_balance.j[(Axis::Y, Axis::Z)]
+    })?;
     b.setter_only("inertia/print-mass-properties", Kind::Int, |m, _| {
         let tanks = m.propulsion.tank_report(&m.mass_balance);
         m.mass_balance.mass_properties_report(&tanks);
@@ -51,7 +63,7 @@ pub(super) fn bind_point_mass(b: &mut Binder<'_>, num: usize) -> Result<(), Erro
             }
         },
     )?;
-    for (name, axis) in [("X", E_X), ("Y", E_Y), ("Z", E_Z)] {
+    for (name, axis) in [("X", Axis::X), ("Y", Axis::Y), ("Z", Axis::Z)] {
         b.property(
             &format!("inertia/pointmass-location-{name}-inches[{num}]"),
             Kind::Double,
@@ -81,15 +93,15 @@ impl MassBalance {
                 l[0],
                 l[1],
                 l[2],
-                j[(E_X, E_X)],
-                j[(E_Y, E_Y)],
-                j[(E_Z, E_Z)],
-                j[(E_X, E_Y)],
-                j[(E_X, E_Z)],
-                j[(E_Y, E_Z)]
+                j[(Axis::X, Axis::X)],
+                j[(Axis::Y, Axis::Y)],
+                j[(Axis::Z, Axis::Z)],
+                j[(Axis::X, Axis::Y)],
+                j[(Axis::X, Axis::Z)],
+                j[(Axis::Y, Axis::Z)]
             )
         };
-        let v = |c: crate::math::ColumnVector3| [c[E_X], c[E_Y], c[E_Z]];
+        let v = |c: crate::math::ColumnVector3| [c[Axis::X], c[Axis::Y], c[Axis::Z]];
         let mut out =
             String::from("\n  Mass Properties Report (English units: lb, in, slug-ft^2)\n");
         out.push_str(&format!(

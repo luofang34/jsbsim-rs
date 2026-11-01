@@ -79,7 +79,7 @@ impl GroundCallback for Sphere {
         let r = location.radius();
         let mut normal = location.ecef();
         normal.normalize();
-        let mut point = location.scale(self.radius_ft / r);
+        let mut point = *location * (self.radius_ft / r);
         point.set_ellipse(self.radius_ft, self.radius_ft);
         point.cache_derived();
         Contact::new(r - self.radius_ft, point, normal)

@@ -148,7 +148,7 @@ fn the_engine_power_spins_the_propeller_up_and_its_thrust_follows() {
     let p = propeller(&mut fdm);
     assert!(p.j > 0.0 && p.helical_tip_mach > 0.0 && p.vinduced > 0.0);
     assert!(
-        p.torque[crate::math::E_X] > 0.0,
+        p.torque[crate::math::Axis::X] > 0.0,
         "sense -1 turns the torque around"
     );
     let thrust = fdm.get_property("propulsion/engine/thrust-lbs").unwrap();

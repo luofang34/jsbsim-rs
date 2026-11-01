@@ -8,7 +8,7 @@
 
 use super::EngineType;
 use crate::Error;
-use crate::math::{E_X, E_Y, E_Z};
+use crate::math::Axis;
 use crate::models::{Binder, ExecRequest, Kind, Models};
 
 fn flag(b: bool) -> f64 {
@@ -53,12 +53,12 @@ pub(crate) fn bind(b: &mut Binder<'_>, types: &[EngineType]) -> Result<(), Error
         |m| f64::from(m.propulsion.active_engine),
         |m, v| m.propulsion.set_active_engine(v as i32),
     )?;
-    for (name, i) in [("x", E_X), ("y", E_Y), ("z", E_Z)] {
+    for (name, i) in [("x", Axis::X), ("y", Axis::Y), ("z", Axis::Z)] {
         b.getter(&format!("forces/fb{name}-prop-lbs"), move |m| {
             m.propulsion.forces[i]
         })?;
     }
-    for (name, i) in [("l", E_X), ("m", E_Y), ("n", E_Z)] {
+    for (name, i) in [("l", Axis::X), ("m", Axis::Y), ("n", Axis::Z)] {
         b.getter(&format!("moments/{name}-prop-lbsft"), move |m| {
             m.propulsion.moments[i]
         })?;

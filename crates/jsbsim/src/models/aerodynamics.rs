@@ -12,7 +12,7 @@ pub(crate) use bind::bind;
 use super::base::ModelBase;
 use crate::Error;
 use crate::functions::FnId;
-use crate::math::{ColumnVector3, E_DRAG, E_LIFT, E_X, E_Y, E_Z, Matrix33};
+use crate::math::{Axis, ColumnVector3, E_DRAG, E_LIFT, Matrix33};
 use crate::models::LoadContext;
 use crate::xml::Element;
 
@@ -370,8 +370,8 @@ impl Aerodynamics {
                 i.tw2b * v
             }
             AxisType::BodyAxialNormal => {
-                v[E_X] *= -1.0;
-                v[E_Z] *= -1.0;
+                v[Axis::X] *= -1.0;
+                v[Axis::Z] *= -1.0;
                 v
             }
             AxisType::Stability => {
@@ -392,10 +392,14 @@ impl Aerodynamics {
         let forces = self.to_body(self.force_axis, values.native)?;
         let forces_at_cg = self.to_body(self.force_axis, values.native_at_cg)?;
         if let Some(shift) = values.rp_shift {
-            self.state.delta_rp[E_X] = shift * self.input.wing_chord;
+            self.state.delta_rp[Axis::X] = shift * self.input.wing_chord;
         }
         let (rp, d) = (self.input.rp_body, self.state.delta_rp);
-        let dxyz_cg = ColumnVector3::new(rp[E_X] - d[E_X], rp[E_Y] + d[E_Y], rp[E_Z] - d[E_Z]);
+        let dxyz_cg = ColumnVector3::new(
+            rp[Axis::X] - d[Axis::X],
+            rp[Axis::Y] + d[Axis::Y],
+            rp[Axis::Z] - d[Axis::Z],
+        );
         self.state.moments_mrc = values.moments_mrc;
         let mrc_body = match self.moment_axis {
             AxisType::BodyXyz => values.moments_mrc,

@@ -9,7 +9,7 @@
 use super::InitialCondition;
 #[cfg(test)]
 use crate::math::E_W;
-use crate::math::{Axis, ColumnVector3, E_PSI, E_U, E_V, dot_product};
+use crate::math::{Axis, ColumnVector3, E_PSI, E_U, E_V};
 use crate::units::{DEGTORAD, KTSTOFPS, RADTODEG};
 
 #[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
@@ -31,7 +31,7 @@ impl InitialCondition {
     /// with `speed_kts` (Gram-Schmidt).
     fn set_wind_along_kts(&mut self, dir: ColumnVector3, speed_kts: f64) {
         let mut wind_ned = self.vt_ned() - self.uvw_ned;
-        wind_ned -= dot_product(wind_ned, dir) * dir;
+        wind_ned -= wind_ned.dot(dir) * dir;
         wind_ned += (speed_kts * KTSTOFPS) * dir;
         self.apply_wind_ned(wind_ned);
     }
@@ -92,7 +92,7 @@ impl InitialCondition {
     /// horizontal speed and vertical component.
     pub(crate) fn set_wind_dir_deg(&mut self, dir: f64) {
         let mut wind_ned = self.vt_ned() - self.uvw_ned;
-        let mag = wind_ned.magnitude2(E_U, E_V);
+        let mag = wind_ned.magnitude_on(E_U, E_V);
         let (sin_dir, cos_dir) = libm::sincos(dir * DEGTORAD);
         wind_ned[E_U] = mag * cos_dir;
         wind_ned[E_V] = mag * sin_dir;
@@ -108,14 +108,14 @@ impl InitialCondition {
     /// `GetWindMagFpsIC`: horizontal wind speed.
     #[must_use]
     pub fn wind_mag_fps(&self) -> f64 {
-        self.wind_ned_fps().magnitude2(E_U, E_V)
+        self.wind_ned_fps().magnitude_on(E_U, E_V)
     }
 
     /// `GetWindDirDegIC`; 0 without horizontal wind.
     #[must_use]
     pub(crate) fn wind_dir_deg(&self) -> f64 {
         let wind_ned = self.wind_ned_fps();
-        if wind_ned.magnitude2(E_U, E_V) == 0.0 {
+        if wind_ned.magnitude_on(E_U, E_V) == 0.0 {
             0.0
         } else {
             libm::atan2(wind_ned[E_V], wind_ned[E_U]) * RADTODEG

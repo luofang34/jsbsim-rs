@@ -5,7 +5,7 @@
 //! Properties of `FGAuxiliary`, in JSBSim's binding order.
 
 use crate::Error;
-use crate::math::{E_PHI, E_PSI, E_THT, E_X, E_Y, E_Z};
+use crate::math::{Axis, E_PHI, E_PSI, E_THT};
 use crate::models::{Binder, Models};
 use crate::units::{FPSTOKTS, RADTODEG};
 
@@ -102,7 +102,7 @@ fn getters(b: &mut Binder<'_>, table: &[(&str, Get)]) -> Result<(), Error> {
 /// `FGAuxiliary::bind`.
 pub(crate) fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
     getters(b, &AIRSPEEDS)?;
-    for (name, i) in [("p", E_X), ("q", E_Y), ("r", E_Z)] {
+    for (name, i) in [("p", Axis::X), ("q", Axis::Y), ("r", Axis::Z)] {
         b.getter(&format!("velocities/{name}-aero-rad_sec"), move |m| {
             m.auxiliary.aero_pqr[i]
         })?;
@@ -112,18 +112,18 @@ pub(crate) fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
             m.auxiliary.euler_rates[i]
         })?;
     }
-    for (name, i) in [("u", E_X), ("v", E_Y), ("w", E_Z)] {
+    for (name, i) in [("u", Axis::X), ("v", Axis::Y), ("w", Axis::Z)] {
         b.getter(&format!("velocities/{name}-aero-fps"), move |m| {
             m.auxiliary.aero_uvw[i]
         })?;
     }
     getters(b, &MOTION)?;
-    for (name, i) in [("x", E_X), ("y", E_Y), ("z", E_Z)] {
+    for (name, i) in [("x", Axis::X), ("y", Axis::Y), ("z", Axis::Z)] {
         b.getter(&format!("accelerations/a-pilot-{name}-ft_sec2"), move |m| {
             m.auxiliary.loads.pilot_accel[i]
         })?;
     }
-    for (name, i) in [("x", E_X), ("y", E_Y), ("z", E_Z)] {
+    for (name, i) in [("x", Axis::X), ("y", Axis::Y), ("z", Axis::Z)] {
         b.getter(&format!("accelerations/n-pilot-{name}-norm"), move |m| {
             m.auxiliary.loads.pilot_accel_n[i]
         })?;
@@ -131,7 +131,7 @@ pub(crate) fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
     getters(b, &LOAD_FACTORS)?;
     getters(b, &AERO)?;
     getters(b, &POSITION)?;
-    for (name, i) in [("n", E_X), ("e", E_Y), ("u", E_Z)] {
+    for (name, i) in [("n", Axis::X), ("e", Axis::Y), ("u", Axis::Z)] {
         b.getter(&format!("position/from-start-neu-{name}-ft"), move |m| {
             m.auxiliary.neu_position_from_start()[i]
         })?;

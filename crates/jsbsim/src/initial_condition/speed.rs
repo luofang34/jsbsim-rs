@@ -9,7 +9,7 @@
 //! the ground velocity and keep the wind.
 
 use super::{Environment, InitialCondition, SpeedSet};
-use crate::math::{Axis, ColumnVector3, E_PSI, E_X, E_Y, E_Z};
+use crate::math::{Axis, ColumnVector3, E_PSI};
 use crate::models::atmosphere::STD_DAY_SL_DENSITY;
 use crate::models::auxiliary::{mach_from_vcalibrated, vcalibrated_from_mach};
 use crate::units::{FPSTOKTS, KTSTOFPS};
@@ -50,9 +50,9 @@ impl InitialCondition {
     pub(crate) fn set_vground_fps(&mut self, vg: f64) {
         let vt_ned = self.vt_ned();
         let wind_ned = vt_ned - self.uvw_ned;
-        self.uvw_ned[E_X] = vg * self.orientation.cos_euler(E_PSI);
-        self.uvw_ned[E_Y] = vg * self.orientation.sin_euler(E_PSI);
-        self.uvw_ned[E_Z] = 0.;
+        self.uvw_ned[Axis::X] = vg * self.orientation.cos_euler(E_PSI);
+        self.uvw_ned[Axis::Y] = vg * self.orientation.sin_euler(E_PSI);
+        self.uvw_ned[Axis::Z] = 0.;
         let vt_ned = self.uvw_ned + wind_ned;
         self.vt = vt_ned.magnitude();
         self.calc_aero_angles(vt_ned);

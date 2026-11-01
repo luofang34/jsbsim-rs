@@ -15,7 +15,7 @@ pub(crate) use integrate::Integrator;
 
 use super::base::ModelBase;
 use super::inertial::Inertial;
-use crate::math::{Axis, ColumnVector3, E_DOWN, E_Z, Location, Matrix33, Quaternion};
+use crate::math::{Axis, ColumnVector3, E_DOWN, Location, Matrix33, Quaternion};
 use crate::units::RADTODEG;
 
 /// The integrated state (`VehicleState`).
@@ -262,7 +262,7 @@ impl Propagate {
         if !integration_suspended {
             self.integrate_all(dt);
         }
-        self.epa += self.input.omega_planet[E_Z] * dt;
+        self.epa += self.input.omega_planet[Axis::Z] * dt;
         self.frames.ti2ec = rotation_z(self.epa);
         self.frames.tec2i = self.frames.ti2ec.transposed();
         self.state
@@ -282,9 +282,7 @@ impl Propagate {
     /// `NudgeBodyLocation`: moves the vehicle by `delta` (body frame, ft).
     pub(crate) fn nudge_body_location(&mut self, delta: ColumnVector3) {
         self.state.inertial_position -= self.frames.tb2i * delta;
-        self.state
-            .location
-            .sub_assign(&Location::from_ecef(self.frames.tb2ec * delta));
+        self.state.location -= Location::from_ecef(self.frames.tb2ec * delta);
         self.state.location.cache_derived();
     }
 

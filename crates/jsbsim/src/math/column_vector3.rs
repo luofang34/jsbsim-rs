@@ -48,9 +48,10 @@ impl ColumnVector3 {
         (x * x + y * y + z * z).sqrt()
     }
 
-    /// `Magnitude(idx1, idx2)`: the norm projected on two axes.
+    /// `Magnitude(idx1, idx2)`: the norm projected on two axes,
+    /// `sqrt(v[idx1]^2 + v[idx2]^2)`.
     #[must_use]
-    pub fn magnitude2(&self, idx1: Axis, idx2: Axis) -> f64 {
+    pub fn magnitude_on(&self, idx1: Axis, idx2: Axis) -> f64 {
         let (a, b) = (self[idx1], self[idx2]);
         (a * a + b * b).sqrt()
     }
@@ -72,18 +73,12 @@ impl ColumnVector3 {
         Self::new(a1 * b2 - a2 * b1, a2 * b0 - a0 * b2, a0 * b1 - a1 * b0)
     }
 
-    /// Dot product ([`dot_product`] as a method).
+    /// `DotProduct(self, v)`.
     #[must_use]
     pub fn dot(self, v: Self) -> f64 {
-        dot_product(self, v)
+        let ([a1, a2, a3], [b1, b2, b3]) = (self.data, v.data);
+        a1 * b1 + a2 * b2 + a3 * b3
     }
-}
-
-/// `DotProduct(v1, v2)`.
-#[must_use]
-pub fn dot_product(v1: ColumnVector3, v2: ColumnVector3) -> f64 {
-    let ([a1, a2, a3], [b1, b2, b3]) = (v1.data, v2.data);
-    a1 * b1 + a2 * b2 + a3 * b3
 }
 
 impl Index<Axis> for ColumnVector3 {

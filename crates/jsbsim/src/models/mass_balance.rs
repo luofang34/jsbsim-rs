@@ -17,7 +17,7 @@ pub(crate) use point_mass::{PointMass, Shape};
 
 use super::base::ModelBase;
 use super::propagate::Propagate;
-use crate::math::{ColumnVector3, E_X, E_Y, E_Z, Matrix33};
+use crate::math::{Axis, ColumnVector3, Matrix33};
 use crate::units::{INCHTOFT, LBTOSLUG, SLUGTOLB};
 
 /// What other models give the mass balance (`FGMassBalance::Inputs`).
@@ -98,7 +98,7 @@ impl MassBalance {
             + self.input.gas_moment)
             / self.weight;
 
-        if self.last_xyz_cg[E_X].is_nan() {
+        if self.last_xyz_cg[Axis::X].is_nan() {
             self.last_xyz_cg = self.xyz_cg;
         }
         self.delta_xyz_cg = self.xyz_cg - self.last_xyz_cg;
@@ -205,12 +205,12 @@ impl MassBalance {
     pub(crate) fn pointmass_inertia(&self, mass_sl: f64, r: ColumnVector3) -> Matrix33 {
         let v = self.structural_to_body(r);
         let sv = mass_sl * v;
-        let xx = sv[E_X] * v[E_X];
-        let yy = sv[E_Y] * v[E_Y];
-        let zz = sv[E_Z] * v[E_Z];
-        let xy = -sv[E_X] * v[E_Y];
-        let xz = -sv[E_X] * v[E_Z];
-        let yz = -sv[E_Y] * v[E_Z];
+        let xx = sv[Axis::X] * v[Axis::X];
+        let yy = sv[Axis::Y] * v[Axis::Y];
+        let zz = sv[Axis::Z] * v[Axis::Z];
+        let xy = -sv[Axis::X] * v[Axis::Y];
+        let xz = -sv[Axis::X] * v[Axis::Z];
+        let yz = -sv[Axis::Y] * v[Axis::Z];
         Matrix33::new(yy + zz, xy, xz, xy, xx + zz, yz, xz, yz, xx + yy)
     }
 
@@ -221,9 +221,9 @@ impl MassBalance {
         let x = &self.xyz_cg;
         let k = INCHTOFT;
         ColumnVector3::new(
-            k * (x[E_X] - r[E_X]),
-            k * (r[E_Y] - x[E_Y]),
-            k * (x[E_Z] - r[E_Z]),
+            k * (x[Axis::X] - r[Axis::X]),
+            k * (r[Axis::Y] - x[Axis::Y]),
+            k * (x[Axis::Z] - r[Axis::Z]),
         )
     }
 }
@@ -231,12 +231,12 @@ impl MassBalance {
 /// The inverse of a symmetric inertia tensor by cofactors (Stevens and
 /// Lewis), as JSBSim computes it rather than by a general inverse.
 fn inverse_inertia(j: &Matrix33) -> Matrix33 {
-    let ixx = j[(E_X, E_X)];
-    let iyy = j[(E_Y, E_Y)];
-    let izz = j[(E_Z, E_Z)];
-    let ixy = -j[(E_X, E_Y)];
-    let ixz = -j[(E_X, E_Z)];
-    let iyz = -j[(E_Y, E_Z)];
+    let ixx = j[(Axis::X, Axis::X)];
+    let iyy = j[(Axis::Y, Axis::Y)];
+    let izz = j[(Axis::Z, Axis::Z)];
+    let ixy = -j[(Axis::X, Axis::Y)];
+    let ixz = -j[(Axis::X, Axis::Z)];
+    let iyz = -j[(Axis::Y, Axis::Z)];
 
     let mut k1 = iyy * izz - iyz * iyz;
     let mut k2 = iyz * ixz + ixy * izz;

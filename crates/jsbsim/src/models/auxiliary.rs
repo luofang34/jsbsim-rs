@@ -27,8 +27,8 @@ pub use inputs::Inputs;
 use super::atmosphere::{STD_DAY_SL_DENSITY, STD_DAY_SL_PRESSURE, STD_DAY_SL_TEMPERATURE};
 use super::base::ModelBase;
 use crate::math::{
-    ColumnVector3, E_DOWN, E_EAST, E_LIFT, E_NORTH, E_P, E_PHI, E_PSI, E_Q, E_R, E_THT, E_U, E_V,
-    E_W, E_X, E_Y, E_Z, Location, Matrix33,
+    Axis, ColumnVector3, E_DOWN, E_EAST, E_LIFT, E_NORTH, E_P, E_PHI, E_PSI, E_Q, E_R, E_THT, E_U,
+    E_V, E_W, Location, Matrix33,
 };
 use crate::units::{SLUGTOLB, rankine_to_celsius};
 
@@ -304,14 +304,14 @@ impl Auxiliary {
         let g = i.constants.standard_gravity;
         let l = &mut self.loads;
         l.ncg = i.body_accel / g;
-        l.nz = -l.ncg[E_Z];
-        l.ny = l.ncg[E_Y];
-        l.nx = l.ncg[E_X];
+        l.nz = -l.ncg[Axis::Z];
+        l.ny = l.ncg[Axis::Y];
+        l.nx = l.ncg[Axis::X];
         l.pilot_accel = i.body_accel + i.pqridot.cross(i.to_eye_pt);
         l.pilot_accel += i.pqri.cross(i.pqri.cross(i.to_eye_pt));
 
         l.nwcg = self.tb2w * l.ncg;
-        l.nwcg[E_Z] = 1.0 - l.nwcg[E_Z];
+        l.nwcg[Axis::Z] = 1.0 - l.nwcg[Axis::Z];
 
         l.pilot_accel_n = l.pilot_accel / g;
     }
@@ -324,7 +324,7 @@ impl Auxiliary {
         let span = i.constants.wingspan;
         self.hoverbcg = i.distance_agl / span;
         let mac = i.tb2l * i.rp_body;
-        self.hoverbmac = (i.distance_agl - mac[E_Z]) / span;
+        self.hoverbmac = (i.distance_agl - mac[Axis::Z]) / span;
     }
 
     /// `GetNlf`: the load factor from the wind-axis lift, 0 without mass.

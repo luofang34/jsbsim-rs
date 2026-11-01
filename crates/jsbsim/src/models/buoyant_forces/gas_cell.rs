@@ -10,7 +10,7 @@ use super::shape::{Envelope, c_max, c_min};
 use super::{GAS_R, Inputs, M_AIR};
 use crate::Error;
 use crate::functions::FnId;
-use crate::math::{ColumnVector3, E_X, E_Y, E_Z, Matrix33};
+use crate::math::{Axis, ColumnVector3, Matrix33};
 use crate::models::LoadContext;
 use crate::models::mass_balance::MassBalance;
 use crate::units::SLUGTOLB;
@@ -245,19 +245,19 @@ impl GasCell {
         let mass = self.contents * self.gas.molar_mass();
         let mut j = Matrix33::zero();
         let (ixx, iyy, izz) = env.shape.inertia(mass);
-        j[(E_X, E_X)] = ixx;
-        j[(E_Y, E_Y)] = iyy;
-        j[(E_Z, E_Z)] = izz;
+        j[(Axis::X, Axis::X)] = ixx;
+        j[(Axis::Y, Axis::Y)] = iyy;
+        j[(Axis::Z, Axis::Z)] = izz;
         self.mass = mass;
         j += mass_balance.pointmass_inertia(self.mass, env.xyz);
 
         let mut m = ColumnVector3::zero();
-        for axis in [E_X, E_Y, E_Z] {
+        for axis in [Axis::X, Axis::Y, Axis::Z] {
             m[axis] += env.xyz[axis] * self.mass * SLUGTOLB;
         }
         for b in &self.ballonets {
             self.mass += b.mass();
-            for axis in [E_X, E_Y, E_Z] {
+            for axis in [Axis::X, Axis::Y, Axis::Z] {
                 m[axis] += b.envelope.xyz[axis] * b.mass() * SLUGTOLB;
             }
             j += b.inertia;

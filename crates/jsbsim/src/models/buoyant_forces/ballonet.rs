@@ -9,7 +9,7 @@ use super::shape::{Envelope, c_max};
 use super::{GAS_R, Inputs, M_AIR};
 use crate::Error;
 use crate::functions::FnId;
-use crate::math::{E_X, E_Y, E_Z, Matrix33};
+use crate::math::{Axis, Matrix33};
 use crate::models::LoadContext;
 use crate::models::mass_balance::MassBalance;
 use crate::xml::Element;
@@ -168,9 +168,9 @@ impl Ballonet {
 
         let mut j = Matrix33::zero();
         let (ixx, iyy, izz) = env.shape.inertia(self.contents * M_AIR);
-        j[(E_X, E_X)] = ixx;
-        j[(E_Y, E_Y)] = iyy;
-        j[(E_Z, E_Z)] = izz;
+        j[(Axis::X, Axis::X)] = ixx;
+        j[(Axis::Y, Axis::Y)] = iyy;
+        j[(Axis::Z, Axis::Z)] = izz;
         j += mass_balance.pointmass_inertia(self.mass(), env.xyz);
         self.inertia = j;
     }

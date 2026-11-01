@@ -14,7 +14,7 @@ use super::force::FrictionType;
 use super::{Inputs, Surface};
 use crate::Error;
 use crate::functions::FunctionSet;
-use crate::math::{ColumnVector3, E_X, E_Y, E_Z, Matrix33};
+use crate::math::{Axis, ColumnVector3, Matrix33};
 use crate::models::inertial::Inertial;
 use crate::units::{INCHTOFT, sign};
 
@@ -128,8 +128,8 @@ impl Contact {
         if height < 0.0 {
             self.state.wow = true;
             self.force.ground_normal = input.tec2b * contact.normal;
-            let normal_z = (input.tec2l * contact.normal)[E_Z];
-            lgear_proj = -(self.t_gear.transposed() * self.force.ground_normal)[E_Z];
+            let normal_z = (input.tec2l * contact.normal)[Axis::Z];
+            lgear_proj = -(self.t_gear.transposed() * self.force.ground_normal)[Axis::Z];
             let s = &mut self.state;
             match self.kind {
                 ContactType::Bogey => {
@@ -146,7 +146,7 @@ impl Contact {
                 }
                 ContactType::Structure => {
                     let n = contact.normal;
-                    s.compress_length = height * normal_z / crate::math::dot_product(n, n);
+                    s.compress_length = height * normal_z / n.dot(n);
                     displacement = s.compress_length * self.force.ground_normal;
                 }
             }
@@ -191,7 +191,7 @@ impl Contact {
             s.compress_speed = 0.0;
             return;
         }
-        s.compress_speed = -self.force.ground_wheel_vel[E_Z];
+        s.compress_speed = -self.force.ground_wheel_vel[Axis::Z];
         if self.kind == ContactType::Bogey {
             s.compress_speed /= lgear_proj;
         }
@@ -227,8 +227,8 @@ impl Contact {
     /// `ComputeSteeringAngle`.
     fn compute_steering_angle(&mut self) {
         let v = &self.state.wheel_vel;
-        if self.steering.castered && v.magnitude2(E_X, E_Y) > 0.1 {
-            self.steering.angle = libm::atan2(v[E_Y], v[E_X].abs());
+        if self.steering.castered && v.magnitude_on(Axis::X, Axis::Y) > 0.1 {
+            self.steering.angle = libm::atan2(v[Axis::Y], v[Axis::X].abs());
         }
     }
 
@@ -240,14 +240,14 @@ impl Contact {
         let (sin_a, cos_a) = libm::sincos(a);
         let mut roll = self.t_gear * ColumnVector3::new(cos_a, sin_a, 0.);
         let mut side = normal.cross(roll);
-        roll -= crate::math::dot_product(roll, normal) * normal;
+        roll -= roll.dot(normal) * normal;
         roll.normalize();
         side.normalize();
         let t = &mut self.force.t_ground;
-        for (column, v) in [(E_X, roll), (E_Y, side), (E_Z, normal)] {
-            t[(E_X, column)] = v[E_X];
-            t[(E_Y, column)] = v[E_Y];
-            t[(E_Z, column)] = v[E_Z];
+        for (column, v) in [(Axis::X, roll), (Axis::Y, side), (Axis::Z, normal)] {
+            t[(Axis::X, column)] = v[Axis::X];
+            t[(Axis::Y, column)] = v[Axis::Y];
+            t[(Axis::Z, column)] = v[Axis::Z];
         }
     }
 
@@ -277,9 +277,9 @@ impl Contact {
                 s.compress_length = -s.strut_force / st.k_spring;
             }
         }
-        self.force.normal_force[E_Z] = match self.kind {
+        self.force.normal_force[Axis::Z] = match self.kind {
             ContactType::Bogey => {
-                s.strut_force / (self.t_gear.transposed() * self.force.ground_normal)[E_Z]
+                s.strut_force / (self.t_gear.transposed() * self.force.ground_normal)[Axis::Z]
             }
             ContactType::Structure => -s.strut_force,
         };
@@ -299,9 +299,9 @@ impl Contact {
     ) {
         let s = &mut self.state;
         if !s.wow {
-            s.wheel_vel[E_X] -= 13.0 * input.total_delta_t;
-            if s.wheel_vel[E_X] < 0.0 {
-                s.wheel_vel[E_X] = 0.0;
+            s.wheel_vel[Axis::X] -= 13.0 * input.total_delta_t;
+            if s.wheel_vel[Axis::X] < 0.0 {
+                s.wheel_vel[Axis::X] = 0.0;
             }
         }
         if !frame.trim_status {

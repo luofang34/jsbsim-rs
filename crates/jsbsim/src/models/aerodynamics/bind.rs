@@ -6,7 +6,7 @@
 
 use crate::Error;
 use crate::math::{
-    ColumnVector3, E_DRAG, E_L, E_LIFT, E_M, E_N, E_PITCH, E_ROLL, E_SIDE, E_X, E_Y, E_YAW, E_Z,
+    Axis, ColumnVector3, E_DRAG, E_L, E_LIFT, E_M, E_N, E_PITCH, E_ROLL, E_SIDE, E_YAW,
 };
 use crate::models::{Binder, Kind, Models};
 
@@ -20,7 +20,7 @@ fn stability_forces(m: &Models) -> ColumnVector3 {
 
 /// `FGAerodynamics::bind`.
 pub(crate) fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
-    for (name, i) in [("x", E_X), ("y", E_Y), ("z", E_Z)] {
+    for (name, i) in [("x", Axis::X), ("y", Axis::Y), ("z", Axis::Z)] {
         b.getter(&format!("forces/fb{name}-aero-lbs"), move |m| {
             m.aerodynamics.state.forces[i]
         })?;
@@ -35,7 +35,7 @@ pub(crate) fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
             m.aerodynamics.state.fw[i]
         })?;
     }
-    for (name, i) in [("x", E_X), ("y", E_Y), ("z", E_Z)] {
+    for (name, i) in [("x", Axis::X), ("y", Axis::Y), ("z", Axis::Z)] {
         b.getter(&format!("forces/fs{name}-aero-lbs"), move |m| {
             stability_forces(m)[i]
         })?;

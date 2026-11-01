@@ -6,7 +6,7 @@
 //! Position relative to the initial conditions.
 
 use super::Auxiliary;
-use crate::math::{ColumnVector3, E_Z, Location};
+use crate::math::{Axis, ColumnVector3, Location};
 use crate::units::FTTOM;
 
 #[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
@@ -65,7 +65,7 @@ impl Auxiliary {
             .start
             .neu_location
             .location_to_local(self.input.location.ecef());
-        neu[E_Z] *= -1.0;
+        neu[Axis::Z] *= -1.0;
         neu
     }
 }

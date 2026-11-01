@@ -6,7 +6,7 @@
 //! north is +z, east +y, up +x); see that file for what each does.
 
 use jsbsim::Fdm;
-use jsbsim::math::{ColumnVector3, Location, dot_product};
+use jsbsim::math::{ColumnVector3, Location};
 use jsbsim::{Contact, GroundCallback};
 
 use crate::OracleError;
@@ -86,7 +86,7 @@ impl GroundCallback for OracleGround {
             }
         }
         let r = location.ecef();
-        let agl = dot_product(r - origin, n);
+        let agl = (r - origin).dot(n);
         let point = r - agl * n;
         if self.kind == Kind::DeckRotating {
             let centre = ColumnVector3::new(self.a, 0.0, -30.0);

@@ -6,7 +6,7 @@
 
 use crate::Error;
 use crate::math::{
-    Axis, E_DOWN, E_EAST, E_NORTH, E_P, E_PHI, E_PSI, E_Q, E_R, E_THT, E_U, E_V, E_W, E_X, E_Y, E_Z,
+    Axis, E_DOWN, E_EAST, E_NORTH, E_P, E_PHI, E_PSI, E_Q, E_R, E_THT, E_U, E_V, E_W,
 };
 use crate::models::{Binder, Kind, Models};
 use crate::units::{DEGTORAD, FTTOM};
@@ -33,12 +33,12 @@ fn velocities(b: &mut Binder<'_>) -> Result<(), Error> {
             m.propagate.state.pqri[i]
         })?;
     }
-    for (name, i) in [("x", E_X), ("y", E_Y), ("z", E_Z)] {
+    for (name, i) in [("x", Axis::X), ("y", Axis::Y), ("z", Axis::Z)] {
         b.getter(&format!("velocities/eci-{name}-fps"), move |m| {
             m.propagate.state.inertial_velocity[i]
         })?;
     }
-    for (name, i) in [("x", E_X), ("y", E_Y), ("z", E_Z)] {
+    for (name, i) in [("x", Axis::X), ("y", Axis::Y), ("z", Axis::Z)] {
         b.getter(&format!("velocities/ecef-{name}-fps"), move |m| {
             m.propagate.ecef_velocity()[i]
         })?;
@@ -136,12 +136,12 @@ fn position_geodetic(b: &mut Binder<'_>) -> Result<(), Error> {
         |m| m.propagate.terrain_elevation(&m.inertial),
         |m, v| m.inertial.set_terrain_elevation(v),
     )?;
-    for (name, i) in [("x", E_X), ("y", E_Y), ("z", E_Z)] {
+    for (name, i) in [("x", Axis::X), ("y", Axis::Y), ("z", Axis::Z)] {
         b.getter(&format!("position/eci-{name}-ft"), move |m| {
             m.propagate.state.inertial_position[i]
         })?;
     }
-    for (name, i) in [("x", E_X), ("y", E_Y), ("z", E_Z)] {
+    for (name, i) in [("x", Axis::X), ("y", Axis::Y), ("z", Axis::Z)] {
         b.getter(&format!("position/ecef-{name}-ft"), move |m| {
             m.propagate.state.location.entry(i)
         })?;

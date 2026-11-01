@@ -8,7 +8,7 @@
 use super::families::{ThrusterFamily, ThrusterSite};
 use super::thruster::ThrusterBase;
 use crate::Error;
-use crate::math::E_X;
+use crate::math::Axis;
 use crate::models::{LoadContext, ModelEvaluator, Models};
 use crate::xml::Element;
 
@@ -59,7 +59,7 @@ impl ThrusterFamily for Nozzle {
         // `std::max(0.0, t)`: 0 unless t is above it.
         let t = vac_thrust - base.input.pressure * self.area;
         base.thrust = if 0.0 < t { t } else { 0.0 };
-        base.force.native_force[E_X] = base.thrust * libm::cos(base.reverser_angle);
+        base.force.native_force[Axis::X] = base.thrust * libm::cos(base.reverser_angle);
         base.thrust
     }
 }

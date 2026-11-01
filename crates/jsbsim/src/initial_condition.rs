@@ -360,7 +360,7 @@ impl InitialCondition {
     /// `GetVgroundFpsIC`: horizontal ground speed.
     #[must_use]
     pub(crate) fn vground_fps(&self) -> f64 {
-        self.uvw_ned.magnitude2(E_U, E_V)
+        self.uvw_ned.magnitude_on(E_U, E_V)
     }
 
     /// `GetVgroundKtsIC`.

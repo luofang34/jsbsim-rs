@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 //! Math probe; twin of `tools/oracle/cpp/probe_math.cpp`.
 
-use jsbsim::math::{
-    Axis, ColumnVector3, E_X, E_Y, E_Z, Location, Matrix33, Quaternion, dot_product,
-};
+use jsbsim::math::{Axis, ColumnVector3, Location, Matrix33, Quaternion};
 use jsbsim::oracle_support::c_numeric::format_g;
 
 #[derive(Default)]
@@ -50,17 +48,17 @@ fn vector(o: &mut Out, a: &Args) {
     o.vec("sum", u + v);
     o.vec("diff", u - v);
     o.vec("cross", u.cross(v));
-    o.tagged("dot", dot_product(u, v));
+    o.tagged("dot", u.dot(v));
     o.tagged("mag", u.magnitude());
-    o.tagged("mag12", u.magnitude2(E_X, E_Y));
-    o.tagged("mag23", u.magnitude2(E_Y, E_Z));
+    o.tagged("mag12", u.magnitude_on(Axis::X, Axis::Y));
+    o.tagged("mag23", u.magnitude_on(Axis::Y, Axis::Z));
     let mut n = u;
     o.vec("norm", *n.normalize());
     o.vec("scaled", 2.5 * u);
     o.vec("div3", u / 3.0);
     o.vec("div0", u / 0.0);
     let mut w = u;
-    w /= v[E_X];
+    w /= v[Axis::X];
     o.vec("divassign", w);
 }
 
@@ -130,12 +128,12 @@ fn location(o: &mut Out, l: &Location, ellipse: bool) {
     let moved = l.local_to_location(lvec);
     o.vec("l2loc", moved.ecef());
     o.vec("loc2l", l.location_to_local(moved.ecef()));
-    let sum = l.add(l);
+    let sum = *l + *l;
     o.tagged("sumradius", sum.radius());
     if ellipse {
         o.tagged("sumgeodalt", sum.geod_altitude());
     }
-    let half = l.scale(0.5);
+    let half = *l * 0.5;
     if ellipse {
         o.tagged("halfgeodlat", half.geod_latitude_rad());
     }

@@ -9,7 +9,7 @@
 
 use crate::fdm::Fdm;
 use crate::initial_condition::Environment;
-use crate::math::{E_P, E_PHI, E_PSI, E_Q, E_R, E_THT, E_X, E_Y, E_Z};
+use crate::math::{Axis, E_P, E_PHI, E_PSI, E_Q, E_R, E_THT};
 
 /// One state or input (`FGStateSpace::Component`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -211,7 +211,10 @@ impl Component {
         Some(match self {
             Self::Vt => {
                 let (uvw, dot) = (p.state.uvw, acc.uvwdot);
-                (uvw[E_X] * dot[E_X] + uvw[E_Y] * dot[E_Y] + uvw[E_Z] * dot[E_Z]) / aux.vt
+                (uvw[Axis::X] * dot[Axis::X]
+                    + uvw[Axis::Y] * dot[Axis::Y]
+                    + uvw[Axis::Z] * dot[Axis::Z])
+                    / aux.vt
             }
             Self::Alpha => aux.adot,
             Self::Theta => aux.euler_rates[E_THT],
@@ -224,9 +227,9 @@ impl Component {
             Self::R => acc.pqrdot[E_R],
             Self::Longitude => {
                 let latitude = p.state.location.latitude();
-                p.vel[E_Y] / (libm::cos(latitude) * p.radius())
+                p.vel[Axis::Y] / (libm::cos(latitude) * p.radius())
             }
-            Self::Latitude => p.vel[E_X] / p.radius(),
+            Self::Latitude => p.vel[Axis::X] / p.radius(),
             Self::Rpm(_) | Self::ThrottleCmd | Self::DaCmd | Self::DeCmd | Self::DrCmd => {
                 return None;
             }

@@ -9,7 +9,7 @@
 use super::GasCell;
 use super::ballonet::Ballonet;
 use crate::Error;
-use crate::math::{E_L, E_M, E_N, E_X, E_Y, E_Z};
+use crate::math::{Axis, E_L, E_M, E_N};
 use crate::models::ground_reactions::contact_bind::indexed_name;
 use crate::models::{Binder, Kind, Models};
 
@@ -101,7 +101,7 @@ pub(crate) fn bind_totals(b: &mut Binder<'_>) -> Result<(), Error> {
             m.buoyant_forces.moments[axis]
         })?;
     }
-    for (name, axis) in [("x", E_X), ("y", E_Y), ("z", E_Z)] {
+    for (name, axis) in [("x", Axis::X), ("y", Axis::Y), ("z", Axis::Z)] {
         b.getter(&format!("forces/fb{name}-buoyancy-lbs"), move |m| {
             m.buoyant_forces.forces[axis]
         })?;

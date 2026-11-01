@@ -20,7 +20,7 @@ use super::families::{ThrusterFamily, ThrusterSite};
 use super::thruster::ThrusterBase;
 use crate::Error;
 use crate::functions::Table;
-use crate::math::{ColumnVector3, E_U, E_V, E_W, E_X, E_Y, E_Z};
+use crate::math::{Axis, ColumnVector3, E_U, E_V, E_W};
 use crate::models::{LoadContext, ModelEvaluator, Models};
 use crate::xml::Element;
 
@@ -204,13 +204,13 @@ impl Propeller {
         if self.p_factor <= 0.0001 {
             return;
         }
-        let tangential_vel = local_aero_vel.magnitude2(E_V, E_W);
+        let tangential_vel = local_aero_vel.magnitude_on(E_V, E_W);
         if tangential_vel > 0.0001 {
             let angle = libm::atan2(tangential_vel, vel + self.vinduced);
             let factor = self.sense * self.p_factor * angle / tangential_vel;
             let force = &mut base.force;
-            force.acting_location[E_Y] = force.location[E_Y] + factor * local_aero_vel[E_W];
-            force.acting_location[E_Z] = force.location[E_Z] + factor * local_aero_vel[E_V];
+            force.acting_location[Axis::Y] = force.location[Axis::Y] + factor * local_aero_vel[E_W];
+            force.acting_location[Axis::Z] = force.location[Axis::Z] + factor * local_aero_vel[E_V];
         }
     }
 }
@@ -278,9 +278,9 @@ impl ThrusterFamily for Propeller {
         };
         self.p_factor_shift(base, local_aero_vel, vel);
         let omega = rps * 2.0 * PI;
-        base.force.native_force[E_X] = base.thrust;
+        base.force.native_force[Axis::X] = base.thrust;
         let omega_floor = if 0.01 < omega { omega } else { 0.01 };
-        self.torque[E_X] = -self.sense * engine_power / omega_floor;
+        self.torque[Axis::X] = -self.sense * engine_power / omega_floor;
         // Gyroscopic momentum about the shaft; GetBodyForces transforms
         // it.
         let v_h = ColumnVector3::new(
@@ -340,7 +340,7 @@ impl ThrusterFamily for Propeller {
     }
 
     fn torque(&self) -> f64 {
-        self.torque[E_X]
+        self.torque[Axis::X]
     }
 }
 

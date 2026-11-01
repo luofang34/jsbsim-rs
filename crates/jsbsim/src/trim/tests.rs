@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 use super::axis::DEFAULT_TOLERANCE;
 use super::*;
-use crate::math::{E_X, E_Z};
+use crate::math::Axis;
 use crate::{Error, MemoryResolver};
 
 mod custom_trim;
@@ -238,7 +238,7 @@ fn turn_and_pullup_set_the_rates_of_their_load_factor() {
     assert_eq!(turn.target_nlf(), 1.0 / libm::cos(30.0 * DEGTORAD));
     turn.update_rates_of(&fdm);
     let pqr = turn.fgic.pqr_radps();
-    assert!(pqr[E_Z] > 0.0 && pqr[E_X].abs() < pqr[E_Z]);
+    assert!(pqr[Axis::Z] > 0.0 && pqr[Axis::X].abs() < pqr[Axis::Z]);
     let mut pullup = Trim::new(&fdm, TrimMode::Pullup);
     pullup.set_target_nlf(2.0);
     pullup.setup_pullup(&fdm);

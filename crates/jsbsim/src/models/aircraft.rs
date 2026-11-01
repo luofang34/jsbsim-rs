@@ -6,7 +6,7 @@
 
 use super::base::ModelBase;
 use crate::Error;
-use crate::math::{ColumnVector3, E_X, E_Y, E_Z};
+use crate::math::{Axis, ColumnVector3};
 use crate::models::{Binder, Kind};
 use crate::units::RADTODEG;
 use crate::xml::Element;
@@ -157,7 +157,7 @@ pub(crate) fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
     b.getter("metrics/lv-norm", |m| m.aircraft.lbarv)?;
     b.getter("metrics/vbarh-norm", |m| m.aircraft.vbarh)?;
     b.getter("metrics/vbarv-norm", |m| m.aircraft.vbarv)?;
-    for (name, i) in [("x", E_X), ("y", E_Y), ("z", E_Z)] {
+    for (name, i) in [("x", Axis::X), ("y", Axis::Y), ("z", Axis::Z)] {
         b.property(
             &format!("metrics/aero-rp-{name}-in"),
             Kind::Double,
@@ -165,12 +165,12 @@ pub(crate) fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
             move |m, v| m.aircraft.xyz_rp[i] = v,
         )?;
     }
-    for (name, i) in [("x", E_X), ("y", E_Y), ("z", E_Z)] {
+    for (name, i) in [("x", Axis::X), ("y", Axis::Y), ("z", Axis::Z)] {
         b.getter(&format!("metrics/eyepoint-{name}-in"), move |m| {
             m.aircraft.xyz_ep[i]
         })?;
     }
-    for (name, i) in [("x", E_X), ("y", E_Y), ("z", E_Z)] {
+    for (name, i) in [("x", Axis::X), ("y", Axis::Y), ("z", Axis::Z)] {
         b.getter(&format!("metrics/visualrefpoint-{name}-in"), move |m| {
             m.aircraft.xyz_vrp[i]
         })?;

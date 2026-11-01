@@ -7,7 +7,7 @@
 
 use super::contact::{Contact, ContactType, SteerType};
 use crate::Error;
-use crate::math::{E_X, E_Y, E_Z};
+use crate::math::Axis;
 use crate::models::{Binder, Kind, Models};
 
 type Get = fn(&Contact) -> f64;
@@ -65,28 +65,28 @@ const COMMON: [Entry; 9] = [
     (
         "x-position",
         D,
-        |c| c.location[E_X],
+        |c| c.location[Axis::X],
         Some(|c, v| {
-            c.location[E_X] = v;
-            c.acting_location[E_X] = v;
+            c.location[Axis::X] = v;
+            c.acting_location[Axis::X] = v;
         }),
     ),
     (
         "y-position",
         D,
-        |c| c.location[E_Y],
+        |c| c.location[Axis::Y],
         Some(|c, v| {
-            c.location[E_Y] = v;
-            c.acting_location[E_Y] = v;
+            c.location[Axis::Y] = v;
+            c.acting_location[Axis::Y] = v;
         }),
     ),
     (
         "z-position",
         D,
-        |c| c.location[E_Z],
+        |c| c.location[Axis::Z],
         Some(|c, v| {
-            c.location[E_Z] = v;
-            c.acting_location[E_Z] = v;
+            c.location[Axis::Z] = v;
+            c.acting_location[Axis::Z] = v;
         }),
     ),
     (

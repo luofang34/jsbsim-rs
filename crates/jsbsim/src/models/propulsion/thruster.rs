@@ -15,7 +15,7 @@ use super::Inputs;
 use super::families::{ThrusterFamily, ThrusterKind, ThrusterSite};
 use super::force::Force;
 use crate::Error;
-use crate::math::{ColumnVector3, E_X, E_Y, E_Z, Matrix33};
+use crate::math::{Axis, ColumnVector3, Matrix33};
 use crate::models::{Binder, LoadContext, ModelEvaluator, Models};
 use crate::xml::Element;
 
@@ -113,9 +113,9 @@ impl ThrusterBase {
             // A fixed nozzle: no property gimbals or reverses it.
             let pointing = pointing_el.find_element_triplet_convert_to("RAD")?;
             let mut t = Matrix33::zero();
-            t[(E_X, E_X)] = pointing[E_X];
-            t[(E_Y, E_X)] = pointing[E_Y];
-            t[(E_Z, E_X)] = pointing[E_Z];
+            t[(Axis::X, Axis::X)] = pointing[Axis::X];
+            t[(Axis::Y, Axis::X)] = pointing[Axis::Y];
+            t[(Axis::Z, Axis::X)] = pointing[Axis::Z];
             self.force.transform = t;
         } else {
             let orientation = match thruster_el.find_element("orient") {
@@ -181,7 +181,7 @@ impl ThrusterFamily for Direct {
     /// `FGThruster::Calculate(tt)`.
     fn calculate(&mut self, base: &mut ThrusterBase, power: f64, _sample: &()) -> f64 {
         base.thrust = libm::cos(base.reverser_angle) * power;
-        base.force.native_force[E_X] = base.thrust;
+        base.force.native_force[Axis::X] = base.thrust;
         base.thrust
     }
 }

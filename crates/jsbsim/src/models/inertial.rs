@@ -17,7 +17,7 @@ pub(crate) use ground::DefaultGroundCallback;
 
 use super::base::ModelBase;
 use crate::Error;
-use crate::math::{ColumnVector3, E_X, E_Y, E_Z, Location};
+use crate::math::{Axis, ColumnVector3, Location};
 use crate::xml::Element;
 
 /// `simulation/gravity-model` for spherical gravity, GM/r^2 to the centre.
@@ -142,9 +142,9 @@ impl Inertial {
         let z = 3.0 - 5.0 * (sin_lat * sin_lat);
         let gm_over_r2 = self.gm / (r * r);
         ColumnVector3::new(
-            -gm_over_r2 * ((1.0 + (pre_common * xy)) * position.entry(E_X) / r),
-            -gm_over_r2 * ((1.0 + (pre_common * xy)) * position.entry(E_Y) / r),
-            -gm_over_r2 * ((1.0 + (pre_common * z)) * position.entry(E_Z) / r),
+            -gm_over_r2 * ((1.0 + (pre_common * xy)) * position.entry(Axis::X) / r),
+            -gm_over_r2 * ((1.0 + (pre_common * xy)) * position.entry(Axis::Y) / r),
+            -gm_over_r2 * ((1.0 + (pre_common * z)) * position.entry(Axis::Z) / r),
         )
     }
 

@@ -22,7 +22,7 @@ pub(crate) use turbulence::{CulpState, DrydenState, PoeTable, TurbulenceType};
 use std::f64::consts::PI;
 
 use super::base::ModelBase;
-use crate::math::{Axis, ColumnVector3, E_DOWN, E_EAST, E_NORTH, E_X, E_Y, Matrix33};
+use crate::math::{Axis, ColumnVector3, E_DOWN, E_EAST, E_NORTH, Matrix33};
 
 /// Inputs loaded by the executive (`FGWinds::Inputs`). JSBSim's latitude,
 /// longitude and planet radius serve only the up/downburst distance, which
@@ -157,8 +157,8 @@ impl Winds {
         }
         self.total_wind_ned =
             self.wind_ned + self.gust_ned + self.cosine_gust_ned + self.turbulence_ned;
-        if self.wind_ned[E_X] != 0.0 {
-            self.psiw = libm::atan2(self.wind_ned[E_Y], self.wind_ned[E_X]);
+        if self.wind_ned[Axis::X] != 0.0 {
+            self.psiw = libm::atan2(self.wind_ned[Axis::Y], self.wind_ned[Axis::X]);
         }
         if self.psiw < 0.0 {
             self.psiw += 2.0 * PI;

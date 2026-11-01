@@ -6,7 +6,7 @@
 //! The `propulsion/engine[n]/` properties of every thruster.
 
 use crate::Error;
-use crate::math::{Axis, E_PITCH, E_X, E_Y, E_YAW, E_Z};
+use crate::math::{Axis, E_PITCH, E_YAW};
 use crate::models::propulsion::ThrusterBase;
 use crate::models::{Binder, Kind, Models};
 
@@ -23,7 +23,7 @@ fn base_mut(m: &mut Models, n: usize) -> Option<&mut ThrusterBase> {
 
 /// The reference (`<location>`) and acting positions, in.
 pub(crate) fn bind_location(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
-    let axes: [(&str, Axis); 3] = [("x", E_X), ("y", E_Y), ("z", E_Z)];
+    let axes: [(&str, Axis); 3] = [("x", Axis::X), ("y", Axis::Y), ("z", Axis::Z)];
     for (name, i) in axes {
         b.getter(
             &format!("propulsion/engine[{n}]/{name}-reference-position"),

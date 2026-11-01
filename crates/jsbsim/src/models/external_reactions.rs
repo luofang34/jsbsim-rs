@@ -10,7 +10,7 @@
 use super::base::ModelBase;
 use crate::Error;
 use crate::functions::FnId;
-use crate::math::{ColumnVector3, E_L, E_M, E_N, E_X, E_Y, E_Z, Matrix33};
+use crate::math::{Axis, ColumnVector3, E_L, E_M, E_N, Matrix33};
 use crate::models::{Kind, LoadContext};
 use crate::properties::NodeId;
 use crate::xml::Element;
@@ -150,7 +150,7 @@ impl ExternalReactions {
                 force.acting_location = force.location;
             }
         }
-        for (axis, i) in [("x", E_X), ("y", E_Y), ("z", E_Z)] {
+        for (axis, i) in [("x", Axis::X), ("y", Axis::Y), ("z", Axis::Z)] {
             ctx.binder.property(
                 &format!("{base_name}/location-{axis}-in"),
                 Kind::Double,
@@ -219,7 +219,7 @@ impl ExternalReactions {
                 v.normalize();
                 // FGPropertyVector3::operator= writes y, then x, then z.
                 let [dx, dy, dz] = direction;
-                for (node, axis) in [(dy, E_Y), (dx, E_X), (dz, E_Z)] {
+                for (node, axis) in [(dy, Axis::Y), (dx, Axis::X), (dz, Axis::Z)] {
                     ctx.tree().set_double(node, v[axis]);
                 }
             }
@@ -263,7 +263,7 @@ pub(crate) fn bind(b: &mut crate::models::Binder<'_>) -> Result<(), Error> {
             m.external_reactions.total_moments[i]
         })?;
     }
-    for (name, i) in [("x", E_X), ("y", E_Y), ("z", E_Z)] {
+    for (name, i) in [("x", Axis::X), ("y", Axis::Y), ("z", Axis::Z)] {
         b.getter(&format!("forces/fb{name}-external-lbs"), move |m| {
             m.external_reactions.total_forces[i]
         })?;

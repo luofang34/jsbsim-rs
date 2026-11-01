@@ -11,10 +11,7 @@
 //! was set last.
 
 use super::{InitialCondition, SpeedSet, wind_to_body};
-use crate::math::{
-    Axis, ColumnVector3, E_PHI, E_PSI, E_THT, E_U, E_V, E_W, E_X, E_Y, E_Z, Matrix33, Quaternion,
-    dot_product,
-};
+use crate::math::{Axis, ColumnVector3, E_PHI, E_PSI, E_THT, E_U, E_V, E_W, Matrix33, Quaternion};
 use crate::units::DEGTORAD;
 
 impl InitialCondition {
@@ -82,25 +79,25 @@ impl InitialCondition {
         let v0 = tpsi * vt_ned;
         let n = (talpha * tphi).transposed() * ColumnVector3::new(0., 0., 1.);
         let y = ColumnVector3::new(0., 1., 0.);
-        let mut u = y - dot_product(y, n) * n;
+        let mut u = y - y.dot(n) * n;
         let mut p = y.cross(n);
-        if dot_product(p, v0) < 0.0 {
+        if p.dot(v0) < 0.0 {
             p *= -1.0;
         }
         p.normalize();
-        u *= dot_product(v0, y) / dot_product(u, y);
+        u *= v0.dot(y) / u.dot(y);
 
         // No theta exists when the roll angle is too large for this alpha.
-        if dot_product(v0, v0) < dot_product(u, u) {
+        if v0.dot(v0) < u.dot(u) {
             tracing::error!("Cannot modify angle 'alpha' from {} to {alfa}", self.alpha);
             return;
         }
-        let v1 = u + (dot_product(v0, v0) - dot_product(u, u)).sqrt() * p;
+        let v1 = u + (v0.dot(v0) - u.dot(u)).sqrt() * p;
         let mut v0xz = ColumnVector3::new(v0[E_U], 0., v0[E_W]);
         let mut v1xz = ColumnVector3::new(v1[E_U], 0., v1[E_W]);
         v0xz.normalize();
         v1xz.normalize();
-        let sin_theta = v1xz.cross(v0xz)[E_Y];
+        let sin_theta = v1xz.cross(v0xz)[Axis::Y];
         orient[E_THT] = libm::asin(sin_theta);
         self.orientation = Quaternion::from_euler_vector(orient);
 
@@ -131,19 +128,21 @@ impl InitialCondition {
         self.tb2w = self.tw2b.transposed();
 
         let vf = tphi_inv * self.tw2b * ColumnVector3::new(self.vt, 0., 0.);
-        let mut v0xy = ColumnVector3::new(vt_ned[E_X], vt_ned[E_Y], 0.);
+        let mut v0xy = ColumnVector3::new(vt_ned[Axis::X], vt_ned[Axis::Y], 0.);
         let mut v1xy = ColumnVector3::new(
-            (v0xy[E_X] * v0xy[E_X] + v0xy[E_Y] * v0xy[E_Y] - vf[E_Y] * vf[E_Y]).sqrt(),
-            vf[E_Y],
+            (v0xy[Axis::X] * v0xy[Axis::X] + v0xy[Axis::Y] * v0xy[Axis::Y]
+                - vf[Axis::Y] * vf[Axis::Y])
+                .sqrt(),
+            vf[Axis::Y],
             0.,
         );
         v0xy.normalize();
         v1xy.normalize();
-        if vf[E_X] < 0. {
-            v0xy[E_X] *= -1.0;
+        if vf[Axis::X] < 0. {
+            v0xy[Axis::X] *= -1.0;
         }
-        let sin_psi = v1xy.cross(v0xy)[E_Z];
-        let cos_psi = dot_product(v0xy, v1xy);
+        let sin_psi = v1xy.cross(v0xy)[Axis::Z];
+        let cos_psi = v0xy.dot(v1xy);
         orient[E_PSI] = libm::atan2(sin_psi, cos_psi);
         let tpsi = Matrix33::new(cos_psi, sin_psi, 0., -sin_psi, cos_psi, 0., 0., 0., 1.);
 
@@ -153,7 +152,7 @@ impl InitialCondition {
         vfxz[E_V] = 0.0;
         v2xz.normalize();
         vfxz.normalize();
-        let sin_theta = v2xz.cross(vfxz)[E_Y];
+        let sin_theta = v2xz.cross(vfxz)[Axis::Y];
         orient[E_THT] = -libm::asin(sin_theta);
         self.orientation = Quaternion::from_euler_vector(orient);
     }

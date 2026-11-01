@@ -10,7 +10,7 @@ use std::sync::{Arc, Mutex};
 
 use jsbsim::Fdm;
 use jsbsim::FileResolver;
-use jsbsim::math::{ColumnVector3, E_X, E_Y, E_Z, Location, dot_product};
+use jsbsim::math::{Axis, ColumnVector3, Location};
 use jsbsim::{Contact, GroundCallback};
 
 /// A plane through (a, 0, 0) at time 0, the planet's surface at latitude
@@ -40,7 +40,7 @@ impl GroundCallback for Plane {
     fn ag_level(&self, time: f64, location: &Location) -> Contact {
         let origin = ColumnVector3::new(self.a, 0.0, 0.0) + self.velocity * time;
         let r = location.ecef();
-        let agl = dot_product(r - origin, self.normal);
+        let agl = (r - origin).dot(self.normal);
         let mut point = Location::from_ecef(r - agl * self.normal);
         point.set_ellipse(self.a, self.b);
         point.cache_derived();
@@ -132,10 +132,13 @@ fn a_vehicle_moving_with_a_deck_stays_at_rest_on_it() {
     let (t1, p1) = (fdm.models.exec.sim_time, ecef(&mut fdm));
     let drift = (p1 - p0) - deck_velocity * (t1 - t0);
     assert!(
-        drift[E_Y].abs() < 1e-3 && drift[E_Z].abs() < 1e-3,
+        drift[Axis::Y].abs() < 1e-3 && drift[Axis::Z].abs() < 1e-3,
         "the rover moved {drift:?} ft relative to the deck"
     );
-    assert!(drift[E_X].abs() < 1e-2, "the rover sank or rose {drift:?}");
+    assert!(
+        drift[Axis::X].abs() < 1e-2,
+        "the rover sank or rose {drift:?}"
+    );
     let vn = fdm.get_property("velocities/v-north-fps").unwrap();
     assert!((vn - 20.0).abs() < 1e-4, "v-north {vn} ft/s");
 
@@ -173,7 +176,7 @@ fn slope_drift_ft(degrees: f64) -> f64 {
     run_for(&mut fdm, 4.0);
     let moved = ecef(&mut fdm) - p0;
     // The downhill direction along the plane is (-sin, 0, cos).
-    moved[E_Z] * c - moved[E_X] * s
+    moved[Axis::Z] * c - moved[Axis::X] * s
 }
 
 #[test]

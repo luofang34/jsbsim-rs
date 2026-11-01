@@ -9,7 +9,7 @@
 use super::Inputs;
 use super::contact::Contact;
 use super::frame::FrameContext;
-use crate::math::E_Z;
+use crate::math::Axis;
 use crate::units::{FTTOM, rankine_to_celsius};
 
 impl Contact {
@@ -68,7 +68,7 @@ impl Contact {
         let r = &self.reporting;
         if r.enabled
             && !r.takeoff_reported
-            && (input.distance_agl - self.state.local_gear[E_Z]) > 50.0
+            && (input.distance_agl - self.state.local_gear[Axis::Z]) > 50.0
             && !input.wow
         {
             self.report_takeoff(input, sim_time);

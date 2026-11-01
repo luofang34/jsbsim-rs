@@ -13,7 +13,7 @@ use super::engine::{EngineBase, EngineType};
 use super::families::{EngineFamily, InitRunning, ThrusterFamily, ThrusterSite};
 use super::thruster::{Thruster, ThrusterBase};
 use crate::Error;
-use crate::math::{ColumnVector3, E_X};
+use crate::math::{Axis, ColumnVector3};
 use crate::models::propulsion::families::EngineHost;
 use crate::models::{LoadContext, ModelEvaluator, Models};
 use crate::xml::Element;
@@ -124,7 +124,7 @@ impl ThrusterFamily for TestThruster {
 
     fn calculate(&mut self, base: &mut ThrusterBase, power: f64, _sample: &()) -> f64 {
         base.thrust = power;
-        base.force.native_force[E_X] = power;
+        base.force.native_force[Axis::X] = power;
         power
     }
 }

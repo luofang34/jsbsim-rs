@@ -18,12 +18,20 @@ fn vector_basics() {
         u.cross(ColumnVector3::new(0.0, 0.0, 1.0)),
         ColumnVector3::new(2.0, -1.0, 0.0)
     );
-    assert_eq!(dot_product(u, u), 9.0);
+    assert_eq!(u.dot(u), 9.0);
     assert_eq!(u / 0.0, ColumnVector3::zero());
     let mut z = ColumnVector3::zero();
     z.normalize();
     assert_eq!(z, ColumnVector3::zero());
-    assert_eq!(u[E_Z], 2.0);
+    assert_eq!(u[Axis::Z], 2.0);
+}
+
+#[test]
+fn magnitude_on_is_the_norm_over_two_axes_not_a_square() {
+    let u = ColumnVector3::new(3.0, 4.0, 12.0);
+    assert_eq!(u.magnitude_on(Axis::X, Axis::Y), 5.0);
+    assert_eq!(u.magnitude_on(Axis::Y, Axis::X), 5.0);
+    assert_eq!(u.magnitude_on(Axis::X, Axis::Z), 153.0_f64.sqrt());
 }
 
 #[test]
@@ -31,16 +39,15 @@ fn dot_sits_beside_cross() {
     let u = ColumnVector3::new(1.0, 2.0, 2.0);
     let v = ColumnVector3::new(3.0, -1.0, 4.0);
     assert_eq!(u.dot(v), 9.0);
-    assert_eq!(u.dot(v), dot_product(u, v));
     assert_eq!(u.dot(u.cross(v)), 0.0);
 }
 
 #[test]
 fn matrix_indexing_is_row_column() {
     let m = Matrix33::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 10.0);
-    assert_eq!(m[(E_X, E_Y)], 2.0);
-    assert_eq!(m[(E_Z, E_X)], 7.0);
-    assert_eq!(m.transposed()[(E_X, E_Y)], 4.0);
+    assert_eq!(m[(Axis::X, Axis::Y)], 2.0);
+    assert_eq!(m[(Axis::Z, Axis::X)], 7.0);
+    assert_eq!(m.transposed()[(Axis::X, Axis::Y)], 4.0);
     assert_eq!(m.determinant(), -3.0);
     let id = m * m.inverse();
     for r in Axis::ALL {
@@ -59,7 +66,7 @@ fn euler_round_trip_and_orthonormal_transform() {
     assert!(close(e[E_THT], -0.4, 1e-14));
     assert!(close(e[E_PSI], 2.5, 1e-14));
     let should_be_identity = q.t() * q.t_inv();
-    assert!(close(should_be_identity[(E_Y, E_Y)], 1.0, 1e-15));
+    assert!(close(should_be_identity[(Axis::Y, Axis::Y)], 1.0, 1e-15));
     assert!(close(q.sin_euler(E_THT), libm::sin(-0.4), 1e-15));
     // Different pivots and normalisation: equal only to rounding.
     let (a, b) = (Quaternion::from_matrix(&q.t()), q.t().quaternion());
@@ -83,7 +90,7 @@ fn gimbal_lock_sets_heading_to_zero() {
     let q = Quaternion::from_euler(0.2, std::f64::consts::FRAC_PI_2, 0.7);
     let m = q.t();
     let mut locked = m;
-    locked[(E_X, E_Z)] = -1.0;
+    locked[(Axis::X, Axis::Z)] = -1.0;
     let e = locked.euler();
     assert_eq!(e[E_THT], std::f64::consts::FRAC_PI_2);
     assert_eq!(e[E_PSI], 0.0);
@@ -305,7 +312,7 @@ fn quaternion_operators_take_values_and_references_alike() {
 #[test]
 fn quaternion_assignment_by_value_drops_the_cached_angles() {
     let bank = Quaternion::from_components(0.0, 0.25_f64.tan(), 0.0, 0.0);
-    let turn = Quaternion::from_axis_index(E_X, 0.25);
+    let turn = Quaternion::from_axis_index(Axis::X, 0.25);
     let mut q = Quaternion::default();
     q.cache_derived();
     q += bank;
@@ -340,4 +347,80 @@ fn quaternion_constructs_and_reads_in_const_context() {
     assert_eq!(IDENTITY, Quaternion::default());
     assert_eq!(COMPONENTS, [1.0, 0.0, 0.0, 0.0]);
     assert_eq!(ZERO, [0.0; 4]);
+}
+
+/// A location on the WGS84 ellipse, with its derived values stored.
+fn cached_location() -> Location {
+    let mut l = Location::from_ecef(ColumnVector3::new(1.2e7, -3.4e6, 1.5e7));
+    l.set_ellipse(WGS84_A, WGS84_B);
+    l.cache_derived();
+    l
+}
+
+#[test]
+fn location_binary_operators_take_the_left_operands_ellipse() {
+    let l = cached_location();
+    let bare = Location::from_ecef(ColumnVector3::new(3.0, -2.0, 1.0));
+    let ec = |l: Location| l.ecef();
+    assert_eq!(ec(l + bare), l.ecef() + bare.ecef());
+    assert_eq!(ec(l - bare), l.ecef() - bare.ecef());
+    assert_eq!(ec(l * 0.5), 0.5 * l.ecef());
+    assert_eq!(ec(0.5 * l), 0.5 * l.ecef());
+
+    let geodetic = |v: ColumnVector3| {
+        let mut expected = Location::from_ecef(v);
+        expected.set_ellipse(WGS84_A, WGS84_B / WGS84_A * WGS84_A);
+        expected.geod_altitude().to_bits()
+    };
+    assert_ne!((l + bare).geod_altitude(), 0.0);
+    assert_eq!(
+        (l + bare).geod_altitude().to_bits(),
+        geodetic(l.ecef() + bare.ecef())
+    );
+    assert_eq!(
+        (l - bare).geod_altitude().to_bits(),
+        geodetic(l.ecef() - bare.ecef())
+    );
+    assert_eq!(
+        (l * 0.5).geod_altitude().to_bits(),
+        geodetic(0.5 * l.ecef())
+    );
+    assert_eq!(
+        (0.5 * l).geod_altitude().to_bits(),
+        geodetic(0.5 * l.ecef())
+    );
+    assert_eq!((bare + l).geod_altitude(), 0.0);
+}
+
+#[test]
+fn location_assignments_keep_the_ellipse_and_drop_the_stored_values() {
+    let start = cached_location();
+    let delta = Location::from_ecef(ColumnVector3::new(1.0e6, 2.0e6, -3.0e6));
+    let settled = |v: ColumnVector3| {
+        let mut expected = Location::from_ecef(v);
+        expected.set_ellipse(WGS84_A, WGS84_B);
+        (expected.radius(), expected.geod_altitude())
+    };
+
+    let mut l = start;
+    l += delta;
+    assert_eq!(l.ecef(), start.ecef() + delta.ecef());
+    assert_eq!((l.radius(), l.geod_altitude()), settled(l.ecef()));
+
+    let mut l = start;
+    l -= delta;
+    assert_eq!(l.ecef(), start.ecef() - delta.ecef());
+    assert_eq!((l.radius(), l.geod_altitude()), settled(l.ecef()));
+
+    let mut l = start;
+    l *= 0.5;
+    assert_eq!(l.ecef(), 0.5 * start.ecef());
+    assert_eq!((l.radius(), l.geod_altitude()), settled(l.ecef()));
+
+    // `/=` is `*=` by the reciprocal, which rounds differently from a
+    // division of each coordinate.
+    let mut l = start;
+    l /= 3.0;
+    assert_eq!(l.ecef(), start.ecef() * (1.0 / 3.0));
+    assert_eq!((l.radius(), l.geod_altitude()), settled(l.ecef()));
 }

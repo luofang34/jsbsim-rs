@@ -12,15 +12,15 @@ use super::contact::{BrakeGroup, Contact, ContactType};
 use super::force::FrictionType;
 use crate::Error;
 use crate::functions::FunctionSet;
-use crate::math::{ColumnVector3, E_X, E_Y, E_Z};
+use crate::math::{Axis, ColumnVector3};
 use crate::units::{RADTODEG, constrain};
 
 impl Contact {
     /// `ComputeSlipAngle`: kept while the wheel is all but still.
     pub(super) fn compute_slip_angle(&mut self) {
         let v = &self.force.ground_wheel_vel;
-        if v.magnitude2(E_X, E_Y) > 1E-3 {
-            self.state.wheel_slip = -libm::atan2(v[E_Y], v[E_X].abs()) * RADTODEG;
+        if v.magnitude_on(Axis::X, Axis::Y) > 1E-3 {
+            self.state.wheel_slip = -libm::atan2(v[Axis::Y], v[Axis::X].abs()) * RADTODEG;
         }
     }
 
@@ -72,12 +72,14 @@ impl Contact {
         index: usize,
     ) {
         let f = &mut self.force;
-        let normal = f.normal_force[E_Z];
+        let normal = f.normal_force[Axis::Z];
         let static_factor = self.surface.static_factor;
-        if self.kind == ContactType::Structure && f.ground_wheel_vel.magnitude2(E_X, E_Y) > 1E-3 {
+        if self.kind == ContactType::Structure
+            && f.ground_wheel_vel.magnitude_on(Axis::X, Axis::Y) > 1E-3
+        {
             let mut direction = f.ground_wheel_vel;
             f.static_friction = false;
-            direction[E_Z] = 0.;
+            direction[Axis::Z] = 0.;
             direction.normalize();
             let m = &mut f.multipliers.dynamic;
             m.force_jacobian = f.t_ground * direction;

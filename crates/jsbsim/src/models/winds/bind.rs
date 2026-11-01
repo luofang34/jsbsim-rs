@@ -5,7 +5,7 @@
 //! Properties of `FGWinds`, in JSBSim's binding order.
 
 use crate::Error;
-use crate::math::{Axis, E_DOWN, E_EAST, E_NORTH, E_P, E_Q, E_R, E_X, E_Y, E_Z};
+use crate::math::{Axis, E_DOWN, E_EAST, E_NORTH, E_P, E_Q, E_R};
 use crate::models::{Binder, Kind};
 
 const NED: [(&str, Axis); 3] = [("north", E_NORTH), ("east", E_EAST), ("down", E_DOWN)];
@@ -89,7 +89,7 @@ fn bind_cosine_gust(b: &mut Binder<'_>) -> Result<(), Error> {
     b.setter_only(&format!("{p}frame"), Kind::Int, |m, v| {
         m.winds.cosine_gust.frame = v as i32;
     })?;
-    for (name, i) in [("X", E_X), ("Y", E_Y), ("Z", E_Z)] {
+    for (name, i) in [("X", Axis::X), ("Y", Axis::Y), ("Z", Axis::Z)] {
         b.setter_only(&format!("{p}{name}-velocity-ft_sec"), d, move |m, v| {
             m.winds.cosine_gust.direction[i] = v;
         })?;

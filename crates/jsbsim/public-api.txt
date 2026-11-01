@@ -255,7 +255,7 @@ impl jsbsim::math::ColumnVector3
 pub fn jsbsim::math::ColumnVector3::cross(self, Self) -> Self
 pub fn jsbsim::math::ColumnVector3::dot(self, Self) -> f64
 pub fn jsbsim::math::ColumnVector3::magnitude(&self) -> f64
-pub fn jsbsim::math::ColumnVector3::magnitude2(&self, jsbsim::math::Axis, jsbsim::math::Axis) -> f64
+pub fn jsbsim::math::ColumnVector3::magnitude_on(&self, jsbsim::math::Axis, jsbsim::math::Axis) -> f64
 pub const fn jsbsim::math::ColumnVector3::new(f64, f64, f64) -> Self
 pub fn jsbsim::math::ColumnVector3::normalize(&mut self) -> &mut Self
 pub fn jsbsim::math::ColumnVector3::set(&mut self, f64, f64, f64)
@@ -314,13 +314,10 @@ impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::math::ColumnVector3
 impl core::panic::unwind_safe::UnwindSafe for jsbsim::math::ColumnVector3
 pub struct jsbsim::math::Location
 impl jsbsim::math::Location
-pub fn jsbsim::math::Location::add(&self, &Self) -> Self
-pub fn jsbsim::math::Location::add_assign(&mut self, &Self)
 pub fn jsbsim::math::Location::assign_ecef(&mut self, jsbsim::math::ColumnVector3)
 pub fn jsbsim::math::Location::cache_derived(&mut self)
 pub fn jsbsim::math::Location::cos_longitude(&self) -> f64
 pub fn jsbsim::math::Location::distance_to(&self, f64, f64) -> f64
-pub fn jsbsim::math::Location::div_assign(&mut self, f64)
 pub fn jsbsim::math::Location::ecef(&self) -> jsbsim::math::ColumnVector3
 pub fn jsbsim::math::Location::entry(&self, jsbsim::math::Axis) -> f64
 pub fn jsbsim::math::Location::from_ecef(jsbsim::math::ColumnVector3) -> Self
@@ -336,8 +333,6 @@ pub fn jsbsim::math::Location::location_to_local(&self, jsbsim::math::ColumnVect
 pub fn jsbsim::math::Location::longitude(&self) -> f64
 pub fn jsbsim::math::Location::longitude_deg(&self) -> f64
 pub fn jsbsim::math::Location::radius(&self) -> f64
-pub fn jsbsim::math::Location::scale(&self, f64) -> Self
-pub fn jsbsim::math::Location::scale_assign(&mut self, f64)
 pub fn jsbsim::math::Location::sea_level_radius(&self) -> f64
 pub fn jsbsim::math::Location::set_ellipse(&mut self, f64, f64)
 pub fn jsbsim::math::Location::set_entry(&mut self, jsbsim::math::Axis, f64)
@@ -347,8 +342,6 @@ pub fn jsbsim::math::Location::set_position(&mut self, f64, f64, f64)
 pub fn jsbsim::math::Location::set_position_geodetic(&mut self, f64, f64, f64)
 pub fn jsbsim::math::Location::set_radius(&mut self, f64)
 pub fn jsbsim::math::Location::sin_longitude(&self) -> f64
-pub fn jsbsim::math::Location::sub(&self, &Self) -> Self
-pub fn jsbsim::math::Location::sub_assign(&mut self, &Self)
 pub fn jsbsim::math::Location::tec2l(&self) -> jsbsim::math::Matrix33
 pub fn jsbsim::math::Location::tl2ec(&self) -> jsbsim::math::Matrix33
 impl core::clone::Clone for jsbsim::math::Location
@@ -360,6 +353,26 @@ pub fn jsbsim::math::Location::default() -> Self
 impl core::fmt::Debug for jsbsim::math::Location
 pub fn jsbsim::math::Location::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::Copy for jsbsim::math::Location
+impl core::ops::arith::Add for jsbsim::math::Location
+pub type jsbsim::math::Location::Output = jsbsim::math::Location
+pub fn jsbsim::math::Location::add(self, Self) -> Self
+impl core::ops::arith::AddAssign for jsbsim::math::Location
+pub fn jsbsim::math::Location::add_assign(&mut self, Self)
+impl core::ops::arith::DivAssign<f64> for jsbsim::math::Location
+pub fn jsbsim::math::Location::div_assign(&mut self, f64)
+impl core::ops::arith::Mul<f64> for jsbsim::math::Location
+pub type jsbsim::math::Location::Output = jsbsim::math::Location
+pub fn jsbsim::math::Location::mul(self, f64) -> Self
+impl core::ops::arith::Mul<jsbsim::math::Location> for f64
+pub type f64::Output = jsbsim::math::Location
+pub fn f64::mul(self, jsbsim::math::Location) -> jsbsim::math::Location
+impl core::ops::arith::MulAssign<f64> for jsbsim::math::Location
+pub fn jsbsim::math::Location::mul_assign(&mut self, f64)
+impl core::ops::arith::Sub for jsbsim::math::Location
+pub type jsbsim::math::Location::Output = jsbsim::math::Location
+pub fn jsbsim::math::Location::sub(self, Self) -> Self
+impl core::ops::arith::SubAssign for jsbsim::math::Location
+pub fn jsbsim::math::Location::sub_assign(&mut self, Self)
 impl core::marker::Freeze for jsbsim::math::Location
 impl core::marker::Send for jsbsim::math::Location
 impl core::marker::Sync for jsbsim::math::Location
@@ -515,34 +528,6 @@ impl core::marker::Unpin for jsbsim::math::Quaternion
 impl core::marker::UnsafeUnpin for jsbsim::math::Quaternion
 impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::math::Quaternion
 impl core::panic::unwind_safe::UnwindSafe for jsbsim::math::Quaternion
-pub const jsbsim::math::E_DOWN: jsbsim::math::Axis
-pub const jsbsim::math::E_DRAG: jsbsim::math::Axis
-pub const jsbsim::math::E_EAST: jsbsim::math::Axis
-pub const jsbsim::math::E_L: jsbsim::math::Axis
-pub const jsbsim::math::E_LAT: jsbsim::math::Axis
-pub const jsbsim::math::E_LIFT: jsbsim::math::Axis
-pub const jsbsim::math::E_LONG: jsbsim::math::Axis
-pub const jsbsim::math::E_M: jsbsim::math::Axis
-pub const jsbsim::math::E_N: jsbsim::math::Axis
-pub const jsbsim::math::E_NORTH: jsbsim::math::Axis
-pub const jsbsim::math::E_P: jsbsim::math::Axis
-pub const jsbsim::math::E_PHI: jsbsim::math::Axis
-pub const jsbsim::math::E_PITCH: jsbsim::math::Axis
-pub const jsbsim::math::E_PSI: jsbsim::math::Axis
-pub const jsbsim::math::E_Q: jsbsim::math::Axis
-pub const jsbsim::math::E_R: jsbsim::math::Axis
-pub const jsbsim::math::E_RAD: jsbsim::math::Axis
-pub const jsbsim::math::E_ROLL: jsbsim::math::Axis
-pub const jsbsim::math::E_SIDE: jsbsim::math::Axis
-pub const jsbsim::math::E_THT: jsbsim::math::Axis
-pub const jsbsim::math::E_U: jsbsim::math::Axis
-pub const jsbsim::math::E_V: jsbsim::math::Axis
-pub const jsbsim::math::E_W: jsbsim::math::Axis
-pub const jsbsim::math::E_X: jsbsim::math::Axis
-pub const jsbsim::math::E_Y: jsbsim::math::Axis
-pub const jsbsim::math::E_YAW: jsbsim::math::Axis
-pub const jsbsim::math::E_Z: jsbsim::math::Axis
-pub fn jsbsim::math::dot_product(jsbsim::math::ColumnVector3, jsbsim::math::ColumnVector3) -> f64
 pub mod jsbsim::snapshot
 #[non_exhaustive] pub enum jsbsim::snapshot::FingerprintPart
 pub jsbsim::snapshot::FingerprintPart::Documents

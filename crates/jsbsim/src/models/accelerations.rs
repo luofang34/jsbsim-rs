@@ -8,10 +8,7 @@
 
 use super::base::ModelBase;
 use crate::Error;
-use crate::math::{
-    Axis, ColumnVector3, E_L, E_M, E_N, E_P, E_Q, E_R, E_U, E_V, E_W, E_X, E_Y, E_Z, Matrix33,
-    dot_product,
-};
+use crate::math::{Axis, ColumnVector3, E_L, E_M, E_N, E_P, E_Q, E_R, E_U, E_V, E_W, Matrix33};
 use crate::models::{Binder, Kind};
 use crate::units::constrain;
 
@@ -224,7 +221,7 @@ impl Accelerations {
                 continue;
             };
             let (u, arm) = (m.force_jacobian, m.lever_arm);
-            *rhs_r = -dot_product(u, vdot + wdot.cross(arm)) / d;
+            *rhs_r = -u.dot(vdot + wdot.cross(arm)) / d;
             for x in row.iter_mut() {
                 *x /= d;
             }
@@ -279,7 +276,7 @@ fn friction_matrix(i: &Inputs, n: usize, a: &mut Vec<f64>) {
         let v1 = u / i.mass;
         let v2 = i.jinv * arm.cross(u);
         for (x, mc) in row.iter_mut().zip(&i.multipliers).skip(r) {
-            *x = dot_product(mc.force_jacobian, v1 + v2.cross(mc.lever_arm));
+            *x = mc.force_jacobian.dot(v1 + v2.cross(mc.lever_arm));
         }
     }
     for r in 1..n {
@@ -324,12 +321,12 @@ pub(crate) fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
         |m| f64::from(u8::from(m.accelerations.grav_torque)),
         |m, v| m.accelerations.grav_torque = v != 0.0,
     )?;
-    for (name, i) in [("x", E_X), ("y", E_Y), ("z", E_Z)] {
+    for (name, i) in [("x", Axis::X), ("y", Axis::Y), ("z", Axis::Z)] {
         b.getter(&format!("forces/fb{name}-weight-lbs"), move |m| {
             m.accelerations.weight(i)
         })?;
     }
-    for (name, i) in [("x", E_X), ("y", E_Y), ("z", E_Z)] {
+    for (name, i) in [("x", Axis::X), ("y", Axis::Y), ("z", Axis::Z)] {
         b.getter(&format!("forces/fb{name}-total-lbs"), move |m| {
             m.accelerations.input.force[i] + m.accelerations.friction_forces[i]
         })?;
@@ -344,7 +341,7 @@ pub(crate) fn bind(b: &mut Binder<'_>) -> Result<(), Error> {
             m.accelerations.input.ground_moment[i] + m.accelerations.friction_moments[i]
         })?;
     }
-    for (name, i) in [("x", E_X), ("y", E_Y), ("z", E_Z)] {
+    for (name, i) in [("x", Axis::X), ("y", Axis::Y), ("z", Axis::Z)] {
         b.getter(&format!("forces/fb{name}-gear-lbs"), move |m| {
             m.accelerations.input.ground_force[i] + m.accelerations.friction_forces[i]
         })?;

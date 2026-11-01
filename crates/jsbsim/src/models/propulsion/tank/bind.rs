@@ -6,7 +6,7 @@
 
 use super::Tank;
 use crate::Error;
-use crate::math::{E_X, E_Y, E_Z};
+use crate::math::Axis;
 use crate::models::{Binder, Kind, Models};
 
 type Get = fn(&Tank) -> f64;
@@ -46,20 +46,20 @@ const PROPERTIES: [(&str, Kind, Get, Option<Set>); 12] = [
     (
         "x-position",
         Kind::Double,
-        |t| t.xyz[E_X],
-        Some(|t, v| t.xyz[E_X] = v),
+        |t| t.xyz[Axis::X],
+        Some(|t, v| t.xyz[Axis::X] = v),
     ),
     (
         "y-position",
         Kind::Double,
-        |t| t.xyz[E_Y],
-        Some(|t, v| t.xyz[E_Y] = v),
+        |t| t.xyz[Axis::Y],
+        Some(|t, v| t.xyz[Axis::Y] = v),
     ),
     (
         "z-position",
         Kind::Double,
-        |t| t.xyz[E_Z],
-        Some(|t, v| t.xyz[E_Z] = v),
+        |t| t.xyz[Axis::Z],
+        Some(|t, v| t.xyz[Axis::Z] = v),
     ),
 ];
 

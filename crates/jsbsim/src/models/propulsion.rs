@@ -40,7 +40,7 @@ pub(crate) use thruster::ThrusterBase;
 
 use super::base::ModelBase;
 use super::mass_balance::MassBalance;
-use crate::math::{ColumnVector3, E_X, E_Y, E_Z, Matrix33};
+use crate::math::{Axis, ColumnVector3, Matrix33};
 use crate::units::LBTOSLUG;
 
 /// `FGEngine::Inputs`, which the executive loads before each run.
@@ -288,7 +288,13 @@ impl Propulsion {
             let xyz = t.xyz();
             out.push_str(&format!(
                 "{i:<4}{desc:<30}{:>12.1}{:>8.1}{:>8.1}{:>8.1}{:>12.1}{:>12.1}{:>12.1}\n",
-                t.contents, xyz[E_X], xyz[E_Y], xyz[E_Z], t.ixx, t.iyy, t.izz
+                t.contents,
+                xyz[Axis::X],
+                xyz[Axis::Y],
+                xyz[Axis::Z],
+                t.ixx,
+                t.iyy,
+                t.izz
             ));
         }
         out
@@ -303,9 +309,9 @@ impl Propulsion {
         let mut j = Matrix33::zero();
         for tank in &self.tanks {
             j += mass_balance.pointmass_inertia(LBTOSLUG * tank.contents, tank.xyz());
-            j[(E_X, E_X)] += tank.ixx;
-            j[(E_Y, E_Y)] += tank.iyy;
-            j[(E_Z, E_Z)] += tank.izz;
+            j[(Axis::X, Axis::X)] += tank.ixx;
+            j[(Axis::Y, Axis::Y)] += tank.iyy;
+            j[(Axis::Z, Axis::Z)] += tank.izz;
         }
         self.tank_j = j;
         j

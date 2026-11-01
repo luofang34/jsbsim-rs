@@ -2,7 +2,7 @@
 use super::contact::{BrakeGroup, DampType, SteerType};
 use super::*;
 use crate::Fdm;
-use crate::math::{E_X, E_Z};
+use crate::math::Axis;
 use crate::units::{DEGTORAD, RADTODEG};
 use crate::{LoadOptions, MemoryResolver};
 
@@ -126,7 +126,10 @@ fn setters_behave_as_in_jsbsim() {
     let mut fdm = load();
     assert!(fdm.set_property("contact/unit/x-position", 12.0).unwrap());
     let c = &fdm.models.ground_reactions.contacts[0];
-    assert_eq!((c.location[E_X], c.acting_location[E_X]), (12.0, 12.0));
+    assert_eq!(
+        (c.location[Axis::X], c.acting_location[Axis::X]),
+        (12.0, 12.0)
+    );
 
     fdm.set_property("gear/unit[1]/static_friction_coeff", 0.6)
         .unwrap();
@@ -266,9 +269,9 @@ fn a_pressed_structure_pushes_back_along_the_ground_normal() {
     // RunIC runs with dt = 0, where no compression speed is computed.
     assert_eq!(c.state.compress_speed, 0.0);
     assert_eq!(c.state.strut_force, -c.state.compress_length * 1000.0);
-    assert_eq!(c.force.normal_force[E_Z], -c.state.strut_force);
+    assert_eq!(c.force.normal_force[Axis::Z], -c.state.strut_force);
     let forces = fdm.models.ground_reactions.forces;
-    assert!((forces[E_Z] + 100.0).abs() < 1e-4, "{forces:?}");
+    assert!((forces[Axis::Z] + 100.0).abs() < 1e-4, "{forces:?}");
     // Static friction holds the contact: roll and side constraints.
     let registered = &fdm.models.ground_reactions.multipliers;
     assert_eq!(
@@ -276,7 +279,10 @@ fn a_pressed_structure_pushes_back_along_the_ground_normal() {
         &[(0, FrictionType::Roll), (0, FrictionType::Side)]
     );
     let m = &c.force.multipliers;
-    assert_eq!(m.roll.max, (1.0 * 1.0 * c.force.normal_force[E_Z]).abs());
+    assert_eq!(
+        m.roll.max,
+        (1.0 * 1.0 * c.force.normal_force[Axis::Z]).abs()
+    );
     assert_eq!(m.roll.min, -m.roll.max);
     assert!(fdm.get_property("contact/unit/WOW").unwrap() != 0.0);
 }
@@ -319,7 +325,7 @@ fn brakes_add_their_share_of_static_friction() {
     let fdm = pressed(WHEEL, 0.1, &[("fcs/left-brake-cmd-norm", 0.5)]);
     let c = &fdm.models.ground_reactions.contacts[0];
     assert_eq!(c.force.brake_coeff, 1.0 * 0.02 + 0.5 * 1.0 * (0.8 - 0.02));
-    let normal = c.force.normal_force[E_Z];
+    let normal = c.force.normal_force[Axis::Z];
     assert_eq!(
         c.force.multipliers.roll.max,
         (c.force.brake_coeff * normal).abs()
