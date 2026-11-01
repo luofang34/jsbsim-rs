@@ -6,13 +6,13 @@
 //! tree and the functions, and steps them in JSBSim's order.
 
 mod bindings;
+mod buoyant_forces;
 mod distribute;
 mod engine_load;
 mod engine_run;
 pub use engine_load::EngineLoad;
 mod env;
 pub(crate) use env::Env;
-mod buoyancy;
 mod exec_bind;
 mod ic_load;
 mod input;
