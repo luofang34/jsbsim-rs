@@ -348,6 +348,14 @@ impl Fdm {
         self.load_systems_and_rest(loader, &document)
     }
 
+    /// `FGMassBalance::Load(<mass_balance>)`, tying the point mass
+    /// properties as it adds them.
+    pub(crate) fn load_mass_balance(&mut self, el: &Element) -> Result<(), Error> {
+        let loaded = self.models.mass_balance.load(el, &mut self.env.binder());
+        self.loaded_without_documents();
+        loaded
+    }
+
     /// `LoadModel` from `<buoyant_forces>` on.
     fn load_systems_and_rest(
         &mut self,

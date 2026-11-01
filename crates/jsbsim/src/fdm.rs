@@ -302,14 +302,6 @@ impl Fdm {
         exec_bind::bind_exec(b)
     }
 
-    /// `FGMassBalance::Load(<mass_balance>)`, tying the point mass
-    /// properties as it adds them.
-    pub(crate) fn load_mass_balance(&mut self, el: &crate::xml::Element) -> Result<(), Error> {
-        let loaded = self.models.mass_balance.load(el, &mut self.env.binder());
-        self.loaded_without_documents();
-        loaded
-    }
-
     /// `SetAircraftPath`: where `load_script` finds aircraft, relative to
     /// the resolver's root.
     pub fn set_aircraft_path(&mut self, path: &str) {
