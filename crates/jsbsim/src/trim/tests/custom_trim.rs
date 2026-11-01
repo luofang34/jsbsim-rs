@@ -72,16 +72,18 @@ fn logged<T>(run: impl FnOnce() -> T) -> (Vec<String>, T) {
     (lines, result)
 }
 
-/// The line after `  Trim Results:` that starts with `name`.
+/// The axis row for control `name` after `  Trim Results:`, found by the
+/// padded name column `AxisReport` writes, so no other line can match.
 fn result_line<'a>(lines: &'a [String], name: &str) -> &'a str {
     let results = lines
         .iter()
         .position(|l| l == "  Trim Results:")
         .unwrap_or_else(|| panic!("no Trim Results in {lines:?}"));
+    let column = format!("  {name:<20}: ");
     lines[results..]
         .iter()
-        .find(|l| l.trim_start().starts_with(name))
-        .unwrap_or_else(|| panic!("no {name} in {lines:?}"))
+        .find(|l| l.starts_with(&column))
+        .unwrap_or_else(|| panic!("no {name} row in {lines:?}"))
 }
 
 #[test]
@@ -146,22 +148,30 @@ fn trim_results_log_alpha_in_degrees_and_leave_the_report_as_it_was() {
 
     let report = debug.last_trim().unwrap();
     assert_eq!(Some(report), quiet.last_trim());
-    let alpha = &report.axes[0];
-    // The display factor belongs to the control; the report holds only values.
-    let shown = format!("{:?}", report.axes[0]);
-    assert!(shown.contains("control_value"), "{shown}");
-    assert!(!shown.contains("control_convert"), "{shown}");
-    assert!(alpha.run_count > 0);
-    assert!(
-        (0.05..0.2).contains(&alpha.control_value),
-        "{}",
-        alpha.control_value
-    );
+    // Naming every field makes a new one, such as a display factor, fail to
+    // compile here: the display factor belongs to the control, and the
+    // report holds only values, alpha in radians.
+    let AxisReport {
+        state,
+        control,
+        control_value,
+        state_value,
+        tolerance,
+        sub_iterations: _,
+        successful: _,
+        stability: _,
+        run_count,
+        avg_stability: _,
+    } = report.axes[0];
+    assert_eq!((state, control), (State::Wdot, Control::Alpha));
+    assert!(state_value.abs() <= tolerance, "{state_value}");
+    assert!(run_count > 0);
+    assert!((0.05..0.2).contains(&control_value), "{control_value}");
     let line = result_line(&lines, "Angle of Attack");
     let degrees = format!(
         "  {:<20}: {:<6.2} wdot : ",
         "Angle of Attack",
-        alpha.control_value * RADTODEG
+        control_value * RADTODEG
     );
     assert!(line.starts_with(&degrees), "{line:?} vs {degrees:?}");
     assert!(line.ends_with("  Passed"), "{line:?}");
