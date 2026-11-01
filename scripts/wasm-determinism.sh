@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: LGPL-2.1-or-later
-# Opt-in check that the port computes the same bits natively and as wasm32:
+# Checks that the port computes the same bits natively and as wasm32 (CI's
+# wasm-determinism job runs it):
 # runs the jsbsim unit tests (among them the geodesic and random-number bit
 # pins) as wasm32-wasip1 under Node's WASI, then records the cases of
 # oracle/determinism.toml natively and as wasm32-wasip1 and fails on the

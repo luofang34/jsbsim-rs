@@ -11,9 +11,9 @@ use crate::Error;
 use crate::fdm::LoadContext;
 use crate::xml::Element;
 
-/// Component element names `FGFCS::Load` knows. A name a family registers
-/// loads that family; the others are refused as not ported yet.
-const KNOWN: &[&str] = &[
+/// Component element names `FGFCS::Load` knows, each loaded by the family
+/// that registers it.
+pub(super) const KNOWN: &[&str] = &[
     "lag_filter",
     "lead_lag_filter",
     "washout_filter",
@@ -107,12 +107,6 @@ fn load_component(
         }
         tracing::error!("{}: Unknown FCS component: {name}", el.location());
         return Ok(None);
-    }
-    if !families::registers(name) {
-        return Err(Error::Unsupported {
-            construct: format!("<{name}> FCS component"),
-            path: el.location().to_string(),
-        });
     }
     let mut base = Base::load(el, ctx, dt)?;
     let kind = families::load(el, &mut base, ctx, at)?;

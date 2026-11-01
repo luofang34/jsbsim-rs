@@ -7,7 +7,7 @@
 //! thrusters, its tanks, the fuel fed and moved between them, and what
 //! they contribute to the forces and the mass balance. [`families`] says
 //! how engine and thruster types are registered; an engine or thruster
-//! no type registers yet is refused with
+//! element no type registers is refused with
 //! [`Error::Unsupported`](crate::Error::Unsupported).
 
 mod bind;

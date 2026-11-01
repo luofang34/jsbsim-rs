@@ -141,6 +141,7 @@ macro_rules! families {
         }
 
         /// Whether a family registers element `name`.
+        #[cfg(test)]
         #[must_use]
         pub fn registers(name: &str) -> bool {
             matches!(name, $($($element)|+)|+)

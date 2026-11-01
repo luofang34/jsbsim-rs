@@ -17,8 +17,9 @@ pub enum Error {
         /// Path that was requested from the resolver.
         path: String,
     },
-    /// The input uses a JSBSim construct this port does not implement yet.
-    /// Loading fails rather than silently ignoring it.
+    /// The input uses a construct this port does not support, or one
+    /// JSBSim does not know under strict loading. Loading fails rather than
+    /// silently ignoring it.
     #[error("{path}: unsupported {construct}")]
     Unsupported {
         /// Element or attribute that is not supported, e.g. `<child>`.

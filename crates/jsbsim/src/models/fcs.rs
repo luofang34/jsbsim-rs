@@ -2,12 +2,13 @@
 // FGFCS: Copyright (C) 1999 Jon S. Berndt (jon@jsbsim.org).
 // FGFCSComponent, FGFCSFunction: Copyright (C) 2000-2005 Jon S. Berndt.
 // Derived from JSBSim src/models/FGFCS.{h,cpp} and
-// src/models/flight_control/FGFCSChannel.h.
+// src/models/FGFCSChannel.h.
 //
 //! Flight control, autopilot and system channels and their components.
 //! [`families`] says how component families are registered; a component
-//! no family registers yet is refused with
-//! [`Error::Unsupported`](crate::Error::Unsupported).
+//! JSBSim does not know is skipped with an error logged, or refused with
+//! [`Error::Unsupported`](crate::Error::Unsupported) under
+//! [`LoadOptions::strict`](crate::LoadOptions::strict).
 
 pub mod accelerometer;
 pub mod actuator;

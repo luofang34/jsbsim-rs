@@ -29,9 +29,10 @@ scripts/ci.sh clippy     # one gate; scripts/ci.sh --list names them
 
 `scripts/ci.sh` runs `cargo fmt --check`, Clippy with `-D warnings` (on the
 workspace, and on `jsbsim` alone as a dependent builds it), the tests and doc
-tests, `cargo doc` with `-D missing_docs -D broken_intra_doc_links`, a release
-build, the `wasm32-unknown-unknown` build of `jsbsim`, the checks in
-`scripts/check-*.sh`, and the scripts' tests in `scripts/*.test.sh`. One of
+tests, `cargo doc` with `-D missing_docs` and rustdoc's intra-doc link lints
+denied, a release build, the `wasm32-unknown-unknown` build of `jsbsim`, the
+checks in `scripts/check-*.sh`, and the scripts' tests in `scripts/*.test.sh`.
+One of
 the checks, `scripts/check-public-api.sh`, compares the public API of
 `jsbsim` with `crates/jsbsim/public-api.txt` and needs
 `cargo install --locked cargo-public-api@0.52.0`; after an intended API change,
@@ -41,10 +42,11 @@ GitHub Actions runs the same gates (`.github/workflows/ci.yml`): the
 `quality-gates` job runs each `scripts/ci.sh` gate as a step on Linux,
 `wasm-determinism` runs `scripts/wasm-determinism.sh`, and `oracle` runs
 `scripts/oracle-ci.sh` on macOS arm64 against C++ JSBSim checked out at the
-goldens' `upstream_commit`. `.github/workflows/oracle-extended.yml` runs
+goldens' `upstream_commit`, then `scripts/verify-goldens-committed.sh`, which
+fails when a golden, input or scenario file on disk is not in the commit. `.github/workflows/oracle-extended.yml` runs
 `scripts/oracle-nasa.sh` weekly and `scripts/oracle-bench.sh` on request.
 `.github/workflows/upstream-sync.yml` runs `scripts/upstream-report.sh`
-weekly and keeps one `upstream-sync` issue listing the upstream JSBSim
+weekly and keeps an open `upstream-sync` issue listing the upstream JSBSim
 commits since that pin that touch C++ sources, model data or tests.
 `.github/workflows/release.yml` publishes `jsbsim` to crates.io when a tag
 `v<version>` matching `crates/jsbsim/Cargo.toml` is pushed, or when started
