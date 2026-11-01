@@ -16,7 +16,7 @@ ported=1111111111111111111111111111111111111111
 skipped=2222222222222222222222222222222222222222
 
 fail() {
-  echo "check-upstream-report.test: $*" >&2
+  echo "upstream-report.test: $*" >&2
   exit 1
 }
 
@@ -68,4 +68,4 @@ commit_json src/simgear/xml/expat.h .github/workflows/x.yml > "$dir/${repo}_comm
 out=$(report "$dir")
 [ -z "$out" ] || fail "nothing relevant, yet it printed:"$'\n'"$out"
 
-echo "check-upstream-report.test: ok"
+echo "upstream-report.test: ok"

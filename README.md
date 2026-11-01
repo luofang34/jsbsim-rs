@@ -30,9 +30,10 @@ scripts/ci.sh clippy     # one gate; scripts/ci.sh --list names them
 `scripts/ci.sh` runs `cargo fmt --check`, Clippy with `-D warnings` (on the
 workspace, and on `jsbsim` alone as a dependent builds it), the tests and doc
 tests, `cargo doc` with `-D missing_docs -D broken_intra_doc_links`, a release
-build, the `wasm32-unknown-unknown` build of `jsbsim`, and the checks in
-`scripts/check-*.sh`. One of them, `scripts/check-public-api.sh`, compares the
-public API of `jsbsim` with `crates/jsbsim/public-api.txt` and needs
+build, the `wasm32-unknown-unknown` build of `jsbsim`, the checks in
+`scripts/check-*.sh`, and the scripts' tests in `scripts/*.test.sh`. One of
+the checks, `scripts/check-public-api.sh`, compares the public API of
+`jsbsim` with `crates/jsbsim/public-api.txt` and needs
 `cargo install --locked cargo-public-api@0.52.0`; after an intended API change,
 `scripts/check-public-api.sh --bless` rewrites the listing.
 

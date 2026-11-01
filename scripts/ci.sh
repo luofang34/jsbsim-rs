@@ -39,9 +39,16 @@ gate() {
       ;;
     release) run cargo build --workspace --release ;;
     wasm) run cargo build -p jsbsim --target wasm32-unknown-unknown ;;
+    # A check's own test matches both globs and runs as a test.
     checks)
       for check in scripts/check-*.sh; do
-        run "$check"
+        case "$check" in
+          *.test.sh) ;;
+          *) run "$check" ;;
+        esac
+      done
+      for script_test in scripts/*.test.sh; do
+        run "$script_test"
       done
       ;;
     *)

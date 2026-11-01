@@ -28,20 +28,20 @@ commit_without() {
 }
 
 if ! "$checker" "$(commit_without)" > "$scratch/full.log" 2>&1; then
-  echo "check-verify-goldens-committed.test: a complete commit failed" >&2
+  echo "verify-goldens-committed.test: a complete commit failed" >&2
   cat "$scratch/full.log" >&2
   exit 1
 fi
 for dir in "${dirs[@]}"; do
   file=$(find "$dir" -type f | LC_ALL=C sort | sed -n 1p)
   if "$checker" "$(commit_without "$file")" > "$scratch/case.log" 2>&1; then
-    echo "check-verify-goldens-committed.test: missing $file passed" >&2
+    echo "verify-goldens-committed.test: missing $file passed" >&2
     exit 1
   fi
   if ! grep -qxF "  $file" "$scratch/case.log"; then
-    echo "check-verify-goldens-committed.test: $file not named" >&2
+    echo "verify-goldens-committed.test: $file not named" >&2
     cat "$scratch/case.log" >&2
     exit 1
   fi
 done
-echo "check-verify-goldens-committed.test: ok"
+echo "verify-goldens-committed.test: ok"

@@ -8,7 +8,7 @@
 # It only reads the public GitHub API. Usage:
 #   scripts/upstream-report.sh
 # JSBSIM_UPSTREAM_FIXTURES names a directory of stored API responses read in
-# place of the API (for scripts/check-upstream-report.test.sh): the response
+# place of the API (for scripts/upstream-report.test.sh): the response
 # for path a/b/c is a_b_c.json.
 set -euo pipefail
 cd "$(dirname "$0")/.."
