@@ -88,6 +88,19 @@ fn a_file_jsbsim_throws_on_is_an_error_to_the_raw_load_too() {
     }
 }
 
+/// A document that is not `<initialize>` names its file once, in the
+/// location, and its root element in the message.
+#[test]
+fn a_file_that_is_not_a_reset_file_says_what_it_is() {
+    let e = load(&mut fdm(), "<reset/>").unwrap_err();
+    let text = e.to_string();
+    assert!(
+        text.ends_with("not a reset file: its root element is <reset>, not <initialize>"),
+        "{text}"
+    );
+    assert_eq!(text.matches("init.xml").count(), 1, "{text}");
+}
+
 #[test]
 fn the_first_inconsistency_is_the_one_reported() {
     let xml = v2(r#"<position frame="HOME"/>

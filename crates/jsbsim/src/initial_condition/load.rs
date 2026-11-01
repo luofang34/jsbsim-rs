@@ -70,8 +70,8 @@ impl InitialCondition {
     ) -> Result<LoadOutcome, Error> {
         if document.name() != "initialize" {
             return Err(document.model_error(format!(
-                "File: {} is not a reset file.",
-                document.file_name()
+                "not a reset file: its root element is <{}>, not <initialize>",
+                document.name()
             )));
         }
         let version = if document.has_attribute("version") {

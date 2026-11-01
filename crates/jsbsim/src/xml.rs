@@ -85,12 +85,6 @@ impl Element {
         }
     }
 
-    /// Resource path of the document the element came from.
-    #[must_use]
-    pub(crate) fn file_name(&self) -> &str {
-        &self.file
-    }
-
     /// One-based line of the start tag.
     #[must_use]
     pub fn line_number(&self) -> u32 {
