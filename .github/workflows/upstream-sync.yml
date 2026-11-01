@@ -43,7 +43,7 @@ jobs:
           fi
           marker=$(sed -n 1p "$RUNNER_TEMP/report.md")
           latest=$(gh issue list --label upstream-sync --state all --limit 1 \
-            --json number,state,body --jq '.[0] // empty | "\(.number)\t\(.state)\t\(.body | split("\n")[0])"')
+            --json number,state,body --jq '.[0] // empty | "\(.number)\t\(.state)\t\(.body | split("\n")[0] // "" | sub("\r$"; ""))"')
           IFS=$'\t' read -r number state seen <<<"$latest" || true
           if [ "${seen:-}" = "$marker" ]; then
             echo "Issue #$number already reports these changes."

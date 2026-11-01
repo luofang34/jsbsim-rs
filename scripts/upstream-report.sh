@@ -2,14 +2,15 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # Prints a Markdown report of the upstream JSBSim master commits since the
 # port's pin (upstream_commit in oracle/goldens/ball/manifest.toml) that
-# touch C++ sources or aircraft, engine, systems or script data, and prints
-# nothing when none do. The report's first line records the newest such
-# commit, so .github/workflows/upstream-sync.yml reports each change once.
+# touch C++ sources, aircraft, engine, systems, script or check-case data,
+# or test XML, and prints nothing when none do. The report's first line
+# records the newest such commit, so .github/workflows/upstream-sync.yml
+# reports each change once.
 # It only reads the public GitHub API. Usage:
 #   scripts/upstream-report.sh
 # JSBSIM_UPSTREAM_FIXTURES names a directory of stored API responses read in
-# place of the API (for scripts/upstream-report.test.sh): the response
-# for path a/b/c is a_b_c.json.
+# place of the API (for scripts/upstream-report.test.sh): each /, ? and = of
+# a path becomes _, so the response for a/b?c=d is a_b_c_d.json.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -18,17 +19,21 @@ manifest=oracle/goldens/ball/manifest.toml
 
 api() {
   if [ -n "${JSBSIM_UPSTREAM_FIXTURES:-}" ]; then
-    cat "$JSBSIM_UPSTREAM_FIXTURES/$(printf '%s' "$1" | tr '/' '_').json"
+    cat "$JSBSIM_UPSTREAM_FIXTURES/$(printf '%s' "$1" | tr '/?=' '___').json"
   else
     gh api "$1"
   fi
 }
 
-# What the port follows: everything under src/ but the bundled expat and
-# the MSVC project files, and the data directories the goldens load.
+# Keeps the "path<TAB>size" lines of what the port follows: everything under
+# src/ but the bundled expat and the MSVC project files, the data directories
+# the goldens and the oracle's corpus load, and the XML under tests/, which
+# the corpus loads too, without the Python and CMake files beside it. grep -E
+# has no \t, so the tab that ends a path is a literal one.
 relevant() {
-  grep -E '^(src|aircraft|engine|systems|scripts)/' |
-    grep -vE '^src/simgear/xml/|\.vcxproj(\.filters)?$' || true
+  local tab=$'\t'
+  grep -E "^(src|aircraft|engine|systems|scripts|check_cases)/|^tests/[^$tab]*\.xml$tab" |
+    grep -vE "^src/simgear/xml/|\.vcxproj(\.filters)?$tab" || true
 }
 
 pin=$(sed -n 's/^upstream_commit = "\([0-9a-f]\{40\}\)"$/\1/p' "$manifest")
@@ -45,23 +50,22 @@ body=""
 newest=""
 count=0
 while IFS=$'\t' read -r sha date title; do
-  files=$(api "repos/$repo/commits/$sha" |
+  kept=$(api "repos/$repo/commits/$sha" |
     jq -r '.files[] | "\(.filename)\t+\(.additions) -\(.deletions)"' |
-    awk -F'\t' '{ print $1 "\t" $2 }')
-  kept=$(cut -f1 <<<"$files" | relevant)
+    relevant)
   [ -n "$kept" ] || continue
   newest=$sha
   count=$((count + 1))
   body+="- [\`${sha:0:9}\`](https://github.com/$repo/commit/$sha) $date $title"$'\n'
-  while IFS= read -r file; do
-    size=$(awk -F'\t' -v f="$file" '$1 == f { print $2 }' <<<"$files")
+  while IFS=$'\t' read -r file size; do
     body+="  - \`$file\` $size"$'\n'
   done <<<"$kept"
 done < <(jq -r '.commits[] | [.sha, .commit.committer.date[:10], (.commit.message | split("\n")[0])] | @tsv' <<<"$compare")
 
 [ "$count" -gt 0 ] || exit 0
 
-tags=$(api "repos/$repo/tags")
+# The API's default page of 30 loses the pin's tag once 30 newer tags exist.
+tags=$(api "repos/$repo/tags?per_page=100")
 pin_tag=$(jq -r --arg pin "$pin" '[.[] | select(.commit.sha == $pin) | .name][0] // empty' <<<"$tags")
 newest_tag=$(jq -r '.[0].name // empty' <<<"$tags")
 
