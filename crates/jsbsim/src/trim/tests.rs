@@ -2,7 +2,12 @@
 use super::axis::DEFAULT_TOLERANCE;
 use super::*;
 use crate::math::{E_X, E_Z};
+use crate::units::RADTODEG;
 use crate::{Error, MemoryResolver};
+use std::sync::{Arc, Mutex};
+use tracing::field::{Field, Visit};
+use tracing::span::{Attributes, Id, Record};
+use tracing::{Event, Metadata, Subscriber};
 
 /// A tripod of three bogeys under a point mass, without aerodynamics, as
 /// JSBSim's tests/tripod.xml.
@@ -52,6 +57,84 @@ fn tripod() -> Fdm {
     r.insert("aircraft/tripod/tripod.xml", TRIPOD);
     fdm.load_model(&r, "aircraft", "tripod").unwrap();
     fdm
+}
+
+/// The tripod clear of the ground with lift that grows with alpha, which a
+/// custom wdot axis trims with alpha.
+fn lifting_tripod() -> Fdm {
+    const LIFT: &str = r#"<aerodynamics>
+        <axis name="LIFT">
+            <function name="aero/force/lift">
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>aero/alpha-rad</property>
+                    <value>20</value>
+                </product>
+            </function>
+        </axis>
+    </aerodynamics>
+</fdm_config>"#;
+    let mut fdm = Fdm::new().unwrap();
+    let mut r = MemoryResolver::new();
+    let text = TRIPOD.replace("</fdm_config>", LIFT);
+    r.insert("aircraft/tripod/tripod.xml", text.as_str());
+    fdm.load_model(&r, "aircraft", "tripod").unwrap();
+    fdm.set_property("ic/h-sl-ft", 1000.0).unwrap();
+    fdm.set_property("ic/vt-fps", 200.0).unwrap();
+    fdm.run_ic().unwrap();
+    fdm
+}
+
+/// Keeps the message of every event logged on its thread.
+struct Capture(Arc<Mutex<Vec<String>>>);
+
+struct Message(String);
+
+impl Visit for Message {
+    fn record_debug(&mut self, field: &Field, value: &dyn std::fmt::Debug) {
+        if field.name() == "message" {
+            self.0 = format!("{value:?}");
+        }
+    }
+}
+
+impl Subscriber for Capture {
+    fn enabled(&self, _: &Metadata<'_>) -> bool {
+        true
+    }
+    fn new_span(&self, _: &Attributes<'_>) -> Id {
+        Id::from_u64(1)
+    }
+    fn record(&self, _: &Id, _: &Record<'_>) {}
+    fn record_follows_from(&self, _: &Id, _: &Id) {}
+    fn event(&self, event: &Event<'_>) {
+        let mut message = Message(String::new());
+        event.record(&mut message);
+        self.0.lock().unwrap().push(message.0);
+    }
+    fn enter(&self, _: &Id) {}
+    fn exit(&self, _: &Id) {}
+}
+
+/// What `run` logs on this thread, and its result.
+fn logged<T>(run: impl FnOnce() -> T) -> (Vec<String>, T) {
+    let lines = Arc::new(Mutex::new(Vec::new()));
+    let result = tracing::subscriber::with_default(Capture(Arc::clone(&lines)), run);
+    let lines = lines.lock().unwrap().clone();
+    (lines, result)
+}
+
+/// The line after `  Trim Results:` that starts with `name`.
+fn result_line<'a>(lines: &'a [String], name: &str) -> &'a str {
+    let results = lines
+        .iter()
+        .position(|l| l == "  Trim Results:")
+        .unwrap_or_else(|| panic!("no Trim Results in {lines:?}"));
+    lines[results..]
+        .iter()
+        .find(|l| l.trim_start().starts_with(name))
+        .unwrap_or_else(|| panic!("no {name} in {lines:?}"))
 }
 
 #[test]
@@ -287,4 +370,78 @@ fn a_custom_trim_trims_the_axes_it_is_given() {
         assert!(a.state_value.abs() <= a.tolerance, "{a:?}");
     }
     assert_eq!(fdm.get_property("simulation/trim-completed").unwrap(), 1.0);
+}
+
+/// `Trim Results:` shows alpha as `FGTrimAxis::AxisReport` does, in degrees,
+/// while the report keeps it in radians and debug logging changes no count.
+#[test]
+fn trim_results_log_alpha_in_degrees_and_leave_the_report_as_it_was() {
+    let axes = [(State::Wdot, Control::Alpha)];
+    let mut quiet = lifting_tripod();
+    quiet.do_trim_custom(&axes).unwrap();
+    let mut debug = lifting_tripod();
+    debug.set_property("simulation/jsbsim-debug", 1.0).unwrap();
+    let (lines, result) = logged(|| debug.do_trim_custom(&axes));
+    result.unwrap();
+
+    let report = debug.last_trim().unwrap();
+    assert_eq!(Some(report), quiet.last_trim());
+    let alpha = &report.axes[0];
+    assert!(alpha.run_count > 0);
+    assert!(
+        (0.05..0.2).contains(&alpha.control_value),
+        "{}",
+        alpha.control_value
+    );
+    let line = result_line(&lines, "Angle of Attack");
+    let degrees = format!(
+        "  {:<20}: {:<6.2} wdot : ",
+        "Angle of Attack",
+        alpha.control_value * RADTODEG
+    );
+    assert!(line.starts_with(&degrees), "{line:?} vs {degrees:?}");
+    assert!(line.ends_with("  Passed"), "{line:?}");
+}
+
+/// `AxisReport` converts only the controls whose `FGTrimAxis` constructor
+/// sets `control_convert`: pitch and heading stay in radians.
+#[test]
+fn trim_results_convert_only_the_controls_axis_report_converts() {
+    let mut fdm = tripod();
+    fdm.set_property("ic/h-sl-ft", 1000.0).unwrap();
+    fdm.set_property("ic/theta-deg", 10.0).unwrap();
+    fdm.set_property("ic/phi-deg", 20.0).unwrap();
+    fdm.set_property("ic/psi-true-deg", 30.0).unwrap();
+    fdm.run_ic().unwrap();
+    fdm.set_property("simulation/jsbsim-debug", 1.0).unwrap();
+    for (control, name, convert) in [
+        (Control::Theta, "Pitch Angle", 1.0),
+        (Control::Heading, "Heading", 1.0),
+        (Control::Phi, "Roll Angle", RADTODEG),
+    ] {
+        let (lines, result) = logged(|| fdm.do_trim_custom(&[(State::All, control)]));
+        result.unwrap();
+        let value = fdm.last_trim().unwrap().axes[0].control_value;
+        assert!(value > 0.1, "{name}: {value}");
+        let shown = format!("  {name:<20}: {:<6.2} all  : ", value * convert);
+        let line = result_line(&lines, name);
+        assert!(line.starts_with(&shown), "{line:?} vs {shown:?}");
+    }
+    let ic = fdm.models.ic.clone();
+    for (control, convert) in [
+        (Control::Throttle, 1.0),
+        (Control::Beta, RADTODEG),
+        (Control::Alpha, RADTODEG),
+        (Control::Elevator, 1.0),
+        (Control::Aileron, 1.0),
+        (Control::Rudder, 1.0),
+        (Control::AltAgl, 1.0),
+        (Control::Gamma, RADTODEG),
+        (Control::PitchTrim, 1.0),
+        (Control::RollTrim, 1.0),
+        (Control::YawTrim, 1.0),
+    ] {
+        let axis = TrimAxis::new(&fdm, &ic, State::Wdot, control);
+        assert_eq!(axis.converts().0, convert, "{control:?}");
+    }
 }

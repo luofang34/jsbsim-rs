@@ -46,7 +46,7 @@ impl Fdm {
         let success = trim.do_trim(self)?;
         let report = trim.report(self);
         if self.models.exec.debug_level > 0 {
-            log_report(&report);
+            report.log();
         }
         self.last_trim = Some(report);
         self.trims_run = self.trims_run.wrapping_add(1);
@@ -88,25 +88,5 @@ impl Fdm {
     #[must_use]
     pub fn trim_requested(&self) -> TrimMode {
         self.models.ic.trim_requested()
-    }
-}
-
-/// `FGTrim::Report`, logged.
-fn log_report(report: &TrimReport) {
-    tracing::info!("  Trim Results:");
-    for a in &report.axes {
-        tracing::info!(
-            "  {:<20}: {:<6.2} {:<5}: {:<9.2e} Tolerance: {:<3.0e}  {}",
-            a.control.name(),
-            a.control_value,
-            a.state.name(),
-            a.state_value,
-            a.tolerance,
-            if a.state_value.abs() < a.tolerance.abs() {
-                "Passed"
-            } else {
-                "Failed"
-            }
-        );
     }
 }

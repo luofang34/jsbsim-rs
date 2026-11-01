@@ -32,6 +32,8 @@ pub struct AxisReport {
     pub run_count: i32,
     /// `GetAvgStability`.
     pub avg_stability: f64,
+    /// `control_convert`: the factor `AxisReport` shows `control_value` in.
+    control_convert: f64,
 }
 
 /// What `FGTrim::Report` and `TrimStats` show.
@@ -66,6 +68,7 @@ impl Trim {
                 stability: a.stability(),
                 run_count: a.run_count(),
                 avg_stability: a.avg_stability(),
+                control_convert: a.converts().0,
             })
             .collect();
         TrimReport {
@@ -77,18 +80,57 @@ impl Trim {
     }
 }
 
+impl TrimReport {
+    /// `FGTrim::Report`, logged from what this report read, so that logging
+    /// reads no axis a second time.
+    pub(crate) fn log(&self) {
+        tracing::info!("  Trim Results:");
+        for a in &self.axes {
+            log_line(
+                a.control,
+                a.control_value,
+                a.control_convert,
+                a.state,
+                a.state_value,
+                a.tolerance,
+            );
+        }
+    }
+}
+
 /// `AxisReport`, logged.
 pub(super) fn log_axis(axis: &mut TrimAxis, fdm: &Fdm) {
-    let (control_convert, _) = axis.converts();
-    let state = axis.state(fdm) + axis.state_target();
-    let passed = state.abs() < axis.tolerance().abs();
+    let state_value = axis.state(fdm) + axis.state_target();
+    log_line(
+        axis.control_type(),
+        axis.control(),
+        axis.converts().0,
+        axis.state_type(),
+        state_value,
+        axis.tolerance(),
+    );
+}
+
+/// The line of `AxisReport`. `state_value` already has the target added.
+fn log_line(
+    control: Control,
+    control_value: f64,
+    control_convert: f64,
+    state: State,
+    state_value: f64,
+    tolerance: f64,
+) {
     tracing::info!(
         "  {:<20}: {:<6.2} {:<5}: {:<9.2e} Tolerance: {:<3.0e}  {}",
-        axis.control_type().name(),
-        axis.control() * control_convert,
-        axis.state_type().name(),
-        state,
-        axis.tolerance(),
-        if passed { "Passed" } else { "Failed" }
+        control.name(),
+        control_value * control_convert,
+        state.name(),
+        state_value,
+        tolerance,
+        if state_value.abs() < tolerance.abs() {
+            "Passed"
+        } else {
+            "Failed"
+        }
     );
 }
