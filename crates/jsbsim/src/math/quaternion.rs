@@ -48,7 +48,7 @@ impl Default for Quaternion {
 impl Quaternion {
     /// A quaternion with the given components, not normalized.
     #[must_use]
-    pub fn from_components(q1: f64, q2: f64, q3: f64, q4: f64) -> Self {
+    pub const fn from_components(q1: f64, q2: f64, q3: f64, q4: f64) -> Self {
         Self {
             data: [q1, q2, q3, q4],
             derived: None,
@@ -57,7 +57,7 @@ impl Quaternion {
 
     /// `zero()`.
     #[must_use]
-    pub fn zero() -> Self {
+    pub const fn zero() -> Self {
         Self::from_components(0.0, 0.0, 0.0, 0.0)
     }
 
@@ -129,7 +129,7 @@ impl Quaternion {
 
     /// Components as an array.
     #[must_use]
-    pub fn to_array(&self) -> [f64; 4] {
+    pub const fn to_array(&self) -> [f64; 4] {
         self.data
     }
 

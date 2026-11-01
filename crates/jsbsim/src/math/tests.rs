@@ -308,3 +308,13 @@ fn quaternion_assignment_by_value_drops_the_cached_angles() {
     q *= turn;
     assert!(close(q.euler()[E_PHI], 0.25, 1e-12), "{:?}", q.euler());
 }
+
+#[test]
+fn quaternion_constructs_and_reads_in_const_context() {
+    const IDENTITY: Quaternion = Quaternion::from_components(1.0, 0.0, 0.0, 0.0);
+    const COMPONENTS: [f64; 4] = IDENTITY.to_array();
+    const ZERO: [f64; 4] = Quaternion::zero().to_array();
+    assert_eq!(IDENTITY, Quaternion::default());
+    assert_eq!(COMPONENTS, [1.0, 0.0, 0.0, 0.0]);
+    assert_eq!(ZERO, [0.0; 4]);
+}

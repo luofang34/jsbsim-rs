@@ -437,7 +437,7 @@ pub fn jsbsim::math::Quaternion::euler_deg(&self) -> jsbsim::math::ColumnVector3
 pub fn jsbsim::math::Quaternion::exp(jsbsim::math::ColumnVector3) -> Self
 pub fn jsbsim::math::Quaternion::from_angle_axis(f64, jsbsim::math::ColumnVector3) -> Self
 pub fn jsbsim::math::Quaternion::from_axis_index(jsbsim::math::Axis, f64) -> Self
-pub fn jsbsim::math::Quaternion::from_components(f64, f64, f64, f64) -> Self
+pub const fn jsbsim::math::Quaternion::from_components(f64, f64, f64, f64) -> Self
 pub fn jsbsim::math::Quaternion::from_euler(f64, f64, f64) -> Self
 pub fn jsbsim::math::Quaternion::from_euler_vector(jsbsim::math::ColumnVector3) -> Self
 pub fn jsbsim::math::Quaternion::from_matrix(&jsbsim::math::Matrix33) -> Self
@@ -449,8 +449,8 @@ pub fn jsbsim::math::Quaternion::sin_euler(&self, jsbsim::math::Axis) -> f64
 pub fn jsbsim::math::Quaternion::sqr_magnitude(&self) -> f64
 pub fn jsbsim::math::Quaternion::t(&self) -> jsbsim::math::Matrix33
 pub fn jsbsim::math::Quaternion::t_inv(&self) -> jsbsim::math::Matrix33
-pub fn jsbsim::math::Quaternion::to_array(&self) -> [f64; 4]
-pub fn jsbsim::math::Quaternion::zero() -> Self
+pub const fn jsbsim::math::Quaternion::to_array(&self) -> [f64; 4]
+pub const fn jsbsim::math::Quaternion::zero() -> Self
 impl core::clone::Clone for jsbsim::math::Quaternion
 pub fn jsbsim::math::Quaternion::clone(&self) -> jsbsim::math::Quaternion
 impl core::cmp::PartialEq for jsbsim::math::Quaternion
