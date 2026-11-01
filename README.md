@@ -45,7 +45,7 @@ goldens' `upstream_commit`. `.github/workflows/oracle-extended.yml` runs
 `scripts/oracle-nasa.sh` weekly and `scripts/oracle-bench.sh` on request.
 `.github/workflows/upstream-sync.yml` runs `scripts/upstream-report.sh`
 weekly and keeps one `upstream-sync` issue listing the upstream JSBSim
-commits since that pin that touch C++ sources or model data.
+commits since that pin that touch C++ sources, model data or tests.
 `.github/workflows/release.yml` publishes `jsbsim` to crates.io when a tag
 `v<version>` matching `crates/jsbsim/Cargo.toml` is pushed, or when started
 by hand with an existing tag, as a dry run by default. Each run waits for a

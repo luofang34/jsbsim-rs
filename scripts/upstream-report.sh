@@ -3,8 +3,8 @@
 # Prints a Markdown report of the upstream JSBSim master commits since the
 # port's pin (upstream_commit in oracle/goldens/ball/manifest.toml) that
 # touch C++ sources, aircraft, engine, systems, script or check-case data,
-# or test XML, and prints nothing when none do. The report's first line
-# records the newest such commit, so .github/workflows/upstream-sync.yml
+# or upstream's tests, and prints nothing when none do. The report's first
+# line records the newest such commit, so .github/workflows/upstream-sync.yml
 # reports each change once.
 # It only reads the public GitHub API. Usage:
 #   scripts/upstream-report.sh
@@ -27,13 +27,13 @@ api() {
 
 # Keeps the "path<TAB>size" lines of what the port follows: everything under
 # src/ but the bundled expat and the MSVC project files, the data directories
-# the goldens and the oracle's corpus load, and the XML under tests/, which
-# the corpus loads too, without the Python and CMake files beside it. grep -E
-# has no \t, so the tab that ends a path is a literal one.
+# the goldens and the oracle's corpus load, and tests/ but its CMake file: the
+# corpus loads the XML there, and tools/oracle ports the Python tests beside
+# it. grep -E has no \t, so the tab that ends a path is a literal one.
 relevant() {
   local tab=$'\t'
-  grep -E "^(src|aircraft|engine|systems|scripts|check_cases)/|^tests/[^$tab]*\.xml$tab" |
-    grep -vE "^src/simgear/xml/|\.vcxproj(\.filters)?$tab" || true
+  grep -E "^(src|aircraft|engine|systems|scripts|check_cases|tests)/" |
+    grep -vE "^src/simgear/xml/|^tests/CMakeLists\.txt$tab|\.vcxproj(\.filters)?$tab" || true
 }
 
 pin=$(sed -n 's/^upstream_commit = "\([0-9a-f]\{40\}\)"$/\1/p' "$manifest")
