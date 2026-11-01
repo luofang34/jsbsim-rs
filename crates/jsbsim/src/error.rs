@@ -19,11 +19,12 @@ pub enum Error {
     },
     /// The input uses a JSBSim construct this port does not implement yet.
     /// Loading fails rather than silently ignoring it.
-    #[error("unsupported {construct} in {path}")]
+    #[error("{path}: unsupported {construct}")]
     Unsupported {
-        /// Element or attribute that is not supported, e.g. `<rotor>`.
+        /// Element or attribute that is not supported, e.g. `<child>`.
         construct: String,
-        /// Resource in which it appeared, with its line when known.
+        /// Where it appeared: the element's [`SourceLocation`] as displayed,
+        /// `In file foo.xml: line 12`.
         path: String,
     },
     /// Malformed XML or an invalid value in it.
@@ -34,11 +35,12 @@ pub enum Error {
     Function(#[from] FunctionError),
     /// An `<input>` whose `type` JSBSim has no input class for (`NONE`
     /// among them), which fails the whole load in JSBSim.
-    #[error("no input type for <input type=\"{kind}\"> in {path}")]
+    #[error("{path}: no input type for <input type=\"{kind}\">")]
     UnknownInputType {
         /// The `type` attribute as written.
         kind: String,
-        /// Resource in which it appeared, with its line when known.
+        /// Where it appeared: the element's [`SourceLocation`] as displayed,
+        /// `In file foo.xml: line 12`.
         path: String,
     },
     /// A model configuration JSBSim refuses to load.

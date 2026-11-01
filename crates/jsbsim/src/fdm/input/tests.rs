@@ -162,6 +162,24 @@ fn input_types_jsbsim_has_no_class_for_fail_the_load() {
 }
 
 #[test]
+fn an_unknown_input_type_displays_where_it_is() {
+    let err = load_box(STRICT, r#"<input type="bogus"/>"#).err().unwrap();
+    assert_eq!(
+        err.to_string(),
+        r#"In file aircraft/box/box.xml: line 12: no input type for <input type="bogus">"#
+    );
+}
+
+#[test]
+fn an_unsupported_element_displays_where_it_is() {
+    let err = load_box(STRICT, "<child/>").err().unwrap();
+    assert_eq!(
+        err.to_string(),
+        "In file aircraft/box/box.xml: line 12: unsupported <child>"
+    );
+}
+
+#[test]
 fn socket_only_inputs_load_strictly() {
     for input in [
         r#"<input port="1137"/>"#,
