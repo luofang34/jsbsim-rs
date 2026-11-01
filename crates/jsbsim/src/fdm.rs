@@ -165,7 +165,7 @@ pub struct Models {
 /// [`GroundCallback`](crate::GroundCallback) need only be `Send`. It moves
 /// between threads, and only one thread may reach it at a time; to store
 /// it in a `Sync` container, wrap it in a `Mutex<Fdm>` or an
-/// exclusive-access wrapper such as Bevy's `SyncCell<Fdm>`.
+/// exclusive-access `Sync` wrapper.
 pub struct Fdm {
     env: env::Env,
     /// The models.
