@@ -13,18 +13,18 @@
 //! which is when a lookup could first succeed; the result is the same
 //! without walking the tree every frame.
 
-use crate::properties::{Attribute, NodeId, PropertyTree};
+use crate::properties::{Attribute, PropertyTree, SlotId};
 
 /// The override nodes found so far.
 #[derive(Debug, Clone, Copy, Default)]
 #[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct OverrideNodes {
     /// `atmosphere/override/temperature`.
-    pub temperature: Option<NodeId>,
+    pub temperature: Option<SlotId>,
     /// `atmosphere/override/pressure`.
-    pub pressure: Option<NodeId>,
+    pub pressure: Option<SlotId>,
     /// `atmosphere/override/density`.
-    pub density: Option<NodeId>,
+    pub density: Option<SlotId>,
     /// Tree generation of the last lookup; `None` before the first.
     looked_up_at: Option<u32>,
 }

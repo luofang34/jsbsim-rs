@@ -12,7 +12,7 @@ use super::component::{Base, Tick};
 use super::families::{ComponentAt, Family};
 use crate::Error;
 use crate::models::{LoadContext, ModelEvaluator};
-use crate::properties::NodeId;
+use crate::properties::SlotId;
 use crate::xml::Element;
 
 /// JSBSim's rounded degrees-to-radians factor for `unit="DEG"` angles.
@@ -22,9 +22,9 @@ const DEG: f64 = 0.017453293;
 #[derive(Debug, Clone)]
 pub(crate) struct Angles {
     /// The `<target_angle>` node; `None` when it did not exist at load.
-    pub target: Option<NodeId>,
+    pub target: Option<SlotId>,
     /// The `<source_angle>` node; `None` when it did not exist at load.
-    pub source: Option<NodeId>,
+    pub source: Option<SlotId>,
     /// The `<target_angle>` path, for the error a missing node gives.
     pub target_path: String,
     /// The `<source_angle>` path, for the error a missing node gives.
@@ -55,7 +55,7 @@ fn angle(
     what: &str,
     base: &Base,
     ctx: &mut LoadContext<'_>,
-) -> Result<(String, Option<NodeId>, f64), Error> {
+) -> Result<(String, Option<SlotId>, f64), Error> {
     let Some(angle_el) = el.find_element(name) else {
         return Err(el.model_error(format!(
             "{what} angle is required for Angles component: {}",
@@ -74,7 +74,7 @@ fn angle(
 
 /// The node of an angle, or the error JSBSim's null dereference becomes.
 fn read(
-    node: Option<NodeId>,
+    node: Option<SlotId>,
     path: &str,
     base: &Base,
     ev: &mut ModelEvaluator<'_>,

@@ -153,7 +153,7 @@ impl Fdm {
                     continue;
                 };
                 if !self.env.tree.attribute(node, Attribute::PRESERVE) {
-                    self.write_node(node, value)?;
+                    self.write_slot(node, value)?;
                 }
             }
         }

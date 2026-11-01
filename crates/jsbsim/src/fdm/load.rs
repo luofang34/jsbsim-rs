@@ -40,12 +40,12 @@ impl Fdm {
                         }
                         continue;
                     }
-                    self.write_node(node, value)?;
+                    self.write_slot(node, value)?;
                     node
                 }
                 false => {
                     let node = self.env.tree.get_or_create(self.env.tree.root(), name)?;
-                    self.write_node(node, value)?;
+                    self.write_slot(node, value)?;
                     node
                 }
             };

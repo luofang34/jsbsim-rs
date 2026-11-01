@@ -18,7 +18,7 @@ use crate::models::aerodynamics::Values;
 use crate::models::external_reactions::{Magnitude, Transforms};
 use crate::models::fcs::{ComponentAt, Fcs, families};
 use crate::models::ground_reactions::FrameContext;
-use crate::properties::{Attribute, NodeId};
+use crate::properties::{Attribute, SlotId};
 
 use crate::xml::{DocumentLoader, Element, IncludeKind};
 
@@ -46,7 +46,7 @@ impl Fdm {
                 continue;
             };
             if !self.env.tree.attribute(node, Attribute::PRESERVE) {
-                self.write_node(node, value)?;
+                self.write_slot(node, value)?;
             }
         }
         Ok(())
@@ -151,7 +151,7 @@ impl Fdm {
             // instead of being borrowed across the write.
             let mut k = 0;
             while let Some((node, output)) = output_node(&self.models.fcs, at, k) {
-                self.write_node(node, output)?;
+                self.write_slot(node, output)?;
                 k += 1;
             }
             at.index += 1;
@@ -303,7 +303,7 @@ impl Fdm {
 }
 
 /// Output node `k` of the component at `at`, with the component's output.
-fn output_node(fcs: &Fcs, at: ComponentAt, k: usize) -> Option<(NodeId, f64)> {
+fn output_node(fcs: &Fcs, at: ComponentAt, k: usize) -> Option<(SlotId, f64)> {
     let component = fcs.channels.get(at.channel)?.components.get(at.index)?;
     let node = component.base.outputs.get(k).copied()?;
     Some((node, component.base.output))

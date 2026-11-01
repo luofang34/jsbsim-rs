@@ -26,7 +26,7 @@ use super::transmission::Transmission;
 use crate::Error;
 use crate::math::{ColumnVector3, E_U, E_W, Matrix33};
 use crate::models::{LoadContext, ModelEvaluator, Models};
-use crate::properties::NodeId;
+use crate::properties::SlotId;
 use crate::units::constrain;
 use crate::xml::Element;
 
@@ -182,7 +182,7 @@ pub(crate) struct ExternalRpm {
     /// `x-rpm-dict` property.
     pub definition: i32,
     /// The property read for the speed, if found.
-    pub source: Option<NodeId>,
+    pub source: Option<SlotId>,
     /// Gear ratio of the source engine's thruster.
     pub source_gear_ratio: f64,
 }

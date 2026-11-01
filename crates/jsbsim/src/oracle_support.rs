@@ -150,7 +150,7 @@ pub mod models {
 /// The property tree.
 pub mod properties {
     pub use crate::properties::{
-        Attribute, NodeId, PathError, PropertyTree, Value, ValueType, mk_property_name,
+        Attribute, PathError, PropertyTree, SlotId, Value, ValueType, mk_property_name,
     };
 }
 

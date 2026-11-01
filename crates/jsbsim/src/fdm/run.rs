@@ -13,7 +13,7 @@ use crate::initial_condition::InitialState;
 use crate::math::{E_PHI, E_THT};
 use crate::models::atmosphere::{AtmosphereModel, Overrides};
 use crate::models::{ExecRequest, Models, ResetMask, aircraft};
-use crate::properties::NodeId;
+use crate::properties::SlotId;
 use crate::units::FPSTOKTS;
 
 impl Models {
@@ -282,7 +282,7 @@ impl Fdm {
         let nodes = &mut self.models.atmosphere.override_nodes;
         nodes.resolve(&self.env.tree);
         let nodes = *nodes;
-        let mut read = |node: Option<NodeId>| node.map(|n| self.read_node(n)).transpose();
+        let mut read = |node: Option<SlotId>| node.map(|n| self.read_slot(n)).transpose();
         Ok(Overrides {
             temperature: read(nodes.temperature)?,
             pressure: read(nodes.pressure)?,

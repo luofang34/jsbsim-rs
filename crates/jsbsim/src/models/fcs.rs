@@ -39,7 +39,7 @@ pub(crate) use bind::bind;
 pub(crate) use families::{Component, ComponentAt, Kind};
 
 use super::base::ModelBase;
-use crate::properties::NodeId;
+use crate::properties::SlotId;
 /// Surface position forms (`OutputForm`): radians, degrees, normalised,
 /// and the magnitude in radians.
 pub(crate) const NFORMS: usize = 4;
@@ -85,13 +85,13 @@ pub struct Channel {
     /// Frames since the last run.
     pub frames_since_run: i32,
     /// Property that switches the channel on and off.
-    pub on_off: Option<NodeId>,
+    pub on_off: Option<SlotId>,
     /// Components in execution order.
     pub(crate) components: Vec<Component>,
 }
 
 impl Channel {
-    fn new(name: String, exec_rate: i32, on_off: Option<NodeId>) -> Self {
+    fn new(name: String, exec_rate: i32, on_off: Option<SlotId>) -> Self {
         let exec_rate = exec_rate.max(1);
         Self {
             name,

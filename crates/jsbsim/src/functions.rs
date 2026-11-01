@@ -51,7 +51,7 @@ pub use table::Table;
 pub(crate) use table::TableKind;
 
 use crate::LoadOptions;
-use crate::properties::{Attribute, NodeId, NodeMap, PropertyTree, Value, mk_property_name};
+use crate::properties::{Attribute, NodeMap, PropertyTree, SlotId, Value, mk_property_name};
 use crate::xml::{SourceLocation, atof_locale_c};
 
 /// Index of a function in a [`FunctionSet`].
@@ -76,8 +76,8 @@ enum Bound {
 pub(crate) struct Function {
     op: Op,
     params: Vec<Parameter>,
-    node: Option<NodeId>,
-    copy_to: Option<NodeId>,
+    node: Option<SlotId>,
+    copy_to: Option<SlotId>,
     cached: Option<f64>,
     /// The draw of a `<random>` or `<urandom>`.
     random: Option<Box<random::RandomDraw>>,
@@ -241,7 +241,7 @@ impl FunctionSet {
         property: &str,
         what: Bound,
         at: &SourceLocation,
-    ) -> Result<NodeId, crate::Error> {
+    ) -> Result<SlotId, crate::Error> {
         let node = tree.get_or_create(tree.root(), property)?;
         if tree.is_tied(node) {
             return Err(FunctionError::AlreadyBound {
@@ -263,7 +263,7 @@ impl FunctionSet {
 
     /// Replaces a constant function's binding by its value: the node is
     /// untied, holds `value` and becomes read-only.
-    fn unbind_as_constant(&mut self, tree: &mut PropertyTree, node: NodeId, value: f64) {
+    fn unbind_as_constant(&mut self, tree: &mut PropertyTree, node: SlotId, value: f64) {
         if self.bound.remove(node).is_some() {
             tree.untie(node);
         }

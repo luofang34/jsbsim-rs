@@ -24,7 +24,7 @@ use super::families::{ComponentAt, Family};
 use crate::Error;
 use crate::functions::{Condition, Parameter, PropertyValue};
 use crate::models::{LoadContext, ModelEvaluator};
-use crate::properties::NodeId;
+use crate::properties::SlotId;
 use crate::xml::Element;
 
 /// A `<property value="...">` of a case.
@@ -110,7 +110,7 @@ impl Distributor {
         case: usize,
         pair: usize,
         ev: &mut ModelEvaluator<'_>,
-    ) -> Result<Option<(NodeId, f64)>, Error> {
+    ) -> Result<Option<(SlotId, f64)>, Error> {
         let Some(p) = self.cases.get(case).and_then(|c| c.pairs.get(pair)) else {
             return Ok(None);
         };

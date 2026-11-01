@@ -2,7 +2,7 @@
 use super::*;
 use crate::fdm::Fdm;
 use crate::math::Location;
-use crate::properties::{NodeId, Value};
+use crate::properties::{SlotId, Value};
 
 fn written(mut f: impl FnMut(&mut Writer<'_>) -> Result<(), SnapshotError>) -> Vec<u8> {
     let mut out = Vec::new();
@@ -46,15 +46,15 @@ fn values_are_little_endian_and_doubles_keep_their_bits() {
 fn optional_state_and_nodes_round_trip() {
     let mut some: Option<f64> = Some(2.5);
     let mut none: Option<f64> = None;
-    let mut node: Option<NodeId> = Some(NodeId::from_u32(42));
-    let mut no_node: Option<NodeId> = None;
+    let mut node: Option<SlotId> = Some(SlotId::from_u32(42));
+    let mut no_node: Option<SlotId> = None;
     let bytes = written(|w| {
         some.visit(w)?;
         none.visit(w)?;
         node.visit(w)?;
         no_node.visit(w)
     });
-    let (mut a, mut b, mut c, mut d) = (None, Some(9.0), None, Some(NodeId::from_u32(1)));
+    let (mut a, mut b, mut c, mut d) = (None, Some(9.0), None, Some(SlotId::from_u32(1)));
     let mut r = Reader::new(&bytes, 0);
     a.visit(&mut r).unwrap();
     b.visit(&mut r).unwrap();
@@ -62,7 +62,7 @@ fn optional_state_and_nodes_round_trip() {
     d.visit(&mut r).unwrap();
     assert_eq!(
         (a, b, c, d),
-        (Some(2.5), None, Some(NodeId::from_u32(42)), None)
+        (Some(2.5), None, Some(SlotId::from_u32(42)), None)
     );
 }
 
@@ -209,7 +209,11 @@ fn nodes_created_before_a_snapshot_are_made_again() {
     assert_eq!(other.node("test/c").unwrap(), None);
     assert_eq!(other.get_property("test/a").unwrap(), 1.0);
     assert_eq!(other.get_property("test/b[2]").unwrap(), 2.0);
-    assert_eq!(other.node("test/a").unwrap(), fdm.node("test/a").unwrap());
+    assert_eq!(
+        other.tree().get("test/a").unwrap(),
+        fdm.tree().get("test/a").unwrap(),
+        "a remade node takes its slot back"
+    );
 }
 
 /// A list whose length is state.

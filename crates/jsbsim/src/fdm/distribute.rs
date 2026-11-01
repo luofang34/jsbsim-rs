@@ -35,7 +35,7 @@ impl Fdm {
                     None => Ok(None),
                 })?;
                 if let Some((node, value)) = target {
-                    self.write_node(node, value)?;
+                    self.write_slot(node, value)?;
                 }
             }
             completed |= completes;

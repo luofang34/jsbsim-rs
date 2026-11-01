@@ -13,7 +13,7 @@
 use super::Models;
 use crate::Error;
 use crate::functions::{Evaluator, GetterSource};
-use crate::properties::{NodeId, NodeMap, PropertyTree, Value};
+use crate::properties::{NodeMap, PropertyTree, SlotId, Value};
 
 /// A getter: the property's value given the models.
 pub(crate) type Getter = Box<dyn Fn(&Models) -> f64 + Send>;
@@ -41,19 +41,19 @@ pub(crate) struct Bindings {
 
 impl Bindings {
     /// The setter of `node`, if it has one.
-    pub(crate) fn setter(&self, node: NodeId) -> Option<&(Kind, Setter)> {
+    pub(crate) fn setter(&self, node: SlotId) -> Option<&(Kind, Setter)> {
         self.setters.get(node)
     }
 
     /// Forgets the getter and setter of `node` (`Unbind`).
-    pub(crate) fn unbind(&mut self, node: NodeId) {
+    pub(crate) fn unbind(&mut self, node: SlotId) {
         self.getters.remove(node);
         self.setters.remove(node);
     }
 
     /// Whether `node` has a getter.
     #[must_use]
-    pub(crate) fn is_bound(&self, node: NodeId) -> bool {
+    pub(crate) fn is_bound(&self, node: SlotId) -> bool {
         self.getters.contains(node)
     }
 }
@@ -71,7 +71,7 @@ impl Binder<'_> {
         kind: Kind,
         getter: Getter,
         setter: Option<Setter>,
-    ) -> Result<NodeId, Error> {
+    ) -> Result<SlotId, Error> {
         let node = self.tree.get_or_create(self.tree.root(), path)?;
         let initial = match kind {
             Kind::Double => Value::Double(0.0),
@@ -94,7 +94,7 @@ impl Binder<'_> {
         &mut self,
         path: &str,
         get: impl Fn(&Models) -> f64 + Send + 'static,
-    ) -> Result<NodeId, Error> {
+    ) -> Result<SlotId, Error> {
         self.tie(path, Kind::Double, Box::new(get), None)
     }
 
@@ -105,7 +105,7 @@ impl Binder<'_> {
         kind: Kind,
         get: impl Fn(&Models) -> f64 + Send + 'static,
         set: impl Fn(&mut Models, f64) + Send + 'static,
-    ) -> Result<NodeId, Error> {
+    ) -> Result<SlotId, Error> {
         self.tie(path, kind, Box::new(get), Some(Box::new(set)))
     }
 
@@ -115,7 +115,7 @@ impl Binder<'_> {
         path: &str,
         kind: Kind,
         set: impl Fn(&mut Models, f64) + Send + 'static,
-    ) -> Result<NodeId, Error> {
+    ) -> Result<SlotId, Error> {
         let node = self.tie(path, kind, Box::new(|_| 0.0), Some(Box::new(set)))?;
         self.tree
             .set_attribute(node, crate::properties::Attribute::READ, false);
@@ -128,7 +128,7 @@ impl Binder<'_> {
         path: &str,
         kind: Kind,
         get: impl Fn(&Models) -> f64 + Send + 'static,
-    ) -> Result<NodeId, Error> {
+    ) -> Result<SlotId, Error> {
         self.tie(path, kind, Box::new(get), None)
     }
 }
@@ -146,7 +146,7 @@ pub(crate) type ModelEvaluator<'a> = Evaluator<'a, ModelGetters<'a>>;
 
 impl GetterSource for ModelGetters<'_> {
     #[inline]
-    fn get(&self, node: NodeId) -> Option<f64> {
+    fn get(&self, node: SlotId) -> Option<f64> {
         self.bindings.getters.get(node).map(|g| g(self.models))
     }
 }

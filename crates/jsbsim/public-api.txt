@@ -1,6 +1,7 @@
 pub mod jsbsim
 pub mod jsbsim::error
 #[non_exhaustive] pub enum jsbsim::error::Error
+pub jsbsim::error::Error::ForeignNode
 pub jsbsim::error::Error::Function(jsbsim::error::FunctionError)
 pub jsbsim::error::Error::Geographic
 pub jsbsim::error::Error::Geographic::message: alloc::string::String
@@ -897,6 +898,7 @@ impl core::marker::UnsafeUnpin for jsbsim::trim::TrimReport
 impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::trim::TrimReport
 impl core::panic::unwind_safe::UnwindSafe for jsbsim::trim::TrimReport
 #[non_exhaustive] pub enum jsbsim::Error
+pub jsbsim::Error::ForeignNode
 pub jsbsim::Error::Function(jsbsim::error::FunctionError)
 pub jsbsim::Error::Geographic
 pub jsbsim::Error::Geographic::message: alloc::string::String
@@ -1118,7 +1120,7 @@ impl core::marker::Unpin for jsbsim::MemoryResolver
 impl core::marker::UnsafeUnpin for jsbsim::MemoryResolver
 impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::MemoryResolver
 impl core::panic::unwind_safe::UnwindSafe for jsbsim::MemoryResolver
-pub struct jsbsim::NodeId(_)
+pub struct jsbsim::NodeId
 impl core::clone::Clone for jsbsim::NodeId
 pub fn jsbsim::NodeId::clone(&self) -> jsbsim::NodeId
 impl core::cmp::Eq for jsbsim::NodeId

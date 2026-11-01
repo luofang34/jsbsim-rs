@@ -35,7 +35,7 @@ use crate::functions::FunctionSet;
 use crate::models::{
     Bindings, Env, Kind, ModelFunctions, Models, accelerations, aircraft, convert_write, propagate,
 };
-use crate::properties::{NodeId, PropertyTree};
+use crate::properties::{NodeId, PropertyTree, SlotId};
 
 /// The executive.
 ///
@@ -233,7 +233,8 @@ impl Fdm {
     ///
     /// [`Error::PropertyPath`] when `path` is not a valid property path.
     pub fn node(&self, path: &str) -> Result<Option<NodeId>, Error> {
-        Ok(self.env.tree.get(path)?)
+        let tree = &self.env.tree;
+        Ok(tree.get(path)?.map(|slot| tree.node_id(slot)))
     }
 
     /// Reads `path` as JSBSim's `GetPropertyValue` does: tied nodes call
@@ -246,20 +247,28 @@ impl Fdm {
     /// and [`Error::Function`] when the function bound to it fails to
     /// evaluate.
     pub fn get_property(&mut self, path: &str) -> Result<f64, Error> {
-        let Some(node) = self.env.tree.get(path)? else {
+        let Some(slot) = self.env.tree.get(path)? else {
             return Ok(0.0);
         };
-        self.read_node(node)
+        self.read_slot(slot)
     }
 
     /// Reads one node through getters and functions.
     ///
     /// # Errors
     ///
+    /// [`Error::ForeignNode`] when `node` came from another `Fdm`, and
     /// [`Error::Function`] when the function bound to `node` fails to
     /// evaluate.
     pub fn read_node(&mut self, node: NodeId) -> Result<f64, Error> {
-        self.env.eval(&self.models, |ev| ev.read_node(node))
+        let Some(slot) = self.env.tree.slot_of(node) else {
+            return Err(Error::ForeignNode);
+        };
+        self.read_slot(slot)
+    }
+
+    fn read_slot(&mut self, slot: SlotId) -> Result<f64, Error> {
+        self.env.eval(&self.models, |ev| ev.read_node(slot))
     }
 
     /// Writes `path` as `SetPropertyValue` does: a node tied to a setter
@@ -271,8 +280,8 @@ impl Fdm {
     /// [`Error::PropertyPath`] when `path` is not a valid property path;
     /// otherwise as [`write_node`](Self::write_node).
     pub fn set_property(&mut self, path: &str, value: f64) -> Result<bool, Error> {
-        let node = self.env.tree.get_or_create(self.env.tree.root(), path)?;
-        self.write_node(node, value)
+        let slot = self.env.tree.get_or_create(self.env.tree.root(), path)?;
+        self.write_slot(slot, value)
     }
 
     /// Writes one node; false when it, or a node it aliases, is not
@@ -280,14 +289,22 @@ impl Fdm {
     ///
     /// # Errors
     ///
-    /// Errors of the request the write starts: a trim
+    /// [`Error::ForeignNode`] when `node` came from another `Fdm`; errors
+    /// of the request the write starts: a trim
     /// (`simulation/do_simple_trim`, [`Error::TrimFailed`] when it does
     /// not converge), a reset or initial-condition run
     /// (`simulation/reset`, as [`run_ic`](Self::run_ic)), or a
     /// linearization; and [`Error::Function`] when a function the request
     /// evaluates fails.
     pub fn write_node(&mut self, node: NodeId, value: f64) -> Result<bool, Error> {
-        let Some(target) = self.env.tree.write_target(node) else {
+        let Some(slot) = self.env.tree.slot_of(node) else {
+            return Err(Error::ForeignNode);
+        };
+        self.write_slot(slot, value)
+    }
+
+    fn write_slot(&mut self, slot: SlotId, value: f64) -> Result<bool, Error> {
+        let Some(target) = self.env.tree.write_target(slot) else {
             return Ok(false);
         };
         let written = match self.env.bindings.setter(target) {

@@ -79,6 +79,10 @@ pub enum Error {
     /// [`PathError`]'s, which is therefore not also given as its source.
     #[error("invalid property path: {0}")]
     PropertyPath(PathError),
+    /// A [`NodeId`](crate::NodeId) passed to [`Fdm::read_node`](crate::Fdm::read_node)
+    /// or [`Fdm::write_node`](crate::Fdm::write_node) belongs to another `Fdm`.
+    #[error("property node belongs to another Fdm")]
+    ForeignNode,
     /// The resolver found something at the path but could not read it,
     /// such as a directory or a file without read permission.
     #[error("cannot read {path}: {kind}")]
@@ -128,6 +132,7 @@ impl Error {
             | Self::Geographic { .. }
             | Self::Snapshot(_)
             | Self::PropertyPath(_)
+            | Self::ForeignNode
             | Self::ResourceUnreadable { .. } => None,
         }
     }

@@ -9,7 +9,7 @@
 use crate::Error;
 use crate::functions::{Parameter, PropertyValue};
 use crate::models::{LoadContext, ModelEvaluator};
-use crate::properties::{NodeId, mk_property_name};
+use crate::properties::{SlotId, mk_property_name};
 use crate::random::RandomNumberGenerator;
 use crate::units::constrain;
 use crate::xml::Element;
@@ -48,7 +48,7 @@ pub(crate) struct Base {
     /// `<input>` operands, in document order.
     pub inputs: Vec<PropertyValue>,
     /// `<output>` nodes, then the component's own property once bound.
-    pub outputs: Vec<NodeId>,
+    pub outputs: Vec<SlotId>,
     /// Clipping, when both limits are given.
     pub clip: Option<Clip>,
     /// The transport delay buffer (`output_array`); its length is the
@@ -89,7 +89,7 @@ pub(crate) fn parameter_value(el: &Element, ctx: &mut LoadContext<'_>) -> Result
 
 /// An output node; a node created here starts at the component's output,
 /// 0.
-fn output_node(path: &str, ctx: &mut LoadContext<'_>) -> Result<NodeId, Error> {
+fn output_node(path: &str, ctx: &mut LoadContext<'_>) -> Result<SlotId, Error> {
     let tree = ctx.tree();
     let existed = tree.has_node(path)?;
     let node = tree.get_or_create(tree.root(), path)?;

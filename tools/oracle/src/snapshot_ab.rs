@@ -13,7 +13,7 @@
 use jsbsim::Error;
 use jsbsim::Fdm;
 use jsbsim::oracle_support::FdmInternals as _;
-use jsbsim::oracle_support::properties::{NodeId, PropertyTree};
+use jsbsim::oracle_support::properties::{PropertyTree, SlotId};
 use jsbsim::snapshot::Snapshot;
 use sha2::{Digest, Sha256};
 
@@ -28,7 +28,7 @@ pub type Host<'a> = &'a mut dyn FnMut(&mut Fdm) -> Result<(), Error>;
 /// Every node of `tree` in depth-first creation order, from the true
 /// root.
 #[must_use]
-pub fn nodes(tree: &PropertyTree) -> Vec<NodeId> {
+pub fn nodes(tree: &PropertyTree) -> Vec<SlotId> {
     let mut out = Vec::new();
     let mut stack = vec![PropertyTree::true_root()];
     while let Some(node) = stack.pop() {
@@ -74,7 +74,8 @@ pub fn record(fdm: &mut Fdm, frames: u32, host: Host<'_>) -> Result<Vec<Frame>, 
         let mut values = Vec::new();
         for node in nodes(fdm.tree()) {
             let path = fdm.tree().path(node, false);
-            let bits = fdm.read_node(node).map_or(u64::MAX, f64::to_bits);
+            let id = fdm.tree().node_id(node);
+            let bits = fdm.read_node(id).map_or(u64::MAX, f64::to_bits);
             values.push((path, bits));
         }
         fdm.snapshot_into(&mut snapshot)?;

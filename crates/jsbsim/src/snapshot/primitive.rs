@@ -8,7 +8,7 @@
 use std::cell::Cell;
 
 use super::{SnapshotError, Visit, Visitor};
-use crate::properties::NodeId;
+use crate::properties::SlotId;
 
 /// `x` into `target`, when the walk restores.
 fn assign<T, V: Visitor>(v: &V, target: &mut T, x: T) {
@@ -123,7 +123,7 @@ impl Visit for String {
     }
 }
 
-impl Visit for NodeId {
+impl Visit for SlotId {
     fn visit<V: Visitor>(&mut self, v: &mut V) -> Result<(), SnapshotError> {
         let mut slot = self.to_u32();
         v.u32(&mut slot)?;
@@ -194,11 +194,11 @@ impl<T: Visit + Default> Visit for Option<T> {
 }
 
 /// A node that may not exist yet, as `u32::MAX` when it does not.
-impl Visit for Option<NodeId> {
+impl Visit for Option<SlotId> {
     fn visit<V: Visitor>(&mut self, v: &mut V) -> Result<(), SnapshotError> {
-        let mut slot = self.map_or(u32::MAX, NodeId::to_u32);
+        let mut slot = self.map_or(u32::MAX, SlotId::to_u32);
         v.u32(&mut slot)?;
-        assign(v, self, (slot != u32::MAX).then(|| NodeId::from_u32(slot)));
+        assign(v, self, (slot != u32::MAX).then(|| SlotId::from_u32(slot)));
         Ok(())
     }
 }

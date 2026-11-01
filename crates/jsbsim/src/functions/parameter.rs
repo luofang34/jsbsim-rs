@@ -10,7 +10,7 @@ use std::cell::Cell;
 
 use super::{FnId, FunctionError, TableId};
 use crate::Error;
-use crate::properties::{Attribute, NodeId, PropertyTree};
+use crate::properties::{Attribute, PropertyTree, SlotId};
 use crate::xml::{SourceLocation, atof_locale_c};
 
 /// A property operand, bound to its node now or at first read
@@ -22,7 +22,7 @@ pub(crate) struct PropertyValue {
     /// still binds, and a missing one fails at that first evaluation, not
     /// at load. The evaluator holds operands through a shared borrow of the
     /// function set, hence `Cell`, which is `Send`.
-    node: Cell<Option<NodeId>>,
+    node: Cell<Option<SlotId>>,
     sign: f64,
     /// Read only to bind late or to report an error; boxed so that the
     /// operands a frame walks stay small.
@@ -72,7 +72,7 @@ impl PropertyValue {
 
     /// The node, binding it now if needed (`GetNode`).
     #[inline]
-    pub(crate) fn node(&self, tree: &PropertyTree) -> Result<NodeId, Error> {
+    pub(crate) fn node(&self, tree: &PropertyTree) -> Result<SlotId, Error> {
         match self.node.get() {
             Some(node) => Ok(node),
             None => self.bind_late(tree),
@@ -82,7 +82,7 @@ impl PropertyValue {
     /// The first read of a late-bound operand.
     #[cold]
     #[inline(never)]
-    fn bind_late(&self, tree: &PropertyTree) -> Result<NodeId, Error> {
+    fn bind_late(&self, tree: &PropertyTree) -> Result<SlotId, Error> {
         let node = tree
             .get(&self.source.name)?
             .ok_or_else(|| FunctionError::MissingProperty {

@@ -10,10 +10,10 @@
 
 use sha2::{Digest, Sha256};
 
-use super::{Node, NodeId, PropertyTree, Value};
+use super::{Node, PropertyTree, SlotId, Value};
 use crate::snapshot::{Checker, Reader, SnapshotError, Visit, Visitor, Writer, count_u32};
 
-impl NodeId {
+impl SlotId {
     /// The id of slot `slot`.
     pub(crate) fn from_u32(slot: u32) -> Self {
         Self(slot)
@@ -43,7 +43,7 @@ impl Value {
     fn of_tag(tag: u8) -> Result<Self, SnapshotError> {
         Ok(match tag {
             0 => Self::None,
-            1 => Self::Alias(NodeId(0)),
+            1 => Self::Alias(SlotId(0)),
             2 => Self::Bool(false),
             3 => Self::Int(0),
             4 => Self::Long(0),
@@ -213,7 +213,7 @@ impl PropertyTree {
                     nodes: self.node_count(),
                 });
             }
-            self.add_child(NodeId(parent), name.to_owned(), index);
+            self.add_child(SlotId(parent), name.to_owned(), index);
         }
         Ok(())
     }

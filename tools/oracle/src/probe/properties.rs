@@ -3,7 +3,7 @@
 
 use jsbsim::oracle_support::c_numeric::format_g;
 use jsbsim::oracle_support::properties::{
-    Attribute, NodeId, PathError, PropertyTree, Value, ValueType,
+    Attribute, PathError, PropertyTree, SlotId, Value, ValueType,
 };
 
 fn attribute(name: &str) -> Attribute {
@@ -36,7 +36,7 @@ fn flag(b: bool) -> String {
     if b { "1" } else { "0" }.to_owned()
 }
 
-fn get(tree: &PropertyTree, id: NodeId, kind: &str) -> String {
+fn get(tree: &PropertyTree, id: SlotId, kind: &str) -> String {
     match kind {
         "bool" => flag(tree.get_bool(id)),
         "int" => tree.get_int(id).to_string(),
@@ -47,7 +47,7 @@ fn get(tree: &PropertyTree, id: NodeId, kind: &str) -> String {
     }
 }
 
-fn set(tree: &mut PropertyTree, id: NodeId, kind: &str, text: &str) -> String {
+fn set(tree: &mut PropertyTree, id: SlotId, kind: &str, text: &str) -> String {
     let done = match kind {
         "bool" => tree.set_bool(id, text == "1"),
         "int" => tree.set_int(id, text.parse().unwrap_or_default()),
@@ -65,11 +65,11 @@ struct Probe {
 }
 
 impl Probe {
-    fn require(&mut self, path: &str) -> Result<NodeId, PathError> {
+    fn require(&mut self, path: &str) -> Result<SlotId, PathError> {
         self.tree.get_or_create(self.tree.root(), path)
     }
 
-    fn fqn(&self, node: Option<NodeId>) -> String {
+    fn fqn(&self, node: Option<SlotId>) -> String {
         node.map_or_else(
             || "null".to_owned(),
             |id| self.tree.fully_qualified_name(id),

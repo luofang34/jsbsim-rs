@@ -7,7 +7,7 @@ use jsbsim::Fdm;
 use jsbsim::FileResolver;
 use jsbsim::oracle_support::FdmInternals as _;
 use jsbsim::oracle_support::c_numeric::format_g;
-use jsbsim::oracle_support::properties::{NodeId, ValueType};
+use jsbsim::oracle_support::properties::{SlotId, ValueType};
 
 use super::ProbeContext;
 
@@ -46,7 +46,7 @@ pub const UNINITIALIZED: [&str; 2] = ["/AGL-ft", "/side_friction_coeff"];
 /// absolute path made outside the instance are not walked.
 const INSTANCE_PREFIX: &str = "/fdm/jsbsim/";
 
-fn walk(fdm: &mut Fdm, node: NodeId, lines: &mut Vec<String>) -> Result<(), jsbsim::Error> {
+fn walk(fdm: &mut Fdm, node: SlotId, lines: &mut Vec<String>) -> Result<(), jsbsim::Error> {
     let children = fdm.tree().children(node).to_vec();
     for child in children {
         if !fdm.tree().children(child).is_empty() {
@@ -65,7 +65,7 @@ fn walk(fdm: &mut Fdm, node: NodeId, lines: &mut Vec<String>) -> Result<(), jsbs
             | ValueType::Long
             | ValueType::Float
             | ValueType::Double => {
-                let v = fdm.read_node(child)?;
+                let v = fdm.read_node(fdm.tree().node_id(child))?;
                 lines.push(format!("{path} = {}", format_g(v, 17)));
             }
             ValueType::String | ValueType::Unspecified => {

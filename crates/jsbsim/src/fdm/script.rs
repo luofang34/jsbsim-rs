@@ -228,7 +228,7 @@ impl Fdm {
                 .env
                 .tree
                 .get_or_create(self.env.tree.root(), p.data_line(0))?;
-            self.write_node(node, value)?;
+            self.write_slot(node, value)?;
             declared.insert(node, value);
             if p.attribute("persistent") == "true" {
                 self.env
@@ -264,7 +264,7 @@ impl Fdm {
                 .env
                 .tree
                 .attribute(node, crate::properties::Attribute::PRESERVE)
-                && let Err(e) = self.write_node(node, value)
+                && let Err(e) = self.write_slot(node, value)
             {
                 result = Err(e);
                 break;
@@ -362,7 +362,7 @@ impl Fdm {
                     n
                 }
             };
-            set.original = self.read_node(node)?;
+            set.original = self.read_slot(node)?;
             if let Some(f) = set.function {
                 set.value = self.eval_function(f)?;
             }
@@ -414,7 +414,7 @@ impl Fdm {
                 }
             };
             if let Some(node) = set.node {
-                self.write_node(node, value)?;
+                self.write_slot(node, value)?;
                 if self.take_events_reset() {
                     event.reset();
                     reset = true;

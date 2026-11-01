@@ -7,14 +7,14 @@
 //
 //! Node names and paths as JSBSim prints them.
 
-use super::{NodeId, PathError, PropertyTree};
+use super::{PathError, PropertyTree, SlotId};
 
 #[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl PropertyTree {
     /// `getDisplayName`: the name, followed by `[index]` unless `simplify`
     /// is set and the index is 0.
     #[must_use]
-    pub(crate) fn display_name(&self, id: NodeId, simplify: bool) -> String {
+    pub(crate) fn display_name(&self, id: SlotId, simplify: bool) -> String {
         let index = self.index(id);
         if index != 0 || !simplify {
             format!("{}[{index}]", self.name(id))
@@ -26,7 +26,7 @@ impl PropertyTree {
     /// `getPath`: `/`-separated display names from the root; empty for the
     /// root itself.
     #[must_use]
-    pub fn path(&self, id: NodeId, simplify: bool) -> String {
+    pub fn path(&self, id: SlotId, simplify: bool) -> String {
         let mut names = Vec::new();
         let mut current = id;
         while let Some(parent) = self.parent(current) {
@@ -43,7 +43,7 @@ impl PropertyTree {
     /// `GetFullyQualifiedName`: like [`path`](Self::path) with simplified
     /// names, and `/` for the root.
     #[must_use]
-    pub fn fully_qualified_name(&self, id: NodeId) -> String {
+    pub fn fully_qualified_name(&self, id: SlotId) -> String {
         match self.parent(id) {
             None => "/".to_owned(),
             Some(_) => self.path(id, true),
@@ -54,7 +54,7 @@ impl PropertyTree {
     /// removed when present.
     #[must_use]
     #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
-    pub fn relative_name(&self, id: NodeId, path: &str) -> String {
+    pub fn relative_name(&self, id: SlotId, path: &str) -> String {
         let name = self.fully_qualified_name(id);
         match name.strip_prefix(path) {
             Some(rest) if !path.is_empty() => rest.to_owned(),
@@ -65,7 +65,7 @@ impl PropertyTree {
     /// Aliases `id` to the node at `path` relative to `id`, creating it
     /// (`alias(const char*)`).
     #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
-    pub fn alias_path(&mut self, id: NodeId, path: &str) -> Result<bool, PathError> {
+    pub fn alias_path(&mut self, id: SlotId, path: &str) -> Result<bool, PathError> {
         let target = self.get_or_create(id, path)?;
         Ok(self.alias(id, target))
     }

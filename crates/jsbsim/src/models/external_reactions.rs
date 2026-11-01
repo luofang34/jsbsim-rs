@@ -12,7 +12,7 @@ use crate::Error;
 use crate::functions::FnId;
 use crate::math::{Axis, ColumnVector3, E_L, E_M, E_N, Matrix33};
 use crate::models::{Kind, LoadContext};
-use crate::properties::NodeId;
+use crate::properties::SlotId;
 use crate::xml::Element;
 
 /// `FGForce::TransformType` of an external force.
@@ -34,7 +34,7 @@ pub(crate) enum Magnitude {
     /// A `<function>`.
     Function(FnId),
     /// The `.../magnitude` property.
-    Property(NodeId),
+    Property(SlotId),
 }
 
 /// One `<force>` or `<moment>` (`FGExternalForce`).
@@ -47,7 +47,7 @@ pub(crate) struct ExternalForce {
     /// Magnitude source.
     pub magnitude: Magnitude,
     /// Direction nodes (`x y z` or `l m n`).
-    pub direction: [NodeId; 3],
+    pub direction: [SlotId; 3],
     /// Location, structural frame, in (`vXYZn`).
     pub location: ColumnVector3,
     /// Point the force acts at (`vActingXYZn`).

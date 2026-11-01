@@ -6,7 +6,7 @@
 //! condition becomes true.
 
 use crate::functions::{Condition, FnId, Parameter};
-use crate::properties::{NodeId, NodeMap};
+use crate::properties::{NodeMap, SlotId};
 
 /// `FG_VALUE`, `FG_DELTA`, `FG_BOOL`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -36,7 +36,7 @@ pub(crate) struct Set {
     /// Property path.
     pub name: String,
     /// The node, once it exists.
-    pub node: Option<NodeId>,
+    pub node: Option<SlotId>,
     /// Value function, instead of a constant.
     pub function: Option<FnId>,
     /// The constant, or the last function value.

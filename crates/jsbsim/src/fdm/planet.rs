@@ -126,7 +126,7 @@ impl Fdm {
         if !self.env.bindings.is_bound(node) {
             return Ok(());
         }
-        let value = self.read_node(node)?;
+        let value = self.read_slot(node)?;
         self.env.bindings.unbind(node);
         self.env.tree.untie(node);
         self.env.tree.set_double(node, value);

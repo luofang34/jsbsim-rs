@@ -9,11 +9,12 @@
 //! read-only nodes. It is the external API of the simulation.
 //!
 //! SimGear ties nodes to C++ getters and setters. Here the tree owns every
-//! value: a model that publishes state holds the [`NodeId`] of a tied node
+//! value: a model that publishes state holds the [`SlotId`] of a tied node
 //! and stores into it with [`PropertyTree::store`], which ignores the WRITE
 //! attribute that keeps outside writers off read-only nodes.
 
 mod conversion;
+mod id;
 mod naming;
 mod node_map;
 mod path;
@@ -23,6 +24,9 @@ mod value;
 #[cfg(test)]
 mod tests;
 
+pub use id::NodeId;
+#[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
+pub use id::SlotId;
 #[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub use naming::mk_property_name;
 pub(crate) use node_map::NodeMap;
@@ -30,22 +34,8 @@ pub use path::PathError;
 #[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub use value::Value;
 
+use id::TreeId;
 use path::{Component, parse_path};
-
-/// Handle to a node of the property tree, from [`Fdm::node`](crate::Fdm::node).
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub struct NodeId(u32);
-
-impl NodeId {
-    /// Index of the node in the tree's arena.
-    pub(crate) fn slot(self) -> usize {
-        self.0 as usize
-    }
-
-    fn from_slot(slot: usize) -> Option<Self> {
-        u32::try_from(slot).ok().map(Self)
-    }
-}
 
 /// SimGear node attribute bits.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -100,8 +90,8 @@ pub enum ValueType {
 struct Node {
     name: String,
     index: i32,
-    parent: Option<NodeId>,
-    children: Vec<NodeId>,
+    parent: Option<SlotId>,
+    children: Vec<SlotId>,
     value: Value,
     attributes: u8,
     /// READ and WRITE as they were when the node was tied; `Some` while
@@ -114,12 +104,14 @@ struct Node {
 /// Relative paths start at the manager root ([`root`](Self::root)), which
 /// is the true root unless the tree was made `for_instance`; a leading
 /// `/` always starts at the true root, as SimGear's `getNode` does.
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 #[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub struct PropertyTree {
+    /// What sets this tree's [`NodeId`]s apart from any other's.
+    id: TreeId,
     nodes: Vec<Node>,
     /// `FGPropertyManager`'s root node.
-    base: NodeId,
+    base: SlotId,
     /// Changes whenever a path lookup could start resolving differently:
     /// a node is created, or one's REMOVED bit flips.
     generation: u32,
@@ -131,14 +123,27 @@ impl Default for PropertyTree {
     }
 }
 
+impl Clone for PropertyTree {
+    /// A copy is a tree of its own: [`NodeId`]s of this one do not reach it.
+    fn clone(&self) -> Self {
+        Self {
+            id: TreeId::mint(),
+            nodes: self.nodes.clone(),
+            base: self.base,
+            generation: self.generation,
+        }
+    }
+}
+
 #[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 impl PropertyTree {
     /// Creates a tree holding only the root.
     #[must_use]
     pub fn new() -> Self {
         Self {
+            id: TreeId::mint(),
             nodes: vec![Node::new(String::new(), 0, None)],
-            base: NodeId(0),
+            base: SlotId(0),
             generation: 0,
         }
     }
@@ -149,7 +154,7 @@ impl PropertyTree {
     #[must_use]
     pub(crate) fn for_instance(index: i32) -> Self {
         let mut tree = Self::new();
-        let fdm = tree.add_child(NodeId(0), "fdm".to_owned(), 0);
+        let fdm = tree.add_child(SlotId(0), "fdm".to_owned(), 0);
         tree.base = tree.add_child(fdm, "jsbsim".to_owned(), index);
         tree
     }
@@ -164,30 +169,30 @@ impl PropertyTree {
     /// The manager root, where relative paths start
     /// (`FGPropertyManager::GetNode()`).
     #[must_use]
-    pub fn root(&self) -> NodeId {
+    pub fn root(&self) -> SlotId {
         self.base
     }
 
     /// The true root, where absolute paths start (`getRootNode`).
     #[must_use]
-    pub const fn true_root() -> NodeId {
-        NodeId(0)
+    pub const fn true_root() -> SlotId {
+        SlotId(0)
     }
 
     /// The node `id`. A tree never removes nodes, so only an id from
     /// another tree can miss; it reads as [`DETACHED`].
-    fn node(&self, id: NodeId) -> &Node {
-        self.nodes.get(id.slot()).unwrap_or(&DETACHED)
+    fn node(&self, id: SlotId) -> &Node {
+        self.nodes.get(id.index()).unwrap_or(&DETACHED)
     }
 
     /// The node `id`; `None` only for an id from another tree, whose
     /// writes are dropped as [`DETACHED`] refuses them.
-    fn node_mut(&mut self, id: NodeId) -> Option<&mut Node> {
-        self.nodes.get_mut(id.slot())
+    fn node_mut(&mut self, id: SlotId) -> Option<&mut Node> {
+        self.nodes.get_mut(id.index())
     }
 
     /// Finds the node at `path` relative to `from` (`getNode(path)`).
-    pub fn find(&self, from: NodeId, path: &str) -> Result<Option<NodeId>, PathError> {
+    pub fn find(&self, from: SlotId, path: &str) -> Result<Option<SlotId>, PathError> {
         self.find_indexed(from, path, None)
     }
 
@@ -195,10 +200,10 @@ impl PropertyTree {
     /// replaced by `index` (`getNode(path, index)`).
     pub fn find_indexed(
         &self,
-        from: NodeId,
+        from: SlotId,
         path: &str,
         index: Option<i32>,
-    ) -> Result<Option<NodeId>, PathError> {
+    ) -> Result<Option<SlotId>, PathError> {
         let mut current = from;
         for component in parse_path(path, index)? {
             current = match component {
@@ -216,7 +221,7 @@ impl PropertyTree {
 
     /// Finds or creates the node at `path` relative to `from`
     /// (`getNode(path, true)`).
-    pub fn get_or_create(&mut self, from: NodeId, path: &str) -> Result<NodeId, PathError> {
+    pub fn get_or_create(&mut self, from: SlotId, path: &str) -> Result<SlotId, PathError> {
         self.get_or_create_indexed(from, path, None)
     }
 
@@ -225,13 +230,13 @@ impl PropertyTree {
     /// tree created, which has nowhere to attach new nodes.
     pub fn get_or_create_indexed(
         &mut self,
-        from: NodeId,
+        from: SlotId,
         path: &str,
         index: Option<i32>,
-    ) -> Result<NodeId, PathError> {
-        if self.nodes.get(from.slot()).is_none() {
+    ) -> Result<SlotId, PathError> {
+        if self.nodes.get(from.index()).is_none() {
             return Err(PathError {
-                message: format!("node {} is not in this property tree", from.slot()),
+                message: format!("node {} is not in this property tree", from.index()),
             });
         }
         let mut current = from;
@@ -250,7 +255,7 @@ impl PropertyTree {
     }
 
     /// Finds `path` from the root (`FGPropertyManager::GetNode`).
-    pub fn get(&self, path: &str) -> Result<Option<NodeId>, PathError> {
+    pub fn get(&self, path: &str) -> Result<Option<SlotId>, PathError> {
         self.find(self.root(), path)
     }
 
@@ -261,12 +266,12 @@ impl PropertyTree {
         Ok(self.get(path)?.is_some())
     }
 
-    fn live(&self, id: NodeId) -> Option<NodeId> {
+    fn live(&self, id: SlotId) -> Option<SlotId> {
         (self.node(id).attributes & Attribute::REMOVED.0 == 0).then_some(id)
     }
 
-    fn add_child(&mut self, parent: NodeId, name: String, index: i32) -> NodeId {
-        let id = NodeId(u32::try_from(self.nodes.len()).unwrap_or(u32::MAX));
+    fn add_child(&mut self, parent: SlotId, name: String, index: i32) -> SlotId {
+        let id = SlotId(u32::try_from(self.nodes.len()).unwrap_or(u32::MAX));
         if let Some(parent) = self.node_mut(parent) {
             parent.children.push(id);
         }
@@ -277,7 +282,7 @@ impl PropertyTree {
 
     /// Child of `parent` named `name` with `index` (`getChild`).
     #[must_use]
-    pub(crate) fn child(&self, parent: NodeId, name: &str, index: i32) -> Option<NodeId> {
+    pub(crate) fn child(&self, parent: SlotId, name: &str, index: i32) -> Option<SlotId> {
         self.node(parent).children.iter().copied().find(|&c| {
             let node = self.node(c);
             node.index == index && node.name == name
@@ -287,42 +292,42 @@ impl PropertyTree {
     /// Children of `parent` in creation order.
     #[must_use]
     #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
-    pub fn children(&self, parent: NodeId) -> &[NodeId] {
+    pub fn children(&self, parent: SlotId) -> &[SlotId] {
         &self.node(parent).children
     }
 
     /// Parent of `id`, `None` for the root.
     #[must_use]
-    pub(crate) fn parent(&self, id: NodeId) -> Option<NodeId> {
+    pub(crate) fn parent(&self, id: SlotId) -> Option<SlotId> {
         self.node(id).parent
     }
 
     /// Name of `id` without index.
     #[must_use]
-    pub(crate) fn name(&self, id: NodeId) -> &str {
+    pub(crate) fn name(&self, id: SlotId) -> &str {
         &self.node(id).name
     }
 
     /// Index of `id` among siblings of the same name.
     #[must_use]
-    pub(crate) fn index(&self, id: NodeId) -> i32 {
+    pub(crate) fn index(&self, id: SlotId) -> i32 {
         self.node(id).index
     }
 
     /// Whether attribute `attr` is set on `id`.
     #[must_use]
-    pub fn attribute(&self, id: NodeId, attr: Attribute) -> bool {
+    pub fn attribute(&self, id: SlotId, attr: Attribute) -> bool {
         self.node(id).attributes & attr.0 != 0
     }
 
     /// Sets or clears attribute `attr` on `id`.
-    pub fn set_attribute(&mut self, id: NodeId, attr: Attribute, on: bool) {
+    pub fn set_attribute(&mut self, id: SlotId, attr: Attribute, on: bool) {
         let bits = self.node(id).attributes;
         self.set_attributes(id, if on { bits | attr.0 } else { bits & !attr.0 });
     }
 
     /// Replaces all attribute bits of `id`.
-    pub(crate) fn set_attributes(&mut self, id: NodeId, bits: u8) {
+    pub(crate) fn set_attributes(&mut self, id: SlotId, bits: u8) {
         let Some(node) = self.node_mut(id) else {
             return;
         };
@@ -335,7 +340,7 @@ impl PropertyTree {
 
     /// Whether `id` is tied to a model.
     #[must_use]
-    pub fn is_tied(&self, id: NodeId) -> bool {
+    pub fn is_tied(&self, id: SlotId) -> bool {
         self.node(id).tied.is_some()
     }
 }
@@ -355,7 +360,7 @@ static DETACHED: Node = Node {
 };
 
 impl Node {
-    fn new(name: String, index: i32, parent: Option<NodeId>) -> Self {
+    fn new(name: String, index: i32, parent: Option<SlotId>) -> Self {
         Self {
             name,
             index,

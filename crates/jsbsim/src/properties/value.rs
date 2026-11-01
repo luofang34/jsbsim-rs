@@ -8,7 +8,7 @@
 use tracing::info;
 
 use super::conversion::{Written, parse_into};
-use super::{Attribute, NodeId, PropertyTree, ValueType};
+use super::{Attribute, PropertyTree, SlotId, ValueType};
 use crate::c_numeric::{atoi, format_g, strtod, strtol};
 
 /// Value held by a node.
@@ -18,7 +18,7 @@ pub enum Value {
     /// No value yet.
     None,
     /// Reads and writes are forwarded to another node.
-    Alias(NodeId),
+    Alias(SlotId),
     /// `bool`.
     Bool(bool),
     /// C `int`.
@@ -71,7 +71,7 @@ impl PropertyTree {
     /// Follows aliases from `id`, returning the node that holds the value,
     /// or `None` when some node on the way is not readable.
     #[inline]
-    pub(crate) fn read_target(&self, mut id: NodeId) -> Option<NodeId> {
+    pub(crate) fn read_target(&self, mut id: SlotId) -> Option<SlotId> {
         loop {
             let node = self.node(id);
             if node.attributes & Attribute::TRACE_READ.0 != 0 {
@@ -91,11 +91,11 @@ impl PropertyTree {
     /// every property read, stays small enough to inline.
     #[cold]
     #[inline(never)]
-    fn trace_read(&self, id: NodeId) {
+    fn trace_read(&self, id: SlotId) {
         info!("TRACE: Read node {}", self.path(id, false));
     }
 
-    fn read<T>(&self, id: NodeId, default: T, convert: impl Fn(&Value) -> T) -> T {
+    fn read<T>(&self, id: SlotId, default: T, convert: impl Fn(&Value) -> T) -> T {
         self.read_target(id)
             .map_or(default, |target| convert(&self.node(target).value))
     }
@@ -103,7 +103,7 @@ impl PropertyTree {
     /// Type of the value, looking through aliases (`getType`).
     #[must_use]
     #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
-    pub fn value_type(&self, id: NodeId) -> ValueType {
+    pub fn value_type(&self, id: SlotId) -> ValueType {
         let mut id = id;
         loop {
             match &self.node(id).value {
@@ -115,7 +115,7 @@ impl PropertyTree {
 
     /// Whether `id` aliases another node, and which.
     #[must_use]
-    pub(crate) fn alias_target(&self, id: NodeId) -> Option<NodeId> {
+    pub(crate) fn alias_target(&self, id: SlotId) -> Option<SlotId> {
         match self.node(id).value {
             Value::Alias(target) => Some(target),
             _ => None,
@@ -125,7 +125,7 @@ impl PropertyTree {
     /// `getBoolValue`.
     #[must_use]
     #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
-    pub fn get_bool(&self, id: NodeId) -> bool {
+    pub fn get_bool(&self, id: SlotId) -> bool {
         self.read(id, false, |v| match v {
             Value::Bool(b) => *b,
             Value::Int(i) => *i != 0,
@@ -140,7 +140,7 @@ impl PropertyTree {
     /// `getIntValue`.
     #[must_use]
     #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
-    pub fn get_int(&self, id: NodeId) -> i32 {
+    pub fn get_int(&self, id: SlotId) -> i32 {
         self.read(id, 0, |v| match v {
             Value::Bool(b) => i32::from(*b),
             Value::Int(i) => *i,
@@ -155,7 +155,7 @@ impl PropertyTree {
     /// `getLongValue`.
     #[must_use]
     #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
-    pub fn get_long(&self, id: NodeId) -> i64 {
+    pub fn get_long(&self, id: SlotId) -> i64 {
         self.read(id, 0, |v| match v {
             Value::Bool(b) => i64::from(*b),
             Value::Int(i) => i64::from(*i),
@@ -170,7 +170,7 @@ impl PropertyTree {
     /// `getFloatValue`.
     #[must_use]
     #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
-    pub fn get_float(&self, id: NodeId) -> f32 {
+    pub fn get_float(&self, id: SlotId) -> f32 {
         self.read(id, 0.0, |v| match v {
             Value::Bool(b) => f32::from(u8::from(*b)),
             Value::Int(i) => *i as f32,
@@ -184,7 +184,7 @@ impl PropertyTree {
 
     /// `getDoubleValue`.
     #[must_use]
-    pub fn get_double(&self, id: NodeId) -> f64 {
+    pub fn get_double(&self, id: SlotId) -> f64 {
         self.read(id, 0.0, Value::to_double)
     }
 
@@ -192,14 +192,14 @@ impl PropertyTree {
     /// [`read_target`](Self::read_target) returned: its own value, with no
     /// aliases to follow and no second TRACE_READ record.
     #[must_use]
-    pub(crate) fn target_double(&self, target: NodeId) -> f64 {
+    pub(crate) fn target_double(&self, target: SlotId) -> f64 {
         self.node(target).value.to_double()
     }
 
     /// `getStringValue`: numbers are formatted as SimGear's `make_string`
     /// does (`double` with 10 significant digits, `float` with 6).
     #[must_use]
-    pub fn get_string(&self, id: NodeId) -> String {
+    pub fn get_string(&self, id: SlotId) -> String {
         self.read(id, String::new(), |v| match v {
             Value::Bool(b) => b.to_text(),
             Value::Int(i) => i.to_string(),
@@ -213,7 +213,7 @@ impl PropertyTree {
 
     /// Follows aliases from `id` for a write, returning the node that
     /// receives it, or `None` when some node on the way is not writable.
-    pub(crate) fn write_target(&self, mut id: NodeId) -> Option<NodeId> {
+    pub(crate) fn write_target(&self, mut id: SlotId) -> Option<SlotId> {
         loop {
             if !self.attribute(id, Attribute::WRITE) {
                 return None;
@@ -225,7 +225,7 @@ impl PropertyTree {
         }
     }
 
-    fn write<T: Written>(&mut self, id: NodeId, value: T) -> bool {
+    fn write<T: Written>(&mut self, id: SlotId, value: T) -> bool {
         match self.write_target(id) {
             Some(target) => {
                 self.write_at_target(target, value);
@@ -238,12 +238,12 @@ impl PropertyTree {
     /// [`set_double`](Self::set_double) of a node that
     /// [`write_target`](Self::write_target) returned: no aliases to follow
     /// again.
-    pub(crate) fn set_double_at_target(&mut self, target: NodeId, value: f64) {
+    pub(crate) fn set_double_at_target(&mut self, target: SlotId, value: f64) {
         self.write_at_target(target, value);
     }
 
     #[inline]
-    fn write_at_target<T: Written>(&mut self, target: NodeId, value: T) {
+    fn write_at_target<T: Written>(&mut self, target: SlotId, value: T) {
         self.store_typed(target, value);
         if self.attribute(target, Attribute::TRACE_WRITE) {
             self.trace_write(target);
@@ -253,7 +253,7 @@ impl PropertyTree {
     /// Converts in place, so that a write to a typed node neither drops nor
     /// rebuilds its value.
     #[inline]
-    fn store_typed<T: Written>(&mut self, target: NodeId, value: T) {
+    fn store_typed<T: Written>(&mut self, target: SlotId, value: T) {
         let Some(node) = self.node_mut(target) else {
             return;
         };
@@ -273,7 +273,7 @@ impl PropertyTree {
     /// small enough to inline.
     #[cold]
     #[inline(never)]
-    fn trace_write(&self, id: NodeId) {
+    fn trace_write(&self, id: SlotId) {
         info!(
             "TRACE: Write node {}, value \"{}\"",
             self.path(id, false),
@@ -283,49 +283,49 @@ impl PropertyTree {
 
     /// `setBoolValue`; false when the node is not writable.
     #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
-    pub fn set_bool(&mut self, id: NodeId, value: bool) -> bool {
+    pub fn set_bool(&mut self, id: SlotId, value: bool) -> bool {
         self.write(id, value)
     }
 
     /// `setIntValue`; false when the node is not writable.
     #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
-    pub fn set_int(&mut self, id: NodeId, value: i32) -> bool {
+    pub fn set_int(&mut self, id: SlotId, value: i32) -> bool {
         self.write(id, value)
     }
 
     /// `setLongValue`; false when the node is not writable.
     #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
-    pub fn set_long(&mut self, id: NodeId, value: i64) -> bool {
+    pub fn set_long(&mut self, id: SlotId, value: i64) -> bool {
         self.write(id, value)
     }
 
     /// `setFloatValue`; false when the node is not writable.
     #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
-    pub fn set_float(&mut self, id: NodeId, value: f32) -> bool {
+    pub fn set_float(&mut self, id: SlotId, value: f32) -> bool {
         self.write(id, value)
     }
 
     /// `setDoubleValue`; false when the node is not writable.
-    pub fn set_double(&mut self, id: NodeId, value: f64) -> bool {
+    pub fn set_double(&mut self, id: SlotId, value: f64) -> bool {
         self.write(id, value)
     }
 
     /// `setStringValue`: an untyped node becomes a string; a typed node
     /// parses the text.
     #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
-    pub fn set_string(&mut self, id: NodeId, text: &str) -> bool {
+    pub fn set_string(&mut self, id: SlotId, text: &str) -> bool {
         self.write_text(id, text, false)
     }
 
     /// `setUnspecifiedValue`: like [`set_string`](Self::set_string), but an
     /// empty node keeps its type open.
     #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
-    pub fn set_unspecified(&mut self, id: NodeId, text: &str) -> bool {
+    pub fn set_unspecified(&mut self, id: SlotId, text: &str) -> bool {
         self.write_text(id, text, true)
     }
 
     #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
-    fn write_text(&mut self, id: NodeId, text: &str, unspecified: bool) -> bool {
+    fn write_text(&mut self, id: SlotId, text: &str, unspecified: bool) -> bool {
         let Some(target) = self.write_target(id) else {
             return false;
         };
@@ -349,7 +349,7 @@ impl PropertyTree {
     /// already aliases another node, or the alias would form a cycle; the
     /// last case recurses without end in SimGear.
     #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
-    pub fn alias(&mut self, id: NodeId, target: NodeId) -> bool {
+    pub fn alias(&mut self, id: SlotId, target: SlotId) -> bool {
         if self.alias_target(id) == Some(target) {
             return true;
         }
@@ -372,7 +372,7 @@ impl PropertyTree {
 
     /// Removes an alias (`unalias`); false when `id` is not an alias.
     #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
-    pub fn unalias(&mut self, id: NodeId) -> bool {
+    pub fn unalias(&mut self, id: SlotId) -> bool {
         if self.alias_target(id).is_none() {
             return false;
         }
@@ -387,7 +387,7 @@ impl PropertyTree {
     /// starts with `initial` (`FGPropertyManager::Tie`). Without a setter
     /// (`writable == false`) the node loses [`Attribute::WRITE`]. Fails on
     /// aliases and already tied nodes.
-    pub fn tie(&mut self, id: NodeId, initial: Value, writable: bool) -> bool {
+    pub fn tie(&mut self, id: SlotId, initial: Value, writable: bool) -> bool {
         if self.alias_target(id).is_some() || self.is_tied(id) {
             return false;
         }
@@ -411,7 +411,7 @@ impl PropertyTree {
 
     /// Releases a tie, restoring READ and WRITE as they were before it
     /// (`FGPropertyManager::Untie`). The node keeps its current value.
-    pub fn untie(&mut self, id: NodeId) -> bool {
+    pub fn untie(&mut self, id: SlotId) -> bool {
         let Some((read, write)) = self.node(id).tied else {
             return false;
         };
@@ -439,7 +439,7 @@ impl PropertyTree {
 
     /// Stores into a tied node on behalf of its owner, bypassing the WRITE
     /// attribute that guards it from outside writers.
-    pub(crate) fn store(&mut self, id: NodeId, value: f64) {
+    pub(crate) fn store(&mut self, id: SlotId, value: f64) {
         self.store_typed(id, value);
     }
 }

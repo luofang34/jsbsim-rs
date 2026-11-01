@@ -20,7 +20,7 @@ use super::{
     TableKind,
 };
 use crate::Error;
-use crate::properties::{NodeId, PropertyTree};
+use crate::properties::{PropertyTree, SlotId};
 
 /// Deeper nesting than this means a property reads itself.
 const MAX_DEPTH: u32 = 256;
@@ -37,7 +37,7 @@ type Eval = Result<f64, Failed>;
 #[cfg_attr(not(feature = "__oracle"), allow(unreachable_pub))]
 pub trait GetterSource {
     /// The getter's value if `node` is tied to one.
-    fn get(&self, node: NodeId) -> Option<f64>;
+    fn get(&self, node: SlotId) -> Option<f64>;
 }
 
 /// A source with no getters, for function sets used on their own.
@@ -46,7 +46,7 @@ pub struct NoGetters;
 
 impl GetterSource for NoGetters {
     #[inline]
-    fn get(&self, _node: NodeId) -> Option<f64> {
+    fn get(&self, _node: SlotId) -> Option<f64> {
         None
     }
 }
@@ -61,7 +61,7 @@ pub struct Evaluator<'a, G = NoGetters> {
     tree: &'a mut PropertyTree,
     getters: G,
     depth: u32,
-    template_argument: Option<NodeId>,
+    template_argument: Option<SlotId>,
     /// The error of the evaluation that returned [`Failed`].
     failure: Option<Error>,
 }
@@ -101,7 +101,7 @@ impl<'a, G: GetterSource> Evaluator<'a, G> {
     /// node reads 0, and a node bound to a function or table evaluates it
     /// and stores the result.
     #[inline]
-    pub fn read_node(&mut self, node: NodeId) -> Result<f64, Error> {
+    pub fn read_node(&mut self, node: SlotId) -> Result<f64, Error> {
         let value = self.eval_node(node);
         self.finish(value)
     }
@@ -159,7 +159,7 @@ impl<'a, G: GetterSource> Evaluator<'a, G> {
         Failed
     }
 
-    fn eval_node(&mut self, node: NodeId) -> Eval {
+    fn eval_node(&mut self, node: SlotId) -> Eval {
         let Some(target) = self.tree.read_target(node) else {
             return Ok(0.0);
         };
@@ -177,7 +177,7 @@ impl<'a, G: GetterSource> Evaluator<'a, G> {
         Ok(value)
     }
 
-    fn nested(&mut self, node: NodeId, f: impl FnOnce(&mut Self) -> Eval) -> Eval {
+    fn nested(&mut self, node: SlotId, f: impl FnOnce(&mut Self) -> Eval) -> Eval {
         if self.depth >= MAX_DEPTH {
             let property = self.tree.fully_qualified_name(node);
             return Err(self.fail(FunctionError::Recursion { property }));
@@ -190,7 +190,7 @@ impl<'a, G: GetterSource> Evaluator<'a, G> {
 
     /// The node of `value`, binding it now if needed.
     #[inline]
-    fn value_node(&mut self, value: &PropertyValue) -> Result<NodeId, Failed> {
+    fn value_node(&mut self, value: &PropertyValue) -> Result<SlotId, Failed> {
         value.node(self.tree).map_err(|e| self.fail(e))
     }
 

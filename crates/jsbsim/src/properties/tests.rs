@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 use super::*;
 
-fn tree_with(path: &str) -> (PropertyTree, NodeId) {
+fn tree_with(path: &str) -> (PropertyTree, SlotId) {
     let mut tree = PropertyTree::new();
     let id = tree.get_or_create(tree.root(), path).unwrap();
     (tree, id)
@@ -221,7 +221,7 @@ fn the_lookup_generation_moves_only_when_a_lookup_could_change() {
 #[test]
 fn node_maps_index_by_node_and_iterate_in_node_order() {
     let mut tree = PropertyTree::new();
-    let ids: Vec<NodeId> = ["x", "y", "z"]
+    let ids: Vec<SlotId> = ["x", "y", "z"]
         .iter()
         .map(|p| tree.get_or_create(tree.root(), p).unwrap())
         .collect();
@@ -284,7 +284,7 @@ fn absolute_paths_leave_an_instance_tree() {
 #[test]
 fn a_double_written_at_its_target_converts_to_the_node_type() {
     let mut tree = PropertyTree::new();
-    let mut typed = |path: &str, set: fn(&mut PropertyTree, NodeId)| {
+    let mut typed = |path: &str, set: fn(&mut PropertyTree, SlotId)| {
         let id = tree.get_or_create(tree.root(), path).unwrap();
         set(&mut tree, id);
         let target = tree.write_target(id).unwrap();
@@ -324,4 +324,30 @@ fn a_path_error_is_reported_once() {
     let err = crate::Error::from(path_error);
     assert_eq!(err.to_string(), format!("invalid property path: {message}"));
     assert!(std::error::Error::source(&err).is_none());
+}
+
+#[test]
+fn a_node_id_names_its_slot_in_its_own_tree_only() {
+    let (tree, slot) = tree_with("a/b");
+    let (other, other_slot) = tree_with("a/b");
+    assert_eq!(slot, other_slot, "the same paths take the same slots");
+    assert_eq!(tree.slot_of(tree.node_id(slot)), Some(slot));
+    assert_eq!(other.slot_of(tree.node_id(slot)), None);
+    assert_ne!(tree.node_id(slot), other.node_id(slot));
+}
+
+#[test]
+fn a_copy_of_a_tree_is_a_tree_of_its_own() {
+    let (tree, slot) = tree_with("a/b");
+    let copy = tree.clone();
+    assert_eq!(copy.get("a/b").unwrap(), Some(slot));
+    assert_eq!(copy.slot_of(tree.node_id(slot)), None);
+    assert_eq!(tree.slot_of(copy.node_id(slot)), None);
+    assert_eq!(copy.slot_of(copy.node_id(slot)), Some(slot));
+}
+
+#[test]
+fn the_tree_id_counter_skips_zero() {
+    assert_eq!(id::TreeId::after(1), 2);
+    assert_eq!(id::TreeId::after(u32::MAX), 1);
 }
