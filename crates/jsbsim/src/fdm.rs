@@ -10,9 +10,7 @@ mod buoyant_forces;
 mod distribute;
 mod engine_load;
 mod engine_run;
-pub use engine_load::EngineLoad;
 mod env;
-pub(crate) use env::Env;
 mod exec_bind;
 mod ic_load;
 mod input;
@@ -32,11 +30,13 @@ mod trim;
 #[cfg(test)]
 mod tests;
 
-pub use bindings::{Binder, Bindings, Kind, ModelEvaluator, ModelGetters, convert_write};
-pub use exec_bind::ExecRequest;
-pub use load::{LoadContext, ModelFunctions};
+pub(crate) use bindings::{Binder, Bindings, Kind, ModelEvaluator, ModelGetters, convert_write};
+pub(crate) use engine_load::EngineLoad;
+pub(crate) use env::Env;
+pub(crate) use exec_bind::ExecRequest;
+pub(crate) use load::{LoadContext, ModelFunctions};
 pub use reset_mask::ResetMask;
-pub use run::InitialState;
+pub(crate) use run::InitialState;
 
 use crate::Error;
 use crate::functions::FunctionSet;
@@ -84,7 +84,7 @@ pub struct ExecState {
     /// it when it loads. The core reads no clock: set it before loading.
     pub wall_clock: i64,
     /// Setter requests the executive still has to carry out.
-    pub requests: Vec<exec_bind::ExecRequest>,
+    pub(crate) requests: Vec<ExecRequest>,
 }
 
 impl Default for ExecState {
