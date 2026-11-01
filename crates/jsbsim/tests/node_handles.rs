@@ -46,16 +46,16 @@ fn node(fdm: &Fdm, path: &str) -> NodeId {
     fdm.node(path).unwrap().unwrap()
 }
 
-/// The `StaleNode` error for `node`, refused by both reads and writes, and
-/// the path the refusing executive holds at its slot.
+/// The path the refusing executive holds at `node`'s slot, from the
+/// `StaleNode` error both reads and writes of `node` give.
 #[cfg(test)]
-fn refused(fdm: &mut Fdm, node: NodeId) -> (u32, Option<String>) {
+fn refused(fdm: &mut Fdm, node: NodeId) -> Option<String> {
     let read = fdm.read_node(node).unwrap_err();
     assert_eq!(fdm.write_node(node, 5.0).unwrap_err(), read);
-    let Error::StaleNode { slot, found } = read else {
+    let Error::StaleNode { found } = read else {
         panic!("not StaleNode: {read:?}");
     };
-    (slot, found)
+    found
 }
 
 #[test]
@@ -93,20 +93,15 @@ fn a_handle_to_a_node_another_fdm_holds_elsewhere_is_refused() {
     a.set_property("test/a", 1.0).unwrap();
     b.set_property("test/b", 2.0).unwrap();
     let theirs = node(&a, "test/a");
-    let (slot, found) = refused(&mut b, theirs);
+    let found = refused(&mut b, theirs);
     assert_eq!(found.as_deref(), Some("/fdm/jsbsim/test/b"));
     assert_eq!(b.get_property("test/b").unwrap(), 2.0);
+    let err = Error::StaleNode { found };
     assert_eq!(
-        Error::StaleNode {
-            slot,
-            found: found.clone()
-        }
-        .to_string(),
-        format!(
-            "no property node at slot {slot} matches the handle; the slot holds /fdm/jsbsim/test/b"
-        )
+        err.to_string(),
+        "the property handle names no node of this executive; its slot holds /fdm/jsbsim/test/b"
     );
-    assert_eq!(Error::StaleNode { slot, found }.location(), None);
+    assert_eq!(err.location(), None);
 }
 
 /// A restore drops the runtime nodes made after the snapshot; their handles
@@ -119,15 +114,15 @@ fn a_handle_to_a_node_a_restore_dropped_is_refused() {
     fdm.set_property("test/made-after", 3.0).unwrap();
     let dropped = node(&fdm, "test/made-after");
     fdm.restore(&snapshot).unwrap();
-    let (slot, found) = refused(&mut fdm, dropped);
+    let found = refused(&mut fdm, dropped);
     assert_eq!(found, None);
     assert_eq!(
-        Error::StaleNode { slot, found }.to_string(),
-        format!("no property node at slot {slot} matches the handle; the slot is empty")
+        Error::StaleNode { found }.to_string(),
+        "the property handle names no node of this executive; its slot is empty"
     );
 
     fdm.set_property("test/made-later", 4.0).unwrap();
-    let (_, found) = refused(&mut fdm, dropped);
+    let found = refused(&mut fdm, dropped);
     assert_eq!(found.as_deref(), Some("/fdm/jsbsim/test/made-later"));
     assert_eq!(fdm.get_property("test/made-later").unwrap(), 4.0);
 }

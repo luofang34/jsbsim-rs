@@ -268,12 +268,8 @@ impl Fdm {
     /// The slot `node` names, or why it names none.
     fn slot_of(&self, node: NodeId) -> Result<SlotId, Error> {
         let tree = &self.env.tree;
-        tree.slot_of(node).ok_or_else(|| {
-            let slot = node.slot_index();
-            Error::StaleNode {
-                slot,
-                found: tree.path_at(slot),
-            }
+        tree.slot_of(node).ok_or_else(|| Error::StaleNode {
+            found: tree.path_at(node.slot()),
         })
     }
 

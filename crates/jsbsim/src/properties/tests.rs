@@ -343,8 +343,8 @@ fn a_node_id_names_the_node_of_its_path_at_its_slot() {
     assert_eq!(deeper.slot_of(other.node_id(slot)), None);
     let (short, _) = tree_with("a");
     assert_eq!(short.slot_of(tree.node_id(slot)), None, "past the end");
-    assert_eq!(short.path_at(slot.0), None);
-    assert_eq!(other.path_at(slot.0).as_deref(), Some("/a/c"));
+    assert_eq!(short.path_at(slot), None);
+    assert_eq!(other.path_at(slot).as_deref(), Some("/a/c"));
 }
 
 /// The key tells apart names and indices that a plain concatenation would

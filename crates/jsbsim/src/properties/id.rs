@@ -50,8 +50,12 @@ impl NodeKey {
     }
 }
 
-/// Handle to a node of one [`Fdm`](crate::Fdm)'s property tree, from
-/// [`Fdm::node`](crate::Fdm::node).
+/// Handle to a property node, from [`Fdm::node`](crate::Fdm::node): the
+/// node of one path at one slot of the property arena. It works on any
+/// [`Fdm`](crate::Fdm) that holds that node there, such as a second
+/// executive of the same model, and is refused with
+/// [`Error::StaleNode`](crate::Error::StaleNode) by one that does not,
+/// such as an executive a snapshot restore took the node from.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct NodeId {
     slot: SlotId,
@@ -59,9 +63,9 @@ pub struct NodeId {
 }
 
 impl NodeId {
-    /// Index of the node in its tree's arena, for error reports.
-    pub(crate) fn slot_index(self) -> u32 {
-        self.slot.0
+    /// The slot the handle names, whatever node is there now.
+    pub(crate) fn slot(self) -> SlotId {
+        self.slot
     }
 }
 
@@ -84,9 +88,8 @@ impl PropertyTree {
         (node.key == id.key).then_some(id.slot)
     }
 
-    /// The path of the node at arena index `slot`, `None` past the end.
-    pub(crate) fn path_at(&self, slot: u32) -> Option<String> {
-        let slot = SlotId(slot);
+    /// The path of the node at `slot`, `None` past the end.
+    pub(crate) fn path_at(&self, slot: SlotId) -> Option<String> {
         (slot.index() < self.nodes.len()).then(|| self.path(slot, true))
     }
 }

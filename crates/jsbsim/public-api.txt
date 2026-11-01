@@ -16,7 +16,6 @@ pub jsbsim::error::Error::ResourceUnreadable::path: alloc::string::String
 pub jsbsim::error::Error::Snapshot(jsbsim::snapshot::SnapshotError)
 pub jsbsim::error::Error::StaleNode
 pub jsbsim::error::Error::StaleNode::found: core::option::Option<alloc::string::String>
-pub jsbsim::error::Error::StaleNode::slot: u32
 pub jsbsim::error::Error::TrimFailed
 pub jsbsim::error::Error::TrimFailed::message: alloc::string::String
 pub jsbsim::error::Error::UnknownInputType
@@ -914,7 +913,6 @@ pub jsbsim::Error::ResourceUnreadable::path: alloc::string::String
 pub jsbsim::Error::Snapshot(jsbsim::snapshot::SnapshotError)
 pub jsbsim::Error::StaleNode
 pub jsbsim::Error::StaleNode::found: core::option::Option<alloc::string::String>
-pub jsbsim::Error::StaleNode::slot: u32
 pub jsbsim::Error::TrimFailed
 pub jsbsim::Error::TrimFailed::message: alloc::string::String
 pub jsbsim::Error::UnknownInputType

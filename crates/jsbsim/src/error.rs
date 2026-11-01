@@ -83,13 +83,11 @@ pub enum Error {
     /// or [`Fdm::write_node`](crate::Fdm::write_node) names a node this
     /// `Fdm` does not hold at its slot: one of another `Fdm` with a
     /// different property there, or one a snapshot restore removed.
-    #[error("no property node at slot {slot} matches the handle; the slot {}", match found {
-        Some(path) => format!("holds {path}"),
-        None => "is empty".to_owned(),
+    #[error("the property handle names no node of this executive; {}", match found {
+        Some(path) => format!("its slot holds {path}"),
+        None => "its slot is empty".to_owned(),
     })]
     StaleNode {
-        /// The handle's slot in the property arena.
-        slot: u32,
         /// The fully qualified path of the node this `Fdm` holds at that
         /// slot, if any.
         found: Option<String>,
