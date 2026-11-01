@@ -109,13 +109,13 @@ fn read_config(el: &Element) -> Result<TurbineConfig, Error> {
 }
 
 /// `GetPreFunction(propulsion/engine[n]/<name>)`.
-fn pre_function(cx: &mut EngineLoad<'_>, name: &str) -> Result<Option<FnId>, Error> {
-    let full = format!("propulsion/engine[{}]/{name}", cx.number());
-    let Some(base) = cx.base_mut() else {
+fn pre_function(ctx: &mut EngineLoad<'_>, name: &str) -> Result<Option<FnId>, Error> {
+    let full = format!("propulsion/engine[{}]/{name}", ctx.number());
+    let Some(base) = ctx.base_mut() else {
         return Ok(None);
     };
     let pre = base.functions.pre.clone();
-    let ctx = cx.context();
+    let ctx = ctx.context();
     for id in pre {
         if ctx.functions.function(id)?.name() == full {
             return Ok(Some(id));
@@ -125,8 +125,8 @@ fn pre_function(cx: &mut EngineLoad<'_>, name: &str) -> Result<Option<FnId>, Err
 }
 
 /// A spool rate: its function, or the default with `factor`.
-fn spool(cx: &mut EngineLoad<'_>, name: &str, bpr: f64, factor: f64) -> Result<Spool, Error> {
-    Ok(match pre_function(cx, name)? {
+fn spool(ctx: &mut EngineLoad<'_>, name: &str, bpr: f64, factor: f64) -> Result<Spool, Error> {
+    Ok(match pre_function(ctx, name)? {
         Some(id) => Spool::Function(id),
         None => Spool::Default {
             delay: factor * 90.0 / (bpr + 3.0),
@@ -135,8 +135,8 @@ fn spool(cx: &mut EngineLoad<'_>, name: &str, bpr: f64, factor: f64) -> Result<S
 }
 
 /// A lookup function `Calculate` dereferences unconditionally.
-fn required(cx: &mut EngineLoad<'_>, el: &Element, name: &str) -> Result<FnId, Error> {
-    pre_function(cx, name)?.ok_or_else(|| Error::Model {
+fn required(ctx: &mut EngineLoad<'_>, el: &Element, name: &str) -> Result<FnId, Error> {
+    pre_function(ctx, name)?.ok_or_else(|| Error::Model {
         message: format!(
             "{}: turbine engine has no function {name}, which JSBSim dereferences",
             el.location()
@@ -147,38 +147,38 @@ fn required(cx: &mut EngineLoad<'_>, el: &Element, name: &str) -> Result<FnId, E
 /// The lookups, with JSBSim's default spool rates for those the engine
 /// does not define.
 fn lookups(
-    cx: &mut EngineLoad<'_>,
+    ctx: &mut EngineLoad<'_>,
     el: &Element,
     c: &TurbineConfig,
 ) -> Result<TurbineLookups, Error> {
-    let aug_thrust = pre_function(cx, "AugThrust")?;
+    let aug_thrust = pre_function(ctx, "AugThrust")?;
     if aug_thrust.is_none() && (c.augmented == 1 || c.aug_method == 2) {
-        required(cx, el, "AugThrust")?;
+        required(ctx, el, "AugThrust")?;
     }
     // An engine with injection but no `Injection` loads; `Calculate`
     // fails once injection is commanded (see `Turbine::sample`).
-    let injection = pre_function(cx, "Injection")?;
+    let injection = pre_function(ctx, "Injection")?;
     let bpr = c.bypass_ratio;
     Ok(TurbineLookups {
-        idle_thrust: required(cx, el, "IdleThrust")?,
-        mil_thrust: required(cx, el, "MilThrust")?,
+        idle_thrust: required(ctx, el, "IdleThrust")?,
+        mil_thrust: required(ctx, el, "MilThrust")?,
         aug_thrust,
         injection,
-        n1_spool_up: spool(cx, "N1SpoolUp", bpr, 1.0)?,
-        n1_spool_down: spool(cx, "N1SpoolDown", bpr, 2.4)?,
-        n2_spool_up: spool(cx, "N2SpoolUp", bpr, 1.0)?,
-        n2_spool_down: spool(cx, "N2SpoolDown", bpr, 3.0)?,
+        n1_spool_up: spool(ctx, "N1SpoolUp", bpr, 1.0)?,
+        n1_spool_down: spool(ctx, "N1SpoolDown", bpr, 2.4)?,
+        n2_spool_up: spool(ctx, "N2SpoolUp", bpr, 1.0)?,
+        n2_spool_down: spool(ctx, "N2SpoolDown", bpr, 3.0)?,
     })
 }
 
 /// `FGTurbine`'s constructor on `<turbine_engine>` `el`.
-pub fn load(el: &Element, cx: &mut EngineLoad<'_>) -> Result<Turbine, Error> {
+pub fn load(el: &Element, ctx: &mut EngineLoad<'_>) -> Result<Turbine, Error> {
     let el = &renamed(el);
-    cx.load_base(el, EngineType::Turbine)?;
+    ctx.load_base(el, EngineType::Turbine)?;
     let config = read_config(el)?;
-    let lookups = lookups(cx, el, &config)?;
+    let lookups = lookups(ctx, el, &config)?;
     let mut turbine = Turbine {
-        number: cx.number(),
+        number: ctx.number(),
         config: Box::new(TurbineConfig {
             // `ResetToIC` (twice) runs before `Load` reads <tsfc>.
             tsfc: 0.8,
@@ -211,7 +211,7 @@ pub fn load(el: &Element, cx: &mut EngineLoad<'_>) -> Result<Turbine, Error> {
             inj_n2_increment: 0.0,
         },
     };
-    if let Some((_, _, input)) = cx.loaded_mut() {
+    if let Some((_, _, input)) = ctx.loaded_mut() {
         turbine.reset_state(input);
     }
     turbine.config.tsfc = config.tsfc;
@@ -235,10 +235,10 @@ pub fn load(el: &Element, cx: &mut EngineLoad<'_>) -> Result<Turbine, Error> {
     }
     s.n1_factor = s.max_n1 - config.idle_n1;
     s.n2_factor = s.max_n2 - config.idle_n2;
-    if let Some((_, _, input)) = cx.loaded_mut() {
+    if let Some((_, _, input)) = ctx.loaded_mut() {
         turbine.state.oil_temp_degk = input.tat_c + 273.0;
     }
-    let n = cx.number();
-    super::bind::bind(&mut cx.context().binder, n)?;
+    let n = ctx.number();
+    super::bind::bind(&mut ctx.context().binder, n)?;
     Ok(turbine)
 }

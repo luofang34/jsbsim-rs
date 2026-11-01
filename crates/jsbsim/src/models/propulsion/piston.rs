@@ -308,8 +308,8 @@ impl EngineFamily for Piston {
     const TYPE: EngineType = EngineType::Piston;
     type Sample = ThrusterSample;
 
-    fn load(el: &Element, cx: &mut EngineLoad<'_>) -> Result<Self, Error> {
-        load::load(el, cx)
+    fn load(el: &Element, ctx: &mut EngineLoad<'_>) -> Result<Self, Error> {
+        load::load(el, ctx)
     }
 
     fn sample(

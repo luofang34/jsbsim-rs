@@ -80,6 +80,12 @@ pub const E_LONG: Axis = Axis::Y;
 /// Radius axis (`eRad`).
 pub const E_RAD: Axis = Axis::Z;
 
+/// `x²`, spelled as the C++ source spells it (`sqr`).
+#[must_use]
+pub(crate) const fn sqr(x: f64) -> f64 {
+    x * x
+}
+
 /// Tracing target of the event a [`Location`] or [`Quaternion`] emits when
 /// a derived value is read without its owner having called
 /// `cache_derived`, so the read computes it again.

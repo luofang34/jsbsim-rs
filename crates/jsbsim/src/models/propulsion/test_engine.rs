@@ -31,10 +31,10 @@ impl EngineFamily for TestEngine {
     const TYPE: EngineType = EngineType::Rocket;
     type Sample = (f64, super::families::ThrusterSample);
 
-    fn load(el: &Element, cx: &mut EngineLoad<'_>) -> Result<Self, Error> {
-        cx.load_base(el, Self::TYPE)?;
+    fn load(el: &Element, ctx: &mut EngineLoad<'_>) -> Result<Self, Error> {
+        ctx.load_base(el, Self::TYPE)?;
         let flow = el.find_element_value_as_number("sl-fuel-flow")?;
-        if let Some(base) = cx.base_mut() {
+        if let Some(base) = ctx.base_mut() {
             base.sl_fuel_flow_max = flow;
         }
         Ok(Self {

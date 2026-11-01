@@ -229,13 +229,13 @@ impl Fdm {
             let Some(el) = engine_el.find_element(name) else {
                 continue;
             };
-            let mut cx = EngineLoad {
+            let mut ctx = EngineLoad {
                 fdm: self,
                 parent: engine_el,
                 number: n,
                 loaded: None,
             };
-            if families::load_engine(name, el, &mut cx)? {
+            if families::load_engine(name, el, &mut ctx)? {
                 return Ok(());
             }
             return Err(Error::Unsupported {

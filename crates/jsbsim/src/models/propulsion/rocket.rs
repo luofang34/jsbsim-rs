@@ -119,7 +119,7 @@ impl Rocket {
 
     /// The specific impulse, flow and throttle parameters of the
     /// constructor; the isp function, when `<isp>` holds one.
-    fn read(&mut self, el: &Element, cx: &mut EngineLoad<'_>) -> Result<(), Error> {
+    fn read(&mut self, el: &Element, ctx: &mut EngineLoad<'_>) -> Result<(), Error> {
         let Some(isp_el) = el.find_element("isp") else {
             return Err(Error::Model {
                 message: format!(
@@ -131,7 +131,7 @@ impl Rocket {
         match isp_el.find_element("function") {
             Some(f) => {
                 let prefix = self.number.to_string();
-                let ctx = cx.context();
+                let ctx = ctx.context();
                 let id = ctx.functions.load_function(ctx.binder.tree, f, &prefix)?;
                 self.isp_function = Some(id);
             }
@@ -140,7 +140,7 @@ impl Rocket {
         if let Some(t) = number(el, "builduptime")? {
             self.buildup_time = t;
         }
-        let base = cx.base_mut().ok_or_else(|| Error::Model {
+        let base = ctx.base_mut().ok_or_else(|| Error::Model {
             message: format!("{}: the rocket did not load its base", el.location()),
         })?;
         base.min_throttle = 0.0;
@@ -168,11 +168,11 @@ impl Rocket {
     }
 
     /// The `<thrust_table>` of a solid rocket and its `<variation>`.
-    fn read_solid(&mut self, el: &Element, cx: &mut EngineLoad<'_>) -> Result<(), Error> {
+    fn read_solid(&mut self, el: &Element, ctx: &mut EngineLoad<'_>) -> Result<(), Error> {
         let Some(table_el) = el.find_element("thrust_table") else {
             return Ok(());
         };
-        let ctx = cx.context();
+        let ctx = ctx.context();
         let id = ctx.functions.load_table(ctx.binder.tree, table_el, "")?;
         self.thrust_table = Some(Box::new(ctx.functions.table(id)?.clone()));
         if let Some(variation) = el.find_element("variation") {
@@ -207,16 +207,16 @@ impl EngineFamily for Rocket {
     /// rocket, its thrust table. The ties are made before the table is
     /// read, so every rocket gets the liquid rocket's (JSBSim's
     /// `bindmodel` tests the table before it is loaded).
-    fn load(el: &Element, cx: &mut EngineLoad<'_>) -> Result<Self, Error> {
-        cx.load_base(el, EngineType::Unknown)?;
-        let n = cx.number();
+    fn load(el: &Element, ctx: &mut EngineLoad<'_>) -> Result<Self, Error> {
+        ctx.load_base(el, EngineType::Unknown)?;
+        let n = ctx.number();
         let mut rocket = Self::new(n);
-        bind::bind(&mut cx.context().binder, n)?;
-        rocket.read(el, cx)?;
+        bind::bind(&mut ctx.context().binder, n)?;
+        rocket.read(el, ctx)?;
         if let Some(id) = rocket.isp_function {
-            rocket.isp = cx.function_value(id)?;
+            rocket.isp = ctx.function_value(id)?;
         }
-        rocket.read_solid(el, cx)?;
+        rocket.read_solid(el, ctx)?;
         Ok(rocket)
     }
 

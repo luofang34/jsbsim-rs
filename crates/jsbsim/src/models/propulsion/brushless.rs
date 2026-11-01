@@ -109,15 +109,15 @@ impl EngineFamily for BrushLessDcMotor {
 
     /// `FGBrushLessDCMotor(exec, el, n, input)`: `FGEngine::Load`, then
     /// the mandatory motor constants.
-    fn load(el: &Element, cx: &mut EngineLoad<'_>) -> Result<Self, Error> {
-        cx.load_base(el, EngineType::Unknown)?;
+    fn load(el: &Element, ctx: &mut EngineLoad<'_>) -> Result<Self, Error> {
+        ctx.load_base(el, EngineType::Unknown)?;
         let max_volts = mandatory(el, "maxvolts", Some("VOLTS"))?;
         let kv = mandatory(el, "velocityconstant", None)?;
         let coil_resistance = mandatory(el, "coilresistance", Some("OHMS"))?;
         let zero_torque_current = mandatory(el, "noloadcurrent", Some("AMPERES"))?;
         let max_current = max_volts / coil_resistance + zero_torque_current;
-        let n = cx.number();
-        bind(&mut cx.context().binder, n)?;
+        let n = ctx.number();
+        bind(&mut ctx.context().binder, n)?;
         Ok(Self {
             number: n,
             zero_torque_current,

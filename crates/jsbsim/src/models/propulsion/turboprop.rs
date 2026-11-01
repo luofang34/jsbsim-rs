@@ -235,8 +235,8 @@ impl EngineFamily for TurboProp {
     const TYPE: EngineType = EngineType::Turboprop;
     type Sample = TurboPropSample;
 
-    fn load(el: &Element, cx: &mut EngineLoad<'_>) -> Result<Self, Error> {
-        load::load(el, cx)
+    fn load(el: &Element, ctx: &mut EngineLoad<'_>) -> Result<Self, Error> {
+        load::load(el, ctx)
     }
 
     fn sample(

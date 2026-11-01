@@ -77,7 +77,7 @@ fn default_mixture_efficiency() -> Table {
 /// The `COMBUSTION` and `MIXTURE` tables of the `FindNextElement("table")`
 /// loop, which starts after `<oil-viscosity-index>`, the last child the
 /// constructor looked for; JSBSim's defaults for those absent.
-fn load_tables(el: &Element, cx: &mut EngineLoad<'_>) -> Result<(Table, Table), Error> {
+fn load_tables(el: &Element, ctx: &mut EngineLoad<'_>) -> Result<(Table, Table), Error> {
     let (mut combustion, mut mixture) = (None, None);
     for table_el in el.find_next_elements_after("oil-viscosity-index", "table") {
         let slot = match table_el.attribute("name") {
@@ -88,7 +88,7 @@ fn load_tables(el: &Element, cx: &mut EngineLoad<'_>) -> Result<(Table, Table), 
                 continue;
             }
         };
-        let ctx = cx.context();
+        let ctx = ctx.context();
         let id = ctx.functions.load_table(ctx.binder.tree, table_el, "")?;
         *slot = Some(ctx.functions.table(id)?.clone());
     }
@@ -102,7 +102,7 @@ fn load_tables(el: &Element, cx: &mut EngineLoad<'_>) -> Result<(Table, Table), 
 /// the engine file sets, before the derived values.
 fn read_config(
     el: &Element,
-    cx: &mut EngineLoad<'_>,
+    ctx: &mut EngineLoad<'_>,
 ) -> Result<(PistonConfig, PistonTuning), Error> {
     let get = |name: &str, default: f64| Ok::<f64, Error>(number(el, name)?.unwrap_or(default));
     let conv = |name: &str, unit: &str, default: f64| {
@@ -154,7 +154,7 @@ fn read_config(
         combustion_efficiency: Table::one_d(&[]),
         mixture_efficiency: Table::one_d(&[]),
     };
-    let (combustion, mixture) = load_tables(el, cx)?;
+    let (combustion, mixture) = load_tables(el, ctx)?;
     Ok((
         PistonConfig {
             combustion_efficiency: combustion,
@@ -342,15 +342,15 @@ fn finish_boost(b: &mut Boost) {
 }
 
 /// `FGPiston`'s constructor on `<piston_engine>` `el`.
-pub fn load(el: &Element, cx: &mut EngineLoad<'_>) -> Result<Piston, Error> {
-    cx.load_base(el, EngineType::Piston)?;
-    let (mut config, mut tuning) = read_config(el, cx)?;
+pub fn load(el: &Element, ctx: &mut EngineLoad<'_>) -> Result<Piston, Error> {
+    ctx.load_base(el, EngineType::Piston)?;
+    let (mut config, mut tuning) = read_config(el, ctx)?;
     let max_throttle = number(el, "maxthrottle")?;
     let min_throttle = number(el, "minthrottle")?;
     let mut boost = read_boost(el)?;
     derive(&mut config, &mut tuning);
-    let n = cx.number();
-    super::bind::bind(&mut cx.context().binder, n, boost.loss_factor > 0.0)?;
+    let n = ctx.number();
+    super::bind::bind(&mut ctx.context().binder, n, boost.loss_factor > 0.0)?;
     finish_boost(&mut boost);
     let mut piston = Piston {
         number: n,
@@ -362,7 +362,7 @@ pub fn load(el: &Element, cx: &mut EngineLoad<'_>) -> Result<Piston, Error> {
         tuning,
         boost,
     };
-    if let Some((base, thruster, input)) = cx.loaded_mut() {
+    if let Some((base, thruster, input)) = ctx.loaded_mut() {
         if let Some(v) = max_throttle {
             base.max_throttle = v;
         }

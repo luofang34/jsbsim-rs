@@ -64,14 +64,14 @@ impl EngineFamily for Electric {
 
     /// `FGElectric(exec, el, n, input)`: `FGEngine::Load`, then the rated
     /// power (1 hp unless `<power>` sets it).
-    fn load(el: &Element, cx: &mut EngineLoad<'_>) -> Result<Self, Error> {
-        cx.load_base(el, EngineType::Unknown)?;
+    fn load(el: &Element, ctx: &mut EngineLoad<'_>) -> Result<Self, Error> {
+        ctx.load_base(el, EngineType::Unknown)?;
         let power_watts = match el.find_element("power") {
             Some(_) => el.find_element_value_as_number_convert_to("power", "WATTS")?,
             None => HP_TO_WATTS,
         };
-        let n = cx.number();
-        bind(&mut cx.context().binder, n)?;
+        let n = ctx.number();
+        bind(&mut ctx.context().binder, n)?;
         Ok(Self {
             number: n,
             power_watts,

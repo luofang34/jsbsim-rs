@@ -60,12 +60,12 @@ struct Tables {
 
 /// The tables: `EnginePowerVC` (when no function gives it) bound under
 /// the engine, the others loaded as `FGTable(pm, el)`.
-fn load_tables(el: &Element, cx: &mut EngineLoad<'_>, have_vc: bool) -> Result<Tables, Error> {
-    let prefix = cx.number().to_string();
+fn load_tables(el: &Element, ctx: &mut EngineLoad<'_>, have_vc: bool) -> Result<Tables, Error> {
+    let prefix = ctx.number().to_string();
     let mut t = Tables::default();
     for table_el in el.find_elements("table") {
         let name = table_el.attribute("name");
-        let ctx = cx.context();
+        let ctx = ctx.context();
         if !have_vc && t.power_vc.is_none() && name == "EnginePowerVC" {
             // Named per engine so that each binds its own property.
             let mut renamed = table_el.clone();
@@ -99,13 +99,13 @@ fn load_tables(el: &Element, cx: &mut EngineLoad<'_>, have_vc: bool) -> Result<T
 }
 
 /// `GetPreFunction(propulsion/engine[n]/EnginePowerVC)`.
-fn power_vc_function(cx: &mut EngineLoad<'_>) -> Result<Option<FnId>, Error> {
-    let full = format!("propulsion/engine[{}]/EnginePowerVC", cx.number());
-    let Some(base) = cx.base_mut() else {
+fn power_vc_function(ctx: &mut EngineLoad<'_>) -> Result<Option<FnId>, Error> {
+    let full = format!("propulsion/engine[{}]/EnginePowerVC", ctx.number());
+    let Some(base) = ctx.base_mut() else {
         return Ok(None);
     };
     let pre = base.functions.pre.clone();
-    let ctx = cx.context();
+    let ctx = ctx.context();
     for id in pre {
         if ctx.functions.function(id)?.name() == full {
             return Ok(Some(id));
@@ -163,20 +163,20 @@ fn read_config(el: &Element, tables: Tables, vc: PowerVc) -> Result<TurboPropCon
 }
 
 /// `FGTurboProp`'s constructor on `<turboprop_engine>` `el`.
-pub fn load(el: &Element, cx: &mut EngineLoad<'_>) -> Result<TurboProp, Error> {
+pub fn load(el: &Element, ctx: &mut EngineLoad<'_>) -> Result<TurboProp, Error> {
     let el = &renamed(el);
-    cx.load_base(el, EngineType::Turboprop)?;
-    let function = power_vc_function(cx)?;
-    let tables = load_tables(el, cx, function.is_some())?;
+    ctx.load_base(el, EngineType::Turboprop)?;
+    let function = power_vc_function(ctx)?;
+    let tables = load_tables(el, ctx, function.is_some())?;
     let vc = match (function, tables.power_vc) {
         (Some(id), _) => PowerVc::Function(id),
         (None, Some(id)) => PowerVc::Table(id),
         (None, None) => required(el, "EnginePowerVC", None)?,
     };
     let config = read_config(el, tables, vc)?;
-    let tat_c = cx.inputs().tat_c;
-    let n = cx.number();
-    super::bind::bind(&mut cx.context().binder, n)?;
+    let tat_c = ctx.inputs().tat_c;
+    let n = ctx.number();
+    super::bind::bind(&mut ctx.context().binder, n)?;
     Ok(TurboProp {
         number: n,
         config: Box::new(config),

@@ -13,17 +13,13 @@ use super::{
 };
 use crate::Error;
 use crate::fdm::LoadContext;
-use crate::math::ColumnVector3;
+use crate::math::{ColumnVector3, sqr};
 use crate::models::propulsion::families::ThrusterSite;
 use crate::models::propulsion::lag_filter::LagFilter;
 use crate::models::propulsion::thruster::ThrusterBase;
 use crate::models::propulsion::transmission::{self, Transmission};
 use crate::units::{HPTOFTLBSSEC, constrain};
 use crate::xml::Element;
-
-fn sqr(x: f64) -> f64 {
-    x * x
-}
 
 /// `ConfigValueConv`: the child `name` of `el` in `unit` (as written when
 /// `unit` is empty), or `default`; with `tell`, a missing child is logged.

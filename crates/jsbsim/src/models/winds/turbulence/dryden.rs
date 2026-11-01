@@ -17,7 +17,7 @@ use std::f64::consts::PI;
 
 use super::super::Winds;
 use crate::functions::Table;
-use crate::math::{ColumnVector3, E_DOWN, E_EAST, E_NORTH, E_P, E_Q, E_R};
+use crate::math::{ColumnVector3, E_DOWN, E_EAST, E_NORTH, E_P, E_Q, E_R, sqr};
 use crate::random::RandomNumberGenerator;
 
 /// The filters' past outputs (`xi_*`) and inputs (`nu_*`), one and two
@@ -115,11 +115,6 @@ impl PoeTable {
     pub fn sigma(&self, severity: i32, h: f64) -> f64 {
         self.0.value_2d(f64::from(severity), h)
     }
-}
-
-/// `sqr`.
-fn sqr(x: f64) -> f64 {
-    x * x
 }
 
 /// The scale lengths `L_u`, `L_w`, ft, and intensities `sig_u`, `sig_w`,

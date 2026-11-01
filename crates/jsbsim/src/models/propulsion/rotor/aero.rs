@@ -9,11 +9,7 @@
 use std::f64::consts::PI;
 
 use super::{HSR_TO_TBO, Rotor, TBO_TO_HSR};
-use crate::math::{ColumnVector3, E_L, E_M, E_N, E_P, E_Q, E_R, E_U, E_V, E_W};
-
-fn sqr(x: f64) -> f64 {
-    x * x
-}
+use crate::math::{ColumnVector3, E_L, E_M, E_N, E_P, E_Q, E_R, E_U, E_V, E_W, sqr};
 
 impl Rotor {
     /// Body to hub-shaft axes (`TboToHsr * InvTransform`).

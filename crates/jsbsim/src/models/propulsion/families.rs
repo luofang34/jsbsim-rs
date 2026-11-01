@@ -107,7 +107,7 @@ pub trait EngineFamily: Sized {
     const IDLE_WHILE_SUSPENDED: bool = false;
 
     /// The type's constructor on its element `el`.
-    fn load(el: &Element, cx: &mut EngineLoad<'_>) -> Result<Self, Error>;
+    fn load(el: &Element, ctx: &mut EngineLoad<'_>) -> Result<Self, Error>;
 
     /// The reads of `Calculate`, in its order.
     fn sample(
@@ -296,12 +296,12 @@ macro_rules! engines {
         pub(crate) fn load_engine(
             name: &str,
             el: &Element,
-            cx: &mut EngineLoad<'_>,
+            ctx: &mut EngineLoad<'_>,
         ) -> Result<bool, Error> {
             match name {
                 $($(#[$cfg])* $element => {
-                    let family = <$ty as EngineFamily>::load(el, cx)?;
-                    cx.push(<$ty as EngineFamily>::TYPE, |base, thruster, engines| {
+                    let family = <$ty as EngineFamily>::load(el, ctx)?;
+                    ctx.push(<$ty as EngineFamily>::TYPE, |base, thruster, engines| {
                         engines.push(super::engine::Engine {
                             base,
                             thruster,
