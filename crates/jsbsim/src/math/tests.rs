@@ -319,6 +319,20 @@ fn quaternion_assignment_by_value_drops_the_cached_angles() {
 }
 
 #[test]
+fn a_half_turn_is_nan_through_from_matrix_but_not_through_quaternion() {
+    let half_turn = Matrix33::new(1.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, -1.0);
+    let unpivoted = Quaternion::from_matrix(&half_turn).to_array();
+    assert!(unpivoted.iter().all(|c| c.is_nan()), "{unpivoted:?}");
+    assert_eq!(half_turn.quaternion().to_array(), [0.0, 1.0, 0.0, 0.0]);
+}
+
+#[test]
+fn matrix_default_is_zero_and_quaternion_default_is_identity() {
+    assert_eq!(Matrix33::default(), Matrix33::zero());
+    assert_eq!(Quaternion::default().to_array(), [1.0, 0.0, 0.0, 0.0]);
+}
+
+#[test]
 fn quaternion_constructs_and_reads_in_const_context() {
     const IDENTITY: Quaternion = Quaternion::from_components(1.0, 0.0, 0.0, 0.0);
     const COMPONENTS: [f64; 4] = IDENTITY.to_array();

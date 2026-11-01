@@ -112,6 +112,11 @@ impl Quaternion {
     }
 
     /// From a transformation matrix, normalized (`FGQuaternion(m)`).
+    ///
+    /// This mirrors `FGQuaternion(m)`'s unpivoted `1 + trace` formula, which
+    /// divides by zero and gives `NaN` on a 180-degree rotation
+    /// (`trace == -1`). Convert a general rotation matrix with
+    /// [`Matrix33::quaternion`].
     #[must_use]
     pub fn from_matrix(m: &Matrix33) -> Self {
         use Axis::{X, Y, Z};

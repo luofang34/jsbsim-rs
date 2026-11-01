@@ -12,6 +12,9 @@ use std::ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, 
 use super::{Axis, ColumnVector3, Quaternion};
 
 /// `FGMatrix33`; entries are indexed `(row, col)` by [`Axis`].
+///
+/// [`Matrix33::default`] is the zero matrix (`FGMatrix33()`), unlike
+/// [`Quaternion::default`], which is the identity rotation.
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub struct Matrix33 {
     /// Column-major: entry `(row, col)` is `data[3 * col + row]`, counting
