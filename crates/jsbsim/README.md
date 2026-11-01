@@ -53,6 +53,12 @@ own name, such as PX4's `models/Rascal/Rascal110-JSBSim.xml`, loads with
 `set_systems_path` and `set_engine_path` name the shared directories searched
 after the aircraft's own.
 
+Initial conditions come from `ic/...` properties or from an initialization
+file, through `Fdm::load_initial_conditions` or, for a file named by one path,
+`Fdm::load_initial_conditions_file`; `run_ic` applies them. `Fdm::do_trim` then
+trims the aircraft in a `TrimMode`, and `Fdm::do_trim_custom` trims the state
+and control axes it is given.
+
 ## Terrain
 
 The host owns the terrain. A `GroundCallback` answers where the ground is
@@ -92,8 +98,7 @@ replay or lockstep. It restores only onto an executive that loaded the same
 model the same way, and its bytes are the same on every target.
 
 ```rust
-use jsbsim::snapshot::Snapshot;
-use jsbsim::{Fdm, MemoryResolver};
+use jsbsim::{Fdm, MemoryResolver, Snapshot};
 
 # let mut files = MemoryResolver::new();
 # files.insert(

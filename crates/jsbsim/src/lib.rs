@@ -9,11 +9,12 @@
 //!
 //! 1. Make an executive with [`Fdm::new`] or [`Fdm::with_options`].
 //! 2. Optionally install terrain with [`Fdm::set_ground_callback`].
-//! 3. Load an aircraft with [`Fdm::load_model`] or a whole script with
-//!    [`Fdm::load_script`], reading files through a [`Resolver`].
-//! 4. Set initial conditions (`ic/...` properties, or
-//!    [`Fdm::load_initial_conditions`]), apply them with [`Fdm::run_ic`],
-//!    and trim with [`Fdm::do_trim`] if wanted.
+//! 3. Load an aircraft with [`Fdm::load_model`] or [`Fdm::load_model_file`],
+//!    or a whole script with [`Fdm::load_script`], through a [`Resolver`].
+//! 4. Set initial conditions (`ic/...` properties, or a file with
+//!    [`Fdm::load_initial_conditions`] or
+//!    [`Fdm::load_initial_conditions_file`]), apply them with [`Fdm::run_ic`],
+//!    and trim with [`Fdm::do_trim`] or [`Fdm::do_trim_custom`] if wanted.
 //! 5. Step with [`Fdm::run`]; read and write properties by name
 //!    ([`Fdm::get_property`], [`Fdm::set_property`]) or by [`NodeId`]
 //!    ([`Fdm::node`], [`Fdm::read_node`], [`Fdm::write_node`]); read the
@@ -37,8 +38,7 @@
 //!         <location> <x>0</x> <y>0</y> <z>-10</z> </location>
 //!         <spring_coeff> 1000 </spring_coeff> <damping_coeff> 100 </damping_coeff>
 //!       </contact> </ground_reactions>
-//!       <aerodynamics> <axis name="DRAG"/> </aerodynamics>
-//!     </fdm_config>"#,
+//!       <aerodynamics> <axis name="DRAG"/> </aerodynamics> </fdm_config>"#,
 //! );
 //! let mut fdm = Fdm::new()?;
 //! fdm.load_model(&files, "aircraft", "box")?;
