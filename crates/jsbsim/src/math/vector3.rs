@@ -71,6 +71,12 @@ impl ColumnVector3 {
         let [b0, b1, b2] = v.data;
         Self::new(a1 * b2 - a2 * b1, a2 * b0 - a0 * b2, a0 * b1 - a1 * b0)
     }
+
+    /// Dot product ([`dot_product`] as a method).
+    #[must_use]
+    pub fn dot(self, v: Self) -> f64 {
+        dot_product(self, v)
+    }
 }
 
 /// `DotProduct(v1, v2)`.

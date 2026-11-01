@@ -27,6 +27,15 @@ fn vector_basics() {
 }
 
 #[test]
+fn dot_sits_beside_cross() {
+    let u = ColumnVector3::new(1.0, 2.0, 2.0);
+    let v = ColumnVector3::new(3.0, -1.0, 4.0);
+    assert_eq!(u.dot(v), 9.0);
+    assert_eq!(u.dot(v), dot_product(u, v));
+    assert_eq!(u.dot(u.cross(v)), 0.0);
+}
+
+#[test]
 fn matrix_indexing_is_row_column() {
     let m = Matrix33::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 10.0);
     assert_eq!(m[(E_X, E_Y)], 2.0);

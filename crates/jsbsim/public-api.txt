@@ -250,6 +250,7 @@ impl core::panic::unwind_safe::UnwindSafe for jsbsim::math::Axis
 pub struct jsbsim::math::ColumnVector3
 impl jsbsim::math::ColumnVector3
 pub fn jsbsim::math::ColumnVector3::cross(self, Self) -> Self
+pub fn jsbsim::math::ColumnVector3::dot(self, Self) -> f64
 pub fn jsbsim::math::ColumnVector3::magnitude(&self) -> f64
 pub fn jsbsim::math::ColumnVector3::magnitude2(&self, jsbsim::math::Axis, jsbsim::math::Axis) -> f64
 pub const fn jsbsim::math::ColumnVector3::new(f64, f64, f64) -> Self
