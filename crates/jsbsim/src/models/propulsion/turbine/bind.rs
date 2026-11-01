@@ -6,8 +6,8 @@
 
 use super::Turbine;
 use crate::Error;
-use crate::fdm::{Binder, Kind, Models};
 use crate::models::propulsion::families::EngineKind;
+use crate::models::{Binder, Kind, Models};
 
 fn turbine(m: &Models, n: usize) -> Option<&Turbine> {
     match &m.propulsion.engines.get(n)?.kind {

@@ -5,23 +5,9 @@
 //
 //! Properties of the executive and the model enable flags.
 
-use super::{Binder, Kind, Models, ResetMask};
 use crate::Error;
 use crate::models::base::ModelBase;
-
-/// Requests from setters that need the whole executive.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ExecRequest {
-    /// `simulation/reset` with its mode bits, unnamed ones included.
-    Reset(ResetMask),
-    /// `simulation/do_simple_trim` with its mode, which may be out of
-    /// range: the executive reports it as JSBSim's illegal trim.
-    Trim(i32),
-    /// `simulation/do_linearization`.
-    Linearize,
-    /// `propulsion/set-running` with the engine, -1 for all.
-    InitRunning(i32),
-}
+use crate::models::{Binder, ExecRequest, Kind, Models, ResetMask};
 
 fn flag(b: bool) -> f64 {
     f64::from(u8::from(b))

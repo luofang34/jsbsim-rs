@@ -7,9 +7,9 @@
 
 use super::{Phase, Spool, Turbine, TurbineConfig, TurbineFlags, TurbineLookups, TurbineState};
 use crate::Error;
-use crate::fdm::EngineLoad;
 use crate::functions::FnId;
 use crate::models::propulsion::engine::EngineType;
+use crate::models::propulsion::families::EngineHost;
 use crate::xml::{Element, atof_locale_c};
 
 /// The engine functions `Load` renames to `propulsion/engine[#]/<name>`.
@@ -109,7 +109,7 @@ fn read_config(el: &Element) -> Result<TurbineConfig, Error> {
 }
 
 /// `GetPreFunction(propulsion/engine[n]/<name>)`.
-fn pre_function(ctx: &mut EngineLoad<'_>, name: &str) -> Result<Option<FnId>, Error> {
+fn pre_function(ctx: &mut dyn EngineHost, name: &str) -> Result<Option<FnId>, Error> {
     let full = format!("propulsion/engine[{}]/{name}", ctx.number());
     let Some(base) = ctx.base_mut() else {
         return Ok(None);
@@ -125,7 +125,7 @@ fn pre_function(ctx: &mut EngineLoad<'_>, name: &str) -> Result<Option<FnId>, Er
 }
 
 /// A spool rate: its function, or the default with `factor`.
-fn spool(ctx: &mut EngineLoad<'_>, name: &str, bpr: f64, factor: f64) -> Result<Spool, Error> {
+fn spool(ctx: &mut dyn EngineHost, name: &str, bpr: f64, factor: f64) -> Result<Spool, Error> {
     Ok(match pre_function(ctx, name)? {
         Some(id) => Spool::Function(id),
         None => Spool::Default {
@@ -135,7 +135,7 @@ fn spool(ctx: &mut EngineLoad<'_>, name: &str, bpr: f64, factor: f64) -> Result<
 }
 
 /// A lookup function `Calculate` dereferences unconditionally.
-fn required(ctx: &mut EngineLoad<'_>, el: &Element, name: &str) -> Result<FnId, Error> {
+fn required(ctx: &mut dyn EngineHost, el: &Element, name: &str) -> Result<FnId, Error> {
     pre_function(ctx, name)?.ok_or_else(|| Error::Model {
         message: format!(
             "{}: turbine engine has no function {name}, which JSBSim dereferences",
@@ -147,7 +147,7 @@ fn required(ctx: &mut EngineLoad<'_>, el: &Element, name: &str) -> Result<FnId, 
 /// The lookups, with JSBSim's default spool rates for those the engine
 /// does not define.
 fn lookups(
-    ctx: &mut EngineLoad<'_>,
+    ctx: &mut dyn EngineHost,
     el: &Element,
     c: &TurbineConfig,
 ) -> Result<TurbineLookups, Error> {
@@ -172,7 +172,7 @@ fn lookups(
 }
 
 /// `FGTurbine`'s constructor on `<turbine_engine>` `el`.
-pub fn load(el: &Element, ctx: &mut EngineLoad<'_>) -> Result<Turbine, Error> {
+pub fn load(el: &Element, ctx: &mut dyn EngineHost) -> Result<Turbine, Error> {
     let el = &renamed(el);
     ctx.load_base(el, EngineType::Turbine)?;
     let config = read_config(el)?;

@@ -9,9 +9,9 @@
 
 use super::base::ModelBase;
 use crate::Error;
-use crate::fdm::{Kind, LoadContext};
 use crate::functions::FnId;
 use crate::math::{ColumnVector3, E_L, E_M, E_N, E_X, E_Y, E_Z, Matrix33};
+use crate::models::{Kind, LoadContext};
 use crate::properties::NodeId;
 use crate::xml::Element;
 
@@ -259,7 +259,7 @@ impl ExternalReactions {
 }
 
 /// `FGExternalReactions::bind`.
-pub fn bind(b: &mut crate::fdm::Binder<'_>) -> Result<(), Error> {
+pub fn bind(b: &mut crate::models::Binder<'_>) -> Result<(), Error> {
     for (name, i) in [("l", E_L), ("m", E_M), ("n", E_N)] {
         b.getter(&format!("moments/{name}-external-lbsft"), move |m| {
             m.external_reactions.total_moments[i]

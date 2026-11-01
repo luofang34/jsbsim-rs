@@ -7,10 +7,9 @@
 //! is registered.
 
 use crate::Error;
-use crate::fdm::ModelEvaluator;
-use crate::fdm::{LoadContext, Models};
 use crate::models::propulsion::engine::Engine;
 use crate::models::propulsion::thruster::{Thruster, ThrusterBase};
+use crate::models::{LoadContext, ModelEvaluator, Models};
 use crate::xml::Element;
 
 /// What a thruster type's constructor reads from the executive besides

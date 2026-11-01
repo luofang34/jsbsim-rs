@@ -7,7 +7,7 @@
 //! propeller advance and feather, one of each per engine.
 
 use crate::Error;
-use crate::fdm::{Binder, Kind, Models};
+use crate::models::{Binder, Kind, Models};
 
 /// The engine commands and positions, indexed by engine.
 #[derive(Debug, Clone, Default, PartialEq)]

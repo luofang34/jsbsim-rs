@@ -7,10 +7,10 @@
 
 use super::Propeller;
 use crate::Error;
-use crate::fdm::{Binder, Kind, Models};
 use crate::math::E_X;
 use crate::models::propulsion::families::ThrusterKind;
 use crate::models::propulsion::thruster::ThrusterBase;
+use crate::models::{Binder, Kind, Models};
 
 fn propeller(m: &Models, n: usize) -> Option<(&ThrusterBase, &Propeller)> {
     let thruster = &m.propulsion.engines.get(n)?.thruster;

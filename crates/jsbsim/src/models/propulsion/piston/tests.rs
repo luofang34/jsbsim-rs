@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 use super::Piston;
 use super::cycle::std_pressure_100k;
-use crate::fdm::Fdm;
+use crate::Fdm;
 use crate::models::propulsion::families::EngineKind;
 use crate::models::propulsion::tests::load;
 

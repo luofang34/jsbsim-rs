@@ -3,7 +3,8 @@
 # Keeps the executive's borrow splitting in place. Model code evaluates
 # through `Env::eval` / `Env::cache_value` with `&Models` while it borrows
 # its own load-time lists, so it never needs to copy those lists or move a
-# model out of `Models` to get past the borrow checker. Usage:
+# model out of `Models` to get past the borrow checker. It covers the
+# executive and the glue in models/ it is built on. Usage:
 #   scripts/check-fdm-borrows.sh [repo-root]
 set -euo pipefail
 
@@ -18,10 +19,16 @@ fail() {
   failures=$((failures + 1))
 }
 
-# The executive's production sources; unit tests may clone freely.
+# The executive's production sources and the glue that hands models their
+# borrows; unit tests may clone freely.
 fdm_files() {
-  { [ -f "$src/fdm.rs" ] && echo "$src/fdm.rs"; find "$src/fdm" -name '*.rs' -type f; } |
-    grep -v '/tests\.rs$' | sort
+  {
+    [ -f "$src/fdm.rs" ] && echo "$src/fdm.rs"
+    find "$src/fdm" -name '*.rs' -type f
+    for glue in bindings env exec load; do
+      [ -f "$src/models/$glue.rs" ] && echo "$src/models/$glue.rs"
+    done
+  } | grep -v '/tests\.rs$' | sort
 }
 
 while IFS= read -r file; do
@@ -38,7 +45,7 @@ while IFS= read -r file; do
   fi
   # Hand-built getters bypass `Env`, which is what keeps the borrows disjoint.
   case "$file" in
-    "$src/fdm/env.rs") ;;
+    "$src/models/env.rs") ;;
     *)
       if grep -n -E 'ModelGetters \{' "$file"; then
         fail "$file: evaluate through Env::eval or Env::cache_value"

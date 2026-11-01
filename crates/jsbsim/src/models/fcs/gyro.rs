@@ -10,8 +10,7 @@ use super::families::{ComponentAt, Family};
 use super::sensor::Signal;
 use super::sensor::orientation::Orientation;
 use crate::Error;
-use crate::fdm::ModelEvaluator;
-use crate::fdm::{LoadContext, Models};
+use crate::models::{LoadContext, ModelEvaluator, Models};
 use crate::xml::Element;
 
 /// `FGGyro`.

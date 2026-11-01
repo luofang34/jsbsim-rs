@@ -5,10 +5,11 @@
 //
 //! Loading and running the propulsion system.
 
+use super::Fdm;
 use super::order::Model;
-use super::{Fdm, Models};
 use crate::Error;
 use crate::math::ColumnVector3;
+use crate::models::Models;
 use crate::models::external_reactions::Transforms;
 use crate::models::fcs::throttle;
 use crate::models::propulsion::{self, Tank, TankType, families, tank};

@@ -30,8 +30,7 @@
 use super::Fcs;
 use super::component::{Base, Tick};
 use crate::Error;
-use crate::fdm::ModelEvaluator;
-use crate::fdm::{Env, LoadContext, Models};
+use crate::models::{Env, LoadContext, ModelEvaluator, Models};
 use crate::xml::Element;
 
 /// Where a component sits: channel index and index in the channel.

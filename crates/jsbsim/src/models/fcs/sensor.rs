@@ -18,8 +18,7 @@ mod tests;
 use super::component::{Base, Tick, lenient, model_error};
 use super::families::{ComponentAt, Family};
 use crate::Error;
-use crate::fdm::LoadContext;
-use crate::fdm::ModelEvaluator;
+use crate::models::{LoadContext, ModelEvaluator};
 use crate::random::RandomNumberGenerator;
 use crate::xml::Element;
 

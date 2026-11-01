@@ -7,8 +7,8 @@
 
 use super::Piston;
 use crate::Error;
-use crate::fdm::{Binder, Kind, Models};
 use crate::models::propulsion::families::EngineKind;
+use crate::models::{Binder, Kind, Models};
 
 fn piston(m: &Models, n: usize) -> Option<&Piston> {
     match &m.propulsion.engines.get(n)?.kind {

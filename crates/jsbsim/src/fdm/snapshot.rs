@@ -4,7 +4,8 @@
 
 use tracing::error;
 
-use super::{ExecState, Fdm, Models};
+use super::Fdm;
+use crate::models::{ExecState, Models};
 use crate::script::{Event, Script, Set};
 use crate::snapshot::{
     Checker, Fingerprint, HashingResolver, ShapeHasher, Snapshot, SnapshotError, Visit, Visitor,

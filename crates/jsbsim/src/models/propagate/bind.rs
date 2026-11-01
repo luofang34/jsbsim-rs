@@ -5,10 +5,10 @@
 //! Properties of `FGPropagate`, in JSBSim's binding order.
 
 use crate::Error;
-use crate::fdm::{Binder, Kind, Models};
 use crate::math::{
     Axis, E_DOWN, E_EAST, E_NORTH, E_P, E_PHI, E_PSI, E_Q, E_R, E_THT, E_U, E_V, E_W, E_X, E_Y, E_Z,
 };
+use crate::models::{Binder, Kind, Models};
 use crate::units::{DEGTORAD, FTTOM};
 
 fn velocities(b: &mut Binder<'_>) -> Result<(), Error> {

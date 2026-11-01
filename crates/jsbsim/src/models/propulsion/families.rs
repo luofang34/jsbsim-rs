@@ -31,7 +31,7 @@
 //! [`Error::Unsupported`] naming the element and where it is.
 //!
 //! An engine's constructor ([`EngineFamily::load`]) calls
-//! [`EngineLoad::load_base`] where the C++ constructor calls
+//! [`EngineHost::load_base`] where the C++ constructor calls
 //! `FGEngine::Load`; that loads the engine's functions, its thruster
 //! (through [`ThrusterFamily::load`]), its feed tanks and its
 //! `propulsion/engine[n]/` properties.
@@ -58,11 +58,11 @@ pub use thrusters::{
 };
 
 use super::Inputs;
-use super::engine::{EngineBase, EngineType};
+use super::engine::{Engine, EngineBase, EngineType};
 use super::thruster::Thruster;
 use crate::Error;
-use crate::fdm::ModelEvaluator;
-use crate::fdm::{EngineLoad, Env, Models};
+use crate::functions::FnId;
+use crate::models::{Env, LoadContext, ModelEvaluator, Models};
 use crate::xml::Element;
 
 /// The engine elements JSBSim's `FGPropulsion::Load` looks for, in order.
@@ -95,6 +95,48 @@ pub enum InitRunning {
     },
 }
 
+/// What an engine type's constructor ([`EngineFamily::load`]) works with:
+/// the executive that holds the models, and the `<engine>` element and
+/// number it is loading.
+pub(crate) trait EngineHost {
+    /// The engine's index among the propulsion's engines.
+    fn number(&self) -> usize;
+
+    /// Functions, tables and ties, for what the type itself loads.
+    fn context(&mut self) -> LoadContext<'_>;
+
+    /// The value of function `id` (`GetValue()`), read against the models
+    /// as loaded so far.
+    fn function_value(&mut self, id: FnId) -> Result<f64, Error>;
+
+    /// The propulsion's engine inputs, as the engine's constructor sees
+    /// them.
+    fn inputs(&self) -> &Inputs;
+
+    /// The engine's base and thruster, once [`load_base`](Self::load_base)
+    /// has loaded them, with the propulsion's engine inputs.
+    fn loaded_mut(&mut self) -> Option<(&mut EngineBase, &mut Thruster, &Inputs)>;
+
+    /// The engine's base, once [`load_base`](Self::load_base) has loaded it.
+    fn base_mut(&mut self) -> Option<&mut EngineBase>;
+
+    /// `FGEngine::Load(exec, el)` for the type's element `el`: the engine's
+    /// model functions (prefixed with its number), its thruster, the reset
+    /// of the base and the thruster, the feed tanks and the
+    /// `propulsion/engine[n]/` properties, then the post-functions. A type
+    /// whose `ResetToIC` resets state of its own resets it where it calls
+    /// this.
+    fn load_base(&mut self, el: &Element, engine_type: EngineType) -> Result<(), Error>;
+
+    /// For the `engines!` registry: what [`load_base`](Self::load_base)
+    /// loaded, with its type set to `engine_type`, and the engines to
+    /// append the finished engine to.
+    fn take_loaded(
+        &mut self,
+        engine_type: EngineType,
+    ) -> Result<(EngineBase, Thruster, &mut Vec<Engine>), Error>;
+}
+
 /// One engine type (a subclass of `FGEngine`).
 pub trait EngineFamily: Sized {
     /// Its `FGEngine::EngineType`.
@@ -107,7 +149,7 @@ pub trait EngineFamily: Sized {
     const IDLE_WHILE_SUSPENDED: bool = false;
 
     /// The type's constructor on its element `el`.
-    fn load(el: &Element, ctx: &mut EngineLoad<'_>) -> Result<Self, Error>;
+    fn load(el: &Element, ctx: &mut dyn EngineHost) -> Result<Self, Error>;
 
     /// The reads of `Calculate`, in its order.
     fn sample(
@@ -296,18 +338,17 @@ macro_rules! engines {
         pub(crate) fn load_engine(
             name: &str,
             el: &Element,
-            ctx: &mut EngineLoad<'_>,
+            ctx: &mut dyn EngineHost,
         ) -> Result<bool, Error> {
             match name {
                 $($(#[$cfg])* $element => {
                     let family = <$ty as EngineFamily>::load(el, ctx)?;
-                    ctx.push(<$ty as EngineFamily>::TYPE, |base, thruster, engines| {
-                        engines.push(super::engine::Engine {
-                            base,
-                            thruster,
-                            kind: EngineKind::$variant(family),
-                        });
-                    })?;
+                    let (base, thruster, engines) = ctx.take_loaded(<$ty as EngineFamily>::TYPE)?;
+                    engines.push(Engine {
+                        base,
+                        thruster,
+                        kind: EngineKind::$variant(family),
+                    });
                     Ok(true)
                 })*
                 _ => Ok(false),
@@ -325,7 +366,7 @@ macro_rules! engines {
                     let (base, thruster) = (&engine.base, &engine.thruster);
                     let sample = env.eval(models, |ev| family.sample(base, thruster, models, ev))?;
                     let p = &mut models.propulsion;
-                    if let Some(super::engine::Engine {
+                    if let Some(Engine {
                         base,
                         thruster,
                         kind: EngineKind::$variant(family),

@@ -7,9 +7,9 @@
 
 use super::{Propeller, PropellerTables};
 use crate::Error;
-use crate::fdm::LoadContext;
 use crate::functions::Table;
 use crate::math::ColumnVector3;
+use crate::models::LoadContext;
 use crate::models::propulsion::thruster::ThrusterBase;
 use crate::xml::Element;
 

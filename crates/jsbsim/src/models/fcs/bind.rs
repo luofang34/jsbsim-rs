@@ -6,7 +6,7 @@
 
 use super::Surface;
 use crate::Error;
-use crate::fdm::{Binder, Kind, Models};
+use crate::models::{Binder, Kind, Models};
 
 fn commands(b: &mut Binder<'_>) -> Result<(), Error> {
     macro_rules! cmd {

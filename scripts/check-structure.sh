@@ -149,6 +149,14 @@ while IFS= read -r file; do
   fi
 done < <(production_files)
 
+# The models sit under the executive: fdm builds on them, never the reverse.
+# Unit tests may run a whole Fdm, through the crate root.
+while IFS= read -r file; do
+  if grep -n -E 'crate::(fdm\b|\{[^}]*\bfdm\b)' "$file"; then
+    fail "$file: models must not depend on crate::fdm"
+  fi
+done < <(production_files | grep '^\./crates/jsbsim/src/models/' || true)
+
 if grep -rn --include='*.rs' --include='Cargo.toml' -E '\banyhow\b' --exclude-dir=target --exclude-dir=.claude . ; then
   fail "anyhow is not used in this workspace; use thiserror"
 fi

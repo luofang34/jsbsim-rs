@@ -8,45 +8,11 @@
 //
 //! Loading an aircraft configuration into the models.
 
+use super::Fdm;
 use super::order::Model;
-use super::{Binder, Fdm};
-use crate::functions::{FnId, FunctionSet};
-use crate::properties::{Attribute, NodeMap, PropertyTree};
+use crate::properties::Attribute;
 use crate::xml::{DocumentLoader, Element, IncludeKind};
-use crate::{Error, LoadOptions, Resolver};
-
-/// What a model's `Load` may touch besides the model itself: the tree
-/// (through the binder), the functions and the options.
-pub struct LoadContext<'a> {
-    /// Functions and tables.
-    pub functions: &'a mut FunctionSet,
-    /// Tied-property bindings and the property tree.
-    pub binder: Binder<'a>,
-    /// Load options.
-    pub options: LoadOptions,
-    /// The initial condition's position (`GetIC()->GetPosition()`), while
-    /// FCS channels load.
-    pub ic_position: Option<crate::math::Location>,
-}
-
-impl LoadContext<'_> {
-    /// The property tree.
-    pub fn tree(&mut self) -> &mut PropertyTree {
-        self.binder.tree
-    }
-}
-
-/// `FGModelFunctions` plus `FGPropertyReader`: a model's `<property>`
-/// declarations and its pre- and post-functions.
-#[derive(Debug, Clone, Default)]
-pub struct ModelFunctions {
-    /// Functions run (and cached) before the model.
-    pub pre: Vec<FnId>,
-    /// Functions run (and cached) after the model.
-    pub post: Vec<FnId>,
-    /// Declared properties and the value `InitModel` restores.
-    pub local_properties: NodeMap<f64>,
-}
+use crate::{Error, Resolver};
 
 impl Fdm {
     /// `FGPropertyReader::Load`: `<property value="v">path</property>`

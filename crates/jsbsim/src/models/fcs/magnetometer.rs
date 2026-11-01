@@ -22,10 +22,9 @@ use super::sensor::Signal;
 use super::sensor::orientation::Orientation;
 use super::{Fcs, Kind};
 use crate::Error;
-use crate::fdm::ModelEvaluator;
-use crate::fdm::{ExecState, LoadContext, Models};
 use crate::math::{ColumnVector3, Matrix33};
 use crate::models::propagate::Propagate;
+use crate::models::{ExecState, LoadContext, ModelEvaluator, Models};
 use crate::units::FTTOM;
 use crate::xml::Element;
 

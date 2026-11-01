@@ -5,8 +5,8 @@
 //! Properties of `FGAuxiliary`, in JSBSim's binding order.
 
 use crate::Error;
-use crate::fdm::{Binder, Models};
 use crate::math::{E_PHI, E_PSI, E_THT, E_X, E_Y, E_Z};
+use crate::models::{Binder, Models};
 use crate::units::{FPSTOKTS, RADTODEG};
 
 type Get = fn(&Models) -> f64;

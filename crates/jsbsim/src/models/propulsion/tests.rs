@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
-use crate::fdm::Fdm;
+use crate::Fdm;
 use crate::units::LBTOSLUG;
 use crate::{Error, MemoryResolver};
 

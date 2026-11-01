@@ -8,11 +8,11 @@
 
 use super::base::ModelBase;
 use crate::Error;
-use crate::fdm::{Binder, Kind};
 use crate::math::{
     Axis, ColumnVector3, E_L, E_M, E_N, E_P, E_Q, E_R, E_U, E_V, E_W, E_X, E_Y, E_Z, Matrix33,
     dot_product,
 };
+use crate::models::{Binder, Kind};
 use crate::units::constrain;
 
 #[cfg(test)]

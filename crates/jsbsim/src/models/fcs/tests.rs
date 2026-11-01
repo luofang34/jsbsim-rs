@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 use super::component::{Base, Tick};
-use crate::fdm::Fdm;
+use crate::Fdm;
 use crate::{Error, LoadOptions, MemoryResolver};
 
 /// An aircraft with nothing but `system` (a `<system>` element) to run.

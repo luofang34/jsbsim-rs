@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 use super::*;
-use crate::fdm::Fdm;
+use crate::Fdm;
 use crate::math::Axis;
 use crate::xml::parse_document;
 

@@ -17,7 +17,8 @@ use super::engine::{EngineBase, EngineType};
 use super::families::{EngineFamily, EngineKind, ThrusterSample};
 use super::thruster::Thruster;
 use crate::Error;
-use crate::fdm::{Binder, EngineLoad, Kind, ModelEvaluator, Models};
+use crate::models::propulsion::families::EngineHost;
+use crate::models::{Binder, Kind, ModelEvaluator, Models};
 use crate::units::constrain;
 use crate::xml::Element;
 
@@ -109,7 +110,7 @@ impl EngineFamily for BrushLessDcMotor {
 
     /// `FGBrushLessDCMotor(exec, el, n, input)`: `FGEngine::Load`, then
     /// the mandatory motor constants.
-    fn load(el: &Element, ctx: &mut EngineLoad<'_>) -> Result<Self, Error> {
+    fn load(el: &Element, ctx: &mut dyn EngineHost) -> Result<Self, Error> {
         ctx.load_base(el, EngineType::Unknown)?;
         let max_volts = mandatory(el, "maxvolts", Some("VOLTS"))?;
         let kv = mandatory(el, "velocityconstant", None)?;

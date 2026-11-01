@@ -6,8 +6,9 @@
 //! Planets: a `<planet>` element or file sets FGInertial's constants,
 //! re-initialises the models, and may replace the atmosphere.
 
+use super::Fdm;
 use super::order::Model;
-use super::{Fdm, ModelFunctions};
+use crate::models::ModelFunctions;
 use crate::models::atmosphere::{Atmosphere, AtmosphereModel, STANDARD_PROPERTIES};
 use crate::xml::{DocumentLoader, Element, IncludeKind};
 use crate::{Error, Resolver};

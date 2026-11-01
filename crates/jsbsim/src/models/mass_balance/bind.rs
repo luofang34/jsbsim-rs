@@ -7,8 +7,8 @@
 
 use super::MassBalance;
 use crate::Error;
-use crate::fdm::{Binder, Kind};
 use crate::math::{E_X, E_Y, E_Z};
+use crate::models::{Binder, Kind};
 
 /// `FGMassBalance::bind`. `inertia/ixz-slugs_ft2` is JSBSim's `GetIxz`,
 /// which, unlike `GetIxy` and `GetIyz`, does not negate the tensor entry.

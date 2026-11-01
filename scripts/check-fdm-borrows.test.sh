@@ -18,6 +18,10 @@ expect() {
   mkdir -p "$dir/$src"
   cp "$repo/$src/fdm.rs" "$dir/$src/fdm.rs"
   cp -R "$repo/$src/fdm" "$dir/$src/fdm"
+  mkdir -p "$dir/$src/models"
+  for glue in bindings env exec load; do
+    cp "$repo/$src/models/$glue.rs" "$dir/$src/models/$glue.rs"
+  done
   if [ -n "$file" ]; then
     printf '%s\n' "$line" >> "$dir/$src/$file"
   fi
@@ -39,7 +43,9 @@ expect fail clone-aero-functions fdm/models_run.rs '            aero.functions_a
 expect fail clone-local-properties fdm/run.rs '        for (n, v) in mf.local_properties.clone() {'
 expect fail clone-component fdm/models_run.rs '            let component = self.models.fcs.channels[c].components[i].clone();'
 expect fail hand-built-getters fdm/script.rs '        let getters = ModelGetters {'
-expect pass getters-in-env fdm/env.rs '        let getters = ModelGetters {'
+expect fail hand-built-getters-in-glue models/load.rs '        let getters = ModelGetters {'
+expect fail take-model-in-glue models/env.rs '        let g = std::mem::take(&mut self.models.fcs);'
+expect pass getters-in-env models/env.rs '        let getters = ModelGetters {'
 expect pass clone-in-unit-tests fdm/tests.rs '    let ids = mf.pre.clone();'
 
 echo "check-fdm-borrows.test: ok"

@@ -6,8 +6,8 @@
 //! the rotation from the body frame into the sensor's frame.
 
 use crate::Error;
-use crate::fdm::LoadContext;
 use crate::math::{Axis, ColumnVector3, Matrix33};
+use crate::models::LoadContext;
 use crate::models::fcs::component::model_error;
 use crate::xml::Element;
 

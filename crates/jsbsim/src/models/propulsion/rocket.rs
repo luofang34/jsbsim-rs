@@ -26,8 +26,9 @@ use super::engine::{EngineBase, EngineType};
 use super::families::{EngineFamily, ThrusterSample};
 use super::thruster::Thruster;
 use crate::Error;
-use crate::fdm::{EngineLoad, ModelEvaluator, Models};
 use crate::functions::{FnId, Table};
+use crate::models::propulsion::families::EngineHost;
+use crate::models::{ModelEvaluator, Models};
 use crate::xml::Element;
 
 /// `FGRocket`'s members beyond `FGEngine`'s.
@@ -119,7 +120,7 @@ impl Rocket {
 
     /// The specific impulse, flow and throttle parameters of the
     /// constructor; the isp function, when `<isp>` holds one.
-    fn read(&mut self, el: &Element, ctx: &mut EngineLoad<'_>) -> Result<(), Error> {
+    fn read(&mut self, el: &Element, ctx: &mut dyn EngineHost) -> Result<(), Error> {
         let Some(isp_el) = el.find_element("isp") else {
             return Err(Error::Model {
                 message: format!(
@@ -168,7 +169,7 @@ impl Rocket {
     }
 
     /// The `<thrust_table>` of a solid rocket and its `<variation>`.
-    fn read_solid(&mut self, el: &Element, ctx: &mut EngineLoad<'_>) -> Result<(), Error> {
+    fn read_solid(&mut self, el: &Element, ctx: &mut dyn EngineHost) -> Result<(), Error> {
         let Some(table_el) = el.find_element("thrust_table") else {
             return Ok(());
         };
@@ -207,7 +208,7 @@ impl EngineFamily for Rocket {
     /// rocket, its thrust table. The ties are made before the table is
     /// read, so every rocket gets the liquid rocket's (JSBSim's
     /// `bindmodel` tests the table before it is loaded).
-    fn load(el: &Element, ctx: &mut EngineLoad<'_>) -> Result<Self, Error> {
+    fn load(el: &Element, ctx: &mut dyn EngineHost) -> Result<Self, Error> {
         ctx.load_base(el, EngineType::Unknown)?;
         let n = ctx.number();
         let mut rocket = Self::new(n);

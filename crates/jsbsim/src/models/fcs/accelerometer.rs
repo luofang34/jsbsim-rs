@@ -10,9 +10,8 @@ use super::families::{ComponentAt, Family};
 use super::sensor::Signal;
 use super::sensor::orientation::Orientation;
 use crate::Error;
-use crate::fdm::ModelEvaluator;
-use crate::fdm::{LoadContext, Models};
 use crate::math::ColumnVector3;
+use crate::models::{LoadContext, ModelEvaluator, Models};
 use crate::xml::Element;
 
 /// `FGAccelerometer`.

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 use super::*;
-use crate::fdm::Fdm;
+use crate::Fdm;
 use crate::{LoadOptions, MemoryResolver};
 
 const DT: f64 = 1.0 / 120.0;

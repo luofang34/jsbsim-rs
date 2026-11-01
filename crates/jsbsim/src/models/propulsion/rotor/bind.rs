@@ -7,8 +7,8 @@
 
 use super::{ControlMap, Rotor, RpmDrive};
 use crate::Error;
-use crate::fdm::{Binder, Kind, LoadContext, Models};
 use crate::models::propulsion::families::ThrusterKind;
+use crate::models::{Binder, Kind, LoadContext, Models};
 
 fn rotor(m: &Models, n: usize) -> Option<&Rotor> {
     match &m.propulsion.engines.get(n)?.thruster.kind {

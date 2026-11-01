@@ -6,33 +6,15 @@
 //! Stepping the models in JSBSim's order, with each model's inputs loaded
 //! from the others just before it runs.
 
-use super::exec_bind::ExecRequest;
+use super::Fdm;
 use super::order::{Model, ORDER};
-use super::{Fdm, Models, ResetMask};
 use crate::Error;
-use crate::math::{ColumnVector3, E_PHI, E_THT, Location, Quaternion};
-use crate::models::aircraft;
+use crate::initial_condition::InitialState;
+use crate::math::{E_PHI, E_THT};
 use crate::models::atmosphere::{AtmosphereModel, Overrides};
+use crate::models::{ExecRequest, Models, ResetMask, aircraft};
 use crate::properties::NodeId;
 use crate::units::FPSTOKTS;
-
-/// What the initial conditions give the models: the `FGInitialCondition`
-/// getters that `FGFDMExec::Initialize` hands to `SetInitialState`.
-#[derive(Debug, Clone, Default)]
-pub struct InitialState {
-    /// Position.
-    pub position: Location,
-    /// Earth position angle, rad.
-    pub epa: f64,
-    /// Local-to-body orientation.
-    pub orientation: Quaternion,
-    /// Body velocity, ft/s.
-    pub uvw: ColumnVector3,
-    /// Body rates, rad/s.
-    pub pqr: ColumnVector3,
-    /// Steady wind, NED, ft/s.
-    pub wind_ned: ColumnVector3,
-}
 
 impl Models {
     /// `FGFDMExec::SetHoldDown`.

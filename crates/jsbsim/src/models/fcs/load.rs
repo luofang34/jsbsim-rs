@@ -8,7 +8,7 @@ use super::component::{Base, model_error};
 use super::families::{self, Component, ComponentAt};
 use super::{Channel, Fcs};
 use crate::Error;
-use crate::fdm::LoadContext;
+use crate::models::LoadContext;
 use crate::xml::Element;
 
 /// Component element names `FGFCS::Load` knows, each loaded by the family

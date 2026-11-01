@@ -17,8 +17,8 @@
 
 use super::base::ModelBase;
 use crate::Error;
-use crate::fdm::{Binder, Kind};
 use crate::functions::FnId;
+use crate::models::{Binder, Kind};
 use crate::xml::Element;
 
 #[cfg(test)]

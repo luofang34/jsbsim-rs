@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 use super::Rocket;
 use crate::Error;
-use crate::fdm::Fdm;
+use crate::Fdm;
 use crate::models::propulsion::engine::EngineType;
 use crate::models::propulsion::families::EngineKind;
 use crate::models::propulsion::tests::load;

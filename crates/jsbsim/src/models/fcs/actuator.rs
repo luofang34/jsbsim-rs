@@ -14,9 +14,8 @@ use super::Kind;
 use super::component::{Base, Tick, own_property};
 use super::families::{self, Component, ComponentAt, Family};
 use crate::Error;
-use crate::fdm::ModelEvaluator;
-use crate::fdm::{self, LoadContext, Models};
 use crate::functions::Parameter;
+use crate::models::{self, LoadContext, ModelEvaluator, Models};
 use crate::xml::Element;
 
 /// `FGActuator`.
@@ -166,7 +165,7 @@ fn bind(base: &Base, ctx: &mut LoadContext<'_>, at: ComponentAt) -> Result<(), E
     for (name, get, set) in flags {
         ctx.binder.property(
             &format!("{own}/malfunction/{name}"),
-            fdm::Kind::Bool,
+            models::Kind::Bool,
             move |m| actuator(m, at).map_or(0.0, |a| f64::from(u8::from(get(a)))),
             move |m, v| {
                 if let Some(a) = actuator_mut(m, at) {
@@ -176,7 +175,7 @@ fn bind(base: &Base, ctx: &mut LoadContext<'_>, at: ComponentAt) -> Result<(), E
         )?;
     }
     ctx.binder
-        .typed_getter(&format!("{own}/saturated"), fdm::Kind::Bool, move |m| {
+        .typed_getter(&format!("{own}/saturated"), models::Kind::Bool, move |m| {
             actuator(m, at).map_or(0.0, |a| f64::from(u8::from(a.saturated)))
         })?;
     Ok(())

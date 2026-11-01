@@ -83,6 +83,12 @@ expect fail frame-counter "printf '%s\nfn f(s: &mut S) {\n    s.frame += 1;\n}\n
 expect fail next-id "printf '%s\nfn f(mut next_id: u32) {\n    next_id += 1;\n}\n' \"$spdx\" > crates/a/src/b.rs"
 expect pass cursor-increment "printf '%s\nfn f(mut pos: usize) {\n    pos += 1;\n}\n' \"$spdx\" > crates/a/src/b.rs"
 expect pass ignores-agent-worktrees "mkdir -p .claude/worktrees/x/src && printf 'fn f() {}\n' > .claude/worktrees/x/src/mod.rs"
+models_dir=crates/jsbsim/src/models
+expect fail models-use-fdm "mkdir -p $models_dir && printf '%s\nuse crate::fdm::Fdm;\n' \"$spdx\" > $models_dir/x.rs"
+expect fail models-path-into-fdm "mkdir -p $models_dir/x && printf '%s\nfn f(b: &crate::fdm::Binder) {}\n' \"$spdx\" > $models_dir/x/y.rs"
+expect fail models-grouped-fdm "mkdir -p $models_dir && printf '%s\nuse crate::{fdm, units};\n' \"$spdx\" > $models_dir/x.rs"
+expect pass models-unit-test-may-use-fdm "mkdir -p $models_dir/x && printf '%s\nuse crate::fdm::Fdm;\n' \"$spdx\" > $models_dir/x/tests.rs"
+expect pass fdm-may-use-models "mkdir -p crates/jsbsim/src/fdm && printf '%s\nuse crate::models::Models;\n' \"$spdx\" > crates/jsbsim/src/fdm/x.rs"
 expect fail anyhow "printf 'anyhow = \"1\"\n' >> crates/a/Cargo.toml"
 expect fail no-workspace-lints "printf '[package]\nname = \"a\"\n' > crates/a/Cargo.toml"
 # A crate the workspace excludes repeats its lints; unsafe_code may be deny.

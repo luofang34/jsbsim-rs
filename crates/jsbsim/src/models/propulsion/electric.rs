@@ -13,7 +13,8 @@ use super::engine::{EngineBase, EngineType};
 use super::families::{EngineFamily, EngineKind, ThrusterSample};
 use super::thruster::Thruster;
 use crate::Error;
-use crate::fdm::{Binder, EngineLoad, Kind, ModelEvaluator, Models};
+use crate::models::propulsion::families::EngineHost;
+use crate::models::{Binder, Kind, ModelEvaluator, Models};
 use crate::units::HPTOFTLBSSEC;
 use crate::xml::Element;
 
@@ -64,7 +65,7 @@ impl EngineFamily for Electric {
 
     /// `FGElectric(exec, el, n, input)`: `FGEngine::Load`, then the rated
     /// power (1 hp unless `<power>` sets it).
-    fn load(el: &Element, ctx: &mut EngineLoad<'_>) -> Result<Self, Error> {
+    fn load(el: &Element, ctx: &mut dyn EngineHost) -> Result<Self, Error> {
         ctx.load_base(el, EngineType::Unknown)?;
         let power_watts = match el.find_element("power") {
             Some(_) => el.find_element_value_as_number_convert_to("power", "WATTS")?,

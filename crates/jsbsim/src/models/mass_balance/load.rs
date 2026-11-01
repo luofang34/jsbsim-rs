@@ -7,8 +7,8 @@
 
 use super::{MassBalance, PointMass, Shape, bind};
 use crate::Error;
-use crate::fdm::Binder;
 use crate::math::Matrix33;
+use crate::models::Binder;
 use crate::xml::{Element, XmlError};
 
 /// The optional child `name` converted to `unit`, 0 when absent.

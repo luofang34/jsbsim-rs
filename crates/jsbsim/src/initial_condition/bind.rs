@@ -6,8 +6,8 @@
 
 use super::Environment;
 use crate::Error;
-use crate::fdm::{Binder, Kind, Models};
 use crate::math::{E_P, E_PHI, E_PSI, E_Q, E_R, E_THT, E_U, E_V, E_W};
+use crate::models::{Binder, Kind, Models};
 
 fn env(m: &Models) -> Environment<'_> {
     Environment::new(&m.atmosphere, &m.inertial)

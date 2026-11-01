@@ -8,7 +8,7 @@
 use super::Inputs;
 use super::families::EngineKind;
 use super::thruster::Thruster;
-use crate::fdm::ModelFunctions;
+use crate::models::ModelFunctions;
 
 /// `FGEngine::EngineType`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

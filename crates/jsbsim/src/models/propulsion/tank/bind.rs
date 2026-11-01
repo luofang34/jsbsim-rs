@@ -6,8 +6,8 @@
 
 use super::Tank;
 use crate::Error;
-use crate::fdm::{Binder, Kind, Models};
 use crate::math::{E_X, E_Y, E_Z};
+use crate::models::{Binder, Kind, Models};
 
 type Get = fn(&Tank) -> f64;
 type Set = fn(&mut Tank, f64);

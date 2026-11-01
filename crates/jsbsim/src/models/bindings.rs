@@ -8,7 +8,7 @@
 //! the getter and every write the setter. Here a tie registers closures over
 //! [`Models`]: reads go through [`Evaluator`](crate::functions::Evaluator),
 //! which asks [`ModelGetters`] for the getter's value, and writes go through
-//! [`Fdm::set_property`](super::Fdm::set_property), which calls the setter.
+//! [`Fdm::set_property`](crate::Fdm::set_property), which calls the setter.
 
 use super::Models;
 use crate::Error;

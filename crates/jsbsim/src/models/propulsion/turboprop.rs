@@ -22,9 +22,9 @@ use super::engine::{EngineBase, EngineType};
 use super::families::{EngineFamily, InitRunning, ThrusterSample};
 use super::thruster::Thruster;
 use crate::Error;
-use crate::fdm::ModelEvaluator;
-use crate::fdm::{EngineLoad, Models};
 use crate::functions::{FnId, Table, TableId};
+use crate::models::propulsion::families::EngineHost;
+use crate::models::{ModelEvaluator, Models};
 use crate::units::HPTOFTLBSSEC;
 use crate::xml::Element;
 
@@ -235,7 +235,7 @@ impl EngineFamily for TurboProp {
     const TYPE: EngineType = EngineType::Turboprop;
     type Sample = TurboPropSample;
 
-    fn load(el: &Element, ctx: &mut EngineLoad<'_>) -> Result<Self, Error> {
+    fn load(el: &Element, ctx: &mut dyn EngineHost) -> Result<Self, Error> {
         load::load(el, ctx)
     }
 

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 use super::*;
-use crate::fdm::Fdm;
+use crate::Fdm;
 
 fn run_at(fdm: &mut Fdm, altitude: f64) {
     fdm.models.atmosphere.input.altitude_asl = altitude;

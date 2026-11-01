@@ -8,8 +8,8 @@
 
 use super::EngineType;
 use crate::Error;
-use crate::fdm::{Binder, ExecRequest, Kind, Models};
 use crate::math::{E_X, E_Y, E_Z};
+use crate::models::{Binder, ExecRequest, Kind, Models};
 
 fn flag(b: bool) -> f64 {
     f64::from(u8::from(b))

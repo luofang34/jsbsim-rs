@@ -6,8 +6,8 @@
 
 use super::base::ModelBase;
 use crate::Error;
-use crate::fdm::{Binder, Kind};
 use crate::math::{ColumnVector3, E_X, E_Y, E_Z};
+use crate::models::{Binder, Kind};
 use crate::units::RADTODEG;
 use crate::xml::Element;
 

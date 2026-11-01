@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 use super::{ControlMap, Rotor, RpmDrive};
-use crate::fdm::Fdm;
+use crate::Fdm;
 use crate::models::propulsion::families::ThrusterKind;
 use crate::models::propulsion::tests::load;
 

@@ -8,9 +8,8 @@
 use super::component::{Base, Tick, parameter_value};
 use super::families::{ComponentAt, Family};
 use crate::Error;
-use crate::fdm::LoadContext;
-use crate::fdm::ModelEvaluator;
 use crate::functions::Parameter;
+use crate::models::{LoadContext, ModelEvaluator};
 use crate::xml::Element;
 
 /// `FGDeadBand`.

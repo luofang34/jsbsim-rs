@@ -6,8 +6,8 @@
 
 use super::TurboProp;
 use crate::Error;
-use crate::fdm::{Binder, Kind, Models};
 use crate::models::propulsion::families::EngineKind;
+use crate::models::{Binder, Kind, Models};
 
 fn turboprop(m: &Models, n: usize) -> Option<&TurboProp> {
     match &m.propulsion.engines.get(n)?.kind {

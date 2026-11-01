@@ -5,80 +5,60 @@
 //
 //! Loading the engines and their thrusters.
 
+use super::Fdm;
 use super::order::Model;
-use super::{Fdm, LoadContext, ModelFunctions};
 use crate::Error;
+use crate::functions::FnId;
 use crate::models::propulsion::engine::{Engine, EngineBase, EngineType};
-use crate::models::propulsion::families::{self, ENGINE_ELEMENTS, THRUSTER_ELEMENTS, ThrusterSite};
+use crate::models::propulsion::families::{
+    self, ENGINE_ELEMENTS, EngineHost, THRUSTER_ELEMENTS, ThrusterSite,
+};
 use crate::models::propulsion::force::TransformType;
 use crate::models::propulsion::thruster::{Thruster, ThrusterBase};
-use crate::models::propulsion::{self as propulsion};
+use crate::models::propulsion::{self as propulsion, Inputs};
+use crate::models::{LoadContext, ModelFunctions};
 use crate::xml::{DocumentLoader, Element, IncludeKind};
 
-/// What an engine type's constructor ([`families::EngineFamily::load`])
-/// works with: the executive, the `<engine>` element and the engine's
-/// number.
-pub struct EngineLoad<'a> {
+/// The [`EngineHost`] of one `<engine>`: the executive, the element and the
+/// engine's number.
+struct EngineLoad<'a> {
     fdm: &'a mut Fdm,
     parent: &'a Element,
     number: usize,
     loaded: Option<(EngineBase, Thruster)>,
 }
 
-impl EngineLoad<'_> {
-    /// The engine's index among the propulsion's engines.
-    #[must_use]
-    pub fn number(&self) -> usize {
+impl EngineHost for EngineLoad<'_> {
+    fn number(&self) -> usize {
         self.number
     }
 
-    /// Functions, tables and ties, for what the type itself loads.
-    pub fn context(&mut self) -> LoadContext<'_> {
+    fn context(&mut self) -> LoadContext<'_> {
         let options = self.fdm.options;
         self.fdm.env.load_context(options)
     }
 
-    /// The value of function `id` (`GetValue()`), read against the models
-    /// as loaded so far.
-    pub fn function_value(&mut self, id: crate::functions::FnId) -> Result<f64, Error> {
+    fn function_value(&mut self, id: FnId) -> Result<f64, Error> {
         let fdm = &mut *self.fdm;
         fdm.env.eval(&fdm.models, |ev| ev.function(id))
     }
 
-    /// The propulsion's engine inputs, as the engine's constructor sees
-    /// them.
-    #[must_use]
-    pub fn inputs(&self) -> &crate::models::propulsion::Inputs {
+    fn inputs(&self) -> &Inputs {
         &self.fdm.models.propulsion.input
     }
 
-    /// The engine's base and thruster, once [`EngineLoad::load_base`] has
-    /// loaded them, with the propulsion's engine inputs.
-    pub fn loaded_mut(
-        &mut self,
-    ) -> Option<(
-        &mut EngineBase,
-        &mut Thruster,
-        &crate::models::propulsion::Inputs,
-    )> {
+    fn loaded_mut(&mut self) -> Option<(&mut EngineBase, &mut Thruster, &Inputs)> {
         let input = &self.fdm.models.propulsion.input;
         self.loaded
             .as_mut()
             .map(|(base, thruster)| (base, thruster, input))
     }
 
-    /// The engine's base, once [`EngineLoad::load_base`] has loaded it.
-    pub fn base_mut(&mut self) -> Option<&mut EngineBase> {
+    fn base_mut(&mut self) -> Option<&mut EngineBase> {
         self.loaded.as_mut().map(|(base, _)| base)
     }
 
-    /// `FGEngine::Load(exec, el)` for the type's element `el`: the engine's
-    /// model functions (prefixed with its number), its thruster, the reset
-    /// of the base and the thruster, the feed tanks and the
-    /// `propulsion/engine[n]/` properties, then the post-functions. A type
-    /// whose `ResetToIC` resets state of its own resets it where it calls
-    /// this.
-    pub fn load_base(&mut self, el: &Element, engine_type: EngineType) -> Result<(), Error> {
+    fn load_base(&mut self, el: &Element, engine_type: EngineType) -> Result<(), Error> {
         let n = self.number;
         let prefix = n.to_string();
         let mut base = EngineBase::new(n, engine_type);
@@ -111,13 +91,10 @@ impl EngineLoad<'_> {
         Ok(())
     }
 
-    /// For the `engines!` registry: has `make` append the engine it builds
-    /// from what [`EngineLoad::load_base`] loaded to the engines.
-    pub fn push(
+    fn take_loaded(
         &mut self,
         engine_type: EngineType,
-        make: impl FnOnce(EngineBase, Thruster, &mut Vec<Engine>),
-    ) -> Result<(), Error> {
+    ) -> Result<(EngineBase, Thruster, &mut Vec<Engine>), Error> {
         let Some((mut base, thruster)) = self.loaded.take() else {
             return Err(Error::Model {
                 message: format!(
@@ -127,8 +104,7 @@ impl EngineLoad<'_> {
             });
         };
         base.engine_type = engine_type;
-        make(base, thruster, &mut self.fdm.models.propulsion.engines);
-        Ok(())
+        Ok((base, thruster, &mut self.fdm.models.propulsion.engines))
     }
 }
 

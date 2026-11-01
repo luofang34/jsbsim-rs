@@ -16,8 +16,8 @@ pub use gas_cell::GasCell;
 
 use super::base::ModelBase;
 use crate::Error;
-use crate::fdm::LoadContext;
 use crate::math::{ColumnVector3, Matrix33};
+use crate::models::LoadContext;
 use crate::xml::Element;
 
 /// `FGGasCell::R` (and `FGBallonet::R`), lbs·ft/(mol·°R).
@@ -111,7 +111,7 @@ impl BuoyantForces {
     }
 
     /// `bind`, which `Load` calls once the cells are loaded, if any are.
-    pub fn bind(&self, b: &mut crate::fdm::Binder<'_>) -> Result<(), Error> {
+    pub fn bind(&self, b: &mut crate::models::Binder<'_>) -> Result<(), Error> {
         if self.none_defined {
             return Ok(());
         }

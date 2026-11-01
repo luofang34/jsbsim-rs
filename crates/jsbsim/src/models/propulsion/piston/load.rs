@@ -10,9 +10,9 @@ use super::{
     Boost, MAX_BOOST_SPEEDS, Piston, PistonConfig, PistonState, PistonTuning, STANDARD_PRESSURE,
 };
 use crate::Error;
-use crate::fdm::EngineLoad;
 use crate::functions::Table;
 use crate::models::propulsion::engine::EngineType;
+use crate::models::propulsion::families::EngineHost;
 use crate::units::{FTTOM, IN3TOM3, INHGTOPA, PSFTOPA, constrain};
 use crate::xml::Element;
 
@@ -77,7 +77,7 @@ fn default_mixture_efficiency() -> Table {
 /// The `COMBUSTION` and `MIXTURE` tables of the `FindNextElement("table")`
 /// loop, which starts after `<oil-viscosity-index>`, the last child the
 /// constructor looked for; JSBSim's defaults for those absent.
-fn load_tables(el: &Element, ctx: &mut EngineLoad<'_>) -> Result<(Table, Table), Error> {
+fn load_tables(el: &Element, ctx: &mut dyn EngineHost) -> Result<(Table, Table), Error> {
     let (mut combustion, mut mixture) = (None, None);
     for table_el in el.find_next_elements_after("oil-viscosity-index", "table") {
         let slot = match table_el.attribute("name") {
@@ -102,7 +102,7 @@ fn load_tables(el: &Element, ctx: &mut EngineLoad<'_>) -> Result<(Table, Table),
 /// the engine file sets, before the derived values.
 fn read_config(
     el: &Element,
-    ctx: &mut EngineLoad<'_>,
+    ctx: &mut dyn EngineHost,
 ) -> Result<(PistonConfig, PistonTuning), Error> {
     let get = |name: &str, default: f64| Ok::<f64, Error>(number(el, name)?.unwrap_or(default));
     let conv = |name: &str, unit: &str, default: f64| {
@@ -342,7 +342,7 @@ fn finish_boost(b: &mut Boost) {
 }
 
 /// `FGPiston`'s constructor on `<piston_engine>` `el`.
-pub fn load(el: &Element, ctx: &mut EngineLoad<'_>) -> Result<Piston, Error> {
+pub fn load(el: &Element, ctx: &mut dyn EngineHost) -> Result<Piston, Error> {
     ctx.load_base(el, EngineType::Piston)?;
     let (mut config, mut tuning) = read_config(el, ctx)?;
     let max_throttle = number(el, "maxthrottle")?;

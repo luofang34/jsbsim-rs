@@ -7,10 +7,10 @@
 
 use super::Signal;
 use crate::Error;
-use crate::fdm::{self, LoadContext, Models};
 use crate::models::fcs::Kind;
 use crate::models::fcs::component::{Base, model_error, own_property};
 use crate::models::fcs::families::{self, ComponentAt};
+use crate::models::{self, LoadContext, Models};
 use crate::properties::mk_property_name;
 use crate::xml::Element;
 
@@ -48,7 +48,7 @@ fn tie_flag(
 ) -> Result<(), Error> {
     ctx.binder.property(
         path,
-        fdm::Kind::Double,
+        models::Kind::Double,
         move |m| match signal(m, at).is_some_and(get) {
             true => 1.0,
             false => 0.0,
@@ -95,7 +95,7 @@ pub(super) fn bind(
     )?;
     ctx.binder.property(
         &format!("{tmp}/randomseed"),
-        fdm::Kind::Int,
+        models::Kind::Int,
         move |m| {
             let own = signal(m, at).and_then(|s| s.random_seed);
             f64::from(own.unwrap_or(m.exec.random_seed))
@@ -119,8 +119,9 @@ pub(super) fn bind(
             format!("Property {tmp} has already been successfully bound (late)."),
         ));
     }
-    ctx.binder.typed_getter(&qprop, fdm::Kind::Int, move |m| {
-        f64::from(signal(m, at).map_or(0, |s| s.quantized))
-    })?;
+    ctx.binder
+        .typed_getter(&qprop, models::Kind::Int, move |m| {
+            f64::from(signal(m, at).map_or(0, |s| s.quantized))
+        })?;
     Ok(())
 }

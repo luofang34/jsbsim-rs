@@ -10,9 +10,8 @@ use super::Kind;
 use super::component::{Base, Tick, model_error, own_property, parameter_value};
 use super::families::{self, Component, ComponentAt, Family};
 use crate::Error;
-use crate::fdm::ModelEvaluator;
-use crate::fdm::{self, LoadContext};
 use crate::functions::{Parameter, PropertyValue};
+use crate::models::{self, LoadContext, ModelEvaluator};
 use crate::xml::Element;
 
 /// The integration scheme of the `ki` term (`eIntegrateType`).
@@ -123,7 +122,7 @@ fn tie_initial_output(
 ) -> Result<(), Error> {
     let path = format!("{}/initial-integrator-value", own_property(&base.name));
     ctx.binder
-        .setter_only(&path, fdm::Kind::Double, move |m, v| {
+        .setter_only(&path, models::Kind::Double, move |m, v| {
             if let Some(Component {
                 base,
                 kind: Kind::Pid(pid),

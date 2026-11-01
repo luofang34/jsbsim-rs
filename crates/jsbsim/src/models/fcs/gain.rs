@@ -7,9 +7,8 @@
 use super::component::{Base, Tick, lenient, model_error, parameter_value};
 use super::families::{ComponentAt, Family};
 use crate::Error;
-use crate::fdm::LoadContext;
-use crate::fdm::ModelEvaluator;
 use crate::functions::{Parameter, TableId};
+use crate::models::{LoadContext, ModelEvaluator};
 use crate::xml::Element;
 
 /// `<aerosurface_scale>`'s mapping of the domain onto the range.

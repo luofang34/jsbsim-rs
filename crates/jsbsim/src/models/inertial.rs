@@ -230,13 +230,13 @@ fn check_ellipsoid(a: f64, b: f64) -> Result<(), Error> {
 }
 
 /// `FGInertial::bind`.
-pub fn bind(b: &mut crate::fdm::Binder<'_>) -> Result<(), Error> {
+pub fn bind(b: &mut crate::models::Binder<'_>) -> Result<(), Error> {
     b.getter("inertial/sea-level-radius_ft", |m| {
         m.inertial.position.sea_level_radius()
     })?;
     b.property(
         "simulation/gravity-model",
-        crate::fdm::Kind::Int,
+        crate::models::Kind::Int,
         |m| f64::from(m.inertial.grav_type),
         |m, v| m.inertial.set_gravity_type(v as i32),
     )?;

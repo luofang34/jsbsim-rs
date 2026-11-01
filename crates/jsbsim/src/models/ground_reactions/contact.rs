@@ -9,9 +9,9 @@
 use super::Surface;
 use super::force::{ContactForce, Multipliers, Reporting};
 use crate::Error;
-use crate::fdm::LoadContext;
 use crate::functions::{FnId, TableId};
 use crate::math::{ColumnVector3, E_X, E_Y, Matrix33, Quaternion};
+use crate::models::LoadContext;
 use crate::units::{DEGTORAD, RADTODEG};
 use crate::xml::Element;
 

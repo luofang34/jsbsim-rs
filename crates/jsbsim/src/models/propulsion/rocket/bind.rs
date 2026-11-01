@@ -6,8 +6,8 @@
 
 use super::Rocket;
 use crate::Error;
-use crate::fdm::{Binder, Models};
 use crate::models::propulsion::families::EngineKind;
+use crate::models::{Binder, Models};
 
 fn rocket(m: &Models, n: usize) -> Option<&Rocket> {
     match &m.propulsion.engines.get(n)?.kind {
@@ -47,7 +47,7 @@ pub fn bind(b: &mut Binder<'_>, n: usize) -> Result<(), Error> {
         let get = move |m: &Models| rocket(m, n).map_or(0.0, get);
         match set {
             Some(set) => {
-                b.property(&path, crate::fdm::Kind::Double, get, move |m, v| {
+                b.property(&path, crate::models::Kind::Double, get, move |m, v| {
                     if let Some(r) = rocket_mut(m, n) {
                         set(r, v);
                     }

@@ -19,10 +19,9 @@ use std::f64::consts::PI;
 use super::families::{ThrusterFamily, ThrusterSite};
 use super::thruster::ThrusterBase;
 use crate::Error;
-use crate::fdm::ModelEvaluator;
-use crate::fdm::{LoadContext, Models};
 use crate::functions::Table;
 use crate::math::{ColumnVector3, E_U, E_V, E_W, E_X, E_Y, E_Z};
+use crate::models::{LoadContext, ModelEvaluator, Models};
 use crate::xml::Element;
 
 /// The propeller's tables.

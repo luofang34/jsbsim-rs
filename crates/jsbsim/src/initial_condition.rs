@@ -15,7 +15,7 @@
 //! Setters and getters take the atmosphere (for calibrated, equivalent and
 //! Mach speeds) and the planet (for its ellipsoid and terrain) explicitly,
 //! because the initial conditions live next to those models in
-//! [`Models`](crate::fdm::Models).
+//! [`Models`](crate::models::Models).
 
 mod attitude;
 mod bind;
@@ -30,11 +30,28 @@ mod tests;
 
 pub use bind::bind;
 
-use crate::fdm::InitialState;
 use crate::math::{Axis, ColumnVector3, E_U, E_V, E_W, Location, Matrix33, Quaternion};
 use crate::models::atmosphere::Atmosphere;
 use crate::models::inertial::Inertial;
 use crate::units::{FPSTOKTS, RADTODEG};
+
+/// What the initial conditions give the models: the `FGInitialCondition`
+/// getters that `FGFDMExec::Initialize` hands to `SetInitialState`.
+#[derive(Debug, Clone, Default)]
+pub struct InitialState {
+    /// Position.
+    pub position: Location,
+    /// Earth position angle, rad.
+    pub epa: f64,
+    /// Local-to-body orientation.
+    pub orientation: Quaternion,
+    /// Body velocity, ft/s.
+    pub uvw: ColumnVector3,
+    /// Body rates, rad/s.
+    pub pqr: ColumnVector3,
+    /// Steady wind, NED, ft/s.
+    pub wind_ned: ColumnVector3,
+}
 
 /// Which speed was set last (`speedset`); altitude changes keep it.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]

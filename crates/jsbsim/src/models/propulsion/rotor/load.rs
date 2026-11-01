@@ -12,8 +12,8 @@ use super::{
     ControlMap, ExternalRpm, Rotor, RotorConfig, RotorControls, RotorState, RpmDrive, bind,
 };
 use crate::Error;
-use crate::fdm::LoadContext;
 use crate::math::{ColumnVector3, sqr};
+use crate::models::LoadContext;
 use crate::models::propulsion::families::ThrusterSite;
 use crate::models::propulsion::lag_filter::LagFilter;
 use crate::models::propulsion::thruster::ThrusterBase;

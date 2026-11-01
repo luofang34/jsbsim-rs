@@ -11,9 +11,9 @@ pub use bind::bind;
 
 use super::base::ModelBase;
 use crate::Error;
-use crate::fdm::LoadContext;
 use crate::functions::FnId;
 use crate::math::{ColumnVector3, E_DRAG, E_LIFT, E_X, E_Y, E_Z, Matrix33};
+use crate::models::LoadContext;
 use crate::xml::Element;
 
 /// `eAxisType`.

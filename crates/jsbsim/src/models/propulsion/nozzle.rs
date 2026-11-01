@@ -8,9 +8,8 @@
 use super::families::{ThrusterFamily, ThrusterSite};
 use super::thruster::ThrusterBase;
 use crate::Error;
-use crate::fdm::ModelEvaluator;
-use crate::fdm::{LoadContext, Models};
 use crate::math::E_X;
+use crate::models::{LoadContext, ModelEvaluator, Models};
 use crate::xml::Element;
 
 /// `FGNozzle`'s members beyond `FGThruster`'s.

@@ -9,9 +9,9 @@
 use super::GasCell;
 use super::ballonet::Ballonet;
 use crate::Error;
-use crate::fdm::{Binder, Kind, Models};
 use crate::math::{E_L, E_M, E_N, E_X, E_Y, E_Z};
 use crate::models::ground_reactions::contact_bind::indexed_name;
+use crate::models::{Binder, Kind, Models};
 
 type CellGet = fn(&GasCell) -> f64;
 type CellSet = fn(&mut GasCell, f64);

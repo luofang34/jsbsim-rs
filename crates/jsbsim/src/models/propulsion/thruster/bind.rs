@@ -6,9 +6,9 @@
 //! The `propulsion/engine[n]/` properties of every thruster.
 
 use crate::Error;
-use crate::fdm::{Binder, Kind, Models};
 use crate::math::{Axis, E_PITCH, E_X, E_Y, E_YAW, E_Z};
 use crate::models::propulsion::ThrusterBase;
+use crate::models::{Binder, Kind, Models};
 
 fn base(m: &Models, n: usize) -> Option<&ThrusterBase> {
     m.propulsion.engines.get(n).map(|e| &e.thruster.base)

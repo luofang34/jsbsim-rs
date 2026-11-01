@@ -21,9 +21,9 @@ use super::engine::{EngineBase, EngineType};
 use super::families::{EngineFamily, InitRunning, ThrusterSample};
 use super::thruster::Thruster;
 use crate::Error;
-use crate::fdm::ModelEvaluator;
-use crate::fdm::{EngineLoad, Models};
 use crate::functions::FnId;
+use crate::models::propulsion::families::EngineHost;
+use crate::models::{ModelEvaluator, Models};
 use crate::xml::Element;
 
 /// `FGTurbine::phaseType`.
@@ -338,7 +338,7 @@ impl EngineFamily for Turbine {
     const TYPE: EngineType = EngineType::Turbine;
     type Sample = TurbineSample;
 
-    fn load(el: &Element, ctx: &mut EngineLoad<'_>) -> Result<Self, Error> {
+    fn load(el: &Element, ctx: &mut dyn EngineHost) -> Result<Self, Error> {
         load::load(el, ctx)
     }
 

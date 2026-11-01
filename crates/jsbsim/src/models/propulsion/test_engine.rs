@@ -13,9 +13,9 @@ use super::engine::{EngineBase, EngineType};
 use super::families::{EngineFamily, InitRunning, ThrusterFamily, ThrusterSite};
 use super::thruster::{Thruster, ThrusterBase};
 use crate::Error;
-use crate::fdm::ModelEvaluator;
-use crate::fdm::{EngineLoad, LoadContext, Models};
 use crate::math::{ColumnVector3, E_X};
+use crate::models::propulsion::families::EngineHost;
+use crate::models::{LoadContext, ModelEvaluator, Models};
 use crate::xml::Element;
 
 /// The test rocket.
@@ -31,7 +31,7 @@ impl EngineFamily for TestEngine {
     const TYPE: EngineType = EngineType::Rocket;
     type Sample = (f64, super::families::ThrusterSample);
 
-    fn load(el: &Element, ctx: &mut EngineLoad<'_>) -> Result<Self, Error> {
+    fn load(el: &Element, ctx: &mut dyn EngineHost) -> Result<Self, Error> {
         ctx.load_base(el, Self::TYPE)?;
         let flow = el.find_element_value_as_number("sl-fuel-flow")?;
         if let Some(base) = ctx.base_mut() {

@@ -25,8 +25,8 @@ pub use frame::FrameContext;
 use super::accelerations::LagrangeMultiplier;
 use super::base::ModelBase;
 use crate::Error;
-use crate::fdm::{Binder, Kind, LoadContext};
 use crate::math::{ColumnVector3, Location, Matrix33};
+use crate::models::{Binder, Kind, LoadContext};
 use crate::xml::Element;
 
 /// Surface properties (`FGSurface`).

@@ -11,7 +11,7 @@ use super::families::{ThrusterKind, ThrusterSite};
 use super::lag_filter::LagFilter;
 use super::rotor::RpmDrive;
 use crate::Error;
-use crate::fdm::{Binder, Kind, Models};
+use crate::models::{Binder, Kind, Models};
 use crate::units::constrain;
 
 /// rpm per rad/s, as `FGTransmission.h` writes it.

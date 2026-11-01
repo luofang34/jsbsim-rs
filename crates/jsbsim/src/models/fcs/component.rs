@@ -7,9 +7,8 @@
 //! property.
 
 use crate::Error;
-use crate::fdm::LoadContext;
-use crate::fdm::ModelEvaluator;
 use crate::functions::{Parameter, PropertyValue};
+use crate::models::{LoadContext, ModelEvaluator};
 use crate::properties::{NodeId, mk_property_name};
 use crate::random::RandomNumberGenerator;
 use crate::units::constrain;

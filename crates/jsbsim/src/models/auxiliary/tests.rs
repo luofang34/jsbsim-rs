@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 use super::inputs::Constants;
 use super::*;
-use crate::fdm::Fdm;
+use crate::Fdm;
 use crate::models::atmosphere::RENG0;
 use crate::models::atmosphere::SH_RATIO;
 use crate::models::inertial::STANDARD_GRAVITY;

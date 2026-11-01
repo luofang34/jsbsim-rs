@@ -7,9 +7,9 @@
 
 use super::{Phase, PowerVc, TurboProp, TurboPropConfig, TurboPropState};
 use crate::Error;
-use crate::fdm::EngineLoad;
 use crate::functions::{FnId, Table, TableId};
 use crate::models::propulsion::engine::EngineType;
+use crate::models::propulsion::families::EngineHost;
 use crate::units::constrain;
 use crate::xml::Element;
 
@@ -60,7 +60,7 @@ struct Tables {
 
 /// The tables: `EnginePowerVC` (when no function gives it) bound under
 /// the engine, the others loaded as `FGTable(pm, el)`.
-fn load_tables(el: &Element, ctx: &mut EngineLoad<'_>, have_vc: bool) -> Result<Tables, Error> {
+fn load_tables(el: &Element, ctx: &mut dyn EngineHost, have_vc: bool) -> Result<Tables, Error> {
     let prefix = ctx.number().to_string();
     let mut t = Tables::default();
     for table_el in el.find_elements("table") {
@@ -99,7 +99,7 @@ fn load_tables(el: &Element, ctx: &mut EngineLoad<'_>, have_vc: bool) -> Result<
 }
 
 /// `GetPreFunction(propulsion/engine[n]/EnginePowerVC)`.
-fn power_vc_function(ctx: &mut EngineLoad<'_>) -> Result<Option<FnId>, Error> {
+fn power_vc_function(ctx: &mut dyn EngineHost) -> Result<Option<FnId>, Error> {
     let full = format!("propulsion/engine[{}]/EnginePowerVC", ctx.number());
     let Some(base) = ctx.base_mut() else {
         return Ok(None);
@@ -163,7 +163,7 @@ fn read_config(el: &Element, tables: Tables, vc: PowerVc) -> Result<TurboPropCon
 }
 
 /// `FGTurboProp`'s constructor on `<turboprop_engine>` `el`.
-pub fn load(el: &Element, ctx: &mut EngineLoad<'_>) -> Result<TurboProp, Error> {
+pub fn load(el: &Element, ctx: &mut dyn EngineHost) -> Result<TurboProp, Error> {
     let el = &renamed(el);
     ctx.load_base(el, EngineType::Turboprop)?;
     let function = power_vc_function(ctx)?;

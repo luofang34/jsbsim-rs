@@ -6,7 +6,7 @@
 //! The evaluation environment: the property tree, the functions and the
 //! tied-property bindings.
 //!
-//! It is a part of [`Fdm`](super::Fdm) separate from the models, so model
+//! It is a part of [`Fdm`](crate::Fdm) separate from the models, so model
 //! code can evaluate functions against `&Models` while it holds borrows of
 //! its own model's load-time data, then apply the results.
 

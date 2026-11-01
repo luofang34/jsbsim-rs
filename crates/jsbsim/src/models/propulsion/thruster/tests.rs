@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 use crate::Error;
-use crate::fdm::Fdm;
+use crate::Fdm;
 use crate::math::{E_X, E_Y, E_Z};
 use crate::models::propulsion::tests::load;
 

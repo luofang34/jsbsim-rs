@@ -7,8 +7,8 @@
 
 use super::contact::{Contact, ContactType, SteerType};
 use crate::Error;
-use crate::fdm::{Binder, Kind, Models};
 use crate::math::{E_X, E_Y, E_Z};
+use crate::models::{Binder, Kind, Models};
 
 type Get = fn(&Contact) -> f64;
 type Set = fn(&mut Contact, f64);

@@ -15,9 +15,8 @@ use super::Inputs;
 use super::families::{ThrusterFamily, ThrusterKind, ThrusterSite};
 use super::force::Force;
 use crate::Error;
-use crate::fdm::ModelEvaluator;
-use crate::fdm::{Binder, LoadContext, Models};
 use crate::math::{ColumnVector3, E_X, E_Y, E_Z, Matrix33};
+use crate::models::{Binder, LoadContext, ModelEvaluator, Models};
 use crate::xml::Element;
 
 /// `FGThruster::Inputs`, which the engine copies from its own before it

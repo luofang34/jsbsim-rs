@@ -11,10 +11,9 @@ use std::f64::consts::FRAC_PI_2;
 use super::component::{Base, Tick, model_error};
 use super::families::{ComponentAt, Family};
 use crate::Error;
-use crate::fdm::LoadContext;
-use crate::fdm::ModelEvaluator;
 use crate::functions::PropertyValue;
 use crate::math::Location;
+use crate::models::{LoadContext, ModelEvaluator};
 use crate::units::{RADTODEG, feet_to_meters};
 use crate::xml::Element;
 

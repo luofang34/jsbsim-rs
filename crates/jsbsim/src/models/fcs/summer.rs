@@ -7,8 +7,7 @@
 use super::component::{Base, Tick};
 use super::families::{ComponentAt, Family};
 use crate::Error;
-use crate::fdm::LoadContext;
-use crate::fdm::ModelEvaluator;
+use crate::models::{LoadContext, ModelEvaluator};
 use crate::xml::Element;
 
 /// `FGSummer`.

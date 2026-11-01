@@ -5,10 +5,10 @@
 //! Properties of `FGAerodynamics`, in JSBSim's binding order.
 
 use crate::Error;
-use crate::fdm::{Binder, Kind, Models};
 use crate::math::{
     ColumnVector3, E_DRAG, E_L, E_LIFT, E_M, E_N, E_PITCH, E_ROLL, E_SIDE, E_X, E_Y, E_YAW, E_Z,
 };
+use crate::models::{Binder, Kind, Models};
 
 fn stability_forces(m: &Models) -> ColumnVector3 {
     let s = &m.aerodynamics.state;

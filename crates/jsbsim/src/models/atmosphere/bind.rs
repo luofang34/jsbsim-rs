@@ -8,7 +8,7 @@
 
 use super::{PressureUnit, TemperatureUnit};
 use crate::Error;
-use crate::fdm::{Binder, Kind, Models};
+use crate::models::{Binder, Kind, Models};
 
 type Get = fn(&Models) -> f64;
 

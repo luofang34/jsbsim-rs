@@ -2,7 +2,7 @@
 use std::f64::consts::PI;
 
 use super::*;
-use crate::fdm::Fdm;
+use crate::Fdm;
 use crate::models::atmosphere::{STD_DAY_SL_PRESSURE, STD_DAY_SL_TEMPERATURE};
 use crate::xml::parse_document;
 

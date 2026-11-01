@@ -15,7 +15,7 @@
 //! writes the tree.
 
 use super::base::ModelBase;
-use crate::fdm::ModelFunctions;
+use crate::models::ModelFunctions;
 
 /// `FGInput`.
 #[derive(Debug, Clone, Default)]
