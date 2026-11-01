@@ -367,6 +367,9 @@ fn location_binary_operators_take_the_left_operands_ellipse() {
     assert_eq!(ec(l * 0.5), 0.5 * l.ecef());
     assert_eq!(ec(0.5 * l), 0.5 * l.ecef());
 
+    // The operators rebuild the ellipse from a and ec, as FGLocation's do
+    // (SetEllipse(a, ec * a)), so the expected location takes that round
+    // trip too: b / a * a need not round back to b.
     let geodetic = |v: ColumnVector3| {
         let mut expected = Location::from_ecef(v);
         expected.set_ellipse(WGS84_A, WGS84_B / WGS84_A * WGS84_A);
