@@ -19,7 +19,7 @@
 //!    ([`Fdm::node`], [`Fdm::read_node`], [`Fdm::write_node`]); read the
 //!    pose free of Euler singularities with [`Fdm::location`] and
 //!    [`Fdm::quaternion`].
-//! 6. Save and restore the dynamic state with [`snapshot::Snapshot`].
+//! 6. Save and restore the dynamic state with [`Snapshot`].
 //!
 //! ```
 //! use jsbsim::{Fdm, MemoryResolver};
@@ -52,9 +52,8 @@
 //! ```
 
 mod c_numeric;
-// Without `__oracle`, the accessors and C++ mirrors that only tools/oracle
-// reads are unused. Every workspace build compiles the feature in, so
-// anything nothing reads is still reported there.
+// Without `__oracle`, the accessors and C++ mirrors only tools/oracle reads
+// are unused. Workspace builds compile it in, so dead code is reported there.
 #[cfg_attr(not(feature = "__oracle"), allow(dead_code, unused_imports))]
 mod elementary;
 #[cfg_attr(not(feature = "__oracle"), allow(dead_code, unused_imports))]
@@ -97,3 +96,5 @@ pub use properties::NodeId;
 #[cfg(feature = "fs")]
 pub use resolver::FileResolver;
 pub use resolver::{MemoryResolver, Resolver};
+pub use snapshot::Snapshot;
+pub use trim::TrimMode;

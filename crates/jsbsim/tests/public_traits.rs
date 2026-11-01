@@ -72,3 +72,11 @@ fn trim_selectors_are_map_keys() {
     let axes = HashSet::from([(State::Wdot, Control::Alpha), (State::Wdot, Control::Alpha)]);
     assert_eq!(axes.len(), 1);
 }
+
+#[test]
+fn the_root_names_the_same_snapshot_and_trim_mode_as_their_modules() {
+    let mode: jsbsim::trim::TrimMode = jsbsim::TrimMode::Full;
+    assert_eq!(mode, TrimMode::Full);
+    let snapshot: jsbsim::snapshot::Snapshot = jsbsim::Snapshot::new();
+    assert!(snapshot.as_bytes().is_empty());
+}

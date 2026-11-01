@@ -829,6 +829,34 @@ impl core::marker::Unpin for jsbsim::error::Error
 impl core::marker::UnsafeUnpin for jsbsim::error::Error
 impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::error::Error
 impl core::panic::unwind_safe::UnwindSafe for jsbsim::error::Error
+pub enum jsbsim::TrimMode
+pub jsbsim::TrimMode::Custom = 4
+pub jsbsim::TrimMode::Full = 1
+pub jsbsim::TrimMode::Ground = 2
+pub jsbsim::TrimMode::Longitudinal = 0
+pub jsbsim::TrimMode::None = 6
+pub jsbsim::TrimMode::Pullup = 3
+pub jsbsim::TrimMode::Turn = 5
+impl jsbsim::trim::TrimMode
+pub fn jsbsim::trim::TrimMode::from_i32(i32) -> core::option::Option<Self>
+impl core::clone::Clone for jsbsim::trim::TrimMode
+pub fn jsbsim::trim::TrimMode::clone(&self) -> jsbsim::trim::TrimMode
+impl core::cmp::Eq for jsbsim::trim::TrimMode
+impl core::cmp::PartialEq for jsbsim::trim::TrimMode
+pub fn jsbsim::trim::TrimMode::eq(&self, &jsbsim::trim::TrimMode) -> bool
+impl core::fmt::Debug for jsbsim::trim::TrimMode
+pub fn jsbsim::trim::TrimMode::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for jsbsim::trim::TrimMode
+pub fn jsbsim::trim::TrimMode::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for jsbsim::trim::TrimMode
+impl core::marker::StructuralPartialEq for jsbsim::trim::TrimMode
+impl core::marker::Freeze for jsbsim::trim::TrimMode
+impl core::marker::Send for jsbsim::trim::TrimMode
+impl core::marker::Sync for jsbsim::trim::TrimMode
+impl core::marker::Unpin for jsbsim::trim::TrimMode
+impl core::marker::UnsafeUnpin for jsbsim::trim::TrimMode
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::trim::TrimMode
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::trim::TrimMode
 #[non_exhaustive] pub struct jsbsim::Contact
 pub jsbsim::Contact::agl: f64
 pub jsbsim::Contact::angular_velocity: jsbsim::math::ColumnVector3
@@ -1023,6 +1051,29 @@ impl core::marker::Unpin for jsbsim::ResetMask
 impl core::marker::UnsafeUnpin for jsbsim::ResetMask
 impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::ResetMask
 impl core::panic::unwind_safe::UnwindSafe for jsbsim::ResetMask
+pub struct jsbsim::Snapshot
+impl jsbsim::snapshot::Snapshot
+pub fn jsbsim::snapshot::Snapshot::as_bytes(&self) -> &[u8]
+pub fn jsbsim::snapshot::Snapshot::fingerprint(&self) -> core::result::Result<jsbsim::snapshot::Fingerprint, jsbsim::snapshot::SnapshotError>
+pub fn jsbsim::snapshot::Snapshot::from_bytes(&[u8]) -> core::result::Result<Self, jsbsim::snapshot::SnapshotError>
+pub fn jsbsim::snapshot::Snapshot::new() -> Self
+impl core::clone::Clone for jsbsim::snapshot::Snapshot
+pub fn jsbsim::snapshot::Snapshot::clone(&self) -> jsbsim::snapshot::Snapshot
+impl core::cmp::Eq for jsbsim::snapshot::Snapshot
+impl core::cmp::PartialEq for jsbsim::snapshot::Snapshot
+pub fn jsbsim::snapshot::Snapshot::eq(&self, &jsbsim::snapshot::Snapshot) -> bool
+impl core::default::Default for jsbsim::snapshot::Snapshot
+pub fn jsbsim::snapshot::Snapshot::default() -> jsbsim::snapshot::Snapshot
+impl core::fmt::Debug for jsbsim::snapshot::Snapshot
+pub fn jsbsim::snapshot::Snapshot::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for jsbsim::snapshot::Snapshot
+impl core::marker::Freeze for jsbsim::snapshot::Snapshot
+impl core::marker::Send for jsbsim::snapshot::Snapshot
+impl core::marker::Sync for jsbsim::snapshot::Snapshot
+impl core::marker::Unpin for jsbsim::snapshot::Snapshot
+impl core::marker::UnsafeUnpin for jsbsim::snapshot::Snapshot
+impl core::panic::unwind_safe::RefUnwindSafe for jsbsim::snapshot::Snapshot
+impl core::panic::unwind_safe::UnwindSafe for jsbsim::snapshot::Snapshot
 pub trait jsbsim::GroundCallback: core::marker::Send
 pub fn jsbsim::GroundCallback::ag_level(&self, f64, &jsbsim::math::Location) -> jsbsim::Contact
 pub fn jsbsim::GroundCallback::set_ellipse(&mut self, f64, f64)
