@@ -16,7 +16,7 @@ use std::rc::Rc;
 
 use roxmltree::{Document, Node, ParsingOptions};
 
-use super::{Element, XmlError};
+use super::{Element, SourceLocation, XmlError};
 use crate::c_numeric::is_c_space;
 
 /// Parses a document; `file` names it in errors and element locations.
@@ -30,8 +30,10 @@ pub fn parse_document(bytes: &[u8], file: &str) -> Result<Element, XmlError> {
     let doc = Document::parse_with_options(&text, options).map_err(|e| {
         let pos = e.pos();
         XmlError::Malformed {
-            file: file.to_owned(),
-            line: pos.row,
+            at: SourceLocation {
+                file: file.to_owned(),
+                line: pos.row,
+            },
             column: pos.col,
             message: e.to_string(),
         }

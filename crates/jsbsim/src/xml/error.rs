@@ -31,12 +31,10 @@ impl fmt::Display for SourceLocation {
 #[non_exhaustive]
 pub enum XmlError {
     /// The document is not well-formed XML.
-    #[error("{file}:{line}:{column}: {message}")]
+    #[error("{}:{}:{column}: {message}", at.file, at.line)]
     Malformed {
-        /// Resource path of the document.
-        file: String,
-        /// One-based line.
-        line: u32,
+        /// The document and the line the parser stopped at.
+        at: SourceLocation,
         /// One-based column.
         column: u32,
         /// Parser message.
@@ -128,17 +126,18 @@ pub enum XmlError {
 }
 
 impl XmlError {
-    /// Where the offending element starts. `None` for [`Malformed`] and
-    /// [`Encoding`], which no element holds: the first gives its position in
-    /// its own fields.
+    /// Where the offending element starts, or for [`Malformed`] the line
+    /// the parser stopped at. `None` for [`Encoding`], which concerns the
+    /// whole document.
     ///
     /// [`Malformed`]: Self::Malformed
     /// [`Encoding`]: Self::Encoding
     #[must_use]
     pub fn location(&self) -> Option<&SourceLocation> {
         match self {
-            Self::Malformed { .. } | Self::Encoding { .. } => None,
-            Self::InvalidNumber { at, .. }
+            Self::Encoding { .. } => None,
+            Self::Malformed { at, .. }
+            | Self::InvalidNumber { at, .. }
             | Self::NoData { at, .. }
             | Self::MultipleLines { at, .. }
             | Self::MissingAttribute { at, .. }

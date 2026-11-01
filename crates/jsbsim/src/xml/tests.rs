@@ -60,9 +60,11 @@ fn latin1_documents_are_decoded() {
 fn malformed_documents_report_position() {
     let err = parse_document(b"<a>\n<b></a>", "bad.xml").unwrap_err();
     assert!(
-        matches!(err, XmlError::Malformed { line: 2, .. }),
+        matches!(&err, XmlError::Malformed { at, .. } if at.line == 2),
         "{err:?}"
     );
+    assert_eq!(err.location().map(|at| at.line), Some(2));
+    assert!(err.to_string().starts_with("bad.xml:2:"), "{err}");
 }
 
 #[test]

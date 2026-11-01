@@ -88,19 +88,12 @@ fn wrapped_xml_and_function_errors_delegate() {
 
 #[test]
 fn errors_without_an_element_have_no_location() {
-    let malformed = XmlError::Malformed {
-        file: "aircraft/box.xml".to_owned(),
-        line: 1,
-        column: 2,
-        message: "unclosed".to_owned(),
-    };
-    assert_eq!(malformed.location(), None);
     let encoding = XmlError::Encoding {
         file: "aircraft/box.xml".to_owned(),
         encoding: "EBCDIC".to_owned(),
     };
     assert_eq!(encoding.location(), None);
-    assert_eq!(Error::from(malformed).location(), None);
+    assert_eq!(Error::from(encoding).location(), None);
     let unknown = FunctionError::UnknownId {
         what: "table",
         id: 3,

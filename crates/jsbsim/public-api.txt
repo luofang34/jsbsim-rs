@@ -134,9 +134,8 @@ pub jsbsim::error::XmlError::InvalidNumber::at: jsbsim::error::SourceLocation
 pub jsbsim::error::XmlError::InvalidNumber::element: alloc::string::String
 pub jsbsim::error::XmlError::InvalidNumber::message: alloc::string::String
 pub jsbsim::error::XmlError::Malformed
+pub jsbsim::error::XmlError::Malformed::at: jsbsim::error::SourceLocation
 pub jsbsim::error::XmlError::Malformed::column: u32
-pub jsbsim::error::XmlError::Malformed::file: alloc::string::String
-pub jsbsim::error::XmlError::Malformed::line: u32
 pub jsbsim::error::XmlError::Malformed::message: alloc::string::String
 pub jsbsim::error::XmlError::MissingAttribute
 pub jsbsim::error::XmlError::MissingAttribute::at: jsbsim::error::SourceLocation
