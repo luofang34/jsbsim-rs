@@ -34,10 +34,8 @@ fn f450() -> Fdm {
     let resolver = FileResolver::new(&root);
     let mut fdm = Fdm::new().unwrap();
     fdm.load_model(&resolver, "aircraft", "F450").unwrap();
-    assert!(
-        fdm.load_initial_conditions(&resolver, "aircraft/F450", "initGrnd")
-            .unwrap()
-    );
+    fdm.load_initial_conditions(&resolver, "aircraft/F450", "initGrnd")
+        .unwrap();
     fdm.run_ic().unwrap();
     fdm
 }

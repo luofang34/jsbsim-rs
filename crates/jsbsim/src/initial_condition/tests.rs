@@ -6,6 +6,8 @@ use crate::models::auxiliary::{mach_from_vcalibrated, vcalibrated_from_mach};
 use crate::units::DEGTORAD;
 use crate::{Error, MemoryResolver};
 
+mod inconsistent;
+
 fn close(a: f64, b: f64, tol: f64) -> bool {
     (a - b).abs() <= tol * (1.0 + b.abs())
 }
@@ -18,7 +20,7 @@ fn fdm() -> Fdm {
     fdm
 }
 
-fn load(fdm: &mut Fdm, xml: &str) -> Result<bool, Error> {
+fn load(fdm: &mut Fdm, xml: &str) -> Result<(), Error> {
     let mut resolver = MemoryResolver::new();
     resolver.insert("aircraft/x/init.xml", xml.as_bytes().to_vec());
     fdm.load_initial_conditions(&resolver, "aircraft/x", "init")
@@ -150,7 +152,7 @@ fn version_1_files_load_through_the_setters() {
              <trim> 0 </trim>
            </initialize>"#,
     );
-    assert_eq!(loaded, Ok(true));
+    assert_eq!(loaded, Ok(()));
     assert!(close(fdm.get_property("ic/u-fps").unwrap(), 500.0, 1e-12));
     assert!(close(
         fdm.get_property("ic/lat-gc-deg").unwrap(),
@@ -186,7 +188,7 @@ fn version_2_files_load_frames() {
              <attitude_rate unit="DEG/SEC" frame="ECI"><z> 0.0 </z></attitude_rate>
            </initialize>"#,
     );
-    assert_eq!(loaded, Ok(true));
+    assert_eq!(loaded, Ok(()));
     assert!(close(
         fdm.get_property("ic/h-sl-ft").unwrap(),
         800000.0,
@@ -222,7 +224,7 @@ fn running_engines_are_recorded_by_number() {
     for (body, running, stopped) in cases {
         let mut fdm = fdm();
         let xml = format!("<initialize><vt unit=\"FT/SEC\">10</vt>{body}</initialize>");
-        assert_eq!(load(&mut fdm, &xml), Ok(true), "{body}");
+        assert_eq!(load(&mut fdm, &xml), Ok(()), "{body}");
         for &n in running {
             assert!(fdm.models.ic.is_engine_running(n), "{body}: {n}");
         }
@@ -247,25 +249,10 @@ fn a_version_1_trim_is_recorded_as_jsbsim_spells_it() {
     ] {
         let mut fdm = fdm();
         let xml = format!("<initialize><vt unit=\"FT/SEC\">10</vt>{body}</initialize>");
-        assert_eq!(load(&mut fdm, &xml), Ok(true), "{body}");
+        assert_eq!(load(&mut fdm, &xml), Ok(()), "{body}");
         assert_eq!(fdm.models.ic.trim_requested(), mode, "{body}");
         let vt = fdm.get_property("ic/vt-fps").unwrap();
         assert!((vt - 10.0).abs() < 1e-9, "{body}: {vt}");
-    }
-}
-
-#[test]
-fn inconsistent_files_fail_as_in_jsbsim() {
-    let mut fdm = fdm();
-    let bad_latitude = r#"<initialize><latitude unit="DEG"> 95 </latitude></initialize>"#;
-    assert_eq!(load(&mut fdm, bad_latitude), Ok(false));
-    let no_position = r#"<initialize version="2"/>"#;
-    assert_eq!(load(&mut fdm, no_position), Ok(false));
-    for xml in [r#"<initialize version="3"/>"#, "<reset/>"] {
-        assert!(
-            matches!(load(&mut fdm, xml), Err(Error::Model { .. })),
-            "{xml}"
-        );
     }
 }
 
@@ -471,10 +458,7 @@ fn an_initialization_file_loads_by_its_path() {
         "scenarios/./takeoff.xml",
     ] {
         let mut fdm = fdm();
-        assert!(
-            fdm.load_initial_conditions_file(&resolver, path).unwrap(),
-            "{path}"
-        );
+        fdm.load_initial_conditions_file(&resolver, path).unwrap();
         assert!(
             close(fdm.get_property("ic/h-agl-ft").unwrap(), 1234.0, 1e-9),
             "{path}"

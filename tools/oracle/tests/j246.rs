@@ -90,10 +90,8 @@ fn stays_on_the_pad(boosters_lit: bool) {
     let resolver = FileResolver::new(&root);
     let mut fdm = Fdm::new().unwrap();
     fdm.load_model(&resolver, "aircraft", "J246").unwrap();
-    assert!(
-        fdm.load_initial_conditions(&resolver, "aircraft/J246", "LC39")
-            .unwrap()
-    );
+    fdm.load_initial_conditions(&resolver, "aircraft/J246", "LC39")
+        .unwrap();
     fdm.set_property("forces/hold-down", 1.0).unwrap();
     fdm.run_ic().unwrap();
     let h0 = get(&mut fdm, "position/vrp-radius-ft");

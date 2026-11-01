@@ -22,6 +22,14 @@ use crate::{Error, Fdm, Resolver};
 pub trait FdmInternals {
     /// The property tree.
     fn tree(&self) -> &properties::PropertyTree;
+    /// `FGInitialCondition::Load(dir/name)`: `Ok(false)` where JSBSim
+    /// returns false, `Err` where it throws.
+    fn load_initial_conditions_raw(
+        &mut self,
+        resolver: &dyn Resolver,
+        dir: &str,
+        name: &str,
+    ) -> Result<bool, Error>;
     /// `FGMassBalance::Load(<mass_balance>)`, tying the point mass
     /// properties as it adds them.
     fn load_mass_balance(&mut self, el: &xml::Element) -> Result<(), Error>;
@@ -46,6 +54,14 @@ pub trait FdmInternals {
 impl FdmInternals for Fdm {
     fn tree(&self) -> &properties::PropertyTree {
         Self::tree(self)
+    }
+    fn load_initial_conditions_raw(
+        &mut self,
+        resolver: &dyn Resolver,
+        dir: &str,
+        name: &str,
+    ) -> Result<bool, Error> {
+        Self::load_initial_conditions_raw(self, resolver, dir, name)
     }
     fn load_mass_balance(&mut self, el: &xml::Element) -> Result<(), Error> {
         Self::load_mass_balance(self, el)

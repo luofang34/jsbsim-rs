@@ -287,3 +287,32 @@ fn a_second_model_is_refused() {
     assert_eq!(fdm.get_property("inertia/empty-weight-lbs").unwrap(), 100.0);
     assert_eq!(fdm.dt(), dt);
 }
+
+/// An inconsistent initialization file fails a script with what is wrong
+/// and where, in that file.
+#[test]
+fn a_script_reports_where_its_initialization_file_is_inconsistent() {
+    let mut files = crate::MemoryResolver::new();
+    files.insert(
+        "aircraft/box/box.xml",
+        r#"<fdm_config name="box"><metrics/><mass_balance>
+             <ixx>10</ixx><iyy>10</iyy><izz>10</izz><emptywt>100</emptywt>
+             <location name="CG" unit="IN"><x>0</x><y>0</y><z>0</z></location>
+           </mass_balance><ground_reactions/></fdm_config>"#,
+    );
+    files.insert(
+        "aircraft/box/ic.xml",
+        r#"<initialize><latitude unit="DEG"> 95 </latitude></initialize>"#,
+    );
+    files.insert(
+        "script.xml",
+        r#"<runscript><use aircraft="box" initialize="ic"/>
+             <run start="0" end="1" dt="0.01"/></runscript>"#,
+    );
+    let e = Fdm::new()
+        .unwrap()
+        .load_script(&files, "script.xml")
+        .unwrap_err();
+    assert!(e.to_string().contains("The latitude value 95"), "{e}");
+    assert!(e.location().unwrap().file.ends_with("ic.xml"), "{e}");
+}

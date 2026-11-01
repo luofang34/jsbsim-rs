@@ -61,10 +61,8 @@ fn check_reset(
     let resolver = FileResolver::new(&root);
     let mut fdm = Fdm::new().unwrap();
     fdm.load_model(&resolver, "aircraft", aircraft).unwrap();
-    assert!(
-        fdm.load_initial_conditions(&resolver, &format!("aircraft/{aircraft}"), ic)
-            .unwrap()
-    );
+    fdm.load_initial_conditions(&resolver, &format!("aircraft/{aircraft}"), ic)
+        .unwrap();
     fdm.run_ic().unwrap();
     let names: Vec<&str> = thruster.iter().chain(&STATE).copied().collect();
     let initial = outputs(&mut fdm, &names);

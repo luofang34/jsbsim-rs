@@ -11,8 +11,7 @@ use crate::Error;
 impl Fdm {
     /// `FGInitialCondition::Load(file)` for `dir/name` (`.xml` added when
     /// it has no extension), applied to the executive's initial
-    /// conditions. False, with the problem logged, where JSBSim's `Load`
-    /// returns false. For a file named by one path, such as one at the
+    /// conditions. For a file named by one path, such as one at the
     /// resolver's root, use
     /// [`load_initial_conditions_file`](Self::load_initial_conditions_file).
     ///
@@ -20,7 +19,11 @@ impl Fdm {
     ///
     /// [`Error::ResourceNotFound`] when the resolver lacks a document;
     /// [`Error::Xml`] for malformed XML or a value that does not parse;
-    /// [`Error::Model`] for a configuration JSBSim refuses;
+    /// [`Error::Model`] for a configuration JSBSim refuses, which includes
+    /// the first inconsistency where JSBSim's `Load` returns false: a
+    /// latitude out of range, a missing position, an unknown frame, a
+    /// version below 1. Like JSBSim, the load goes on past an inconsistency,
+    /// and that error's [`location`](Error::location) names the element;
     /// [`Error::Function`] for an invalid table, function or condition;
     /// [`Error::Unsupported`] for a construct the port does not implement;
     /// [`Error::UnknownInputType`] for an `<input>` without an input class;
@@ -32,7 +35,7 @@ impl Fdm {
         resolver: &dyn crate::Resolver,
         dir: &str,
         name: &str,
-    ) -> Result<bool, Error> {
+    ) -> Result<(), Error> {
         self.hashed_load(resolver, |fdm, r| {
             fdm.load_initial_conditions_from(r, dir, name)
         })
@@ -51,11 +54,25 @@ impl Fdm {
         &mut self,
         resolver: &dyn crate::Resolver,
         path: &str,
-    ) -> Result<bool, Error> {
+    ) -> Result<(), Error> {
         self.hashed_load(resolver, |fdm, r| {
             let document = crate::xml::DocumentLoader::new(r, ".").load_document(path)?;
-            fdm.load_initial_conditions_document(&document)
+            fdm.apply_initial_conditions(&document)?.map_or(Ok(()), Err)
         })
+    }
+
+    /// `FGInitialCondition::Load`'s own result: `Ok(false)` where JSBSim
+    /// returns false and [`load_initial_conditions`](Self::load_initial_conditions)
+    /// fails, `Err` where JSBSim throws.
+    #[cfg_attr(not(feature = "__oracle"), allow(dead_code))]
+    pub(crate) fn load_initial_conditions_raw(
+        &mut self,
+        resolver: &dyn crate::Resolver,
+        dir: &str,
+        name: &str,
+    ) -> Result<bool, Error> {
+        self.hashed_load(resolver, |fdm, r| fdm.read_initial_conditions(r, dir, name))
+            .map(|problem| problem.is_none())
     }
 
     /// [`load_initial_conditions`](Self::load_initial_conditions) within
@@ -65,17 +82,29 @@ impl Fdm {
         resolver: &dyn crate::Resolver,
         dir: &str,
         name: &str,
-    ) -> Result<bool, Error> {
-        let loader = crate::xml::DocumentLoader::new(resolver, dir);
-        let document = loader.load_document(&format!("{dir}/{name}"))?;
-        self.load_initial_conditions_document(&document)
+    ) -> Result<(), Error> {
+        self.read_initial_conditions(resolver, dir, name)?
+            .map_or(Ok(()), Err)
     }
 
-    /// `FGInitialCondition::Load` on a parsed `<initialize>` document.
-    pub(crate) fn load_initial_conditions_document(
+    fn read_initial_conditions(
+        &mut self,
+        resolver: &dyn crate::Resolver,
+        dir: &str,
+        name: &str,
+    ) -> Result<Option<Error>, Error> {
+        let loader = crate::xml::DocumentLoader::new(resolver, dir);
+        let document = loader.load_document(&format!("{dir}/{name}"))?;
+        self.apply_initial_conditions(&document)
+    }
+
+    /// `FGInitialCondition::Load` on a parsed `<initialize>` document. `Err`
+    /// is what JSBSim throws; the inconsistency it returns false for comes
+    /// back in `Ok`, once what the load changed has reached the models.
+    fn apply_initial_conditions(
         &mut self,
         document: &crate::xml::Element,
-    ) -> Result<bool, Error> {
+    ) -> Result<Option<Error>, Error> {
         let m = &mut self.models;
         let outcome = m.ic.load(document, &m.atmosphere, &mut m.inertial);
         self.loaded_without_documents();
@@ -85,6 +114,6 @@ impl Fdm {
             m.propagate.input.omega_planet = m.inertial.omega_planet;
             m.accelerations.input.omega_planet = m.inertial.omega_planet;
         }
-        Ok(outcome.result)
+        Ok(outcome.problem)
     }
 }

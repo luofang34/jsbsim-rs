@@ -191,13 +191,11 @@ impl Fdm {
         if initialize.is_empty() {
             return Err(use_el.model_error("Initialization file must be specified in use element."));
         }
-        if !self.load_initial_conditions_from(
+        self.load_initial_conditions_from(
             resolver,
             &format!("{aircraft_path}/{aircraft}"),
             initialize,
-        )? {
-            return Err(use_el.model_error("Initialization unsuccessful"));
-        }
+        )?;
         let script_dir = match script_path.rfind('/') {
             Some(at) => &script_path[..at],
             None => ".",

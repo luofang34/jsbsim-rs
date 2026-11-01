@@ -21,15 +21,24 @@ use crate::trim::TrimMode;
 use crate::xml::Element;
 
 /// What `Load` reports.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub(crate) struct LoadOutcome {
-    /// `Load`'s return value: false when the file is inconsistent (a
+    /// Why `Load` returns false: the first inconsistency in the file (a
     /// latitude out of range, a missing position, an unknown frame, a
-    /// version below 1); the problem has been logged.
-    pub result: bool,
+    /// version below 1). `Load` goes on past it, so the rest of the file
+    /// has been applied.
+    pub problem: Option<Error>,
     /// Whether `<planet_rotation_rate>` changed the planet's rotation,
     /// which the propagation and acceleration inputs then take.
     pub planet_rotation_changed: bool,
+}
+
+impl LoadOutcome {
+    /// Logs an inconsistency the load goes on past; the first one stands.
+    pub(super) fn inconsistent(&mut self, problem: Error) {
+        tracing::error!("{problem}");
+        self.problem.get_or_insert(problem);
+    }
 }
 
 /// `SetTrimRequest`: the trim mode `value` asks for; anything unknown,
@@ -72,9 +81,11 @@ impl InitialCondition {
         }
         let mut outcome = LoadOutcome::default();
         match version {
-            Some(v) if v >= 2.0 => outcome = self.load_v2(document, atmosphere, inertial)?,
-            Some(v) if v < 1.0 => {}
-            _ => outcome.result = self.load_v1(document, atmosphere, inertial)?,
+            Some(v) if v >= 2.0 => self.load_v2(document, atmosphere, inertial, &mut outcome)?,
+            Some(v) if v < 1.0 => outcome.inconsistent(
+                document.model_error(format!("Initialization file version {v} is below 1")),
+            ),
+            _ => self.load_v1(document, atmosphere, inertial, &mut outcome)?,
         }
         // Engine -1 is every engine.
         for running in document.find_elements("running") {
@@ -97,7 +108,8 @@ impl InitialCondition {
         document: &Element,
         atmosphere: &Atmosphere,
         inertial: &mut Inertial,
-    ) -> Result<bool, Error> {
+        outcome: &mut LoadOutcome,
+    ) -> Result<(), Error> {
         let value = |name: &str, unit: &str| -> Result<Option<f64>, Error> {
             match document.find_element(name) {
                 Some(_) => Ok(Some(
@@ -120,7 +132,7 @@ impl InitialCondition {
         } else if let Some(v) = value("altitudeMSL", "FT")? {
             self.set_altitude_asl_ft(env, v);
         }
-        let result = self.load_latitude(document, env)?;
+        self.load_latitude(document, env, outcome)?;
 
         let mut orient = self.orientation.euler();
         for (name, idx) in [("phi", E_PHI), ("theta", E_THT), ("psi", E_PSI)] {
@@ -142,7 +154,7 @@ impl InitialCondition {
         }
         self.load_v1_speeds_and_wind(document, env)?;
         self.pqr_body = crate::math::ColumnVector3::zero();
-        Ok(result)
+        Ok(())
     }
 
     fn load_v1_speeds_and_wind(
@@ -205,15 +217,16 @@ impl InitialCondition {
         Ok(())
     }
 
-    /// `LoadLatitude`: false, logged, when the latitude is outside
-    /// [-pi/2, pi/2].
+    /// `LoadLatitude`: an inconsistency, leaving the latitude as it was,
+    /// when the latitude is outside [-pi/2, pi/2].
     pub(super) fn load_latitude(
         &mut self,
         position_el: &Element,
         env: Environment<'_>,
-    ) -> Result<bool, Error> {
+        outcome: &mut LoadOutcome,
+    ) -> Result<(), Error> {
         let Some(latitude_el) = position_el.find_element("latitude") else {
-            return Ok(true);
+            return Ok(());
         };
         let latitude = position_el.find_element_value_as_number_convert_to("latitude", "RAD")?;
         if latitude.abs() > 0.5 * PI {
@@ -226,12 +239,11 @@ impl InitialCondition {
             } else {
                 "-PI/2 RAD; +PI/2 RAD]"
             };
-            tracing::error!(
-                "{}: The latitude value {} {unit} is outside the range [{range}",
-                latitude_el.location(),
+            outcome.inconsistent(latitude_el.model_error(format!(
+                "The latitude value {} {unit} is outside the range [{range}",
                 latitude_el.data_line(0)
-            );
-            return Ok(false);
+            )));
+            return Ok(());
         }
         match latitude_el.attribute("type") {
             "geod" | "geodetic" => {
@@ -243,6 +255,6 @@ impl InitialCondition {
                 self.last_latitude_set = LatitudeSet::Geocentric;
             }
         }
-        Ok(true)
+        Ok(())
     }
 }

@@ -307,10 +307,8 @@ fn run_ic_starts_the_engines_the_initial_conditions_name() {
     let mut r = MemoryResolver::new();
     let ic = "<initialize><altitude unit=\"FT\">10000</altitude><running>0</running></initialize>";
     r.insert("aircraft/t/running.xml", ic.as_bytes().to_vec());
-    assert!(
-        fdm.load_initial_conditions(&r, "aircraft/t", "running")
-            .unwrap()
-    );
+    fdm.load_initial_conditions(&r, "aircraft/t", "running")
+        .unwrap();
     assert_eq!(
         fdm.get_property("propulsion/engine/set-running").unwrap(),
         0.0

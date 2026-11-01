@@ -141,7 +141,7 @@ impl Probe {
             }
             "ic" => {
                 let dir = format!("{}/{}", self.aircraft, self.model);
-                let loaded = fdm.load_initial_conditions(&resolver, &dir, arg(0))?;
+                let loaded = fdm.load_initial_conditions_raw(&resolver, &dir, arg(0))?;
                 Ok(format!(" {loaded}"))
             }
             "planet" => {

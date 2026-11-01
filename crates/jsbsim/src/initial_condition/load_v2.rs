@@ -32,11 +32,8 @@ impl InitialCondition {
         document: &Element,
         atmosphere: &Atmosphere,
         inertial: &mut Inertial,
-    ) -> Result<LoadOutcome, Error> {
-        let mut outcome = LoadOutcome {
-            result: true,
-            planet_rotation_changed: false,
-        };
+        outcome: &mut LoadOutcome,
+    ) -> Result<(), Error> {
         // Both names are accepted; the later one wins.
         for name in ["earth_position_angle", "planet_position_angle"] {
             if document.find_element(name).is_some() {
@@ -58,31 +55,17 @@ impl InitialCondition {
         }
         let env = Environment::new(atmosphere, inertial);
         match document.find_element("position") {
-            Some(el) => {
-                if !self.load_v2_position(el, env, &ti2ec)? {
-                    outcome.result = false;
-                }
-            }
-            None => {
-                tracing::error!(
-                    "{}: Initial position not specified in this initialization file.",
-                    document.location()
-                );
-                outcome.result = false;
-            }
+            Some(el) => self.load_v2_position(el, env, &ti2ec, outcome)?,
+            None => outcome.inconsistent(
+                document.model_error("Initial position not specified in this initialization file."),
+            ),
         }
-        if let Some(el) = document.find_element("orientation")
-            && !self.load_v2_orientation(el, &ti2ec)?
-        {
-            outcome.result = false;
+        if let Some(el) = document.find_element("orientation") {
+            self.load_v2_orientation(el, &ti2ec, outcome)?;
         }
-        if !self.load_v2_velocity(document.find_element("velocity"), omega, &ti2ec)? {
-            outcome.result = false;
-        }
-        if !self.load_v2_attitude_rate(document.find_element("attitude_rate"), omega, &ti2ec)? {
-            outcome.result = false;
-        }
-        Ok(outcome)
+        self.load_v2_velocity(document.find_element("velocity"), omega, &ti2ec, outcome)?;
+        let rate = document.find_element("attitude_rate");
+        self.load_v2_attitude_rate(rate, omega, &ti2ec, outcome)
     }
 
     fn load_v2_position(
@@ -90,18 +73,19 @@ impl InitialCondition {
         el: &Element,
         env: Environment<'_>,
         ti2ec: &Matrix33,
-    ) -> Result<bool, Error> {
+        outcome: &mut LoadOutcome,
+    ) -> Result<(), Error> {
         match frame_of(el).as_str() {
             "eci" => {
                 let eci = el.find_element_triplet_convert_to("FT")?;
                 self.position.assign_ecef(*ti2ec * eci);
-                Ok(true)
+                Ok(())
             }
             "ecef" => {
                 if ["x", "y", "z"].iter().any(|n| el.find_element(n).is_some()) {
                     let ecef = el.find_element_triplet_convert_to("FT")?;
                     self.position.assign_ecef(ecef);
-                    return Ok(true);
+                    return Ok(());
                 }
                 if el.find_element("longitude").is_some() {
                     let lon = el.find_element_value_as_number_convert_to("longitude", "RAD")?;
@@ -117,27 +101,30 @@ impl InitialCondition {
                     let asl = el.find_element_value_as_number_convert_to("altitudeMSL", "FT")?;
                     self.set_altitude_asl_ft(env, asl);
                 } else {
-                    tracing::error!(
-                        "{}: No altitude or radius initial condition is given.",
-                        el.location()
+                    outcome.inconsistent(
+                        el.model_error("No altitude or radius initial condition is given."),
                     );
-                    return Ok(false);
+                    return Ok(());
                 }
-                self.load_latitude(el, env)
+                self.load_latitude(el, env, outcome)
             }
             _ => {
-                tracing::error!(
-                    "{}: Neither ECI nor ECEF frame is specified for initial position.",
-                    el.location()
+                outcome.inconsistent(
+                    el.model_error("Neither ECI nor ECEF frame is specified for initial position."),
                 );
-                Ok(false)
+                Ok(())
             }
         }
     }
 
     /// Euler angles of the body relative to the ECI, ECEF or local frame,
     /// stored as the local-to-body quaternion.
-    fn load_v2_orientation(&mut self, el: &Element, ti2ec: &Matrix33) -> Result<bool, Error> {
+    fn load_v2_orientation(
+        &mut self,
+        el: &Element,
+        ti2ec: &Matrix33,
+        outcome: &mut LoadOutcome,
+    ) -> Result<(), Error> {
         let frame = frame_of(el);
         let orient = el.find_element_triplet_convert_to("RAD")?;
         match frame.as_str() {
@@ -160,14 +147,12 @@ impl InitialCondition {
             }
             "local" => self.orientation = Quaternion::from_euler_vector(orient),
             _ => {
-                tracing::error!(
-                    "{}: Orientation frame type: \"{frame}\" is not supported!",
-                    el.location()
-                );
-                return Ok(false);
+                outcome.inconsistent(el.model_error(format!(
+                    "Orientation frame type: \"{frame}\" is not supported!"
+                )));
             }
         }
-        Ok(true)
+        Ok(())
     }
 
     /// The ground velocity, zero when no element is given; then the true
@@ -177,10 +162,10 @@ impl InitialCondition {
         el: Option<&Element>,
         omega: ColumnVector3,
         ti2ec: &Matrix33,
-    ) -> Result<bool, Error> {
+        outcome: &mut LoadOutcome,
+    ) -> Result<(), Error> {
         let tec2l = self.position.tec2l();
         let tb2l = self.orientation.t_inv();
-        let mut result = true;
         match el {
             Some(el) => {
                 let frame = frame_of(el);
@@ -204,11 +189,9 @@ impl InitialCondition {
                         self.last_speed_set = SpeedSet::Uvw;
                     }
                     _ => {
-                        tracing::error!(
-                            "{}: Velocity frame type: \"{frame}\" is not supported!",
-                            el.location()
-                        );
-                        result = false;
+                        outcome.inconsistent(el.model_error(format!(
+                            "Velocity frame type: \"{frame}\" is not supported!"
+                        )));
                     }
                 }
             }
@@ -216,7 +199,7 @@ impl InitialCondition {
         }
         self.vt = self.uvw_ned.magnitude();
         self.calc_aero_angles(self.uvw_ned);
-        Ok(result)
+        Ok(())
     }
 
     /// Body rates given relative to the ECI, ECEF, local or body frame,
@@ -227,10 +210,11 @@ impl InitialCondition {
         el: Option<&Element>,
         omega: ColumnVector3,
         ti2ec: &Matrix33,
-    ) -> Result<bool, Error> {
+        outcome: &mut LoadOutcome,
+    ) -> Result<(), Error> {
         let Some(el) = el else {
             self.pqr_body = ColumnVector3::zero();
-            return Ok(true);
+            return Ok(());
         };
         let frame = frame_of(el);
         let tl2b = self.orientation.t();
@@ -256,13 +240,11 @@ impl InitialCondition {
             "body" => self.pqr_body = rate,
             "" => self.pqr_body = ColumnVector3::zero(),
             _ => {
-                tracing::error!(
-                    "{}: Attitude rate frame type: \"{frame}\" is not supported!",
-                    el.location()
-                );
-                return Ok(false);
+                outcome.inconsistent(el.model_error(format!(
+                    "Attitude rate frame type: \"{frame}\" is not supported!"
+                )));
             }
         }
-        Ok(true)
+        Ok(())
     }
 }

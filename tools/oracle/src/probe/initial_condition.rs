@@ -9,6 +9,7 @@ use std::path::Path;
 
 use jsbsim::Fdm;
 use jsbsim::FileResolver;
+use jsbsim::oracle_support::FdmInternals as _;
 use jsbsim::oracle_support::c_numeric::format_g;
 use jsbsim::oracle_support::initial_condition::SpeedSet;
 
@@ -124,7 +125,7 @@ struct Probe {
 fn load(fdm: &mut Fdm, rel: &str, input_dir: &Path) -> String {
     let resolver = FileResolver::new(input_dir);
     let (dir, name) = rel.rsplit_once('/').unwrap_or((".", rel));
-    match fdm.load_initial_conditions(&resolver, dir, name) {
+    match fdm.load_initial_conditions_raw(&resolver, dir, name) {
         Ok(result) => format!(" {result}{}", printed(fdm)),
         Err(jsbsim::Error::Unsupported { construct, .. }) => format!(" unsupported {construct}"),
         Err(e) => {
