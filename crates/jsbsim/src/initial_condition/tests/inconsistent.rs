@@ -93,8 +93,30 @@ fn the_first_inconsistency_is_the_one_reported() {
     let xml = v2(r#"<position frame="HOME"/>
 <orientation frame="HOME"/>
 <velocity frame="HOME"/>"#);
-    let e = load(&mut fdm(), &xml).unwrap_err();
+    let (logs, result) = crate::test_log::logged(|| load(&mut fdm(), &xml));
+    let e = result.unwrap_err();
     assert_eq!(e.location().unwrap().line, 2, "{e}");
+    // The returned error is not logged too; the two it does not carry are.
+    let errors: Vec<_> = logs
+        .iter()
+        .filter(|(level, _)| *level == tracing::Level::ERROR)
+        .map(|(_, m)| m.as_str())
+        .collect();
+    assert_eq!(errors.len(), 2, "{logs:?}");
+    assert!(errors.iter().all(|m| !m.contains("line 2")), "{logs:?}");
+}
+
+/// JSBSim's `Load` returns false for a version below 1 without a word; the
+/// error says why, and nothing is logged.
+#[test]
+fn a_version_below_1_fails_without_logging() {
+    let (logs, result) =
+        crate::test_log::logged(|| load(&mut fdm(), r#"<initialize version="0.5"/>"#));
+    assert!(result.unwrap_err().to_string().contains("below 1"));
+    assert!(
+        logs.iter().all(|(level, _)| *level > tracing::Level::WARN),
+        "{logs:?}"
+    );
 }
 
 /// A version 2 load goes on past each frame it cannot use, then reads

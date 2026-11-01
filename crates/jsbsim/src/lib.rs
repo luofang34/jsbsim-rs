@@ -65,6 +65,8 @@ mod random;
 mod readme;
 mod resolver;
 mod script;
+#[cfg(test)]
+mod test_log;
 mod units;
 mod xml;
 

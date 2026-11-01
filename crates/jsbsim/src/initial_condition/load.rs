@@ -34,10 +34,14 @@ pub(crate) struct LoadOutcome {
 }
 
 impl LoadOutcome {
-    /// Logs an inconsistency the load goes on past; the first one stands.
+    /// Records an inconsistency the load goes on past. The first one is
+    /// what the load returns, so only later ones, which the error does not
+    /// carry, are logged.
     pub(super) fn inconsistent(&mut self, problem: Error) {
-        tracing::error!("{problem}");
-        self.problem.get_or_insert(problem);
+        match self.problem {
+            None => self.problem = Some(problem),
+            Some(_) => tracing::error!("{problem}"),
+        }
     }
 }
 

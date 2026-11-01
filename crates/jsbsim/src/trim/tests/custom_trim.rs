@@ -1,10 +1,7 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 use super::*;
+use crate::test_log::messages as logged;
 use crate::units::RADTODEG;
-use std::sync::{Arc, Mutex};
-use tracing::field::{Field, Visit};
-use tracing::span::{Attributes, Id, Record};
-use tracing::{Event, Metadata, Subscriber};
 
 /// The tripod clear of the ground with lift that grows with alpha, which a
 /// custom wdot axis trims with alpha.
@@ -31,45 +28,6 @@ fn lifting_tripod() -> Fdm {
     fdm.set_property("ic/vt-fps", 200.0).unwrap();
     fdm.run_ic().unwrap();
     fdm
-}
-
-/// Keeps the message of every event logged on its thread.
-struct Capture(Arc<Mutex<Vec<String>>>);
-
-struct Message(String);
-
-impl Visit for Message {
-    fn record_debug(&mut self, field: &Field, value: &dyn std::fmt::Debug) {
-        if field.name() == "message" {
-            self.0 = format!("{value:?}");
-        }
-    }
-}
-
-impl Subscriber for Capture {
-    fn enabled(&self, _: &Metadata<'_>) -> bool {
-        true
-    }
-    fn new_span(&self, _: &Attributes<'_>) -> Id {
-        Id::from_u64(1)
-    }
-    fn record(&self, _: &Id, _: &Record<'_>) {}
-    fn record_follows_from(&self, _: &Id, _: &Id) {}
-    fn event(&self, event: &Event<'_>) {
-        let mut message = Message(String::new());
-        event.record(&mut message);
-        self.0.lock().unwrap().push(message.0);
-    }
-    fn enter(&self, _: &Id) {}
-    fn exit(&self, _: &Id) {}
-}
-
-/// What `run` logs on this thread, and its result.
-fn logged<T>(run: impl FnOnce() -> T) -> (Vec<String>, T) {
-    let lines = Arc::new(Mutex::new(Vec::new()));
-    let result = tracing::subscriber::with_default(Capture(Arc::clone(&lines)), run);
-    let lines = lines.lock().unwrap().clone();
-    (lines, result)
 }
 
 /// The axis row for control `name` after `  Trim Results:`, found by the
