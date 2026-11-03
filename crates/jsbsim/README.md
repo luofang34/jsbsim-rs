@@ -9,131 +9,50 @@ engine, system and script files reach it through a `Resolver`. It is
 deterministic and builds for native targets and for `wasm32-unknown-unknown`.
 The `fs` feature adds `FileResolver`, which reads them from a directory.
 
-## Loading an aircraft and running
+**[User manual](https://luofang34.github.io/jsbsim-rs/)**: loading models
+and scripts, initial conditions, properties, trimming, linearization,
+terrain, snapshots, determinism and WebAssembly, and what of JSBSim is
+supported.
+
+## Quickstart
+
+Drop a box from 1000 ft:
 
 ```rust
 use jsbsim::{Fdm, MemoryResolver};
 
-let mut files = MemoryResolver::new();
-files.insert(
-    "aircraft/box/box.xml",
-    r#"<fdm_config name="box" version="2.0">
-      <metrics> <wingarea unit="FT2"> 1 </wingarea> <wingspan unit="FT"> 1 </wingspan>
-        <chord unit="FT"> 1 </chord> </metrics>
-      <mass_balance> <ixx> 10 </ixx> <iyy> 10 </iyy> <izz> 10 </izz>
-        <emptywt> 100 </emptywt> <location name="CG"> <x>0</x> <y>0</y> <z>0</z> </location>
-      </mass_balance>
-      <ground_reactions> <contact type="STRUCTURE" name="BOTTOM">
-        <location> <x>0</x> <y>0</y> <z>-10</z> </location>
-        <spring_coeff> 1000 </spring_coeff> <damping_coeff> 100 </damping_coeff>
-      </contact> </ground_reactions>
-      <aerodynamics> <axis name="DRAG"/> </aerodynamics>
-    </fdm_config>"#,
-);
+fn main() -> Result<(), jsbsim::Error> {
+    let mut files = MemoryResolver::new();
+    files.insert(
+        "aircraft/box/box.xml",
+        r#"<fdm_config name="box" version="2.0">
+          <metrics> <wingarea unit="FT2"> 1 </wingarea> <wingspan unit="FT"> 1 </wingspan>
+            <chord unit="FT"> 1 </chord> </metrics>
+          <mass_balance> <ixx> 10 </ixx> <iyy> 10 </iyy> <izz> 10 </izz>
+            <emptywt> 100 </emptywt> <location name="CG"> <x>0</x> <y>0</y> <z>0</z> </location>
+          </mass_balance>
+          <ground_reactions> <contact type="STRUCTURE" name="BOTTOM">
+            <location> <x>0</x> <y>0</y> <z>-10</z> </location>
+            <spring_coeff> 1000 </spring_coeff> <damping_coeff> 100 </damping_coeff>
+          </contact> </ground_reactions>
+          <aerodynamics> <axis name="DRAG"/> </aerodynamics>
+        </fdm_config>"#,
+    );
 
-let mut fdm = Fdm::new()?;
-fdm.load_model(&files, "aircraft", "box")?;
-fdm.set_property("ic/h-sl-ft", 1000.0)?;
-fdm.run_ic()?;
-
-// Look a property up once, then read it by id every frame.
-let altitude = fdm.node("position/h-sl-ft")?.expect("bound by the model");
-for _ in 0..120 {
-    fdm.run()?;
+    let mut fdm = Fdm::new()?;
+    fdm.load_model(&files, "aircraft", "box")?;
+    fdm.set_property("ic/h-sl-ft", 1000.0)?;
+    fdm.run_ic()?;
+    while fdm.sim_time() < 5.0 {
+        fdm.run()?;
+    }
+    assert!(fdm.get_property("position/h-sl-ft")? < 700.0);
+    Ok(())
 }
-assert!(fdm.read_node(altitude)? < 1000.0);
-# Ok::<(), jsbsim::Error>(())
 ```
 
 With the `fs` feature, `FileResolver::new("path/to/jsbsim")` serves a JSBSim
-data tree instead, and `Fdm::load_script` runs a script from it.
-`load_model` reads `aircraft/box/box.xml`; a model not in a directory of its
-own name, such as PX4's `models/Rascal/Rascal110-JSBSim.xml`, loads with
-`Fdm::load_model_file(&files, "models/Rascal/Rascal110-JSBSim.xml")`.
-`set_systems_path` and `set_engine_path` name the shared directories searched
-after the aircraft's own.
-
-Initial conditions come from `ic/...` properties or from an initialization
-file, through `Fdm::load_initial_conditions` or, for a file named by one path,
-`Fdm::load_initial_conditions_file`; `run_ic` applies them. `Fdm::do_trim` then
-trims the aircraft in a `TrimMode`, and `Fdm::do_trim_custom` trims the state
-and control axes it is given.
-
-## Terrain
-
-The host owns the terrain. A `GroundCallback` answers where the ground is
-below a point; install it before loading so that initial conditions given
-above ground are placed on it.
-
-```rust
-use jsbsim::math::Location;
-use jsbsim::{Contact, Fdm, GroundCallback};
-
-/// A sphere with no terrain on it.
-struct Sphere {
-    radius_ft: f64,
-}
-
-impl GroundCallback for Sphere {
-    fn ag_level(&self, _time: f64, location: &Location) -> Contact {
-        let r = location.radius();
-        let mut normal = location.ecef();
-        normal.normalize();
-        let mut point = *location * (self.radius_ft / r);
-        point.set_ellipse(self.radius_ft, self.radius_ft);
-        point.cache_derived();
-        Contact::new(r - self.radius_ft, point, normal)
-    }
-}
-
-let mut fdm = Fdm::new()?;
-fdm.set_ground_callback(Box::new(Sphere { radius_ft: 20_925_646.3 }));
-# Ok::<(), jsbsim::Error>(())
-```
-
-## Snapshots
-
-A `Snapshot` holds the whole dynamic state of an executive, for rewind,
-replay or lockstep. It restores only onto an executive that loaded the same
-model the same way, and its bytes are the same on every target.
-
-```rust
-use jsbsim::{Fdm, MemoryResolver, Snapshot};
-
-# let mut files = MemoryResolver::new();
-# files.insert(
-#     "aircraft/box/box.xml",
-#     r#"<fdm_config name="box" version="2.0">
-#       <metrics> <wingarea unit="FT2"> 1 </wingarea> <wingspan unit="FT"> 1 </wingspan>
-#         <chord unit="FT"> 1 </chord> </metrics>
-#       <mass_balance> <ixx> 10 </ixx> <iyy> 10 </iyy> <izz> 10 </izz>
-#         <emptywt> 100 </emptywt> <location name="CG"> <x>0</x> <y>0</y> <z>0</z> </location>
-#       </mass_balance>
-#       <ground_reactions> <contact type="STRUCTURE" name="BOTTOM">
-#         <location> <x>0</x> <y>0</y> <z>-10</z> </location>
-#         <spring_coeff> 1000 </spring_coeff> <damping_coeff> 100 </damping_coeff>
-#       </contact> </ground_reactions>
-#       <aerodynamics> <axis name="DRAG"/> </aerodynamics>
-#     </fdm_config>"#,
-# );
-let mut fdm = Fdm::new()?;
-fdm.load_model(&files, "aircraft", "box")?;
-fdm.run_ic()?;
-
-let mut saved = Snapshot::new();
-fdm.snapshot_into(&mut saved)?;
-let then = fdm.get_property("position/h-sl-ft")?;
-for _ in 0..60 {
-    fdm.run()?;
-}
-fdm.restore(&saved)?;
-assert_eq!(fdm.get_property("position/h-sl-ft")?, then);
-
-// The bytes can be stored or sent, then decoded again.
-let copy = Snapshot::from_bytes(saved.as_bytes())?;
-fdm.restore(&copy)?;
-# Ok::<(), jsbsim::Error>(())
-```
+data tree instead, and `Fdm::load_script` runs one of its scripts.
 
 ## Licence
 

@@ -1,0 +1,23 @@
+[book]
+title = "jsbsim-rs User Manual"
+authors = ["The jsbsim-rs contributors"]
+description = "Using the jsbsim crate, an unofficial pure-Rust port of the JSBSim flight dynamics model"
+language = "en"
+src = "src"
+
+[build]
+# Under the workspace's ignored target directory, which `cargo clean` empties.
+build-dir = "../target/book"
+create-missing = false
+
+[output.html]
+git-repository-url = "https://github.com/luofang34/jsbsim-rs"
+edit-url-template = "https://github.com/luofang34/jsbsim-rs/edit/main/book/src/{path}"
+site-url = "/jsbsim-rs/"
+
+[output.html.search]
+enable = true
+
+# The examples need the jsbsim crate, which the Rust playground lacks.
+[output.html.playground]
+runnable = false
